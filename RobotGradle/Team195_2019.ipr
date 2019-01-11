@@ -12,6 +12,8 @@
       <entry name="!?*.java" />
     </wildcardResourcePatterns>
     <bytecodeTargetLevel target="11">
+      <module name="RobotGradle.main" target="11" />
+      <module name="RobotGradle.test" target="11" />
       <module name="Team195_2019.main" target="11" />
       <module name="Team195_2019.test" target="11" />
     </bytecodeTargetLevel>
@@ -71,9 +73,9 @@
   </component>
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Team195_2019.iml" filepath="$PROJECT_DIR$/Team195_2019.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Team195_2019.main.iml" filepath="$PROJECT_DIR$/Team195_2019.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Team195_2019.test.iml" filepath="$PROJECT_DIR$/Team195_2019.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RobotGradle.iml" filepath="$PROJECT_DIR$/RobotGradle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RobotGradle.main.iml" filepath="$PROJECT_DIR$/RobotGradle.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RobotGradle.test.iml" filepath="$PROJECT_DIR$/RobotGradle.test.iml" />
     </modules>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="11" project-jdk-type="JavaSDK">
@@ -81,6 +83,9 @@
   </component>
   <component name="SvnBranchConfigurationManager">
     <option name="mySupportsUserInfoFilter" value="true" />
+  </component>
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
   </component>
   <component name="libraryTable">
     <library name="Gradle: com.ctre.phoenix:api-java:5.12.0">

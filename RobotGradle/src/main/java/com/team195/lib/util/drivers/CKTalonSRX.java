@@ -8,13 +8,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.lib.util.QuickMaths;
 
-public class CKTalonSRX extends TalonSRX {
+public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	private int currentSelectedSlot = 0;
-	//TODO: Rewrite to support up to 4 slots, as Omar says the talons have 4 slots
-	private double[] mCLRampRate = {0, 0};
-	private int[] mMMAccel = {0, 0};
-	private int[] mMMVel = {0, 0};
+	private double[] mCLRampRate = new double[4];
+	private int[] mMMAccel = new int[4];
+	private int[] mMMVel = new int[4];
 
 	public CKTalonSRX(int deviceId) {
 		super(deviceId);
@@ -122,5 +122,126 @@ public class CKTalonSRX extends TalonSRX {
 		sb.append("General Status Frame 14: " + getStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, Constants.kLongCANTimeoutMs) + "\r\n");
 		sb.append("General Status Frame 15: " + getStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmareApiStatus, Constants.kLongCANTimeoutMs) + "\r\n");
 		return sb.toString();
+	}
+
+	@Override
+	public void setPIDF(double kP, double kI, double kD, double kF) {
+		config_kP(currentSelectedSlot, kP);
+		config_kI(currentSelectedSlot, kI);
+		config_kD(currentSelectedSlot, kD);
+		config_kF(currentSelectedSlot, kF);
+	}
+
+	@Override
+	public void setIZone(double iZone) {
+		config_IntegralZone(currentSelectedSlot, (int)iZone);
+	}
+
+	@Override
+	public void setIAccum(double iAccum) {
+		setIntegralAccumulator(iAccum);
+	}
+
+	@Override
+	public void setMaxIAccum(double maxIAccum) {
+		configMaxIntegralAccumulator(currentSelectedSlot, maxIAccum);
+	}
+
+	@Override
+	public void setRampRate(double rampRate) {
+		configClosedloopRamp(rampRate, Constants.kCANTimeoutMs);
+	}
+
+	@Override
+	public void setMotionParameters(int cruiseVel, int cruiseAccel) {
+		configMotionCruiseVelocity(QuickMaths.convertRPMToNativeUnits(cruiseVel), Constants.kCANTimeoutMs);
+		configMotionAcceleration(QuickMaths.convertRPMToNativeUnits(cruiseAccel), Constants.kCANTimeoutMs);
+	}
+
+	@Override
+	public void setControlMode(MCControlMode controlMode) {
+		if (getMotionControlMode() != controlMode) {
+			switch (controlMode) {
+				case PERCENTOUT:
+					set(ControlMode.PercentOutput, 0);
+					break;
+				case POSITION:
+					set(ControlMode.Position, getSelectedSensorPosition());
+					break;
+				case VELOCITY:
+					set(ControlMode.Velocity, 0);
+					break;
+				case CURRENT:
+					set(ControlMode.Current, 0);
+					break;
+				case MOTIONMAGIC:
+					set(ControlMode.MotionMagic, getSelectedSensorPosition());
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	@Override
+	public MCControlMode getMotionControlMode() {
+		switch (getControlMode()) {
+			case PercentOutput:
+				return MCControlMode.PERCENTOUT;
+			case Position:
+				return MCControlMode.POSITION;
+			case Velocity:
+				return MCControlMode.VELOCITY;
+			case Current:
+				return MCControlMode.CURRENT;
+			case MotionMagic:
+				return MCControlMode.MOTIONMAGIC;
+			default:
+				return MCControlMode.INVALID;
+		}
+	}
+
+	@Override
+	public void setSetpoint(double setpoint) {
+		ControlMode controlMode = getControlMode();
+		switch (controlMode) {
+			case PercentOutput:
+				set(controlMode, setpoint);
+				break;
+			case Position:
+			case MotionMagic:
+				set(controlMode, QuickMaths.convertRotationsToNativeUnits(setpoint));
+				break;
+			case Velocity:
+				set(controlMode, QuickMaths.convertRPMToNativeUnits(setpoint));
+				break;
+			case Current:
+				set(controlMode, setpoint);
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public double getActual() {
+		switch (getControlMode()) {
+			case PercentOutput:
+				return getMotorOutputPercent();
+			case Position:
+			case MotionMagic:
+				return QuickMaths.convertNativeUnitsToRotations(getSelectedSensorPosition());
+			case Velocity:
+				return QuickMaths.convertNativeUnitsToRPM(getSelectedSensorVelocity());
+			case Current:
+				return getOutputCurrent();
+			default:
+				return 0;
+		}
+	}
+
+	@Override
+	public double getIntegralAccum() {
+		return getIntegralAccumulator();
 	}
 }

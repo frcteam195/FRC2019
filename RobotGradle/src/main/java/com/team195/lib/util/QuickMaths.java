@@ -18,15 +18,19 @@ public class QuickMaths {
 		return angle * countsPerRev / 360;
 	}
 
-	public static int convertNativeUnitsToRotations(double nativeUnitsPos) {
-		return (int)(nativeUnitsPos / Constants.kSensorUnitsPerRotation);
+	public static double convertNativeUnitsToRotations(int nativeUnitsPos) {
+		return nativeUnitsPos / Constants.kSensorUnitsPerRotation;
+	}
+
+	public static int convertRotationsToNativeUnits(double rotations) {
+		return (int)(rotations * Constants.kSensorUnitsPerRotation);
+	}
+
+	public static double convertNativeUnitsToRPM(int nativeUnits) {
+		return (nativeUnits / Constants.kSensorUnitsPerRotation * Constants.k100msPerMinute);
 	}
 
 	public static int convertRPMToNativeUnits(double rpm) {
 		return (int)(rpm * Constants.kSensorUnitsPerRotation / Constants.k100msPerMinute);
-	}
-
-	public static int convertNativeUnitsToRPM(double nativeUnits) {
-		return (int)(nativeUnits / Constants.kSensorUnitsPerRotation * Constants.k100msPerMinute);
 	}
 }
