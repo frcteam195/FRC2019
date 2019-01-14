@@ -13,10 +13,11 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	private double[] mCLRampRate = new double[4];
 	private int[] mMMAccel = new int[4];
 	private int[] mMMVel = new int[4];
+	private double prevOutput = Double.MIN_VALUE;
 
-	final private Configuration fastMasterConfig = new Configuration(5, 5, 20);
-	final private Configuration normalMasterConfig = new Configuration(10, 10, 20);
-	final private Configuration normalSlaveConfig = new Configuration(10, 100, 100);
+	private final Configuration fastMasterConfig = new Configuration(5, 5, 20);
+	private final Configuration normalMasterConfig = new Configuration(10, 10, 20);
+	private final Configuration normalSlaveConfig = new Configuration(10, 100, 100);
 
 	public CKTalonSRX(int deviceId, boolean fastMaster) {
 		super(deviceId);
@@ -153,12 +154,42 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		return sb.toString();
 	}
 
+	@Deprecated
+	public void set(ControlMode mode, double outputValue) {
+		set(MCControlMode.valueOf(mode), outputValue, currentSelectedSlot, 0);
+	}
+
+	@Deprecated
+	public void set(ControlMode mode, double demand0, double demand1) {
+		set(MCControlMode.valueOf(mode), demand0, currentSelectedSlot, demand1);
+	}
+
+	@Deprecated
+	public void set(ControlMode mode, double demand0, DemandType demand1Type, double demand1){
+		set(MCControlMode.valueOf(mode), demand0, currentSelectedSlot, demand1);
+	}
+
 	@Override
-	public void set(MCControlMode controlMode, double output, int slotIdx, double arbitraryFeedForward) {
+	public void set(MCControlMode controlMode, double demand, int slotIdx, double arbitraryFeedForward) {
 		if (currentSelectedSlot != slotIdx)
 			selectProfileSlot(slotIdx, 0);
 
-		set(controlMode.CTRE(), output, DemandType.ArbitraryFeedForward, arbitraryFeedForward);
+		switch (controlMode) {
+			case Position:
+			case MotionMagic:
+				demand = convertRotationsToNativeUnits(demand);
+				break;
+			case Velocity:
+				demand = convertRPMToNativeUnits(demand);
+				break;
+			default:
+				break;
+		}
+
+		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode.CTRE() != getControlMode()) {
+			set(controlMode.CTRE(), demand, DemandType.ArbitraryFeedForward, arbitraryFeedForward);
+			prevOutput = demand + arbitraryFeedForward;
+		}
 	}
 
 	@Override
@@ -191,8 +222,14 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 
 	@Override
 	public void setMotionParameters(int cruiseVel, int cruiseAccel) {
-		configMotionCruiseVelocity(QuickMaths.convertRPMToNativeUnits(cruiseVel), Constants.kCANTimeoutMs);
-		configMotionAcceleration(QuickMaths.convertRPMToNativeUnits(cruiseAccel), Constants.kCANTimeoutMs);
+		configMotionCruiseVelocity(convertRPMToNativeUnits(cruiseVel), Constants.kCANTimeoutMs);
+		configMotionAcceleration(convertRPMToNativeUnits(cruiseAccel), Constants.kCANTimeoutMs);
+	}
+
+	@Override
+	public void setPIDGainSlot(int slotIdx) {
+		if (currentSelectedSlot != slotIdx)
+			selectProfileSlot(slotIdx, 0);
 	}
 
 	@Override
@@ -200,19 +237,13 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		if (getMotionControlMode() != controlMode) {
 			switch (controlMode) {
 				case PercentOut:
-					set(ControlMode.PercentOutput, 0);
+				case Velocity:
+				case Current:
+					set(controlMode, 0, currentSelectedSlot, 0);
 					break;
 				case Position:
-					set(ControlMode.Position, getSelectedSensorPosition());
-					break;
-				case Velocity:
-					set(ControlMode.Velocity, 0);
-					break;
-				case Current:
-					set(ControlMode.Current, 0);
-					break;
 				case MotionMagic:
-					set(ControlMode.MotionMagic, getSelectedSensorPosition());
+					set(controlMode, getPosition(), currentSelectedSlot, 0);
 					break;
 				default:
 					break;
@@ -227,24 +258,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		ControlMode controlMode = getControlMode();
-		switch (controlMode) {
-			case PercentOutput:
-				set(controlMode, setpoint);
-				break;
-			case Position:
-			case MotionMagic:
-				set(controlMode, QuickMaths.convertRotationsToNativeUnits(setpoint));
-				break;
-			case Velocity:
-				set(controlMode, QuickMaths.convertRPMToNativeUnits(setpoint));
-				break;
-			case Current:
-				set(controlMode, setpoint);
-				break;
-			default:
-				break;
-		}
+		set(getMotionControlMode(), setpoint, currentSelectedSlot, 0);
 	}
 
 	@Override
@@ -254,9 +268,9 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 				return getMotorOutputPercent();
 			case Position:
 			case MotionMagic:
-				return QuickMaths.convertNativeUnitsToRotations(getSelectedSensorPosition());
+				return getPosition();
 			case Velocity:
-				return QuickMaths.convertNativeUnitsToRPM(getSelectedSensorVelocity());
+				return getVelocity();
 			case Current:
 				return getOutputCurrent();
 			default:
@@ -265,10 +279,29 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public double getPosition() {
+		return convertNativeUnitsToRotations(getSelectedSensorPosition());
+	}
+
+	@Override
+	public double getVelocity() {
+		return convertNativeUnitsToRPM(getSelectedSensorVelocity());
+	}
+
+	@Override
+	public double getSensorUnitsPerRotation() {
+		return 4096;
+	}
+
+	@Override
+	public double getVelocityRPMTimeConversionFactor() {
+		return 600;
+	}
+
+	@Override
 	public double getIntegralAccum() {
 		return getIntegralAccumulator();
 	}
-
 
 	private static class Configuration {
 		int CONTROL_FRAME_PERIOD_MS;

@@ -4,8 +4,10 @@ import com.revrobotics.*;
 import java.util.Optional;
 
 public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
+	private int currentSelectedSlot = 0;
 	private final CANPIDController canPIDController;
 	private final CANEncoder canEncoder;
+	private double prevOutput = Double.MIN_VALUE;
 
 	private Configuration fastMasterConfig = new Configuration(5, 5, 20, 50);
 	private Configuration normalMasterConfig = new Configuration(10, 10, 20, 50);
@@ -39,24 +41,33 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		setSmartCurrentLimit(80);
 	}
 
-	@Override
+	@Deprecated
 	public void set(double DO_NOT_USE) {
 
 	}
 
-	public void set(double value, ControlType ctrl) {
-		canPIDController.setReference(value, ctrl);
-	}
+	@Override
+	public void set(MCControlMode controlMode, double demand, int slotIdx, double arbitraryFeedForward) {
+		if (currentSelectedSlot != slotIdx)
+			setPIDGainSlot(slotIdx);
 
-	/**
-	 * Four parameter set mode
-	 * @param value Output value
-	 * @param ctrl Control Mode
-	 * @param pidSlot PID Slot
-	 * @param arbFeedforward Expected value -1 to 1 and convert it automatically to voltage based on nominal voltage compensation
-	 */
-	public void set(double value, ControlType ctrl, int pidSlot, double arbFeedforward) {
-		canPIDController.setReference(value, ctrl, pidSlot, arbFeedforward * voltageCompensation);
+		//TODO: Remove if not necessary after testing position units
+		switch (controlMode) {
+			case Position:
+			case MotionMagic:
+				demand = convertRotationsToNativeUnits(demand);
+				break;
+			case Velocity:
+				demand = convertRPMToNativeUnits(demand);
+				break;
+			default:
+				break;
+		}
+
+		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode.Rev() != getControlType()) {
+			canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward * voltageCompensation);
+			prevOutput = demand + arbitraryFeedForward;
+		}
 	}
 
 	public double getPosition() {
@@ -65,6 +76,18 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public double getVelocity() {
 		return canEncoder.getVelocity();
+	}
+
+	@Override
+	public double getSensorUnitsPerRotation() {
+//		return 42;
+		//TODO: Change this after testing what position units are in for Rev
+		return 1;
+	}
+
+	@Override
+	public double getVelocityRPMTimeConversionFactor() {
+		return 1;
 	}
 
 
@@ -78,15 +101,15 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
-		canPIDController.setP(kP);
-		canPIDController.setI(kI);
-		canPIDController.setD(kD);
-		canPIDController.setFF(kF);
+		canPIDController.setP(kP, currentSelectedSlot);
+		canPIDController.setI(kI, currentSelectedSlot);
+		canPIDController.setD(kD, currentSelectedSlot);
+		canPIDController.setFF(kF, currentSelectedSlot);
 	}
 
 	@Override
 	public void setIZone(double iZone) {
-		canPIDController.setIZone(iZone);
+		canPIDController.setIZone(iZone, currentSelectedSlot);
 	}
 
 	@Override
@@ -110,24 +133,27 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
+	public void setPIDGainSlot(int slotIdx) {
+		setCurrentSelectedSlot(slotIdx);
+	}
+
+	private synchronized void setCurrentSelectedSlot(int slotIdx) {
+		currentSelectedSlot = slotIdx;
+	}
+
+	@Override
 	public void setControlMode(MCControlMode controlMode) {
 		if (getMotionControlMode() != controlMode)
 		{
 			switch (controlMode) {
-				case PercentOut:
-					set(0, ControlType.kDutyCycle);
-					break;
 				case Position:
-					set(canEncoder.getPosition(), ControlType.kPosition);
+					set(controlMode, canEncoder.getPosition(), currentSelectedSlot, 0);
 					break;
+				case PercentOut:
 				case Velocity:
-					set(0, ControlType.kVelocity);
-					break;
 				case Voltage:
-					set(0, ControlType.kVoltage);
-					break;
 				default:
-					set(0, ControlType.kDutyCycle);
+					set(controlMode, 0, currentSelectedSlot, 0);
 					break;
 			}
 		}
@@ -135,23 +161,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public void setSetpoint(double setpoint) {
-		ControlType controlType = getControlType();
-		switch (controlType) {
-			case kDutyCycle:
-				set(setpoint, controlType);
-				break;
-			case kVelocity:
-				set(setpoint, controlType);
-				break;
-			case kVoltage:
-				set(setpoint, controlType);
-				break;
-			case kPosition:
-				set(setpoint, controlType);
-				break;
-			default:
-				break;
-		}
+		set(getMotionControlMode(), setpoint, currentSelectedSlot, 0);
 	}
 
 	@Override
@@ -177,18 +187,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public MCControlMode getMotionControlMode() {
-		switch (getControlType()) {
-			case kDutyCycle:
-				return MCControlMode.PercentOut;
-			case kVelocity:
-				return MCControlMode.Velocity;
-			case kVoltage:
-				return MCControlMode.Voltage;
-			case kPosition:
-				return MCControlMode.Position;
-			default:
-				return MCControlMode.Disabled;
-		}
+		return MCControlMode.valueOf(getControlType());
 	}
 
 	public ControlType getControlType() {

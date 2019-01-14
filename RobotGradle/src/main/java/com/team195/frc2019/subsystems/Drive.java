@@ -13,6 +13,7 @@ import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
 import com.team195.lib.drivers.CKSparkMax;
+import com.team195.lib.drivers.MCControlMode;
 import com.team195.lib.drivers.TuneablePIDOSC;
 import com.team254.lib.drivers.TalonSRXChecker;
 import com.team254.lib.drivers.TalonSRXFactory;
@@ -441,12 +442,12 @@ public class Drive extends Subsystem {
 //        }
 
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            mLeftMaster.set(mPeriodicIO.left_demand, ControlType.kDutyCycle, 0, 0.0);
-            mRightMaster.set(mPeriodicIO.right_demand, ControlType.kDutyCycle, 0, 0.0);
+            mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
+            mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
         } else {
-            mLeftMaster.set(mPeriodicIO.left_demand, ControlType.kVelocity, 0,
+            mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
                     mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / 1023.0);
-            mRightMaster.set(mPeriodicIO.right_demand, ControlType.kVelocity, 0,
+            mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
                     mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
         }
     }
