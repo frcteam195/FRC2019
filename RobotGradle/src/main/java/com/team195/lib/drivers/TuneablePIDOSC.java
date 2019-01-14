@@ -1,4 +1,4 @@
-package com.team195.lib.util.drivers;
+package com.team195.lib.drivers;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TuneablePID {
+public class TuneablePIDOSC {
 	private static final int MIN_PID_SEND_RATE_MS = 50;
 
 	private String name;
@@ -26,7 +26,7 @@ public class TuneablePID {
 
 	private TuneablePIDData tpd;
 
-	public TuneablePID(String name, int portNumber, boolean autoUpdate, TuneableMotorController... tuneableMotorControllers) throws SocketException {
+	public TuneablePIDOSC(String name, int portNumber, boolean autoUpdate, TuneableMotorController... tuneableMotorControllers) throws SocketException {
 		if (Constants.TUNING_PIDS) {
 			this.name = name;
 			mcArr = new ArrayList<>(Arrays.asList(tuneableMotorControllers));
@@ -42,7 +42,7 @@ public class TuneablePID {
 							if (autoUpdate) {
 								tmc.setPIDF(tpd.kP, tpd.kI, tpd.kD, tpd.kF);
 								tmc.setSetpoint(tpd.setpoint);
-								tmc.setRampRate(tpd.rampRate);
+								tmc.setMCRampRate(tpd.rampRate);
 								tmc.setIZone(tpd.iZone);
 								tmc.setMaxIAccum(tpd.maxIAccum);
 								tmc.setMotionParameters(tpd.cruiseVelocity, tpd.cruiseAccel);

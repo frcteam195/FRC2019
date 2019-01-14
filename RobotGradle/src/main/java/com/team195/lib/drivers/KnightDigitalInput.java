@@ -1,4 +1,4 @@
-package com.team195.lib.util.drivers;
+package com.team195.lib.drivers;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 

@@ -4,11 +4,16 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.ControlType;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
+import com.team195.lib.drivers.CKSparkMax;
+import com.team195.lib.drivers.TuneablePIDOSC;
 import com.team254.lib.drivers.TalonSRXChecker;
 import com.team254.lib.drivers.TalonSRXFactory;
 import com.team254.lib.geometry.Pose2d;
@@ -32,8 +37,8 @@ public class Drive extends Subsystem {
     private static final double DRIVE_ENCODER_PPR = 4096.;
     private static Drive mInstance = new Drive();
     // Hardware
-    private final TalonSRX mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
-    private final Solenoid mShifter;
+    private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
+//    private final Solenoid mShifter;
     // Control states
     private DriveControlState mDriveControlState;
     private PigeonIMU mPigeon;
@@ -51,7 +56,8 @@ public class Drive extends Subsystem {
         @Override
         public void onStart(double timestamp) {
             synchronized (Drive.this) {
-                setOpenLoop(new DriveSignal(0.05, 0.05));
+//                setOpenLoop(new DriveSignal(0.05, 0.05));
+                setOpenLoop(new DriveSignal(0, 0));
                 setBrakeMode(false);
 //                 startLogging();
             }
@@ -88,51 +94,34 @@ public class Drive extends Subsystem {
         }
     };
 
-    private void configureMaster(TalonSRX talon, boolean left) {
-        talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
-        final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice
-                .CTRE_MagEncoder_Relative, 0, 100); //primary closed-loop, 100 ms timeout
-        if (sensorPresent != ErrorCode.OK) {
-            DriverStation.reportError("Could not detect " + (left ? "left" : "right") + " encoder: " + sensorPresent, false);
-        }
-        talon.setInverted(!left);
-        talon.setSensorPhase(true);
-        talon.enableVoltageCompensation(true);
-        talon.configVoltageCompSaturation(12.0, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs);
-        talon.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs);
-        talon.configClosedloopRamp(Constants.kDriveVoltageRampRate, Constants.kLongCANTimeoutMs);
-        talon.configNeutralDeadband(0.04, 0);
-    }
-
     private Drive() {
         mPeriodicIO = new PeriodicIO();
 
         // Start all Talons in open loop mode.
-        mLeftMaster = TalonSRXFactory.createDefaultTalon(Constants.kLeftDriveMasterId);
-        configureMaster(mLeftMaster, true);
+        mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+        mLeftMaster.setInverted(false);
 
-        mLeftSlaveA = TalonSRXFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveAId, Constants.kLeftDriveMasterId);
+        mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
         mLeftSlaveA.setInverted(false);
 
-        mLeftSlaveB = TalonSRXFactory.createPermanentSlaveTalon(Constants.kLeftDriveSlaveBId, Constants.kLeftDriveMasterId);
+        mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
         mLeftSlaveB.setInverted(false);
 
-        mRightMaster = TalonSRXFactory.createDefaultTalon(Constants.kRightDriveMasterId);
-        configureMaster(mRightMaster, false);
+        mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+        mRightMaster.setInverted(true);
 
-        mRightSlaveA = TalonSRXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveAId, Constants.kRightDriveMasterId);
+        mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
         mRightSlaveA.setInverted(true);
 
-        mRightSlaveB = TalonSRXFactory.createPermanentSlaveTalon(Constants.kRightDriveSlaveBId, Constants.kRightDriveMasterId);
+        mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
         mRightSlaveB.setInverted(true);
 
-        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
+//        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
         reloadGains();
 
-        mPigeon = new PigeonIMU(mLeftSlaveB);
-        mLeftSlaveB.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
+//        mPigeon = new PigeonIMU(mLeftSlaveB);
+//        mLeftSlaveB.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
         // Force a solenoid message.
         mIsHighGear = true;
@@ -187,8 +176,8 @@ public class Drive extends Subsystem {
             System.out.println("Switching to open loop");
             System.out.println(signal);
             mDriveControlState = DriveControlState.OPEN_LOOP;
-            mLeftMaster.configNeutralDeadband(0.04, 0);
-            mRightMaster.configNeutralDeadband(0.04, 0);
+//            mLeftMaster.configNeutralDeadband(0.04, 0);
+//            mRightMaster.configNeutralDeadband(0.04, 0);
         }
         mPeriodicIO.left_demand = signal.getLeft();
         mPeriodicIO.right_demand = signal.getRight();
@@ -204,10 +193,10 @@ public class Drive extends Subsystem {
             // We entered a velocity control state.
             setBrakeMode(true);
             mAutoShift = false;
-            mLeftMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
-            mRightMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
-            mLeftMaster.configNeutralDeadband(0.0, 0);
-            mRightMaster.configNeutralDeadband(0.0, 0);
+//            mLeftMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+//            mRightMaster.selectProfileSlot(kLowGearVelocityControlSlot, 0);
+//            mLeftMaster.configNeutralDeadband(0.0, 0);
+//            mRightMaster.configNeutralDeadband(0.0, 0);
 
             mDriveControlState = DriveControlState.PATH_FOLLOWING;
         }
@@ -238,10 +227,10 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void setHighGear(boolean wantsHighGear) {
-        if (wantsHighGear != mIsHighGear) {
-            mIsHighGear = wantsHighGear;
-            mShifter.set(wantsHighGear);
-        }
+//        if (wantsHighGear != mIsHighGear) {
+//            mIsHighGear = wantsHighGear;
+//            mShifter.set(wantsHighGear);
+//        }
     }
 
     public boolean isBrakeMode() {
@@ -251,14 +240,16 @@ public class Drive extends Subsystem {
     public synchronized void setBrakeMode(boolean on) {
         if (mIsBrakeMode != on) {
             mIsBrakeMode = on;
-            NeutralMode mode = on ? NeutralMode.Brake : NeutralMode.Coast;
-            mRightMaster.setNeutralMode(mode);
-            mRightSlaveA.setNeutralMode(mode);
-            mRightSlaveB.setNeutralMode(mode);
+//            NeutralMode mode = on ? NeutralMode.Brake : NeutralMode.Coast;
+            CANSparkMax.IdleMode mode = on ? CANSparkMax.IdleMode.kBrake : CANSparkMax.IdleMode.kCoast;
+            mRightMaster.setIdleMode(mode);
+            mRightSlaveA.setIdleMode(mode);
+            mRightSlaveB.setIdleMode(mode);
 
-            mLeftMaster.setNeutralMode(mode);
-            mLeftSlaveA.setNeutralMode(mode);
-            mLeftSlaveB.setNeutralMode(mode);
+            mLeftMaster.setIdleMode(mode);
+            mLeftSlaveA.setIdleMode(mode);
+            mLeftSlaveB.setIdleMode(mode);
+//            mLeftSlaveB.setNeutralMode(mode);
         }
     }
 
@@ -267,12 +258,12 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void setHeading(Rotation2d heading) {
-        System.out.println("SET HEADING: " + heading.getDegrees());
-
-        mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getFusedHeading()).inverse());
-        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
-
-        mPeriodicIO.gyro_heading = heading;
+//        System.out.println("SET HEADING: " + heading.getDegrees());
+//
+//        mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getFusedHeading()).inverse());
+//        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
+//
+//        mPeriodicIO.gyro_heading = heading;
     }
 
     @Override
@@ -301,8 +292,8 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void resetEncoders() {
-        mLeftMaster.setSelectedSensorPosition(0, 0, 0);
-        mRightMaster.setSelectedSensorPosition(0, 0, 0);
+//        mLeftMaster.setSelectedSensorPosition(0, 0, 0);
+//        mRightMaster.setSelectedSensorPosition(0, 0, 0);
         mPeriodicIO = new PeriodicIO();
     }
 
@@ -395,17 +386,11 @@ public class Drive extends Subsystem {
     }
 
     public synchronized void reloadGains() {
-        mLeftMaster.config_kP(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKp, Constants.kLongCANTimeoutMs);
-        mLeftMaster.config_kI(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKi, Constants.kLongCANTimeoutMs);
-        mLeftMaster.config_kD(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKd, Constants.kLongCANTimeoutMs);
-        mLeftMaster.config_kF(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKf, Constants.kLongCANTimeoutMs);
-        mLeftMaster.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone, Constants.kLongCANTimeoutMs);
+        mLeftMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
+        mLeftMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
 
-        mRightMaster.config_kP(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKp, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kI(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKi, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kD(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKd, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_kF(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityKf, Constants.kLongCANTimeoutMs);
-        mRightMaster.config_IntegralZone(kLowGearVelocityControlSlot, Constants.kDriveLowGearVelocityIZone, Constants.kLongCANTimeoutMs);
+        mRightMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
+        mRightMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
     }
 
     @Override
@@ -416,11 +401,11 @@ public class Drive extends Subsystem {
     public synchronized void readPeriodicInputs() {
         double prevLeftTicks = mPeriodicIO.left_position_ticks;
         double prevRightTicks = mPeriodicIO.right_position_ticks;
-        mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
-        mPeriodicIO.right_position_ticks = mRightMaster.getSelectedSensorPosition(0);
-        mPeriodicIO.left_velocity_ticks_per_100ms = mLeftMaster.getSelectedSensorVelocity(0);
-        mPeriodicIO.right_velocity_ticks_per_100ms = mRightMaster.getSelectedSensorVelocity(0);
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getFusedHeading()).rotateBy(mGyroOffset);
+//        mPeriodicIO.left_position_ticks = mLeftMaster.getSelectedSensorPosition(0);
+//        mPeriodicIO.right_position_ticks = mRightMaster.getSelectedSensorPosition(0);
+//        mPeriodicIO.left_velocity_ticks_per_100ms = mLeftMaster.getSelectedSensorVelocity(0);
+//        mPeriodicIO.right_velocity_ticks_per_100ms = mRightMaster.getSelectedSensorVelocity(0);
+//        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getFusedHeading()).rotateBy(mGyroOffset);
 
         double deltaLeftTicks = ((mPeriodicIO.left_position_ticks - prevLeftTicks) / 4096.0) * Math.PI;
         if (deltaLeftTicks > 0.0) {
@@ -445,52 +430,63 @@ public class Drive extends Subsystem {
 
     @Override
     public synchronized void writePeriodicOutputs() {
+//        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+//            mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward, 0.0);
+//            mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward, 0.0);
+//        } else {
+//            mLeftMaster.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
+//                    mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / 1023.0);
+//            mRightMaster.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
+//                    mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
+//        }
+
         if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward, 0.0);
-            mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward, 0.0);
+            mLeftMaster.set(mPeriodicIO.left_demand, ControlType.kDutyCycle, 0, 0.0);
+            mRightMaster.set(mPeriodicIO.right_demand, ControlType.kDutyCycle, 0, 0.0);
         } else {
-            mLeftMaster.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
+            mLeftMaster.set(mPeriodicIO.left_demand, ControlType.kVelocity, 0,
                     mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / 1023.0);
-            mRightMaster.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
+            mRightMaster.set(mPeriodicIO.right_demand, ControlType.kVelocity, 0,
                     mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
         }
     }
 
     @Override
     public boolean checkSystem() {
-        boolean leftSide = TalonSRXChecker.CheckTalons(this,
-                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
-                    {
-                        add(new TalonSRXChecker.TalonSRXConfig("left_master", mLeftMaster));
-                        add(new TalonSRXChecker.TalonSRXConfig("left_slave", mLeftSlaveA));
-                        add(new TalonSRXChecker.TalonSRXConfig("left_slave1", mLeftSlaveB));
-                    }
-                }, new TalonSRXChecker.CheckerConfig() {
-                    {
-                        mCurrentFloor = 2;
-                        mRPMFloor = 1500;
-                        mCurrentEpsilon = 2.0;
-                        mRPMEpsilon = 250;
-                        mRPMSupplier = () -> mLeftMaster.getSelectedSensorVelocity(0);
-                    }
-                });
-        boolean rightSide = TalonSRXChecker.CheckTalons(this,
-                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
-                    {
-                        add(new TalonSRXChecker.TalonSRXConfig("right_master", mRightMaster));
-                        add(new TalonSRXChecker.TalonSRXConfig("right_slave", mRightSlaveA));
-                        add(new TalonSRXChecker.TalonSRXConfig("right_slave1", mRightSlaveB));
-                    }
-                }, new TalonSRXChecker.CheckerConfig() {
-                    {
-                        mCurrentFloor = 2;
-                        mRPMFloor = 1500;
-                        mCurrentEpsilon = 2.0;
-                        mRPMEpsilon = 250;
-                        mRPMSupplier = () -> mRightMaster.getSelectedSensorVelocity(0);
-                    }
-                });
-        return leftSide && rightSide;
+//        boolean leftSide = TalonSRXChecker.CheckTalons(this,
+//                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
+//                    {
+//                        add(new TalonSRXChecker.TalonSRXConfig("left_master", mLeftMaster));
+//                        add(new TalonSRXChecker.TalonSRXConfig("left_slave", mLeftSlaveA));
+//                        add(new TalonSRXChecker.TalonSRXConfig("left_slave1", mLeftSlaveB));
+//                    }
+//                }, new TalonSRXChecker.CheckerConfig() {
+//                    {
+//                        mCurrentFloor = 2;
+//                        mRPMFloor = 1500;
+//                        mCurrentEpsilon = 2.0;
+//                        mRPMEpsilon = 250;
+//                        mRPMSupplier = () -> mLeftMaster.getSelectedSensorVelocity(0);
+//                    }
+//                });
+//        boolean rightSide = TalonSRXChecker.CheckTalons(this,
+//                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
+//                    {
+//                        add(new TalonSRXChecker.TalonSRXConfig("right_master", mRightMaster));
+//                        add(new TalonSRXChecker.TalonSRXConfig("right_slave", mRightSlaveA));
+//                        add(new TalonSRXChecker.TalonSRXConfig("right_slave1", mRightSlaveB));
+//                    }
+//                }, new TalonSRXChecker.CheckerConfig() {
+//                    {
+//                        mCurrentFloor = 2;
+//                        mRPMFloor = 1500;
+//                        mCurrentEpsilon = 2.0;
+//                        mRPMEpsilon = 250;
+//                        mRPMSupplier = () -> mRightMaster.getSelectedSensorVelocity(0);
+//                    }
+//                });
+//        return leftSide && rightSide;
+        return false;
     }
 
     public synchronized void startLogging() {

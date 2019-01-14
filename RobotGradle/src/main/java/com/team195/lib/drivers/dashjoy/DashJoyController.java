@@ -1,4 +1,4 @@
-package com.team195.lib.util.drivers.dashjoy;
+package com.team195.lib.drivers.dashjoy;
 
 import java.util.ArrayList;
 

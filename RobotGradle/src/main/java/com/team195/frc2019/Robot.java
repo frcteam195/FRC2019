@@ -6,8 +6,8 @@ import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.lib.util.QuickMaths;
-import com.team195.lib.util.drivers.dashjoy.CKDashJoystick;
-import com.team195.lib.util.drivers.dashjoy.DashJoyReceiver;
+import com.team195.lib.drivers.dashjoy.CKDashJoystick;
+import com.team195.lib.drivers.dashjoy.DashJoyReceiver;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -219,15 +219,15 @@ public class Robot extends TimedRobot {
 //        double throttle = mControlBoard.getThrottle();
 //        double turn = mControlBoard.getTurn();
 
-        double throttle = QuickMaths.normalizeJoystickWithDeadband(dashjoy1.getRawAxis(1),0.04);
-        double turn = QuickMaths.normalizeJoystickWithDeadband(dashjoy1.getRawAxis(4),0.04);
+        double throttle = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(1),0.04);
+        double turn = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(4),0.04);
 
         try {
             // When elevator is up, tune sensitivity on turn a little.
 //            if (mElevator.getInchesOffGround() > Constants.kElevatorLowSensitivityThreshold) {
 //                turn *= Constants.kLowSensitivityFactor;
 //            }
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, dashjoy1.getRawButton(6),
+            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, Controllers.getInstance().getDriveJoystickThrottle().getRawButton(5),
                     mDrive.isHighGear()));
 
 

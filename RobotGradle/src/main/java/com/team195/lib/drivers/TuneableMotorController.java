@@ -1,11 +1,12 @@
-package com.team195.lib.util.drivers;
+package com.team195.lib.drivers;
 
 public interface TuneableMotorController {
+	void set(MCControlMode controlMode, double output, int slotIdx, double arbitraryFeedForward);
 	void setPIDF(double kP, double kI, double kD, double kF);
 	void setIZone(double iZone);
 	void setIAccum(double iAccum);
 	void setMaxIAccum(double maxIAccum);
-	void setRampRate(double rampRate);
+	void setMCRampRate(double rampRate);
 	void setMotionParameters(int cruiseVel, int cruiseAccel);
 
 	/**
@@ -23,14 +24,4 @@ public interface TuneableMotorController {
 	double getIntegralAccum();
 
 	MCControlMode getMotionControlMode();
-
-	public enum MCControlMode {
-		PERCENTOUT,
-		POSITION,
-		VELOCITY,
-		CURRENT,
-		VOLTAGE,
-		MOTIONMAGIC,
-		INVALID
-	}
 }

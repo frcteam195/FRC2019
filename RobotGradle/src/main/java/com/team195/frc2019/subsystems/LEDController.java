@@ -2,14 +2,13 @@ package com.team195.frc2019.subsystems;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.Controllers;
-import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.MorseCodeTranslator;
 import com.team195.lib.util.RGBColor;
 import com.team195.lib.util.ThreadRateControl;
-import com.team195.lib.util.drivers.LEDDriver;
-import com.team195.lib.util.drivers.LEDDriverCANifier;
+import com.team195.lib.drivers.LEDDriver;
+import com.team195.lib.drivers.LEDDriverCANifier;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.Arrays;

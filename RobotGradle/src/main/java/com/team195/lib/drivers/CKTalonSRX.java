@@ -1,9 +1,7 @@
-package com.team195.lib.util.drivers;
+package com.team195.lib.drivers;
 
 import com.ctre.phoenix.ErrorCode;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -16,10 +14,48 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	private int[] mMMAccel = new int[4];
 	private int[] mMMVel = new int[4];
 
-	public CKTalonSRX(int deviceId) {
+	final private Configuration fastMasterConfig = new Configuration(5, 5, 20);
+	final private Configuration normalMasterConfig = new Configuration(10, 10, 20);
+	final private Configuration normalSlaveConfig = new Configuration(10, 100, 100);
+
+	public CKTalonSRX(int deviceId, boolean fastMaster) {
 		super(deviceId);
+		Configuration config = fastMaster ? fastMasterConfig : normalMasterConfig;
+
+		boolean setSucceeded;
+		int retryCounter = 0;
+
+		do {
+			setSucceeded = true;
+			setSucceeded &= clearStickyFaults(Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS) == ErrorCode.OK;
+			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_1_General, config.STATUS_FRAME_GENERAL_1_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_2_Feedback0, config.STATUS_FRAME_FEEDBACK0_2_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to initialize Talon " + getDeviceID() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
+	public CKTalonSRX(int deviceId, TalonSRX masterTalon) {
+		super(deviceId);
+		follow(masterTalon);
+		Configuration config = normalSlaveConfig;
+
+		boolean setSucceeded;
+		int retryCounter = 0;
+
+		do {
+			setSucceeded = true;
+			setSucceeded &= clearStickyFaults(Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS) == ErrorCode.OK;
+			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_1_General, config.STATUS_FRAME_GENERAL_1_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_2_Feedback0, config.STATUS_FRAME_FEEDBACK0_2_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to initialize Talon " + getDeviceID() + " !!!!!!", MessageLevel.DEFCON1);
+	}
 
 	@Override
 	public ErrorCode configClosedloopRamp(double secondsFromNeutralToFull, int timeoutMs) {
@@ -75,13 +111,6 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		}
 	}
 
-	public void set(ControlMode mode, double outputValue, int slotIdx) {
-		if (currentSelectedSlot != slotIdx)
-			selectProfileSlot(slotIdx, 0);
-
-		set(mode, outputValue);
-	}
-
 	private synchronized void setCurrentSlotValue(int slotIdx) {
 		currentSelectedSlot = slotIdx;
 	}
@@ -125,6 +154,14 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public void set(MCControlMode controlMode, double output, int slotIdx, double arbitraryFeedForward) {
+		if (currentSelectedSlot != slotIdx)
+			selectProfileSlot(slotIdx, 0);
+
+		set(controlMode.CTRE(), output, DemandType.ArbitraryFeedForward, arbitraryFeedForward);
+	}
+
+	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
 		config_kP(currentSelectedSlot, kP);
 		config_kI(currentSelectedSlot, kI);
@@ -148,7 +185,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
-	public void setRampRate(double rampRate) {
+	public void setMCRampRate(double rampRate) {
 		configClosedloopRamp(rampRate, Constants.kCANTimeoutMs);
 	}
 
@@ -162,19 +199,19 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	public void setControlMode(MCControlMode controlMode) {
 		if (getMotionControlMode() != controlMode) {
 			switch (controlMode) {
-				case PERCENTOUT:
+				case PercentOut:
 					set(ControlMode.PercentOutput, 0);
 					break;
-				case POSITION:
+				case Position:
 					set(ControlMode.Position, getSelectedSensorPosition());
 					break;
-				case VELOCITY:
+				case Velocity:
 					set(ControlMode.Velocity, 0);
 					break;
-				case CURRENT:
+				case Current:
 					set(ControlMode.Current, 0);
 					break;
-				case MOTIONMAGIC:
+				case MotionMagic:
 					set(ControlMode.MotionMagic, getSelectedSensorPosition());
 					break;
 				default:
@@ -185,20 +222,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 
 	@Override
 	public MCControlMode getMotionControlMode() {
-		switch (getControlMode()) {
-			case PercentOutput:
-				return MCControlMode.PERCENTOUT;
-			case Position:
-				return MCControlMode.POSITION;
-			case Velocity:
-				return MCControlMode.VELOCITY;
-			case Current:
-				return MCControlMode.CURRENT;
-			case MotionMagic:
-				return MCControlMode.MOTIONMAGIC;
-			default:
-				return MCControlMode.INVALID;
-		}
+		return MCControlMode.valueOf(getControlMode());
 	}
 
 	@Override
@@ -243,5 +267,18 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public double getIntegralAccum() {
 		return getIntegralAccumulator();
+	}
+
+
+	private static class Configuration {
+		int CONTROL_FRAME_PERIOD_MS;
+		int STATUS_FRAME_GENERAL_1_MS;
+		int STATUS_FRAME_FEEDBACK0_2_MS;
+
+		Configuration(int CONTROL_FRAME_PERIOD_MS, int STATUS_FRAME_GENERAL_1_MS, int STATUS_FRAME_FEEDBACK0_2_MS) {
+			this.CONTROL_FRAME_PERIOD_MS = CONTROL_FRAME_PERIOD_MS;
+			this.STATUS_FRAME_GENERAL_1_MS = STATUS_FRAME_GENERAL_1_MS;
+			this.STATUS_FRAME_FEEDBACK0_2_MS = STATUS_FRAME_FEEDBACK0_2_MS;
+		}
 	}
 }
