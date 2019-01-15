@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
-import com.team195.lib.drivers.CKTalonSRX;
+import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.KnightDigitalInput;
 import com.team195.lib.drivers.KnightJoystick;
 import com.team195.lib.drivers.NavX;

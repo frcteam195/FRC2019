@@ -1,6 +1,10 @@
-package com.team195.lib.drivers;
+package com.team195.lib.drivers.motorcontrol;
 
 import com.revrobotics.*;
+import com.team195.frc2019.Constants;
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
+
 import java.util.Optional;
 
 public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
@@ -8,6 +12,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private final CANPIDController canPIDController;
 	private final CANEncoder canEncoder;
 	private double prevOutput = Double.MIN_VALUE;
+	private double encoderOffset = 0;
 
 	private Configuration fastMasterConfig = new Configuration(5, 5, 20, 50);
 	private Configuration normalMasterConfig = new Configuration(10, 10, 20, 50);
@@ -17,28 +22,34 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster) {
 		super(deviceID, type);
-		Configuration config = fastMaster ? fastMasterConfig : normalMasterConfig;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
 		canPIDController.setOutputRange(-1, 1);
-		setControlFramePeriod(config.CONTROL_FRAME_PERIOD_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS);
-		setSmartCurrentLimit(80);
+		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark) {
 		super(deviceID, type);
 		follow(masterSpark);
-		Configuration config = normalSlaveConfig;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
+		doDefaultConfig(normalSlaveConfig);
+	}
+
+	private void doDefaultConfig(Configuration config) {
 		setControlFramePeriod(config.CONTROL_FRAME_PERIOD_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS);
-		setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS);
-		setSmartCurrentLimit(80);
+		boolean setSucceeded;
+		int retryCounter = 3;
+
+		do {
+			setSucceeded = setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS) == CANError.kOK;
+			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS) == CANError.kOK;
+			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
+			setSucceeded &= setSmartCurrentLimit(80) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set PID Gains Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Deprecated
@@ -52,26 +63,24 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setPIDGainSlot(slotIdx);
 
 		//TODO: Remove if not necessary after testing position units
-		switch (controlMode) {
-			case Position:
-			case MotionMagic:
-				demand = convertRotationsToNativeUnits(demand);
-				break;
-			case Velocity:
-				demand = convertRPMToNativeUnits(demand);
-				break;
-			default:
-				break;
-		}
+		demand = convertDemandToNativeUnits(controlMode, demand);
 
 		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode.Rev() != getControlType()) {
-			canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward * voltageCompensation);
+			boolean setSucceeded;
+			int retryCounter = 1;
+
+			do {
+				setSucceeded = canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward * voltageCompensation) == CANError.kOK;
+			} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+				ConsoleReporter.report("Failed to set output Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 			prevOutput = demand + arbitraryFeedForward;
 		}
 	}
 
 	public double getPosition() {
-		return canEncoder.getPosition();
+		return canEncoder.getPosition() + encoderOffset;
 	}
 
 	public double getVelocity() {
@@ -90,6 +99,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		return 1;
 	}
 
+	@Override
+	public double getNativeUnitsOutputRange() {
+		return 1.0;
+	}
+
 
 	/**
 	 * Config voltage compensation for arbitrary feed forward
@@ -101,15 +115,31 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
-		canPIDController.setP(kP, currentSelectedSlot);
-		canPIDController.setI(kI, currentSelectedSlot);
-		canPIDController.setD(kD, currentSelectedSlot);
-		canPIDController.setFF(kF, currentSelectedSlot);
+		boolean setSucceeded;
+		int retryCounter = 1;
+
+		do {
+			setSucceeded = canPIDController.setP(kP, currentSelectedSlot) == CANError.kOK;
+			setSucceeded &= canPIDController.setI(kI, currentSelectedSlot) == CANError.kOK;
+			setSucceeded &= canPIDController.setD(kD, currentSelectedSlot) == CANError.kOK;
+			setSucceeded &= canPIDController.setFF(kF, currentSelectedSlot) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set PID Gains Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override
 	public void setIZone(double iZone) {
-		canPIDController.setIZone(iZone, currentSelectedSlot);
+		boolean setSucceeded;
+		int retryCounter = 1;
+
+		do {
+			setSucceeded = canPIDController.setIZone(iZone, currentSelectedSlot) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set IZone Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override
@@ -123,8 +153,21 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
-	public void setMCRampRate(double rampRate) {
-		setRampRate(rampRate);
+	public void setMCOpenLoopRampRate(double rampRate) {
+		boolean setSucceeded;
+		int retryCounter = 1;
+
+		do {
+			setSucceeded = setRampRate(rampRate) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+	}
+
+	@Override
+	public void setMCClosedLoopRampRate(double rampRate) {
+		setMCOpenLoopRampRate(rampRate);
 	}
 
 	@Override
@@ -135,6 +178,28 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public void setPIDGainSlot(int slotIdx) {
 		setCurrentSelectedSlot(slotIdx);
+	}
+
+	@Override
+	public void setBrakeCoastMode(MCNeutralMode neutralMode) {
+		boolean setSucceeded;
+		int retryCounter = 1;
+
+		do {
+			setSucceeded = setIdleMode(neutralMode.Rev()) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+	}
+
+	@Override
+	public void setEncoderPosition(double position) {
+		setEncoderOffset(position - getPosition());
+	}
+
+	private synchronized void setEncoderOffset(double offset) {
+		encoderOffset = offset;
 	}
 
 	private synchronized void setCurrentSelectedSlot(int slotIdx) {

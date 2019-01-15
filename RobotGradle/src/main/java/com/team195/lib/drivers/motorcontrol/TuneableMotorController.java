@@ -1,4 +1,6 @@
-package com.team195.lib.drivers;
+package com.team195.lib.drivers.motorcontrol;
+
+import com.team195.lib.drivers.motorcontrol.MCControlMode;
 
 /**
  * Interface for all motor control to abstract controllers from different vendors
@@ -16,11 +18,17 @@ public interface TuneableMotorController {
 
 	void setMaxIAccum(double maxIAccum);
 
-	void setMCRampRate(double rampRate);
+	void setMCOpenLoopRampRate(double rampRate);
+
+	void setMCClosedLoopRampRate(double rampRate);
 
 	void setMotionParameters(int cruiseVel, int cruiseAccel);
 
 	void setPIDGainSlot(int slotIdx);
+
+	void setBrakeCoastMode(MCNeutralMode neutralMode);
+
+	void setEncoderPosition(double position);
 
 	/**
 	 * Method to change control modes. Make sure this method only changes modes if the current mode is not the desired mode.
@@ -41,6 +49,8 @@ public interface TuneableMotorController {
 
 	double getVelocityRPMTimeConversionFactor();
 
+	double getNativeUnitsOutputRange();
+
 	double getIntegralAccum();
 
 	MCControlMode getMotionControlMode();
@@ -59,5 +69,21 @@ public interface TuneableMotorController {
 
 	default int convertRPMToNativeUnits(double rpm) {
 		return (int) (rpm * getSensorUnitsPerRotation() / getVelocityRPMTimeConversionFactor());
+	}
+
+	default double convertDemandToNativeUnits(MCControlMode controlMode, double demand) {
+		double output = demand;
+		switch (controlMode) {
+			case Position:
+			case MotionMagic:
+				output = convertRotationsToNativeUnits(demand);
+				break;
+			case Velocity:
+				output = convertRPMToNativeUnits(demand);
+				break;
+			default:
+				break;
+		}
+		return output;
 	}
 }

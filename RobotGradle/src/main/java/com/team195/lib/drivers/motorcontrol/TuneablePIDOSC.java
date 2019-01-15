@@ -1,4 +1,4 @@
-package com.team195.lib.drivers;
+package com.team195.lib.drivers.motorcontrol;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
@@ -42,7 +42,7 @@ public class TuneablePIDOSC {
 							if (autoUpdate) {
 								tmc.setPIDF(tpd.kP, tpd.kI, tpd.kD, tpd.kF);
 								tmc.setSetpoint(tpd.setpoint);
-								tmc.setMCRampRate(tpd.rampRate);
+								tmc.setMCClosedLoopRampRate(tpd.rampRate);
 								tmc.setIZone(tpd.iZone);
 								tmc.setMaxIAccum(tpd.maxIAccum);
 								tmc.setMotionParameters(tpd.cruiseVelocity, tpd.cruiseAccel);

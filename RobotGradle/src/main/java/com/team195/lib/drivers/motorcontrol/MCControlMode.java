@@ -1,4 +1,4 @@
-package com.team195.lib.drivers;
+package com.team195.lib.drivers.motorcontrol;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.revrobotics.ControlType;
