@@ -19,238 +19,238 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class Robot extends TimedRobot {
-    private Looper mEnabledLooper = new Looper();
-    private Looper mDisabledLooper = new Looper();
-    private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
-    private IControlBoard mControlBoard = ControlBoard.getInstance();
-    private AutoFieldState mAutoFieldState = AutoFieldState.getInstance();
-    private TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
+	private Looper mEnabledLooper = new Looper();
+	private Looper mDisabledLooper = new Looper();
+	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
+	private IControlBoard mControlBoard = ControlBoard.getInstance();
+	private AutoFieldState mAutoFieldState = AutoFieldState.getInstance();
+	private TrajectoryGenerator mTrajectoryGenerator = TrajectoryGenerator.getInstance();
 
-    private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
+	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
-    private CKDashJoystick dashjoy1 = new CKDashJoystick(0);
+	private CKDashJoystick dashjoy1 = new CKDashJoystick(0);
 
-    private final SubsystemManager mSubsystemManager = new SubsystemManager(
-            Arrays.asList(
-                    RobotStateEstimator.getInstance(),
-                    Drive.getInstance(),
-                    Infrastructure.getInstance()
-            )
-    );
+	private final SubsystemManager mSubsystemManager = new SubsystemManager(
+			Arrays.asList(
+					RobotStateEstimator.getInstance(),
+					Drive.getInstance(),
+					Infrastructure.getInstance()
+			)
+	);
 
-    private Drive mDrive = Drive.getInstance();
-    private LEDController mLED = LEDController.getInstance();
-    private Infrastructure mInfrastructure = Infrastructure.getInstance();
+	private Drive mDrive = Drive.getInstance();
+	private LEDController mLED = LEDController.getInstance();
+	private Infrastructure mInfrastructure = Infrastructure.getInstance();
 
-    private AutoModeExecutor mAutoModeExecutor;
+	private AutoModeExecutor mAutoModeExecutor;
 
-    public Robot() {
-        CrashTracker.logRobotConstruction();
-    }
+	public Robot() {
+		CrashTracker.logRobotConstruction();
+	}
 
-    @Override
-    public void robotInit() {
-        try {
-            CrashTracker.logRobotInit();
+	@Override
+	public void robotInit() {
+		try {
+			CrashTracker.logRobotInit();
 
-            DashJoyReceiver.getInstance();
+			DashJoyReceiver.getInstance();
 
-            mSubsystemManager.registerEnabledLoops(mEnabledLooper);
-            mSubsystemManager.registerDisabledLoops(mDisabledLooper);
+			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
+			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-            mTrajectoryGenerator.generateTrajectories();
+			mTrajectoryGenerator.generateTrajectories();
 
-            mLED = LEDController.getInstance();
-            mLED.start();
-            mLED.setRequestedState(LEDController.LEDState.BLINK);
+			mLED = LEDController.getInstance();
+			mLED.start();
+			mLED.setRequestedState(LEDController.LEDState.BLINK);
 
-            ConnectionMonitor.getInstance().start();
+			ConnectionMonitor.getInstance().start();
 
-            mAutoModeSelector.updateModeCreator();
+			mAutoModeSelector.updateModeCreator();
 
-            // Set the auto field state at least once.
-            mAutoFieldState.setSides(DriverStation.getInstance().getGameSpecificMessage());
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			// Set the auto field state at least once.
+			mAutoFieldState.setSides(DriverStation.getInstance().getGameSpecificMessage());
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void disabledInit() {
-        SmartDashboard.putString("Match Cycle", "DISABLED");
+	@Override
+	public void disabledInit() {
+		SmartDashboard.putString("Match Cycle", "DISABLED");
 
-        try {
-            CrashTracker.logDisabledInit();
-            mEnabledLooper.stop();
-            if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
-            }
+		try {
+			CrashTracker.logDisabledInit();
+			mEnabledLooper.stop();
+			if (mAutoModeExecutor != null) {
+				mAutoModeExecutor.stop();
+			}
 
-            mInfrastructure.setIsDuringAuto(true);
-            Drive.getInstance().zeroSensors();
-            RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			mInfrastructure.setIsDuringAuto(true);
+			Drive.getInstance().zeroSensors();
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-            // Reset all auto mode state.
-            mAutoModeSelector.reset();
-            mAutoModeSelector.updateModeCreator();
-            mAutoModeExecutor = new AutoModeExecutor();
+			// Reset all auto mode state.
+			mAutoModeSelector.reset();
+			mAutoModeSelector.updateModeCreator();
+			mAutoModeExecutor = new AutoModeExecutor();
 
-            mDisabledLooper.start();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			mDisabledLooper.start();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void autonomousInit() {
-        SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
+	@Override
+	public void autonomousInit() {
+		SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
 
-        try {
-            CrashTracker.logAutoInit();
-            mDisabledLooper.stop();
+		try {
+			CrashTracker.logAutoInit();
+			mDisabledLooper.stop();
 
-            RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-            Drive.getInstance().zeroSensors();
-            mInfrastructure.setIsDuringAuto(true);
+			Drive.getInstance().zeroSensors();
+			mInfrastructure.setIsDuringAuto(true);
 
-            mAutoModeExecutor.start();
+			mAutoModeExecutor.start();
 
-            mEnabledLooper.start();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			mEnabledLooper.start();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void teleopInit() {
-        SmartDashboard.putString("Match Cycle", "TELEOP");
+	@Override
+	public void teleopInit() {
+		SmartDashboard.putString("Match Cycle", "TELEOP");
 
-        try {
-            CrashTracker.logTeleopInit();
-            mDisabledLooper.stop();
-            if (mAutoModeExecutor != null) {
-                mAutoModeExecutor.stop();
-            }
+		try {
+			CrashTracker.logTeleopInit();
+			mDisabledLooper.stop();
+			if (mAutoModeExecutor != null) {
+				mAutoModeExecutor.stop();
+			}
 
-            mAutoFieldState.disableOverride();
+			mAutoFieldState.disableOverride();
 
-            mInfrastructure.setIsDuringAuto(false);
+			mInfrastructure.setIsDuringAuto(false);
 
-            RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
-            mEnabledLooper.start();
-            mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
-            mDrive.setOpenLoop(new DriveSignal(0.05, 0.05));
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			mEnabledLooper.start();
+			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
+			mDrive.setOpenLoop(new DriveSignal(0.05, 0.05));
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void testInit() {
-        SmartDashboard.putString("Match Cycle", "TEST");
+	@Override
+	public void testInit() {
+		SmartDashboard.putString("Match Cycle", "TEST");
 
-        try {
-            System.out.println("Starting check systems.");
+		try {
+			System.out.println("Starting check systems.");
 
-            mDisabledLooper.stop();
-            mEnabledLooper.stop();
+			mDisabledLooper.stop();
+			mEnabledLooper.stop();
 
-            //mDrive.checkSystem();
-            //mIntake.checkSystem();
-            //mWrist.checkSystem();
+			//mDrive.checkSystem();
+			//mIntake.checkSystem();
+			//mWrist.checkSystem();
 //            mElevator.checkSystem();
 
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void disabledPeriodic() {
-        SmartDashboard.putString("Match Cycle", "DISABLED");
+	@Override
+	public void disabledPeriodic() {
+		SmartDashboard.putString("Match Cycle", "DISABLED");
 
-        try {
-            outputToSmartDashboard();
+		try {
+			outputToSmartDashboard();
 //            mWrist.resetIfAtLimit();
 //            mElevator.resetIfAtLimit();
 
-            // Poll FMS auto mode info and update mode creator cache
-            mAutoFieldState.setSides(DriverStation.getInstance().getGameSpecificMessage());
-            mAutoModeSelector.updateModeCreator();
+			// Poll FMS auto mode info and update mode creator cache
+			mAutoFieldState.setSides(DriverStation.getInstance().getGameSpecificMessage());
+			mAutoModeSelector.updateModeCreator();
 
-            if (mAutoFieldState.isValid()) {
-                Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode(mAutoFieldState);
-                if (autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()) {
-                    System.out.println("Set auto mode to: " + autoMode.get().getClass().toString());
-                    mAutoModeExecutor.setAutoMode(autoMode.get());
-                }
-                System.gc();
-            }
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			if (mAutoFieldState.isValid()) {
+				Optional<AutoModeBase> autoMode = mAutoModeSelector.getAutoMode(mAutoFieldState);
+				if (autoMode.isPresent() && autoMode.get() != mAutoModeExecutor.getAutoMode()) {
+					System.out.println("Set auto mode to: " + autoMode.get().getClass().toString());
+					mAutoModeExecutor.setAutoMode(autoMode.get());
+				}
+				System.gc();
+			}
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void autonomousPeriodic() {
-        SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
+	@Override
+	public void autonomousPeriodic() {
+		SmartDashboard.putString("Match Cycle", "AUTONOMOUS");
 
-        outputToSmartDashboard();
-        try {
+		outputToSmartDashboard();
+		try {
 
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void teleopPeriodic() {
-        SmartDashboard.putString("Match Cycle", "TELEOP");
-        double timestamp = Timer.getFPGATimestamp();
+	@Override
+	public void teleopPeriodic() {
+		SmartDashboard.putString("Match Cycle", "TELEOP");
+		double timestamp = Timer.getFPGATimestamp();
 
 //        double throttle = mControlBoard.getThrottle();
 //        double turn = mControlBoard.getTurn();
 
-        double throttle = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(1),0.04);
-        double turn = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(4),0.04);
+		double throttle = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(1), 0.04);
+		double turn = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(4), 0.04);
 
-        try {
-            // When elevator is up, tune sensitivity on turn a little.
+		try {
+			// When elevator is up, tune sensitivity on turn a little.
 //            if (mElevator.getInchesOffGround() > Constants.kElevatorLowSensitivityThreshold) {
 //                turn *= Constants.kLowSensitivityFactor;
 //            }
-            mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, Controllers.getInstance().getDriveJoystickThrottle().getRawButton(5),
-                    mDrive.isHighGear()));
+			mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, Controllers.getInstance().getDriveJoystickThrottle().getRawButton(5),
+					mDrive.isHighGear()));
 
 
-            outputToSmartDashboard();
-        } catch (Throwable t) {
-            CrashTracker.logThrowableCrash(t);
-            throw t;
-        }
-    }
+			outputToSmartDashboard();
+		} catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
+	}
 
-    @Override
-    public void testPeriodic() {
-        SmartDashboard.putString("Match Cycle", "TEST");
-    }
+	@Override
+	public void testPeriodic() {
+		SmartDashboard.putString("Match Cycle", "TEST");
+	}
 
-    public void outputToSmartDashboard() {
-        RobotState.getInstance().outputToSmartDashboard();
-        Drive.getInstance().outputTelemetry();
-        Infrastructure.getInstance().outputTelemetry();
-        mAutoFieldState.outputToSmartDashboard();
-        mEnabledLooper.outputToSmartDashboard();
-        mAutoModeSelector.outputToSmartDashboard();
+	public void outputToSmartDashboard() {
+		RobotState.getInstance().outputToSmartDashboard();
+		Drive.getInstance().outputTelemetry();
+		Infrastructure.getInstance().outputTelemetry();
+		mAutoFieldState.outputToSmartDashboard();
+		mEnabledLooper.outputToSmartDashboard();
+		mAutoModeSelector.outputToSmartDashboard();
 //        mCheesyVision2.outputTelemetry();
-        // SmartDashboard.updateValues();
-    }
+		// SmartDashboard.updateValues();
+	}
 }

@@ -23,383 +23,383 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
 
-    private static final int kLowGearVelocityControlSlot = 0;
-    private static final int kHighGearVelocityControlSlot = 1;
-    private static Drive mInstance = new Drive();
-    // Hardware
-    private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
-//    private final Solenoid mShifter;
-    private DriveControlState mDriveControlState;
-    private PigeonIMU mPigeon;
-    // Hardware states
-    private PeriodicIO mPeriodicIO;
-    private boolean mAutoShift;
-    private boolean mIsHighGear;
-    private boolean mIsBrakeMode;
-    private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
-    private DriveMotionPlanner mMotionPlanner;
-    private Rotation2d mGyroOffset = Rotation2d.identity();
-    private boolean mOverrideTrajectory = false;
+	private static final int kLowGearVelocityControlSlot = 0;
+	private static final int kHighGearVelocityControlSlot = 1;
+	private static Drive mInstance = new Drive();
+	// Hardware
+	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
+	//    private final Solenoid mShifter;
+	private DriveControlState mDriveControlState;
+	private PigeonIMU mPigeon;
+	// Hardware states
+	private PeriodicIO mPeriodicIO;
+	private boolean mAutoShift;
+	private boolean mIsHighGear;
+	private boolean mIsBrakeMode;
+	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
+	private DriveMotionPlanner mMotionPlanner;
+	private Rotation2d mGyroOffset = Rotation2d.identity();
+	private boolean mOverrideTrajectory = false;
 
-    private final Loop mLoop = new Loop() {
-        @Override
-        public void onStart(double timestamp) {
-            synchronized (Drive.this) {
+	private final Loop mLoop = new Loop() {
+		@Override
+		public void onStart(double timestamp) {
+			synchronized (Drive.this) {
 //                setOpenLoop(new DriveSignal(0.05, 0.05));
-                setOpenLoop(new DriveSignal(0, 0));
-                setBrakeMode(false);
+				setOpenLoop(new DriveSignal(0, 0));
+				setBrakeMode(false);
 //                 startLogging();
-            }
-        }
+			}
+		}
 
-        @Override
-        public void onLoop(double timestamp) {
-            synchronized (Drive.this) {
-                switch (mDriveControlState) {
-                    case OPEN_LOOP:
-                        break;
-                    case PATH_FOLLOWING:
-                        updatePathFollower();
-                        break;
-                    default:
-                        System.out.println("Unexpected drive control state: " + mDriveControlState);
-                        break;
-                }
+		@Override
+		public void onLoop(double timestamp) {
+			synchronized (Drive.this) {
+				switch (mDriveControlState) {
+					case OPEN_LOOP:
+						break;
+					case PATH_FOLLOWING:
+						updatePathFollower();
+						break;
+					default:
+						System.out.println("Unexpected drive control state: " + mDriveControlState);
+						break;
+				}
                 /*
                 // TODO: fix this (tom)
                 if (mAutoShift) {
                     handleAutoShift();
                 } else */
-                {
-                    setHighGear(false);
-                }
-            }
-        }
+				{
+					setHighGear(false);
+				}
+			}
+		}
 
-        @Override
-        public void onStop(double timestamp) {
-            stop();
-            stopLogging();
-        }
-    };
+		@Override
+		public void onStop(double timestamp) {
+			stop();
+			stopLogging();
+		}
+	};
 
-    private Drive() {
-        mPeriodicIO = new PeriodicIO();
+	private Drive() {
+		mPeriodicIO = new PeriodicIO();
 
-        mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
-        mLeftMaster.setInverted(false);
+		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+		mLeftMaster.setInverted(false);
 
-        mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
-        mLeftSlaveA.setInverted(false);
+		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
+		mLeftSlaveA.setInverted(false);
 
-        mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
-        mLeftSlaveB.setInverted(false);
+		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
+		mLeftSlaveB.setInverted(false);
 
-        mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
-        mRightMaster.setInverted(true);
+		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+		mRightMaster.setInverted(true);
 
-        mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
-        mRightSlaveA.setInverted(true);
+		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
+		mRightSlaveA.setInverted(true);
 
-        mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
-        mRightSlaveB.setInverted(true);
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
+		mRightSlaveB.setInverted(true);
 
 //        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
-        reloadGains();
+		reloadGains();
 
 //        mPigeon = new PigeonIMU(mLeftSlaveB);
 //        mLeftSlaveB.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
 
-        // Force a solenoid message.
-        mIsHighGear = true;
-        setHighGear(false);
+		// Force a solenoid message.
+		mIsHighGear = true;
+		setHighGear(false);
 
-        setOpenLoop(DriveSignal.NEUTRAL);
+		setOpenLoop(DriveSignal.NEUTRAL);
 
-        // Force a CAN message across.
-        mIsBrakeMode = true;
-        setBrakeMode(false);
+		// Force a CAN message across.
+		mIsBrakeMode = true;
+		setBrakeMode(false);
 
-        mMotionPlanner = new DriveMotionPlanner();
-    }
+		mMotionPlanner = new DriveMotionPlanner();
+	}
 
-    public static Drive getInstance() {
-        return mInstance;
-    }
+	public static Drive getInstance() {
+		return mInstance;
+	}
 
-    private static double rotationsToInches(double rotations) {
-        return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
-    }
+	private static double rotationsToInches(double rotations) {
+		return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+	}
 
-    private static double rpmToInchesPerSecond(double rpm) {
-        return rotationsToInches(rpm) / 60.0;
-    }
+	private static double rpmToInchesPerSecond(double rpm) {
+		return rotationsToInches(rpm) / 60.0;
+	}
 
-    private static double inchesToRotations(double inches) {
-        return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
-    }
+	private static double inchesToRotations(double inches) {
+		return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+	}
 
-    private static double inchesPerSecondToRpm(double inches_per_second) {
-        return inchesToRotations(inches_per_second) * 60.0;
-    }
+	private static double inchesPerSecondToRpm(double inches_per_second) {
+		return inchesToRotations(inches_per_second) * 60.0;
+	}
 
-    private static double radiansPerSecondToRPM(double rad_s) {
-        return rad_s / (2.0 * Math.PI) * 60.0;
-    }
+	private static double radiansPerSecondToRPM(double rad_s) {
+		return rad_s / (2.0 * Math.PI) * 60.0;
+	}
 
-    @Override
-    public void registerEnabledLoops(ILooper in) {
-        in.register(mLoop);
-    }
+	@Override
+	public void registerEnabledLoops(ILooper in) {
+		in.register(mLoop);
+	}
 
-    /**
-     * Configure talons for open loop control
-     */
-    public synchronized void setOpenLoop(DriveSignal signal) {
-        if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-            setBrakeMode(false);
-            mAutoShift = true;
+	/**
+	 * Configure talons for open loop control
+	 */
+	public synchronized void setOpenLoop(DriveSignal signal) {
+		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+			setBrakeMode(false);
+			mAutoShift = true;
 
-            System.out.println("Switching to open loop");
-            System.out.println(signal);
-            mDriveControlState = DriveControlState.OPEN_LOOP;
+			System.out.println("Switching to open loop");
+			System.out.println(signal);
+			mDriveControlState = DriveControlState.OPEN_LOOP;
 //            mLeftMaster.configNeutralDeadband(0.04, 0);
 //            mRightMaster.configNeutralDeadband(0.04, 0);
-        }
-        mPeriodicIO.left_demand = signal.getLeft();
-        mPeriodicIO.right_demand = signal.getRight();
-        mPeriodicIO.left_feedforward = 0.0;
-        mPeriodicIO.right_feedforward = 0.0;
-    }
+		}
+		mPeriodicIO.left_demand = signal.getLeft();
+		mPeriodicIO.right_demand = signal.getRight();
+		mPeriodicIO.left_feedforward = 0.0;
+		mPeriodicIO.right_feedforward = 0.0;
+	}
 
-    /**
-     * Configures talons for velocity control
-     */
-    public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
-        if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-            // We entered a velocity control state.
-            setBrakeMode(true);
-            mAutoShift = false;
-            mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
-            mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
+	/**
+	 * Configures talons for velocity control
+	 */
+	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
+		if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+			// We entered a velocity control state.
+			setBrakeMode(true);
+			mAutoShift = false;
+			mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
+			mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 //            mLeftMaster.configNeutralDeadband(0.0, 0);
 //            mRightMaster.configNeutralDeadband(0.0, 0);
 
-            mDriveControlState = DriveControlState.PATH_FOLLOWING;
-        }
-        mPeriodicIO.left_demand = signal.getLeft();
-        mPeriodicIO.right_demand = signal.getRight();
-        mPeriodicIO.left_feedforward = feedforward.getLeft();
-        mPeriodicIO.right_feedforward = feedforward.getRight();
-    }
+			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+		}
+		mPeriodicIO.left_demand = signal.getLeft();
+		mPeriodicIO.right_demand = signal.getRight();
+		mPeriodicIO.left_feedforward = feedforward.getLeft();
+		mPeriodicIO.right_feedforward = feedforward.getRight();
+	}
 
-    public synchronized void setTrajectory(TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory) {
-        if (mMotionPlanner != null) {
-            mOverrideTrajectory = false;
-            mMotionPlanner.reset();
-            mMotionPlanner.setTrajectory(trajectory);
-            mDriveControlState = DriveControlState.PATH_FOLLOWING;
-        }
-    }
+	public synchronized void setTrajectory(TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory) {
+		if (mMotionPlanner != null) {
+			mOverrideTrajectory = false;
+			mMotionPlanner.reset();
+			mMotionPlanner.setTrajectory(trajectory);
+			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+		}
+	}
 
-    public boolean isDoneWithTrajectory() {
-        if (mMotionPlanner == null || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-            return false;
-        }
-        return mMotionPlanner.isDone() || mOverrideTrajectory;
-    }
+	public boolean isDoneWithTrajectory() {
+		if (mMotionPlanner == null || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+			return false;
+		}
+		return mMotionPlanner.isDone() || mOverrideTrajectory;
+	}
 
-    public boolean isHighGear() {
-        return mIsHighGear;
-    }
+	public boolean isHighGear() {
+		return mIsHighGear;
+	}
 
-    public synchronized void setHighGear(boolean wantsHighGear) {
+	public synchronized void setHighGear(boolean wantsHighGear) {
 //        if (wantsHighGear != mIsHighGear) {
 //            mIsHighGear = wantsHighGear;
 //            mShifter.set(wantsHighGear);
 //        }
-    }
+	}
 
-    public boolean isBrakeMode() {
-        return mIsBrakeMode;
-    }
+	public boolean isBrakeMode() {
+		return mIsBrakeMode;
+	}
 
-    public synchronized void setBrakeMode(boolean on) {
-        if (mIsBrakeMode != on) {
-            mIsBrakeMode = on;
-            MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
-            mRightMaster.setBrakeCoastMode(mode);
-            mRightSlaveA.setBrakeCoastMode(mode);
-            mRightSlaveB.setBrakeCoastMode(mode);
+	public synchronized void setBrakeMode(boolean on) {
+		if (mIsBrakeMode != on) {
+			mIsBrakeMode = on;
+			MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
+			mRightMaster.setBrakeCoastMode(mode);
+			mRightSlaveA.setBrakeCoastMode(mode);
+			mRightSlaveB.setBrakeCoastMode(mode);
 
-            mLeftMaster.setBrakeCoastMode(mode);
-            mLeftSlaveA.setBrakeCoastMode(mode);
-            mLeftSlaveB.setBrakeCoastMode(mode);
-        }
-    }
+			mLeftMaster.setBrakeCoastMode(mode);
+			mLeftSlaveA.setBrakeCoastMode(mode);
+			mLeftSlaveB.setBrakeCoastMode(mode);
+		}
+	}
 
-    public synchronized Rotation2d getHeading() {
-        return mPeriodicIO.gyro_heading;
-    }
+	public synchronized Rotation2d getHeading() {
+		return mPeriodicIO.gyro_heading;
+	}
 
-    public synchronized void setHeading(Rotation2d heading) {
+	public synchronized void setHeading(Rotation2d heading) {
 //        System.out.println("SET HEADING: " + heading.getDegrees());
 //
 //        mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getFusedHeading()).inverse());
 //        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
 //
 //        mPeriodicIO.gyro_heading = heading;
-    }
+	}
 
-    @Override
-    public synchronized void stop() {
-        setOpenLoop(DriveSignal.NEUTRAL);
-    }
+	@Override
+	public synchronized void stop() {
+		setOpenLoop(DriveSignal.NEUTRAL);
+	}
 
-    @Override
-    public void outputTelemetry() {
-        SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-        SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_rotations);
-        SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_rotations);
-        SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-        SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-        SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+	@Override
+	public void outputTelemetry() {
+		SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+		SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_rotations);
+		SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_rotations);
+		SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+		SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+		SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
 
-        SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
-        SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
-        SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
-        if (getHeading() != null) {
-            SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
-        }
-        if (mCSVWriter != null) {
-            mCSVWriter.write();
-        }
-    }
+		SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
+		SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
+		SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
+		if (getHeading() != null) {
+			SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+		}
+		if (mCSVWriter != null) {
+			mCSVWriter.write();
+		}
+	}
 
-    public synchronized void resetEncoders() {
+	public synchronized void resetEncoders() {
 //        mLeftMaster.setSelectedSensorPosition(0, 0, 0);
 //        mRightMaster.setSelectedSensorPosition(0, 0, 0);
-        mPeriodicIO = new PeriodicIO();
-    }
+		mPeriodicIO = new PeriodicIO();
+	}
 
-    @Override
-    public void zeroSensors() {
-        setHeading(Rotation2d.identity());
-        resetEncoders();
-        mAutoShift = true;
-    }
+	@Override
+	public void zeroSensors() {
+		setHeading(Rotation2d.identity());
+		resetEncoders();
+		mAutoShift = true;
+	}
 
-    public double getLeftEncoderDistance() {
-        return rotationsToInches(mPeriodicIO.left_position_rotations);
-    }
+	public double getLeftEncoderDistance() {
+		return rotationsToInches(mPeriodicIO.left_position_rotations);
+	}
 
-    public double getRightEncoderDistance() {
-        return rotationsToInches(mPeriodicIO.right_position_rotations);
-    }
+	public double getRightEncoderDistance() {
+		return rotationsToInches(mPeriodicIO.right_position_rotations);
+	}
 
-    public double getRightLinearVelocity() {
-        return rotationsToInches(mPeriodicIO.right_velocity_RPM / 60.0);
-    }
+	public double getRightLinearVelocity() {
+		return rotationsToInches(mPeriodicIO.right_velocity_RPM / 60.0);
+	}
 
-    public double getLeftLinearVelocity() {
-        return rotationsToInches(mPeriodicIO.left_velocity_RPM / 60.0);
-    }
+	public double getLeftLinearVelocity() {
+		return rotationsToInches(mPeriodicIO.left_velocity_RPM / 60.0);
+	}
 
-    public double getLinearVelocity() {
-        return (getLeftLinearVelocity() + getRightLinearVelocity()) / 2.0;
-    }
+	public double getLinearVelocity() {
+		return (getLeftLinearVelocity() + getRightLinearVelocity()) / 2.0;
+	}
 
-    public double getAngularVelocity() {
-        return (getRightLinearVelocity() - getLeftLinearVelocity()) / Constants.kDriveWheelTrackWidthInches;
-    }
+	public double getAngularVelocity() {
+		return (getRightLinearVelocity() - getLeftLinearVelocity()) / Constants.kDriveWheelTrackWidthInches;
+	}
 
-    public void overrideTrajectory(boolean value) {
-        mOverrideTrajectory = value;
-    }
+	public void overrideTrajectory(boolean value) {
+		mOverrideTrajectory = value;
+	}
 
-    private void updatePathFollower() {
-        if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
-            final double now = Timer.getFPGATimestamp();
+	private void updatePathFollower() {
+		if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
+			final double now = Timer.getFPGATimestamp();
 
-            DriveMotionPlanner.Output output = mMotionPlanner.update(now, RobotState.getInstance().getFieldToVehicle(now));
+			DriveMotionPlanner.Output output = mMotionPlanner.update(now, RobotState.getInstance().getFieldToVehicle(now));
 
-            // DriveSignal signal = new DriveSignal(demand.left_feedforward_voltage / 12.0, demand.right_feedforward_voltage / 12.0);
+			// DriveSignal signal = new DriveSignal(demand.left_feedforward_voltage / 12.0, demand.right_feedforward_voltage / 12.0);
 
-            mPeriodicIO.error = mMotionPlanner.error();
-            mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
+			mPeriodicIO.error = mMotionPlanner.error();
+			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
 
-            if (!mOverrideTrajectory) {
-                setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity), radiansPerSecondToRPM(output.right_velocity)),
-                        new DriveSignal(output.left_feedforward_voltage / 12.0, output.right_feedforward_voltage / 12.0));
+			if (!mOverrideTrajectory) {
+				setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity), radiansPerSecondToRPM(output.right_velocity)),
+						new DriveSignal(output.left_feedforward_voltage / 12.0, output.right_feedforward_voltage / 12.0));
 
-                mPeriodicIO.left_accel = radiansPerSecondToRPM(output.left_accel) / 1000.0;
-                mPeriodicIO.right_accel = radiansPerSecondToRPM(output.right_accel) / 1000.0;
-            } else {
-                setVelocity(DriveSignal.BRAKE, DriveSignal.BRAKE);
-                mPeriodicIO.left_accel = mPeriodicIO.right_accel = 0.0;
-            }
-        } else {
-            DriverStation.reportError("Drive is not in path following state", false);
-        }
-    }
+				mPeriodicIO.left_accel = radiansPerSecondToRPM(output.left_accel) / 1000.0;
+				mPeriodicIO.right_accel = radiansPerSecondToRPM(output.right_accel) / 1000.0;
+			} else {
+				setVelocity(DriveSignal.BRAKE, DriveSignal.BRAKE);
+				mPeriodicIO.left_accel = mPeriodicIO.right_accel = 0.0;
+			}
+		} else {
+			DriverStation.reportError("Drive is not in path following state", false);
+		}
+	}
 
-    private void handleAutoShift() {
-        final double linear_velocity = Math.abs(getLinearVelocity());
-        final double angular_velocity = Math.abs(getAngularVelocity());
-        if (mIsHighGear && linear_velocity < Constants.kDriveDownShiftVelocity && angular_velocity < Constants
-                .kDriveDownShiftAngularVelocity) {
-            setHighGear(false);
-        } else if (!mIsHighGear && linear_velocity > Constants.kDriveUpShiftVelocity) {
-            setHighGear(true);
-        }
-    }
+	private void handleAutoShift() {
+		final double linear_velocity = Math.abs(getLinearVelocity());
+		final double angular_velocity = Math.abs(getAngularVelocity());
+		if (mIsHighGear && linear_velocity < Constants.kDriveDownShiftVelocity && angular_velocity < Constants
+				.kDriveDownShiftAngularVelocity) {
+			setHighGear(false);
+		} else if (!mIsHighGear && linear_velocity > Constants.kDriveUpShiftVelocity) {
+			setHighGear(true);
+		}
+	}
 
-    public synchronized void reloadGains() {
-        mLeftMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
-        mLeftMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+	public synchronized void reloadGains() {
+		mLeftMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
+		mLeftMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
 
-        mRightMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
-        mRightMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
-    }
+		mRightMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
+		mRightMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+	}
 
-    @Override
-    public void writeToLog() {
-    }
+	@Override
+	public void writeToLog() {
+	}
 
-    @Override
-    public synchronized void readPeriodicInputs() {
-        double prevLeftRotations = mPeriodicIO.left_position_rotations;
-        double prevRightRotations = mPeriodicIO.right_position_rotations;
-        mPeriodicIO.left_position_rotations = mLeftMaster.getPosition();
-        mPeriodicIO.right_position_rotations = mRightMaster.getPosition();
-        mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
-        mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
-        mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getFusedHeading()).rotateBy(mGyroOffset);
+	@Override
+	public synchronized void readPeriodicInputs() {
+		double prevLeftRotations = mPeriodicIO.left_position_rotations;
+		double prevRightRotations = mPeriodicIO.right_position_rotations;
+		mPeriodicIO.left_position_rotations = mLeftMaster.getPosition();
+		mPeriodicIO.right_position_rotations = mRightMaster.getPosition();
+		mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
+		mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
+		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getFusedHeading()).rotateBy(mGyroOffset);
 
-        double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
-        if (deltaLeftRotations > 0.0) {
-            mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
-        } else {
-            mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
-        }
+		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
+		if (deltaLeftRotations > 0.0) {
+			mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
+		} else {
+			mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
+		}
 
-        double deltaRightRotations = (mPeriodicIO.right_position_rotations - prevRightRotations) * Math.PI;
-        if (deltaRightRotations > 0.0) {
-            mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
-        } else {
-            mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
-        }
+		double deltaRightRotations = (mPeriodicIO.right_position_rotations - prevRightRotations) * Math.PI;
+		if (deltaRightRotations > 0.0) {
+			mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
+		} else {
+			mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
+		}
 
-        if (mCSVWriter != null) {
-            mCSVWriter.add(mPeriodicIO);
-        }
+		if (mCSVWriter != null) {
+			mCSVWriter.add(mPeriodicIO);
+		}
 
-        // System.out.println("control state: " + mDriveControlState + ", left: " + mPeriodicIO.left_demand + ", right: " + mPeriodicIO.right_demand);
-    }
+		// System.out.println("control state: " + mDriveControlState + ", left: " + mPeriodicIO.left_demand + ", right: " + mPeriodicIO.right_demand);
+	}
 
-    @Override
-    public synchronized void writePeriodicOutputs() {
+	@Override
+	public synchronized void writePeriodicOutputs() {
 //        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 //            mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward, 0.0);
 //            mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward, 0.0);
@@ -410,19 +410,19 @@ public class Drive extends Subsystem {
 //                    mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
 //        }
 
-        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-            mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
-            mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
-        } else {
-            mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
-                    mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
-            mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
-                    mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
-        }
-    }
+		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
+			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
+		} else {
+			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
+					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
+			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
+					mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
+		}
+	}
 
-    @Override
-    public boolean checkSystem() {
+	@Override
+	public boolean checkSystem() {
 //        boolean leftSide = TalonSRXChecker.CheckTalons(this,
 //                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
 //                    {
@@ -456,53 +456,53 @@ public class Drive extends Subsystem {
 //                    }
 //                });
 //        return leftSide && rightSide;
-        return false;
-    }
+		return false;
+	}
 
-    public synchronized void startLogging() {
-        if (mCSVWriter == null) {
-            mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/DRIVE-LOGS.csv", PeriodicIO.class);
-        }
-    }
+	public synchronized void startLogging() {
+		if (mCSVWriter == null) {
+			mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/DRIVE-LOGS.csv", PeriodicIO.class);
+		}
+	}
 
-    public synchronized void stopLogging() {
-        if (mCSVWriter != null) {
-            mCSVWriter.flush();
-            mCSVWriter = null;
-        }
-    }
+	public synchronized void stopLogging() {
+		if (mCSVWriter != null) {
+			mCSVWriter.flush();
+			mCSVWriter = null;
+		}
+	}
 
-    // The robot drivetrain's various states.
-    public enum DriveControlState {
-        OPEN_LOOP, // open loop voltage control
-        PATH_FOLLOWING, // velocity PID control
-    }
+	// The robot drivetrain's various states.
+	public enum DriveControlState {
+		OPEN_LOOP, // open loop voltage control
+		PATH_FOLLOWING, // velocity PID control
+	}
 
-    public enum ShifterState {
-        FORCE_LOW_GEAR,
-        FORCE_HIGH_GEAR,
-        AUTO_SHIFT
-    }
+	public enum ShifterState {
+		FORCE_LOW_GEAR,
+		FORCE_HIGH_GEAR,
+		AUTO_SHIFT
+	}
 
-    public static class PeriodicIO {
-        // INPUTS
-        public double left_position_rotations;
-        public double right_position_rotations;
-        public double left_distance;
-        public double right_distance;
-        public double left_velocity_RPM;
-        public double right_velocity_RPM;
-        public Rotation2d gyro_heading = Rotation2d.identity();
-        public Pose2d error = Pose2d.identity();
+	public static class PeriodicIO {
+		// INPUTS
+		public double left_position_rotations;
+		public double right_position_rotations;
+		public double left_distance;
+		public double right_distance;
+		public double left_velocity_RPM;
+		public double right_velocity_RPM;
+		public Rotation2d gyro_heading = Rotation2d.identity();
+		public Pose2d error = Pose2d.identity();
 
-        // OUTPUTS
-        public double left_demand;
-        public double right_demand;
-        public double left_accel;
-        public double right_accel;
-        public double left_feedforward;
-        public double right_feedforward;
-        public TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
-    }
+		// OUTPUTS
+		public double left_demand;
+		public double right_demand;
+		public double left_accel;
+		public double right_accel;
+		public double left_feedforward;
+		public double right_feedforward;
+		public TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
+	}
 }
 
