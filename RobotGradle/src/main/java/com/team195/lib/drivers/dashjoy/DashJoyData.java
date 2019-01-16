@@ -1,8 +1,8 @@
 package com.team195.lib.drivers.dashjoy;
 
 public class DashJoyData {
-	double[] axisVal = new double[6];
-	boolean[] buttonVal = new boolean[64];
+	double[] axisVal = new double[DashJoyController.MAX_AXES];
+	boolean[] buttonVal = new boolean[DashJoyController.BUTTON_ARR_SIZE];
 	int pov = -1;
 
 	public synchronized void setAxisValue(int axis, double val) {

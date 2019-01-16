@@ -42,28 +42,30 @@ public class DashJoyReceiver {
 						}
 						if (joystickNum == -1)
 							return;
-
+						DashJoyController dashJoyController = DashJoyController.getInstance();
 						List<Object> valArr = message.getArguments();
 
 						for (int i = 0; i < 6; i++) {
 							double axisVal = ((int)valArr.get(i))/32767.0;
 							axisVal = axisVal > 1 ? 1 : axisVal;
 							axisVal = axisVal < -1 ? -1 : axisVal;
-							DashJoyController.getInstance().setRawAxis(joystickNum, i, axisVal);
+							dashJoyController.setRawAxis(joystickNum, i, axisVal);
 						}
 
 						boolean[] buttons = getButtonArrFromLong((long)valArr.get(6));
 						for (int i = 0; i < buttons.length; i++) {
-							DashJoyController.getInstance().setRawButton(joystickNum, i, buttons[i]);
+							dashJoyController.setRawButton(joystickNum, i, buttons[i]);
 						}
 
 						int pov = (int)valArr.get(7);
 						pov = pov == -1 ? -1 : pov / 100;
-						DashJoyController.getInstance().setPOV(joystickNum, pov);
+						dashJoyController.setPOV(joystickNum, pov);
 
-						long remoteTimestamp = (long)valArr.get(8);
-						long currentTimestamp = System.currentTimeMillis();
-						movingAverage.addNumber(currentTimestamp-remoteTimestamp);
+						dashJoyController.refreshLastUpdateTimestamp();
+
+//						long remoteTimestamp = (long)valArr.get(8);
+//						long currentTimestamp = System.currentTimeMillis();
+//						movingAverage.addNumber(currentTimestamp-remoteTimestamp);
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
