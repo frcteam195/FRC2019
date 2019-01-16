@@ -142,8 +142,6 @@ public class Constants {
     public static final double kCollisionDetectionJerkThreshold = 950;
     public static final double kTippingThresholdDeg = 11;
 
-    public static final double kSensorUnitsPerRotation = 4096.0;
-    public static final double k100msPerMinute = 600.0;
     public static final int kActionTimeoutS = 2;
 
     public static final int kCANifierLEDId = 30;

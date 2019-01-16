@@ -1,5 +1,6 @@
 package com.team195.lib.drivers.motorcontrol;
 
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 
 /**
@@ -52,6 +53,8 @@ public interface TuneableMotorController {
 	double getNativeUnitsOutputRange();
 
 	double getIntegralAccum();
+
+	DiagnosticMessage hasMotorControllerReset();
 
 	MCControlMode getMotionControlMode();
 

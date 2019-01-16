@@ -3,6 +3,7 @@ package com.team195.lib.drivers.motorcontrol;
 import com.revrobotics.*;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 
 import java.util.Optional;
@@ -248,6 +249,27 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public double getIntegralAccum() {
 		return 0;
+	}
+
+	@Override
+	public DiagnosticMessage hasMotorControllerReset() {
+		//TODO: Verify this works in SparkMax API
+		if (getFault(FaultID.kHasReset)) {
+			ConsoleReporter.report("Spark Max ID " + getDeviceId() + " has reset!", MessageLevel.DEFCON1);
+
+			boolean setSucceeded;
+			int retryCounter = 0;
+
+			do {
+				setSucceeded = clearFaults() == CANError.kOK;
+			} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+				ConsoleReporter.report("Failed to clear Spark Max ID " + getDeviceId() + " Reset !!!!!!", MessageLevel.DEFCON1);
+
+			return new DiagnosticMessage("SparkMax" + getDeviceId() + "ResetHasOccurred");
+		}
+		return DiagnosticMessage.NO_MSG;
 	}
 
 	@Override

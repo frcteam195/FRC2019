@@ -42,6 +42,8 @@ public class Robot extends TimedRobot {
 	private LEDController mLED = LEDController.getInstance();
 	private Infrastructure mInfrastructure = Infrastructure.getInstance();
 
+	CKDashJoystick driveJoystick = new CKDashJoystick(0);
+
 	private AutoModeExecutor mAutoModeExecutor;
 
 	public Robot() {
@@ -219,8 +221,8 @@ public class Robot extends TimedRobot {
 //        double throttle = mControlBoard.getThrottle();
 //        double turn = mControlBoard.getTurn();
 
-		double throttle = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(1), 0.04);
-		double turn = QuickMaths.normalizeJoystickWithDeadband(Controllers.getInstance().getDriveJoystickThrottle().getRawAxis(4), 0.04);
+		double throttle = driveJoystick.getNormalizedAxis(1, 0.04);
+		double turn = driveJoystick.getNormalizedAxis(4, 0.04);
 
 		try {
 			// When elevator is up, tune sensitivity on turn a little.

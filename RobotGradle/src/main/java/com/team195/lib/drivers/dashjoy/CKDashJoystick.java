@@ -46,6 +46,10 @@ public class CKDashJoystick {
 			return backupJoystick.getRawAxis(axis);
 	}
 
+	public double getNormalizedAxis(int axis, double deadband) {
+		return normalizeJoystickWithDeadband(getRawAxis(axis), deadband);
+	}
+
 
 	public boolean getRawButton(int button) {
 		if (isTimestampValid())
@@ -84,5 +88,14 @@ public class CKDashJoystick {
 
 	private boolean isTimestampValid() {
 		return (HALUtil.getFPGATime() - dashJoyController.getLastUpdateTimestamp()) < EXPIRATION_TIME;
+	}
+
+	private double normalizeJoystickWithDeadband(double val, double deadband) {
+		val = (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
+
+		if (val != 0)
+			val = Math.signum(val) * ((Math.abs(val) - deadband) / (1.0 - deadband));
+
+		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
 	}
 }

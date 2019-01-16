@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 
 public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
@@ -361,6 +362,28 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public double getIntegralAccum() {
 		return getIntegralAccumulator();
+	}
+
+	@Override
+	public DiagnosticMessage hasMotorControllerReset() {
+		if (hasResetOccurred()) {
+
+			ConsoleReporter.report("Talon ID " + getDeviceID() + " has reset!", MessageLevel.DEFCON1);
+
+			boolean setSucceeded;
+			int retryCounter = 0;
+
+			do {
+				setSucceeded = clearStickyFaults(Constants.kCANTimeoutMs) == ErrorCode.OK;
+			} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+				ConsoleReporter.report("Failed to clear Talon ID " + getDeviceID() + " Reset !!!!!!", MessageLevel.DEFCON1);
+
+			return new DiagnosticMessage("Talon" + getDeviceID() + "ResetHasOccurred");
+		}
+
+		return DiagnosticMessage.NO_MSG;
 	}
 
 	private static class Configuration {
