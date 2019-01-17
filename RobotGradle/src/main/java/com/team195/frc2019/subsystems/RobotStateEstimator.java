@@ -23,16 +23,6 @@ public class RobotStateEstimator extends Subsystem {
     }
 
     @Override
-    public boolean checkSystem() {
-        return false;
-    }
-
-    @Override
-    public void outputTelemetry() {
-        // No-op
-    }
-
-    @Override
     public void stop() {
         // No-op
     }
@@ -40,6 +30,21 @@ public class RobotStateEstimator extends Subsystem {
     @Override
     public void registerEnabledLoops(ILooper looper) {
         looper.register(new EnabledLoop());
+    }
+
+    @Override
+    public boolean isSystemFaulted() {
+        return false;
+    }
+
+    @Override
+    public boolean runDiagnostics() {
+        return true;
+    }
+
+    @Override
+    public String generateReport() {
+        return "";
     }
 
     private class EnabledLoop implements Loop {

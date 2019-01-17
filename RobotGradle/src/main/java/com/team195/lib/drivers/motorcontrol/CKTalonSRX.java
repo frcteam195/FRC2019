@@ -335,6 +335,31 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public double getMCOutputCurrent() {
+		return getOutputCurrent();
+	}
+
+	@Override
+	public double getMCOutputPercent() {
+		return getMotorOutputPercent();
+	}
+
+	@Override
+	public boolean isEncoderPresent() {
+		return getSensorCollection().getPulseWidthRiseToRiseUs() != 0;
+	}
+
+	@Override
+	public double getMCInputVoltage() {
+		return getBusVoltage();
+	}
+
+	@Override
+	public double getMCOutputVoltage() {
+		return getMotorOutputVoltage();
+	}
+
+	@Override
 	public double getPosition() {
 		return convertNativeUnitsToRotations(getSelectedSensorPosition());
 	}

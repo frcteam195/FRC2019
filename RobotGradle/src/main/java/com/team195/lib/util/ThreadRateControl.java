@@ -41,6 +41,10 @@ public class ThreadRateControl {
 		}
 	}
 
+	/**
+	 * Do rate control for loops
+	 * @param minLoopTime Time in ms
+	 */
 	public synchronized void doRateControl(int minLoopTime) {
 		mLoopTimeMS = (startTime - mPrevStartTime) * 1000;
 		mAverageLoopTime.addNumber(mLoopTimeMS);

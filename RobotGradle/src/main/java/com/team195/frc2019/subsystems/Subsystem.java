@@ -1,6 +1,9 @@
 package com.team195.frc2019.subsystems;
 
 import com.team195.frc2019.loops.ILooper;
+import com.team195.lib.util.CriticalSystemStatus;
+import com.team195.lib.util.DiagnosableSubsystem;
+import com.team195.lib.util.Reportable;
 
 /**
  * The Subsystem abstract class, which serves as a basic framework for all robot subsystems. Each subsystem outputs
@@ -12,10 +15,7 @@ import com.team195.frc2019.loops.ILooper;
  * state; the robot code will try to match the two states with actions. Each Subsystem also is responsible for
  * instantializing all member components at the start of the match.
  */
-public abstract class Subsystem {
-    public void writeToLog() {
-    }
-
+public abstract class Subsystem implements Reportable, CriticalSystemStatus, DiagnosableSubsystem {
     // Optional design pattern for caching periodic reads to avoid hammering the HAL/CAN.
     public void readPeriodicInputs() {
     }
@@ -23,10 +23,6 @@ public abstract class Subsystem {
     // Optional design pattern for caching periodic writes to avoid hammering the HAL/CAN.
     public void writePeriodicOutputs() {
     }
-
-    public abstract boolean checkSystem();
-
-    public abstract void outputTelemetry();
 
     public abstract void stop();
 

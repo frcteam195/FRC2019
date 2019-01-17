@@ -1,12 +1,15 @@
 package com.team195.frc2019.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.lib.drivers.CKIMU;
+import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.CKSparkMax;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
@@ -17,21 +20,18 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Drive extends Subsystem {
 
 	private static final int kLowGearVelocityControlSlot = 0;
 	private static final int kHighGearVelocityControlSlot = 1;
 	private static Drive mInstance = new Drive();
-	// Hardware
 	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
 	//    private final Solenoid mShifter;
 	private DriveControlState mDriveControlState;
-	private PigeonIMU mPigeon;
-	// Hardware states
+	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
 	private boolean mAutoShift;
 	private boolean mIsHighGear;
@@ -45,10 +45,8 @@ public class Drive extends Subsystem {
 		@Override
 		public void onStart(double timestamp) {
 			synchronized (Drive.this) {
-//                setOpenLoop(new DriveSignal(0.05, 0.05));
 				setOpenLoop(new DriveSignal(0, 0));
 				setBrakeMode(false);
-//                 startLogging();
 			}
 		}
 
@@ -79,7 +77,6 @@ public class Drive extends Subsystem {
 		@Override
 		public void onStop(double timestamp) {
 			stop();
-			stopLogging();
 		}
 	};
 
@@ -108,8 +105,7 @@ public class Drive extends Subsystem {
 
 		reloadGains();
 
-//        mPigeon = new PigeonIMU(mLeftSlaveB);
-//        mLeftSlaveB.setStatusFramePeriod(StatusFrameEnhanced.Status_11_UartGadgeteer, 10, 10);
+		mGyro = new NavX();
 
 		// Force a solenoid message.
 		mIsHighGear = true;
@@ -153,9 +149,6 @@ public class Drive extends Subsystem {
 		in.register(mLoop);
 	}
 
-	/**
-	 * Configure talons for open loop control
-	 */
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
@@ -164,8 +157,6 @@ public class Drive extends Subsystem {
 			System.out.println("Switching to open loop");
 			System.out.println(signal);
 			mDriveControlState = DriveControlState.OPEN_LOOP;
-//            mLeftMaster.configNeutralDeadband(0.04, 0);
-//            mRightMaster.configNeutralDeadband(0.04, 0);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -173,18 +164,12 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_feedforward = 0.0;
 	}
 
-	/**
-	 * Configures talons for velocity control
-	 */
 	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
 		if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-			// We entered a velocity control state.
 			setBrakeMode(true);
 			mAutoShift = false;
 			mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 			mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
-//            mLeftMaster.configNeutralDeadband(0.0, 0);
-//            mRightMaster.configNeutralDeadband(0.0, 0);
 
 			mDriveControlState = DriveControlState.PATH_FOLLOWING;
 		}
@@ -244,12 +229,12 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setHeading(Rotation2d heading) {
-//        System.out.println("SET HEADING: " + heading.getDegrees());
-//
-//        mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mPigeon.getFusedHeading()).inverse());
-//        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
-//
-//        mPeriodicIO.gyro_heading = heading;
+        System.out.println("SET HEADING: " + heading.getDegrees());
+
+        mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mGyro.getFusedHeading()).inverse());
+        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
+
+        mPeriodicIO.gyro_heading = heading;
 	}
 
 	@Override
@@ -257,29 +242,29 @@ public class Drive extends Subsystem {
 		setOpenLoop(DriveSignal.NEUTRAL);
 	}
 
-	@Override
-	public void outputTelemetry() {
-		SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-		SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_rotations);
-		SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_rotations);
-		SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-		SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-		SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
-
-		SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
-		SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
-		SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
-		if (getHeading() != null) {
-			SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
-		}
-		if (mCSVWriter != null) {
-			mCSVWriter.write();
-		}
-	}
+//	@Override
+//	public void outputTelemetry() {
+//		SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
+//		SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_rotations);
+//		SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_rotations);
+//		SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
+//		SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
+//		SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
+//
+//		SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
+//		SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
+//		SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
+//		if (getHeading() != null) {
+//			SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
+//		}
+//		if (mCSVWriter != null) {
+//			mCSVWriter.write();
+//		}
+//	}
 
 	public synchronized void resetEncoders() {
-//        mLeftMaster.setSelectedSensorPosition(0, 0, 0);
-//        mRightMaster.setSelectedSensorPosition(0, 0, 0);
+        mLeftMaster.setEncoderPosition(0);
+        mRightMaster.setEncoderPosition(0);
 		mPeriodicIO = new PeriodicIO();
 	}
 
@@ -318,13 +303,19 @@ public class Drive extends Subsystem {
 		mOverrideTrajectory = value;
 	}
 
+	public double getLeftEncoderVelocityRPM() {
+		return mPeriodicIO.left_velocity_RPM;
+	}
+
+	public double getRightEncoderVelocityRPM() {
+		return mPeriodicIO.right_velocity_RPM;
+	}
+
 	private void updatePathFollower() {
 		if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
 			final double now = Timer.getFPGATimestamp();
 
 			DriveMotionPlanner.Output output = mMotionPlanner.update(now, RobotState.getInstance().getFieldToVehicle(now));
-
-			// DriveSignal signal = new DriveSignal(demand.left_feedforward_voltage / 12.0, demand.right_feedforward_voltage / 12.0);
 
 			mPeriodicIO.error = mMotionPlanner.error();
 			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
@@ -340,7 +331,7 @@ public class Drive extends Subsystem {
 				mPeriodicIO.left_accel = mPeriodicIO.right_accel = 0.0;
 			}
 		} else {
-			DriverStation.reportError("Drive is not in path following state", false);
+			ConsoleReporter.report("Drive is not in path following state", MessageLevel.ERROR);
 		}
 	}
 
@@ -364,10 +355,6 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public void writeToLog() {
-	}
-
-	@Override
 	public synchronized void readPeriodicInputs() {
 		double prevLeftRotations = mPeriodicIO.left_position_rotations;
 		double prevRightRotations = mPeriodicIO.right_position_rotations;
@@ -375,7 +362,7 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_position_rotations = mRightMaster.getPosition();
 		mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
 		mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
-		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mPigeon.getFusedHeading()).rotateBy(mGyroOffset);
+		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
 
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
@@ -394,22 +381,10 @@ public class Drive extends Subsystem {
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mPeriodicIO);
 		}
-
-		// System.out.println("control state: " + mDriveControlState + ", left: " + mPeriodicIO.left_demand + ", right: " + mPeriodicIO.right_demand);
 	}
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-//        if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-//            mLeftMaster.set(ControlMode.PercentOutput, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward, 0.0);
-//            mRightMaster.set(ControlMode.PercentOutput, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward, 0.0);
-//        } else {
-//            mLeftMaster.set(ControlMode.Velocity, mPeriodicIO.left_demand, DemandType.ArbitraryFeedForward,
-//                    mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / 1023.0);
-//            mRightMaster.set(ControlMode.Velocity, mPeriodicIO.right_demand, DemandType.ArbitraryFeedForward,
-//                    mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / 1023.0);
-//        }
-
 		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
@@ -422,7 +397,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public boolean checkSystem() {
+	public boolean runDiagnostics() {
 //        boolean leftSide = TalonSRXChecker.CheckTalons(this,
 //                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
 //                    {
@@ -459,23 +434,66 @@ public class Drive extends Subsystem {
 		return false;
 	}
 
-	public synchronized void startLogging() {
-		if (mCSVWriter == null) {
-			mCSVWriter = new ReflectingCSVWriter<>("/home/lvuser/DRIVE-LOGS.csv", PeriodicIO.class);
-		}
+	@Override
+	public String generateReport() {
+		String retVal = "";
+
+		retVal += "LeftDrivePos:" + mLeftMaster.getVelocity() + ";";
+		retVal += "LeftDriveVel:" + mLeftMaster.getVelocity() + ";";
+		retVal += "LeftDriveOutput:" + mPeriodicIO.left_demand + ";";
+		retVal += "LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";";
+		retVal += "LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";";
+		retVal += "LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";";
+		retVal += "LeftOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";";
+		retVal += "LeftOutputVoltage:" + mLeftMaster.getMCOutputPercent()*mLeftMaster.getMCInputVoltage() + ";";
+		retVal += "LeftSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";";
+
+		retVal += "RightDrivePos:" + mRightMaster.getVelocity() + ";";
+		retVal += "RightDriveVel:" + mRightMaster.getVelocity() + ";";
+		retVal += "RightDriveOutput:" + mPeriodicIO.right_demand + ";";
+		retVal += "RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";";
+		retVal += "RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";";
+		retVal += "RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";";
+		retVal += "RightOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";";
+		retVal += "RightOutputVoltage:" + mRightMaster.getMCOutputPercent()*mRightMaster.getMCInputVoltage() + ";";
+		retVal += "RightSupplyVoltage:" + mRightMaster.getBusVoltage() + ";";
+
+//		retVal += "AccelX:" + mGyro.getRawAccelX() + ";";
+//		retVal += "AccelY:" + mGyro.getRawAccelY() + ";";
+//		retVal += "AccelZ:" + mGyro.getRawAccelZ() + ";";
+//
+//		retVal += "Gyro:" + mGyro.getRawYawDegrees() + ";";
+//		retVal += "GyroRate:" + mGyro.getYawRateDegreesPerSec() + ";";
+
+		retVal += "DriveMode:" + mDriveControlState.toString() + ";";
+//		retVal += "RobotPosition:" + PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue().toString() + ";";
+
+		retVal += "IsDriveFaulted:" + isSystemFaulted() + ";";
+
+		return retVal;
 	}
 
-	public synchronized void stopLogging() {
-		if (mCSVWriter != null) {
-			mCSVWriter.flush();
-			mCSVWriter = null;
-		}
+	@Override
+	public boolean isSystemFaulted() {
+		boolean leftSensorFaulted = !mLeftMaster.isEncoderPresent();
+		boolean rightSensorFaulted = !mRightMaster.isEncoderPresent();
+		boolean navXFaulted = !mGyro.isPresent();
+
+		if (leftSensorFaulted)
+			ConsoleReporter.report("Left Drive Encoder Error", MessageLevel.DEFCON1);
+
+		if (rightSensorFaulted)
+			ConsoleReporter.report("Right Drive Encoder Error", MessageLevel.DEFCON1);
+
+		if (navXFaulted)
+			ConsoleReporter.report("NavX Error", MessageLevel.DEFCON1);
+
+		return leftSensorFaulted || rightSensorFaulted || navXFaulted;
 	}
 
-	// The robot drivetrain's various states.
 	public enum DriveControlState {
-		OPEN_LOOP, // open loop voltage control
-		PATH_FOLLOWING, // velocity PID control
+		OPEN_LOOP,
+		PATH_FOLLOWING,
 	}
 
 	public enum ShifterState {

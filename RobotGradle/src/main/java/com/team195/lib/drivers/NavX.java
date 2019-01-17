@@ -11,11 +11,11 @@ import edu.wpi.first.wpilibj.Timer;
 /**
  * Driver for a NavX board. Basically a wrapper for the {@link AHRS} class
  */
-public class NavX {
+public class NavX implements CKIMU {
     protected class Callback implements ITimestampedDataSubscriber {
         @Override
         public void timestampedDataReceived(long system_timestamp, long sensor_timestamp, AHRSUpdateBase update,
-                Object context) {
+                                            Object context) {
             synchronized (NavX.this) {
                 // This handles the fact that the sensor is inverted from our coordinate conventions.
                 if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
@@ -24,6 +24,7 @@ public class NavX {
                 }
                 mLastSensorTimestampMs = sensor_timestamp;
                 mYawDegrees = -update.yaw;
+                mFusedHeading = -update.fused_heading;
             }
         }
     }
@@ -32,6 +33,7 @@ public class NavX {
 
     protected Rotation2d mAngleAdjustment = Rotation2d.identity();
     protected double mYawDegrees;
+    protected double mFusedHeading;
     protected double mYawRateDegreesPerSecond;
     protected final long kInvalidTimestamp = -1;
     protected long mLastSensorTimestampMs;
@@ -43,19 +45,26 @@ public class NavX {
     private double mJerkCollisionThreshold = Constants.kCollisionDetectionJerkThreshold;
     private double mTippingThreshold = Constants.kTippingThresholdDeg;
 
+    public NavX() {
+        this(SPI.Port.kMXP);
+    }
+
     public NavX(SPI.Port spi_port_id) {
         mAHRS = new AHRS(spi_port_id, (byte) 200);
         resetState();
         mAHRS.registerCallback(new Callback(), null);
     }
 
+    @Override
     public boolean isPresent() {
         return mAHRS.isConnected();
     }
 
-    public synchronized void reset() {
+    @Override
+    public synchronized boolean reset() {
         mAHRS.reset();
         resetState();
+        return true;
     }
 
     public synchronized void zeroYaw() {
@@ -91,6 +100,11 @@ public class NavX {
 
     public double getYawRateDegreesPerSec() {
         return mYawRateDegreesPerSecond;
+    }
+
+    @Override
+    public double getFusedHeading() {
+        return mFusedHeading;
     }
 
     public double getYawRateRadiansPerSec() {

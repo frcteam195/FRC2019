@@ -6,13 +6,14 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 
-public class PigeonDriver {
+public class PigeonDriver implements CKIMU {
 	private PigeonIMU pigeonIMU;
 
 	public PigeonDriver(int deviceNumber) {
 		pigeonIMU = new PigeonIMU(deviceNumber);
 	}
 
+	@Override
 	public boolean reset() {
 		boolean setSucceeded;
 		int retryCounter = 0;
@@ -25,5 +26,15 @@ public class PigeonDriver {
 			ConsoleReporter.report("Failed to reset Pigeon " + pigeonIMU.getDeviceID() + " !!!!!!", MessageLevel.DEFCON1);
 
 		return setSucceeded;
+	}
+
+	@Override
+	public double getFusedHeading() {
+		return pigeonIMU.getFusedHeading();
+	}
+
+	@Override
+	public boolean isPresent() {
+		return pigeonIMU.clearStickyFaults() == ErrorCode.OK;
 	}
 }

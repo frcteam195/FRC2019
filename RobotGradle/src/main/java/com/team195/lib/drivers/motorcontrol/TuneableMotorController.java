@@ -54,6 +54,16 @@ public interface TuneableMotorController {
 
 	double getIntegralAccum();
 
+	double getMCOutputCurrent();
+
+	double getMCInputVoltage();
+
+	double getMCOutputVoltage();
+
+	double getMCOutputPercent();
+
+	boolean isEncoderPresent();
+
 	DiagnosticMessage hasMotorControllerReset();
 
 	MCControlMode getMotionControlMode();
@@ -89,4 +99,5 @@ public interface TuneableMotorController {
 		}
 		return output;
 	}
+
 }

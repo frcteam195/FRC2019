@@ -252,6 +252,32 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
+	public double getMCOutputCurrent() {
+		return getOutputCurrent();
+	}
+
+	@Override
+	public double getMCOutputPercent() {
+		return getAppliedOutput();
+	}
+
+	@Override
+	public double getMCInputVoltage() {
+		return getBusVoltage();
+	}
+
+	@Override
+	public double getMCOutputVoltage() {
+		return getMCOutputPercent()*getMCInputVoltage();
+	}
+
+	@Override
+	public boolean isEncoderPresent() {
+		//TODO: Test
+		return !getFault(FaultID.kSensorFault);
+	}
+
+	@Override
 	public DiagnosticMessage hasMotorControllerReset() {
 		//TODO: Verify this works in SparkMax API
 		if (getFault(FaultID.kHasReset)) {

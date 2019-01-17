@@ -26,15 +26,6 @@ public class Infrastructure extends Subsystem {
     }
 
     @Override
-    public boolean checkSystem() {
-        return false;
-    }
-
-    @Override
-    public void outputTelemetry() {
-    }
-
-    @Override
     public void stop() {
         // No-op.
     }
@@ -89,5 +80,20 @@ public class Infrastructure extends Subsystem {
 
             }
         });
+    }
+
+    @Override
+    public boolean isSystemFaulted() {
+        return false;
+    }
+
+    @Override
+    public boolean runDiagnostics() {
+        return false;
+    }
+
+    @Override
+    public String generateReport() {
+        return "";
     }
 }

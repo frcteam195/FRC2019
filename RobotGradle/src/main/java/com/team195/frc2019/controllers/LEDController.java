@@ -1,7 +1,7 @@
-package com.team195.frc2019.subsystems;
+package com.team195.frc2019.controllers;
 
+import com.ctre.phoenix.CANifier;
 import com.team195.frc2019.Constants;
-import com.team195.frc2019.Controllers;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.MorseCodeTranslator;
@@ -39,8 +39,6 @@ public class LEDController extends Thread {
     private MorseCodeTranslator morseCodeTranslator = new MorseCodeTranslator();
     private LinkedList<String> requestedMorseMessage;
     private LinkedList<String> runningMorseMessage;
-    private double mPrevMorseTime;
-    private double mMorseTransitionTime = 0.5;
     private MorseState mMorseState = MorseState.LOAD;
     private double morseStateTime = 0;
     private Character currentMorseChar = ' ';
@@ -51,7 +49,7 @@ public class LEDController extends Thread {
     private LEDController() throws Exception {
     	super();
 		super.setPriority(Constants.kLEDThreadPriority);
-        mLED = new LEDDriverCANifier(Controllers.getInstance().getCANifierLED());
+        mLED = new LEDDriverCANifier(new CANifier(Constants.kCANifierLEDId));
         mLED.set(false);
 
         // Force a relay change.

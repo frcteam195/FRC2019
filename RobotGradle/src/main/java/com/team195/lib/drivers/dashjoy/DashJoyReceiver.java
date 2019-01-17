@@ -3,12 +3,13 @@ package com.team195.lib.drivers.dashjoy;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
+import com.team195.frc2019.Constants;
 import com.team254.lib.util.MovingAverage;
 
 import java.util.List;
 
 public class DashJoyReceiver {
-	private static final int RECEIVE_PORT = 5806;
+	private static final int RECEIVE_PORT = Constants.DASHJOY_RECEIVER_PORT;
 
 	private OSCPortIn oscPortIn;
 	public MovingAverage movingAverage = new MovingAverage(50);

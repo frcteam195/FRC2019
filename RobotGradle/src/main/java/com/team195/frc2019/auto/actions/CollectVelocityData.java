@@ -53,7 +53,7 @@ public class CollectVelocityData implements Action {
         }
         mDrive.setOpenLoop(new DriveSignal((mReverse ? -1.0 : 1.0) * percentPower, (mReverse ? -1.0 : 1.0) * (mTurn ? -1.0 : 1.0) * percentPower));
         mVelocityData.add(new DriveCharacterization.VelocityDataPoint(
-                (Math.abs(mDrive.getLeftVelocityNativeUnits()) + Math.abs(mDrive.getRightVelocityNativeUnits())) / 4096.0 * Math.PI * 10, //convert velocity to radians per second
+                (Math.abs(mDrive.getLeftEncoderVelocityRPM()) + Math.abs(mDrive.getRightEncoderVelocityRPM())) * Math.PI / 60.0, //convert velocity to radians per second
                 percentPower * 12.0 //convert to volts
         ));
         mCSVWriter.add(mVelocityData.get(mVelocityData.size() - 1));

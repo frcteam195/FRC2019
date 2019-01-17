@@ -1,157 +1,77 @@
 package com.team195.frc2019;
 
-import com.team195.frc2019.auto.creators.AutoModeCreator;
-import com.team195.frc2019.auto.creators.CrossAutoLineCreator;
+import com.illposed.osc.OSCListener;
+import com.illposed.osc.OSCPortIn;
 import com.team195.frc2019.auto.AutoModeBase;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.team195.frc2019.auto.modes.CharacterizeHighGearStraight;
+import com.team195.frc2019.auto.modes.CrossAutoLineMode;
+import com.team195.frc2019.auto.modes.DesiredMode;
+import com.team195.frc2019.auto.modes.DoNothingMode;
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.lib.util.StartingPosition;
 
-import java.util.Optional;
+import java.util.List;
 
 public class AutoModeSelector {
-
-    enum StartingPosition {
-        LEFT,
-        CENTER,
-        RIGHT,
-    }
-
-    ;
-
-    enum SwitchScalePosition {
-        USE_FMS_DATA,
-        LEFT_SWITCH_LEFT_SCALE,
-        LEFT_SWITCH_RIGHT_SCALE,
-        RIGHT_SWITCH_LEFT_SCALE,
-        RIGHT_SWITCH_RIGHT_SCALE,
-    }
-
-    ;
-
-    enum DesiredMode {
-        DO_NOTHING,
-        CROSS_AUTO_LINE,
-        SIMPLE_SWITCH,
-        SCALE_AND_SWITCH,
-        ONLY_SCALE,
-        ADVANCED, // This uses 4 additional sendable choosers to pick one for each field state combo
-    }
-
-    ;
-
     private DesiredMode mCachedDesiredMode = null;
-    private SwitchScalePosition mCachedSwitchScalePosition = null;
     private StartingPosition mCachedStartingPosition = null;
-
-    private Optional<AutoModeCreator> mCreator = Optional.empty();
-
-    private AutoFieldState mFieldState = AutoFieldState.getInstance();
-
-    private SendableChooser<DesiredMode> mModeChooser;
-    private SendableChooser<SwitchScalePosition> mSwitchScalePositionChooser;
-    private SendableChooser<StartingPosition> mStartPositionChooser;
+    private OSCPortIn oscPortIn;
 
     public AutoModeSelector() {
-        mModeChooser = new SendableChooser<>();
-        mModeChooser.addDefault("Cross Auto Line", DesiredMode.CROSS_AUTO_LINE);
-        mModeChooser.addObject("Do Nothing", DesiredMode.DO_NOTHING);
-        mModeChooser.addObject("Simple switch", DesiredMode.SIMPLE_SWITCH);
-        mModeChooser.addObject("Scale AND Switch", DesiredMode.SCALE_AND_SWITCH);
-        mModeChooser.addObject("Only Scale", DesiredMode.ONLY_SCALE);
-        SmartDashboard.putData("Auto mode", mModeChooser);
+        try {
+            oscPortIn = new OSCPortIn(Constants.LOG_OSC_REPORTER_PORT);
 
-        mStartPositionChooser = new SendableChooser<>();
-        mStartPositionChooser.addDefault("Right", StartingPosition.RIGHT);
-        mStartPositionChooser.addObject("Center", StartingPosition.CENTER);
-        mStartPositionChooser.addObject("Left", StartingPosition.LEFT);
-        SmartDashboard.putData("Starting Position", mStartPositionChooser);
+            OSCListener autoSelectionListener = (time, message) -> {
+                try {
+                    List<Object> args = message.getArguments();
+                    if (args.size() > 1) {
+                        StartingPosition tmpStartingPosition = StartingPosition.valueOf((int)args.get(0));
+                        if (tmpStartingPosition != StartingPosition.Invalid)
+                            mCachedStartingPosition = tmpStartingPosition;
+                        DesiredMode tmpDesiredMode = DesiredMode.valueOf((int)args.get(1));
+                        if (tmpDesiredMode != DesiredMode.Invalid)
+                            mCachedDesiredMode = tmpDesiredMode;
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            };
+            oscPortIn.addListener("/AutoData", autoSelectionListener);
 
-        mSwitchScalePositionChooser = new SendableChooser<>();
-        mSwitchScalePositionChooser.addDefault("Use FMS Data", SwitchScalePosition.USE_FMS_DATA);
-        mSwitchScalePositionChooser.addObject("Left Switch Left Scale", SwitchScalePosition.LEFT_SWITCH_LEFT_SCALE);
-        mSwitchScalePositionChooser.addObject("Left Switch Right Scale", SwitchScalePosition.LEFT_SWITCH_RIGHT_SCALE);
-        mSwitchScalePositionChooser.addObject("Right Switch Left Scale", SwitchScalePosition.RIGHT_SWITCH_LEFT_SCALE);
-        mSwitchScalePositionChooser.addObject("Right Switch Right Scale", SwitchScalePosition.RIGHT_SWITCH_RIGHT_SCALE);
-        SmartDashboard.putData("Switch and Scale Position", mSwitchScalePositionChooser);
 
-    }
 
-    public void updateModeCreator() {
-        DesiredMode desiredMode = mModeChooser.getSelected();
-        StartingPosition staringPosition = mStartPositionChooser.getSelected();
-        SwitchScalePosition switchScalePosition = mSwitchScalePositionChooser.getSelected();
-        if (mCachedDesiredMode != desiredMode || staringPosition != mCachedStartingPosition || switchScalePosition != mCachedSwitchScalePosition) {
-            System.out.println("Auto selection changed, updating creator: desiredMode->" + desiredMode.name() + ", starting position->" + staringPosition.name() + ", switch/scale position->" + switchScalePosition.name());
-            mCreator = getCreatorForParams(desiredMode, staringPosition);
-            if (switchScalePosition == SwitchScalePosition.USE_FMS_DATA) {
-                mFieldState.disableOverride();
-            } else {
-                setFieldOverride(switchScalePosition);
-            }
-        }
-        mCachedDesiredMode = desiredMode;
-        mCachedStartingPosition = staringPosition;
-        mCachedSwitchScalePosition = switchScalePosition;
-    }
-
-    private Optional<AutoModeCreator> getCreatorForParams(DesiredMode mode, StartingPosition position) {
-        boolean startOnLeft = StartingPosition.LEFT == position;
-        switch (mode) {
-            case SIMPLE_SWITCH:
-                return Optional.of(null);
-            case CROSS_AUTO_LINE:
-                return Optional.of(new CrossAutoLineCreator());
-            case SCALE_AND_SWITCH:
-                return Optional.of(null);
-            case ONLY_SCALE:
-                return Optional.of(null);
-            default:
-                break;
-        }
-
-        System.err.println("No valid auto mode found for  " + mode);
-        return Optional.empty();
-    }
-
-    private void setFieldOverride(SwitchScalePosition switchScalePosition) {
-        switch (switchScalePosition) {
-            case LEFT_SWITCH_LEFT_SCALE:
-                mFieldState.overrideSides("LLL");
-                break;
-            case LEFT_SWITCH_RIGHT_SCALE:
-                mFieldState.overrideSides("LRL");
-                break;
-            case RIGHT_SWITCH_LEFT_SCALE:
-                mFieldState.overrideSides("RLR");
-                break;
-            case RIGHT_SWITCH_RIGHT_SCALE:
-                mFieldState.overrideSides("RRR");
-                break;
-            default:
-                break;
+            oscPortIn.startListening();
+        } catch (Exception ex) {
+            ConsoleReporter.report(ex);
         }
     }
 
     public void reset() {
-        mCreator = Optional.empty();
-        mFieldState.disableOverride();
         mCachedDesiredMode = null;
+        mCachedStartingPosition = null;
     }
 
-    public void outputToSmartDashboard() {
-        SmartDashboard.putString("AutoModeSelected", mCachedDesiredMode.name());
-        SmartDashboard.putString("StartingPositionSelected", mCachedStartingPosition.name());
-        SmartDashboard.putString("SwitchScalePositionSelected", mCachedSwitchScalePosition.name());
-    }
-
-    public Optional<AutoModeBase> getAutoMode(AutoFieldState fieldState) {
-        if (!mCreator.isPresent()) {
-            return Optional.empty();
+    public AutoModeBase getAutoMode() {
+        switch (mCachedDesiredMode) {
+            case CrossAutoLine:
+//                switch(mCachedStartingPosition) {
+//                    case Left:
+//                        break;
+//                    case Center:
+//                        break;
+//                    case Right:
+//                        break;
+//                    case Invalid:
+//                        break;
+//                }
+                return new CrossAutoLineMode();
+            case Characterization:
+                return new CharacterizeHighGearStraight();
+            case DoNothing:
+                return new DoNothingMode();
+            default:
+                return new CrossAutoLineMode();
         }
-        if (fieldState.isOverridingGameData()) {
-            System.out.println("Overriding FMS switch/scale positions!");
-        }
-        return Optional.of(mCreator.get().getStateDependentAutoMode(fieldState));
     }
 
 }

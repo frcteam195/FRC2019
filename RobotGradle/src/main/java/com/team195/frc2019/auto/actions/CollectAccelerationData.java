@@ -48,7 +48,7 @@ public class CollectAccelerationData implements Action {
 
     @Override
     public void update() {
-        double currentVelocity = (Math.abs(mDrive.getLeftVelocityNativeUnits()) + Math.abs(mDrive.getRightVelocityNativeUnits())) / 4096.0 * Math.PI * 10;
+        double currentVelocity = (Math.abs(mDrive.getLeftEncoderVelocityRPM()) + Math.abs(mDrive.getRightEncoderVelocityRPM())) * Math.PI / 60.0;
         double currentTime = Timer.getFPGATimestamp();
 
         //don't calculate acceleration until we've populated prevTime and prevVelocity
