@@ -3,11 +3,9 @@ package com.team195.frc2019;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.loops.Looper;
-import com.team195.frc2019.monitors.CriticalSystemsMonitor;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.Subsystem;
-import com.team195.lib.util.CriticalSystemStatus;
 import com.team195.lib.util.Reportable;
 
 import java.util.ArrayList;

@@ -13,6 +13,7 @@ import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.CKSparkMax;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
+import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
@@ -20,7 +21,6 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Drive extends Subsystem {
@@ -83,22 +83,22 @@ public class Drive extends Subsystem {
 	private Drive() {
 		mPeriodicIO = new PeriodicIO();
 
-		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.setInverted(false);
 
-		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
+		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveA.setInverted(false);
 
-		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster);
+		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveB.setInverted(false);
 
-		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true);
+		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
 
-		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
+		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveA.setInverted(true);
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster);
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveB.setInverted(true);
 
 //        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);

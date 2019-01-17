@@ -97,7 +97,11 @@ public class Constants {
     public static final double kJoystickThreshold = 0.5;
     public static final double kJoystickJogThreshold = 0.4;
 
-
+    //Breaker model for trip time output in seconds y = a*(current_percent_over_rating)^b + c
+    public static final double kPDPBreakerModelA = 282.2962;
+    public static final double kPDPBreakerModelB = -6.6305;
+    public static final double kPDPBreakerModelC = 0.5;
+    public static final double kPDPDefaultSafetyFactor = 4.0;
 
 
 

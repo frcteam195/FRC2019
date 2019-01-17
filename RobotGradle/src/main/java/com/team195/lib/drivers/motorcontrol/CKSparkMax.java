@@ -20,17 +20,20 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private Configuration normalSlaveConfig = new Configuration(10, 100, 100, 100);
 
 	private double voltageCompensation = 12;
+	private final PDPBreaker motorBreaker;
 
-	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster) {
+	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
 		super(deviceID, type);
+		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
 		canPIDController.setOutputRange(-1, 1);
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 	}
 
-	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark) {
+	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
 		super(deviceID, type);
+		motorBreaker = breakerCurrent;
 		follow(masterSpark);
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
@@ -41,14 +44,12 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		setControlFramePeriod(config.CONTROL_FRAME_PERIOD_MS);
 		boolean setSucceeded;
 		int retryCounter = 3;
-
 		do {
 			setSucceeded = setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS) == CANError.kOK;
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS) == CANError.kOK;
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
-			setSucceeded &= setSmartCurrentLimit(80) == CANError.kOK;
+			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
 			ConsoleReporter.report("Failed to set PID Gains Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}

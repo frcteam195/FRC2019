@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends TimedRobot {
-	private Looper mEnabledLooper = new Looper();
-	private Looper mDisabledLooper = new Looper();
+	private Looper mEnabledLooper = new Looper("EnabledLooper");
+	private Looper mDisabledLooper = new Looper("DisabledLooper");
 	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 
 	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();

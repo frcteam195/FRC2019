@@ -14,33 +14,43 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	private int[] mMMAccel = new int[4];
 	private int[] mMMVel = new int[4];
 	private double prevOutput = Double.MIN_VALUE;
+	private final PDPBreaker motorBreaker;
 
 	private final Configuration fastMasterConfig = new Configuration(5, 5, 20);
 	private final Configuration normalMasterConfig = new Configuration(10, 10, 20);
 	private final Configuration normalSlaveConfig = new Configuration(10, 100, 100);
 
-	public CKTalonSRX(int deviceId, boolean fastMaster) {
+	public CKTalonSRX(int deviceId, boolean fastMaster, PDPBreaker breakerCurrent) {
 		super(deviceId);
+		motorBreaker = breakerCurrent;
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 	}
 
-	public CKTalonSRX(int deviceId, TalonSRX masterTalon) {
+	public CKTalonSRX(int deviceId, TalonSRX masterTalon, PDPBreaker breakerCurrent) {
 		super(deviceId);
-		follow(masterTalon);
+		motorBreaker = breakerCurrent;
 		doDefaultConfig(normalSlaveConfig);
+		follow(masterTalon);
 	}
 
 	private void doDefaultConfig(Configuration config) {
 		boolean setSucceeded;
 		int retryCounter = 3;
-
 		do {
 			setSucceeded = clearStickyFaults(Constants.kLongCANTimeoutMs) == ErrorCode.OK;
 			setSucceeded &= setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS) == ErrorCode.OK;
 			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_1_General, config.STATUS_FRAME_GENERAL_1_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
 			setSucceeded &= setStatusFramePeriod(StatusFrame.Status_2_Feedback0, config.STATUS_FRAME_FEEDBACK0_2_MS, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configContinuousCurrentLimit(motorBreaker.value, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configPeakCurrentLimit(motorBreaker.value * 2, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configPeakCurrentDuration(getMSDurationForBreakerLimit(motorBreaker.value * 2, motorBreaker.value), Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			enableCurrentLimit(true);
+			setSucceeded &= configForwardSoftLimitEnable(false, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			setSucceeded &= configReverseSoftLimitEnable(false, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
 			ConsoleReporter.report("Failed to initialize Talon " + getDeviceID() + " !!!!!!", MessageLevel.DEFCON1);
 	}

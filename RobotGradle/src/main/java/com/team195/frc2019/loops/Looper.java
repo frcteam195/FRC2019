@@ -40,7 +40,12 @@ public class Looper implements ILooper, Reportable {
         }
     };
 
-    public Looper() {
+    public Looper(String name) {
+        this();
+        this.name = name;
+    }
+
+    private Looper() {
         notifier_ = new Notifier(runnable_);
         running_ = false;
         loops_ = new ArrayList<>();
