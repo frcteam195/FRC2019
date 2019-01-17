@@ -8,6 +8,7 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.Subsystem;
 import com.team195.lib.util.CriticalSystemStatus;
+import com.team195.lib.util.Reportable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +23,8 @@ public class SubsystemManager implements ILooper {
 
 	private static ArrayList<Subsystem> mAllSubsystems = new ArrayList<>();
 	private List<Loop> mLoops = new ArrayList<>();
+
+	private List<Reportable> additionalReportables = new ArrayList<>();
 
 	private SubsystemManager() {
 
@@ -64,6 +67,7 @@ public class SubsystemManager implements ILooper {
 	public String generateReport() {
 		StringBuilder sb = new StringBuilder();
 		mAllSubsystems.forEach((s) -> sb.append(s.generateReport()));
+		additionalReportables.forEach((s) -> sb.append(s.generateReport()));
 		return sb.toString();
 	}
 
@@ -113,10 +117,14 @@ public class SubsystemManager implements ILooper {
 	public void registerEnabledLoops(Looper enabledLooper) {
 		mAllSubsystems.forEach((s) -> s.registerEnabledLoops(this));
 		enabledLooper.register(new EnabledLoop());
+		if (!additionalReportables.contains(enabledLooper))
+			additionalReportables.add(enabledLooper);
 	}
 
 	public void registerDisabledLoops(Looper disabledLooper) {
 		disabledLooper.register(new DisabledLoop());
+		if (!additionalReportables.contains(disabledLooper))
+			additionalReportables.add(disabledLooper);
 	}
 
 	@Override
