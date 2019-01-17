@@ -24,7 +24,11 @@ public class TuneablePIDOSC {
 	private OSCPortOut oscPortOut;
 	private OSCPortIn oscPortIn;
 
-	private TuneablePIDData tpd;
+	private TuneablePIDData tpd = new TuneablePIDData(0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+	private InetAddress IPAddress = null;
+	private InetAddress prevIPAddress = null;
+
 
 	public TuneablePIDOSC(String name, int portNumber, boolean autoUpdate, TuneableMotorController... tuneableMotorControllers) throws SocketException {
 		if (Constants.TUNING_PIDS) {
@@ -37,6 +41,7 @@ public class TuneablePIDOSC {
 					List<Object> valArr = message.getArguments();
 
 					if (valArr.size() == 10) {
+						setIPAddress(message.getIPAddress());
 						setTuneablePIDData(processUDPPacket(valArr));
 						for (TuneableMotorController tmc : mcArr) {
 							if (autoUpdate) {
@@ -60,6 +65,7 @@ public class TuneablePIDOSC {
 					List<Object> valArr = message.getArguments();
 
 					if (valArr.size() == 1) {
+						setIPAddress(message.getIPAddress());
 						for (TuneableMotorController tmc : mcArr) {
 							tmc.setIAccum((double) valArr.get(0));
 						}
@@ -76,16 +82,27 @@ public class TuneablePIDOSC {
 
 			runThread = true;
 			Thread oscSenderThread = new Thread(() -> {
-				if (oscPortOut == null) {
-					try {
-						oscPortOut = new OSCPortOut(InetAddress.getByName(Constants.DASHBOARD_IP), portNumber);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
 				ThreadRateControl threadRateControl = new ThreadRateControl();
 				threadRateControl.start();
 				while (runThread) {
+					try {
+						if (oscPortOut == null || (IPAddress != null && !IPAddress.equals(prevIPAddress))) {
+							if (IPAddress != null) {
+								if (oscPortOut != null)
+									oscPortOut.close();
+								oscPortOut = new OSCPortOut(IPAddress, portNumber);
+								prevIPAddress = IPAddress;
+							}
+							else {
+								Thread.sleep(100);
+								continue;
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+						continue;
+					}
+
 					try {
 						oscPortOut.send(createSendData());
 					} catch (IOException e) {
@@ -99,17 +116,25 @@ public class TuneablePIDOSC {
 		}
 	}
 
+	private synchronized void setIPAddress(InetAddress ipAddr) {
+		try {
+			IPAddress = ipAddr;
+		} catch (Exception ex) {
+			IPAddress = null;
+		}
+	}
+
 	private OSCMessage createSendData() {
 		ArrayList<Object> args = new ArrayList<>();
 		if (mcArr.size() > 0) {
 			TuneableMotorController tmc = mcArr.get(0);
-			args.add(tmc.getActual());
-			args.add(tpd.setpoint);
-			args.add(tmc.getIntegralAccum());
+			args.add((double)tmc.getActual());
+			args.add((double)tpd.setpoint);
+			args.add((double)tmc.getIntegralAccum());
 		} else {
-			args.add(0);
-			args.add(tpd.setpoint);
-			args.add(0);
+			args.add((double)0);
+			args.add((double)tpd.setpoint);
+			args.add((double)0);
 		}
 		args.add(name);
 
