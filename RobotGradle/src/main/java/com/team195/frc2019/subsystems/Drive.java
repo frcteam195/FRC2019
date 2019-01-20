@@ -98,7 +98,7 @@ public class Drive extends Subsystem {
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveA.setInverted(true);
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveB.setInverted(true);
 
 //        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);

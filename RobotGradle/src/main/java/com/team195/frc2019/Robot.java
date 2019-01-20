@@ -188,7 +188,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
-			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
+//			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
