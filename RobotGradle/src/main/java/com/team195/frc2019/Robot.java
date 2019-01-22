@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		try {
 			CrashTracker.logRobotInit();
+			ConsoleReporter.getInstance().start();
 
 			DashJoyReceiver.getInstance();
 

@@ -14,6 +14,8 @@ public class ThreadRateControl {
 	private double mLoopTimeMS;
 	private MovingAverage mAverageLoopTime;
 
+	private double prevDtCalcTime;
+
 
 	public ThreadRateControl() {
 		startTime = 0;
@@ -21,6 +23,7 @@ public class ThreadRateControl {
 		mLoopTimeMS = 0;
 		endTime = 0;
 		elapsedTimeMS = 0;
+		prevDtCalcTime = 0;
 		started = false;
 		mAverageLoopTime = new MovingAverage(20);
 	}
@@ -35,6 +38,7 @@ public class ThreadRateControl {
 		if (!started) {
 			startTime = Timer.getFPGATimestamp();
 			mPrevStartTime = startTime;
+			getDt();
 			started = true;
 		} else {
 			ConsoleReporter.report("Thread rate control start called too many times!", MessageLevel.ERROR);
@@ -73,5 +77,12 @@ public class ThreadRateControl {
 
 	public double getAverageLoopTime() {
 		return mAverageLoopTime.getAverage();
+	}
+
+	public synchronized double getDt() {
+		double currDtCalcTime = Timer.getFPGATimestamp();
+		double dt = currDtCalcTime - prevDtCalcTime;
+		prevDtCalcTime = currDtCalcTime;
+		return dt;
 	}
 }

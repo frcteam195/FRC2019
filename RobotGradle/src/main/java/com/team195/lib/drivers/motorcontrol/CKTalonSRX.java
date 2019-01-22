@@ -50,6 +50,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 			enableCurrentLimit(true);
 			setSucceeded &= configForwardSoftLimitEnable(false, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
 			setSucceeded &= configReverseSoftLimitEnable(false, Constants.kLongCANTimeoutMs) == ErrorCode.OK;
+			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
 			ConsoleReporter.report("Failed to initialize Talon " + getDeviceID() + " !!!!!!", MessageLevel.DEFCON1);
@@ -147,7 +148,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		sb.append("General Status Frame 12: " + getStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, Constants.kLongCANTimeoutMs) + "\r\n");
 		sb.append("General Status Frame 13: " + getStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, Constants.kLongCANTimeoutMs) + "\r\n");
 		sb.append("General Status Frame 14: " + getStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, Constants.kLongCANTimeoutMs) + "\r\n");
-		sb.append("General Status Frame 15: " + getStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmareApiStatus, Constants.kLongCANTimeoutMs) + "\r\n");
+//		sb.append("General Status Frame 15: " + getStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmareApiStatus, Constants.kLongCANTimeoutMs) + "\r\n");
 		return sb.toString();
 	}
 
@@ -352,6 +353,11 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public double getMCOutputPercent() {
 		return getMotorOutputPercent();
+	}
+
+	@Override
+	public int getMCID() {
+		return getDeviceID();
 	}
 
 	@Override
