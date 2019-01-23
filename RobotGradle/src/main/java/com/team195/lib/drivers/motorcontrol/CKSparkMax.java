@@ -29,12 +29,12 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	private double prevMotionVelocitySetpoint = 0;
 	private double minSetpointOutput = 0;
-	private double allowedClosedLoopError = 0.2;
+	private double allowedClosedLoopError = 0.1;
 	private double lastNonZeroEncPosition = Double.longBitsToDouble(0x1L);
 	private double lastNonZeroEncVelocity = Double.longBitsToDouble(0x1L);
 	private MCControlMode currentControlMode = MCControlMode.PercentOut;
 
-	private final Thread motionMagicControlThread;
+	private Thread motionMagicControlThread;
 	private double motionMagicDemand = 0;
 	private int motionMagicSlotIdx = 0;
 	private double motionMagicArbitraryFF = 0;
@@ -53,20 +53,6 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 		setMinimumSetpointOutput(25);
 
-		//Instantiate Motion Magic Thread
-		motionMagicControlThread = new Thread(() -> {
-			ThreadRateControl trc = new ThreadRateControl();
-			trc.start();
-			while (currentControlMode == MCControlMode.MotionMagic) {
-				double demandStep = generateMotionMagicValue(getPosition(), motionMagicDemand, getVelocity(), trc.getDt());
-				prevMotionVelocitySetpoint = demandStep;
-				demandStep = Math.abs(demandStep) < minSetpointOutput ? 0 : demandStep;
-				canPIDController.setReference(demandStep, MCControlMode.Velocity.Rev(), motionMagicSlotIdx, motionMagicArbitraryFF * voltageCompensation);
-				trc.doRateControl(10);
-			}
-		});
-
-
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
@@ -80,22 +66,50 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		motionMagicControlThread = new Thread(() -> {});
 	}
 
+	private void startMotionMagicControlThread() {
+		if (motionMagicControlThread != null) {
+			if (!motionMagicControlThread.isAlive()) {
+				resetMotionMagicLambda();
+				motionMagicControlThread.start();
+			}
+		} else {
+			resetMotionMagicLambda();
+			motionMagicControlThread.start();
+		}
+	}
+
+	private void resetMotionMagicLambda() {
+		//Instantiate Motion Magic Thread
+		motionMagicControlThread = new Thread(() -> {
+			ThreadRateControl trc = new ThreadRateControl();
+			trc.start();
+			while (currentControlMode == MCControlMode.MotionMagic) {
+				double demandStep = generateMotionMagicValue(getPosition(), motionMagicDemand, getVelocity(), trc.getDt());
+				prevMotionVelocitySetpoint = demandStep;
+				demandStep = Math.abs(demandStep) < minSetpointOutput ? 0 : demandStep;
+				canPIDController.setReference(demandStep, MCControlMode.Velocity.Rev(), motionMagicSlotIdx, motionMagicArbitraryFF * voltageCompensation);
+				trc.doRateControl(10);
+			}
+		});
+	}
+
 	private void doDefaultConfig(Configuration config) {
+		//Fix encoder transient 0s which cause issues with all kinds of motion code
+		setCANTimeout(500);
+
 		setControlFramePeriod(config.CONTROL_FRAME_PERIOD_MS);
 		boolean setSucceeded;
-		int retryCounter = 3;
+		int retryCounter = 0;
 		do {
 			setSucceeded = setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS) == CANError.kOK;
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS) == CANError.kOK;
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
-			//Fix encoder transient 0s which cause issues with all kinds of motion code
-			setCANTimeout(500);
 			//Erase previously stored values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set PID Gains Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+			ConsoleReporter.report("Failed to config Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Deprecated
@@ -118,8 +132,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 				motionMagicDemand = demand;
 				motionMagicSlotIdx = slotIdx;
 				motionMagicArbitraryFF = arbitraryFeedForward;
-				if (!motionMagicControlThread.isAlive())
-					motionMagicControlThread.start();
+				startMotionMagicControlThread();
 			} else {
 				boolean setSucceeded;
 				int retryCounter = 1;
@@ -180,13 +193,14 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	//Filter 0 due to issue with API returning transient 0s
 	public double getVelocity() {
-		double encVel = canEncoder.getPosition();
-		if (encVel == 0) {
-			return lastNonZeroEncVelocity;
-		} else {
-			lastNonZeroEncVelocity = encVel;
-			return lastNonZeroEncVelocity;
-		}
+//		double encVel = canEncoder.getVelocity();
+//		if (encVel == 0) {
+//			return lastNonZeroEncVelocity;
+//		} else {
+//			lastNonZeroEncVelocity = encVel;
+//			return lastNonZeroEncVelocity;
+//		}
+		return canEncoder.getVelocity();
 	}
 
 	private synchronized void setLastNonZeroEncPosition(double position) {
@@ -232,7 +246,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = canPIDController.setP(kP, currentSelectedSlot) == CANError.kOK;
@@ -248,7 +262,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public void setIZone(double iZone) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = canPIDController.setIZone(iZone, currentSelectedSlot) == CANError.kOK;
@@ -271,7 +285,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public void setMCOpenLoopRampRate(double rampRate) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = setRampRate(rampRate) == CANError.kOK;
@@ -300,7 +314,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public void setBrakeCoastMode(MCNeutralMode neutralMode) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = setIdleMode(neutralMode.Rev()) == CANError.kOK;

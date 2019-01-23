@@ -35,7 +35,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 
 	private void doDefaultConfig(Configuration config) {
 		boolean setSucceeded;
-		int retryCounter = 3;
+		int retryCounter = 0;
 		do {
 			setSucceeded = clearStickyFaults(Constants.kLongCANTimeoutMs) == ErrorCode.OK;
 			setSucceeded &= setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS) == ErrorCode.OK;
@@ -148,7 +148,6 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		sb.append("General Status Frame 12: " + getStatusFramePeriod(StatusFrameEnhanced.Status_12_Feedback1, Constants.kLongCANTimeoutMs) + "\r\n");
 		sb.append("General Status Frame 13: " + getStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, Constants.kLongCANTimeoutMs) + "\r\n");
 		sb.append("General Status Frame 14: " + getStatusFramePeriod(StatusFrameEnhanced.Status_14_Turn_PIDF1, Constants.kLongCANTimeoutMs) + "\r\n");
-//		sb.append("General Status Frame 15: " + getStatusFramePeriod(StatusFrameEnhanced.Status_15_FirmareApiStatus, Constants.kLongCANTimeoutMs) + "\r\n");
 		return sb.toString();
 	}
 
@@ -183,7 +182,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = config_kP(currentSelectedSlot, kP, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -199,7 +198,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setIZone(double iZone) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = config_IntegralZone(currentSelectedSlot, (int)iZone, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -212,7 +211,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setIAccum(double iAccum) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = setIntegralAccumulator(iAccum, 0, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -225,7 +224,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setMaxIAccum(double maxIAccum) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = configMaxIntegralAccumulator(currentSelectedSlot, maxIAccum, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -238,7 +237,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setMCOpenLoopRampRate(double rampRate) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = configOpenloopRamp(rampRate, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -251,7 +250,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setMCClosedLoopRampRate(double rampRate) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = configClosedloopRamp(rampRate, Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -264,7 +263,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setMotionParameters(int cruiseVel, int cruiseAccel) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = configMotionCruiseVelocity(convertRPMToNativeUnits(cruiseVel), Constants.kCANTimeoutMs) == ErrorCode.OK;
@@ -289,7 +288,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void setEncoderPosition(double position) {
 		boolean setSucceeded;
-		int retryCounter = 1;
+		int retryCounter = 0;
 
 		do {
 			setSucceeded = setSelectedSensorPosition(convertRotationsToNativeUnits(position), 0, Constants.kCANTimeoutMs) == ErrorCode.OK;
