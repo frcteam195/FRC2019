@@ -24,6 +24,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		super(deviceId);
 		motorBreaker = breakerCurrent;
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
+		System.out.println("\n\n\n\nSomething\n\n\n\n");
 	}
 
 	public CKTalonSRX(int deviceId, TalonSRX masterTalon, PDPBreaker breakerCurrent) {
@@ -161,11 +162,6 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		set(MCControlMode.valueOf(mode), demand0, currentSelectedSlot, demand1);
 	}
 
-	@Deprecated
-	public void set(ControlMode mode, double demand0, DemandType demand1Type, double demand1){
-		set(MCControlMode.valueOf(mode), demand0, currentSelectedSlot, demand1);
-	}
-
 	@Override
 	public void set(MCControlMode controlMode, double demand, int slotIdx, double arbitraryFeedForward) {
 		if (currentSelectedSlot != slotIdx)
@@ -196,6 +192,11 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public void setDFilter(double dFilter) {
+
+	}
+
+	@Override
 	public void setIZone(double iZone) {
 		boolean setSucceeded;
 		int retryCounter = 0;
@@ -209,7 +210,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
-	public void setIAccum(double iAccum) {
+	public void setMCIAccum(double iAccum) {
 		boolean setSucceeded;
 		int retryCounter = 0;
 
@@ -400,7 +401,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
-	public double getIntegralAccum() {
+	public double getMCIAccum() {
 		return getIntegralAccumulator();
 	}
 
@@ -438,3 +439,4 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		}
 	}
 }
+

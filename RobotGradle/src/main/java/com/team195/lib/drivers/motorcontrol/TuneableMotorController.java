@@ -13,9 +13,11 @@ public interface TuneableMotorController {
 
 	void setPIDF(double kP, double kI, double kD, double kF);
 
+	void setDFilter(double dFilter);
+
 	void setIZone(double iZone);
 
-	void setIAccum(double iAccum);
+	void setMCIAccum(double iAccum);
 
 	void setMaxIAccum(double maxIAccum);
 
@@ -52,7 +54,7 @@ public interface TuneableMotorController {
 
 	double getNativeUnitsOutputRange();
 
-	double getIntegralAccum();
+	double getMCIAccum();
 
 	double getMCOutputCurrent();
 

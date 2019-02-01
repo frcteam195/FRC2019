@@ -76,12 +76,12 @@ public class Constants {
 
 
     // Drive
-    public static final int kLeftDriveMasterId = 1;
-    public static final int kLeftDriveSlaveAId = 2;
-    public static final int kLeftDriveSlaveBId = 3;
-    public static final int kRightDriveMasterId = 4;
-    public static final int kRightDriveSlaveAId = 5;
-    public static final int kRightDriveSlaveBId = 6;
+    public static final int kLeftDriveMasterId =4;
+    public static final int kLeftDriveSlaveAId = 5;
+    public static final int kLeftDriveSlaveBId = 6;
+    public static final int kRightDriveMasterId = 1;
+    public static final int kRightDriveSlaveAId = 2;
+    public static final int kRightDriveSlaveBId = 3;
 
     // Solenoids
     public static final int kShifterSolenoidId = 12; // PCM 0, Solenoid 4

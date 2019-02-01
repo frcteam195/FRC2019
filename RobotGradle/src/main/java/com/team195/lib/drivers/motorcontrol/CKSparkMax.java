@@ -11,10 +11,10 @@ import java.util.Optional;
 
 public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private int currentSelectedSlot = 0;
-	private final CANPIDController canPIDController;
-	private final CANEncoder canEncoder;
+	public final CANPIDController canPIDController;
+	public final CANEncoder canEncoder;
 	private double prevOutput = Double.MIN_VALUE;
-	private double encoderOffset = 0;
+	private double setpoint = 0;
 
 //	private Configuration fastMasterConfig = new Configuration(5, 5, 20, 50);
 //	private Configuration normalMasterConfig = new Configuration(10, 10, 20, 50);
@@ -27,22 +27,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private double voltageCompensation = 12;
 	private final PDPBreaker motorBreaker;
 
-	private double prevMotionVelocitySetpoint = 0;
-	private double minSetpointOutput = 0;
-	private double allowedClosedLoopError = 0.1;
-	private double lastNonZeroEncPosition = Double.longBitsToDouble(0x1L);
-	private double lastNonZeroEncVelocity = Double.longBitsToDouble(0x1L);
 	private MCControlMode currentControlMode = MCControlMode.PercentOut;
-
-	private Thread motionMagicControlThread;
-	private double motionMagicDemand = 0;
-	private int motionMagicSlotIdx = 0;
-	private double motionMagicArbitraryFF = 0;
-	private double motionMagicMaxVelocity = 0;
-	private double motionMagicMaxAccel = 0;
-
-	private double speedNew = 0;
-	private double decelVelocity = 0;
 
 	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
 		super(deviceID, type);
@@ -52,7 +37,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		canPIDController.setOutputRange(-1, 1);
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 		setMinimumSetpointOutput(25);
-
+		setBrakeCoastMode(MCNeutralMode.Brake);
+		setMCOpenLoopRampRate(0.1);
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
@@ -62,35 +48,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		canEncoder = getEncoder();
 		doDefaultConfig(normalSlaveConfig);
 		follow(masterSpark);
-
-		motionMagicControlThread = new Thread(() -> {});
-	}
-
-	private void startMotionMagicControlThread() {
-		if (motionMagicControlThread != null) {
-			if (!motionMagicControlThread.isAlive()) {
-				resetMotionMagicLambda();
-				motionMagicControlThread.start();
-			}
-		} else {
-			resetMotionMagicLambda();
-			motionMagicControlThread.start();
-		}
-	}
-
-	private void resetMotionMagicLambda() {
-		//Instantiate Motion Magic Thread
-		motionMagicControlThread = new Thread(() -> {
-			ThreadRateControl trc = new ThreadRateControl();
-			trc.start();
-			while (currentControlMode == MCControlMode.MotionMagic) {
-				double demandStep = generateMotionMagicValue(getPosition(), motionMagicDemand, getVelocity(), trc.getDt());
-				prevMotionVelocitySetpoint = demandStep;
-				demandStep = Math.abs(demandStep) < minSetpointOutput ? 0 : demandStep;
-				canPIDController.setReference(demandStep, MCControlMode.Velocity.Rev(), motionMagicSlotIdx, motionMagicArbitraryFF * voltageCompensation);
-				trc.doRateControl(10);
-			}
-		});
+		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 	}
 
 	private void doDefaultConfig(Configuration config) {
@@ -127,94 +85,37 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode != currentControlMode) {
 			currentControlMode = controlMode;
+			setpoint = demand;
 
-			if (controlMode == MCControlMode.MotionMagic) {
-				motionMagicDemand = demand;
-				motionMagicSlotIdx = slotIdx;
-				motionMagicArbitraryFF = arbitraryFeedForward;
-				startMotionMagicControlThread();
-			} else {
-				boolean setSucceeded;
-				int retryCounter = 1;
+			boolean setSucceeded;
+			int retryCounter = 1;
 
-				do {
-					System.out.println(getPosition());
-					setSucceeded = canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward * voltageCompensation) == CANError.kOK;
-				} while (!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+			do {
+				System.out.println(getPosition());
+				setSucceeded = canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward * voltageCompensation) == CANError.kOK;
+			} while (!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 
-				if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-					ConsoleReporter.report("Failed to set output Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
-			}
+			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+				ConsoleReporter.report("Failed to set output Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 
 			prevOutput = demand + arbitraryFeedForward;
 		}
 	}
 
-	public double getMotionPositionSetpoint() {
-		return motionMagicDemand;
-	}
-
-	public double getPrevMotionVelocitySetpoint() {
-		return prevMotionVelocitySetpoint;
-	}
-
 	public synchronized void setMinimumSetpointOutput(double minSetpointOutput) {
-		this.minSetpointOutput = minSetpointOutput;
+		canPIDController.setSmartMotionMinOutputVelocity(minSetpointOutput, currentSelectedSlot);
 	}
 
 	public synchronized void setAllowedClosedLoopError(double allowedClosedLoopError) {
-		this.allowedClosedLoopError = allowedClosedLoopError;
+		canPIDController.setSmartMotionAllowedClosedLoopError(allowedClosedLoopError, currentSelectedSlot);
 	}
 
-	private double generateMotionMagicValue(double position, double setpoint, double speed, double dt) {
-		double diffErr = setpoint - position;
-		double sign = Math.signum(diffErr);
-		diffErr = Math.abs(diffErr);
-		if (motionMagicMaxVelocity == 0 || motionMagicMaxAccel == 0 || diffErr <= allowedClosedLoopError)
-			return 0;
-
-		speedNew = Math.abs(prevMotionVelocitySetpoint) + motionMagicMaxAccel * dt;
-		speedNew = speedNew > motionMagicMaxVelocity ? motionMagicMaxVelocity : speedNew;
-		double decelTime = Math.sqrt(diffErr * 2 / (motionMagicMaxAccel * 60));
-		decelVelocity = decelTime * (motionMagicMaxAccel * 60);
-		return sign * (speedNew <= decelVelocity ? speedNew : decelVelocity);
-	}
-
-	//Filter 0 due to issue with API returning transient 0s
 	public double getPosition() {
-		double encPos = canEncoder.getPosition();
-		if (encPos == 0) {
-			return lastNonZeroEncPosition;
-		} else {
-			setLastNonZeroEncPosition(encPos + encoderOffset);
-			return lastNonZeroEncPosition;
-		}
+		return canEncoder.getPosition();
 	}
 
-	//Filter 0 due to issue with API returning transient 0s
 	public double getVelocity() {
-//		double encVel = canEncoder.getVelocity();
-//		if (encVel == 0) {
-//			return lastNonZeroEncVelocity;
-//		} else {
-//			lastNonZeroEncVelocity = encVel;
-//			return lastNonZeroEncVelocity;
-//		}
 		return canEncoder.getVelocity();
-	}
-
-	private synchronized void setLastNonZeroEncPosition(double position) {
-		lastNonZeroEncPosition = position;
-	}
-
-	//TODO: Remove
-	public double getSpeedNew() {
-		return speedNew;
-	}
-
-	//TODO: Remove
-	public double getDecelVelocity() {
-		return decelVelocity;
 	}
 
 	@Override
@@ -222,6 +123,10 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 //		return 42;
 		//TODO: Change this after testing what position units are in for Rev
 		return 1;
+	}
+
+	public double getSetpoint() {
+		return setpoint;
 	}
 
 	@Override
@@ -260,6 +165,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
+	public void setDFilter(double dFilter) {
+		canPIDController.setDFilter(dFilter, currentSelectedSlot);
+	}
+
+	@Override
 	public void setIZone(double iZone) {
 		boolean setSucceeded;
 		int retryCounter = 0;
@@ -273,13 +183,13 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
-	public void setIAccum(double iAccum) {
-
+	public void setMCIAccum(double iAccum) {
+		canPIDController.setIAccum(iAccum);
 	}
 
 	@Override
 	public void setMaxIAccum(double maxIAccum) {
-
+		canPIDController.setIMaxAccum(maxIAccum, currentSelectedSlot);
 	}
 
 	@Override
@@ -302,8 +212,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public synchronized void setMotionParameters(int cruiseVel, int cruiseAccel) {
-		motionMagicMaxAccel = cruiseAccel;
-		motionMagicMaxVelocity = cruiseVel;
+		canPIDController.setSmartMotionMaxVelocity(cruiseVel, currentSelectedSlot);
+		canPIDController.setSmartMotionMaxAccel(cruiseAccel, currentSelectedSlot);
 	}
 
 	@Override
@@ -321,17 +231,12 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+			ConsoleReporter.report("Failed to set Idle Mode Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override
 	public synchronized void setEncoderPosition(double position) {
-		setEncoderOffset(position - getPosition());
-		setLastNonZeroEncPosition(position == 0 ? Double.longBitsToDouble(0x1L) : position);
-	}
-
-	private synchronized void setEncoderOffset(double offset) {
-		encoderOffset = offset;
+		canEncoder.setPosition(position);
 	}
 
 	private synchronized void setCurrentSelectedSlot(int slotIdx) {
@@ -345,6 +250,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			currentControlMode = controlMode;
 			switch (controlMode) {
 				case Position:
+				case MotionMagic:
 					set(controlMode, canEncoder.getPosition(), currentSelectedSlot, 0);
 					break;
 				case PercentOut:
@@ -372,6 +278,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			case kVoltage:
 				return getAppliedOutput() * voltageCompensation;
 			case kPosition:
+			case kSmartMotion:
 				return canEncoder.getPosition();
 			default:
 				return 0;
@@ -379,8 +286,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
-	public double getIntegralAccum() {
-		return 0;
+	public double getMCIAccum() {
+		return canPIDController.getIAccum();
 	}
 
 	@Override
@@ -457,6 +364,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 				return ControlType.kVoltage;
 			case 3:
 				return ControlType.kPosition;
+			case 4:
+				return ControlType.kSmartMotion;
 			default:
 				return ControlType.kDutyCycle;
 		}

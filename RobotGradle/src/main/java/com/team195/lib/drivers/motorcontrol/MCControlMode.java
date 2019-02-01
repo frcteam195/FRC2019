@@ -63,7 +63,7 @@ public enum MCControlMode {
 		}
 		@Override
 		public ControlType Rev() {
-			return ControlType.kDutyCycle;
+			return ControlType.kSmartMotion;
 		}
 	},
 	Disabled(15) {
@@ -102,6 +102,8 @@ public enum MCControlMode {
 		revLookupMap.put(ControlType.kPosition, Position);
 		revLookupMap.put(ControlType.kVelocity, Velocity);
 		revLookupMap.put(ControlType.kVoltage, Voltage);
+		revLookupMap.put(ControlType.kSmartMotion, MotionMagic);
+
 	}
 
 	public static MCControlMode valueOf(Object value) {

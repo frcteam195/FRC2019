@@ -239,9 +239,9 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.kauailabs.navx.frc/navx-java/3.1.344/d4d52e9506c6d7a139b3a473ce62d4b2d2ed6019/navx-java-3.1.344-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.revrobotics.frc:SparkMax-java:1.0.27">
+    <library name="Gradle: com.revrobotics.frc:SparkMax-java:1.0.29">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.0.27/891cdcbe2d7e45894bf8cbfda924aad14b184546/SparkMax-java-1.0.27.jar!/" />
+        <root url="jar://$USER_HOME$/frc2019/maven/com/revrobotics/frc/SparkMax-java/1.0.29/SparkMax-java-1.0.29.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

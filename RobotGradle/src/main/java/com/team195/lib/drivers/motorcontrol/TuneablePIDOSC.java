@@ -67,7 +67,7 @@ public class TuneablePIDOSC {
 					if (valArr.size() == 1) {
 						setIPAddress(message.getIPAddress());
 						for (TuneableMotorController tmc : mcArr) {
-							tmc.setIAccum((double) valArr.get(0));
+							tmc.setMCIAccum((double) valArr.get(0));
 						}
 					}
 
@@ -130,7 +130,7 @@ public class TuneablePIDOSC {
 			TuneableMotorController tmc = mcArr.get(0);
 			args.add((double)tmc.getActual());
 			args.add((double)tpd.setpoint);
-			args.add((double)tmc.getIntegralAccum());
+			args.add((double)tmc.getMCIAccum());
 		} else {
 			args.add((double)0);
 			args.add((double)tpd.setpoint);

@@ -2,9 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b9ed637-5271-42da-b75f-b413d8c023ca" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/RobotGradle.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RobotGradle.main.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RobotGradle.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RobotGradle.test.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Team195_2019.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Team195_2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.iws" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vendordeps/REVRobotics.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendordeps/REVRobotics.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -99,63 +107,47 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="180" column="5" lean-forward="true" selection-start-line="180" selection-start-column="5" selection-end-line="180" selection-end-column="5" />
+            <state relative-caret-position="-1654">
+              <caret line="40" column="35" lean-forward="true" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#5909#5910#0" expanded="true" />
-                <element signature="e#5940#5941#0" expanded="true" />
-                <element signature="e#5990#5991#0" expanded="true" />
-                <element signature="e#6030#6031#0" expanded="true" />
-                <element signature="e#7691#7692#0" expanded="true" />
-                <element signature="e#7731#7732#0" expanded="true" />
-                <element signature="e#7779#7780#0" expanded="true" />
-                <element signature="e#7801#7802#0" expanded="true" />
-                <element signature="e#7854#7855#0" expanded="true" />
-                <element signature="e#7881#7882#0" expanded="true" />
-                <element signature="e#8105#8106#0" expanded="true" />
-                <element signature="e#8120#8121#0" expanded="true" />
-                <element signature="e#8177#8178#0" expanded="true" />
-                <element signature="e#8194#8195#0" expanded="true" />
-                <element signature="e#8420#8421#0" expanded="true" />
-                <element signature="e#8456#8457#0" expanded="true" />
-                <element signature="e#10256#10257#0" expanded="true" />
-                <element signature="e#10294#10295#0" expanded="true" />
-                <element signature="e#10519#10520#0" expanded="true" />
-                <element signature="e#10557#10558#0" expanded="true" />
-                <element signature="e#11284#11285#0" expanded="true" />
-                <element signature="e#11313#11314#0" expanded="true" />
-                <element signature="e#11379#11380#0" expanded="true" />
-                <element signature="e#11415#11416#0" expanded="true" />
-                <element signature="e#11910#11911#0" expanded="true" />
-                <element signature="e#11978#11979#0" expanded="true" />
-                <element signature="e#12364#12365#0" expanded="true" />
-                <element signature="e#12379#12380#0" expanded="true" />
-                <element signature="e#12429#12430#0" expanded="true" />
-                <element signature="e#12461#12462#0" expanded="true" />
-                <element signature="e#12511#12512#0" expanded="true" />
-                <element signature="e#12543#12544#0" expanded="true" />
-                <element signature="e#12579#12580#0" expanded="true" />
-                <element signature="e#12606#12607#0" expanded="true" />
-                <element signature="e#12655#12656#0" expanded="true" />
-                <element signature="e#12684#12685#0" expanded="true" />
-                <element signature="e#12734#12735#0" expanded="true" />
-                <element signature="e#12788#12789#0" expanded="true" />
-                <element signature="e#13696#13697#0" expanded="true" />
-                <element signature="e#13728#13729#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6030">
-              <caret line="440" lean-forward="true" selection-start-line="440" selection-end-line="440" />
+            <state relative-caret-position="480">
+              <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="60">
+              <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3015">
+              <caret line="85" column="30" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -188,8 +180,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/DashJoy/DashJoyData.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/dashjoy/DashJoyData.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/dashjoy/CKDashJoystick.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/dashjoy/DashJoyReceiver.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/TuneableMotorController.java" />
@@ -228,17 +218,19 @@
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DesiredMode.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/AutoModeSelector.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoConstants.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/SubsystemManager.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/PDPBreaker.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Looper.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java" />
+        <option value="$PROJECT_DIR$/vendordeps/REVRobotics.json" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" />
       </list>
     </option>
   </component>
@@ -270,8 +262,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="ProjectPane" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
@@ -303,7 +293,7 @@
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
+              <item name="frc2019" type="1f31426a:PackageElementNode" />
             </path>
             <path>
               <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
@@ -311,32 +301,30 @@
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-              <item name="motorcontrol" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="util" type="1f31426a:PackageElementNode" />
+              <item name="frc2019" type="1f31426a:PackageElementNode" />
+              <item name="subsystems" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="RobotGradle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RobotGradle" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+            </path>
+            <path>
+              <item name="RobotGradle" type="b2602c69:ProjectViewProjectNode" />
+              <item name="RobotGradle" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="vendordeps" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -387,7 +375,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Gradle.Team195_2019 [build]">
+  <component name="RunManager" selected="Gradle.Team195_2019 [deploy]">
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
       <Port>5050</Port>
@@ -539,6 +527,10 @@
       <workItem from="1548143747499" duration="688000" />
       <workItem from="1548145371177" duration="484000" />
       <workItem from="1548221084221" duration="111000" />
+      <workItem from="1548294683121" duration="1454000" />
+      <workItem from="1548981806401" duration="430000" />
+      <workItem from="1548983411962" duration="741000" />
+      <workItem from="1548985584650" duration="1781000" />
     </task>
     <task id="LOCAL-00001" summary="Line indentation testing">
       <created>1547620138702</created>
@@ -593,7 +585,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="84301000" />
+    <option name="totallyTimeSpent" value="88707000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -608,7 +600,7 @@
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24114774" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25335777" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -637,7 +629,7 @@
       <window_info anchor="bottom" id="Duplicate detector" order="18" weight="0.32959184" />
       <window_info anchor="bottom" id="Messages" order="19" weight="0.32959184" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.24969475" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Gradle" order="3" weight="0.32967034" />
       <window_info anchor="right" id="Maven" order="4" weight="0.32967034" />
@@ -666,56 +658,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="Add update to current limiting" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ElapsedTimer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/dashjoy/DashJoyReceiver.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="26" selection-start-line="26" selection-end-line="81" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCNeutralMode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="50" selection-start-line="50" selection-end-line="66" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DesiredMode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="30" column="1" lean-forward="true" selection-start-line="30" selection-start-column="1" selection-end-line="30" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/reporters/DiagnosticMessage.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoConstants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="40" selection-start-line="3" selection-start-column="40" selection-end-line="3" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ShiftHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
@@ -815,17 +762,6 @@
           <folding>
             <element signature="e#1753#1754#0" expanded="true" />
             <element signature="e#1774#1775#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="615">
-          <caret line="41" lean-forward="true" selection-start-line="41" selection-end-line="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3944#3945#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -948,13 +884,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="79" selection-start-line="79" selection-end-line="83" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.0.26/e527062dac6f8cecda9b70001561d32b2b9f0416/SparkMax-java-1.0.26.jar!/com/revrobotics/CANSparkMax.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="415">
@@ -970,13 +899,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -997,26 +919,130 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team254/lib/util/MovingAverage.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1095">
-          <caret line="78" column="28" selection-start-line="78" selection-start-column="28" selection-end-line="78" selection-end-column="28" />
+        <state relative-caret-position="105">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java">
+    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk-11.0.1.jdk/Contents/Home/lib/src.zip!/java.base/java/util/concurrent/atomic/AtomicInteger.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1155">
-          <caret line="79" column="9" selection-start-line="79" selection-start-column="9" selection-end-line="79" selection-end-column="9" />
+        <state relative-caret-position="270">
+          <caret line="53" column="13" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/frc2019/maven/edu/wpi/first/wpilibj/wpilibj-java/2019.1.1/wpilibj-java-2019.1.1-sources.jar!/edu/wpi/first/wpilibj/Notifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="67" column="24" lean-forward="true" selection-start-line="67" selection-start-column="24" selection-end-line="67" selection-end-column="24" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2612#2613#0" expanded="true" />
+            <element signature="e#2666#2667#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="60" column="66" selection-start-line="60" selection-start-column="66" selection-end-line="60" selection-end-column="66" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="jar://$USER_HOME$/frc2019/maven/edu/wpi/first/hal/hal-java/2019.1.1/hal-java-2019.1.1-sources.jar!/edu/wpi/first/hal/NotifierJNI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="35" column="28" selection-start-line="35" selection-start-column="28" selection-end-line="35" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/frc2019/maven/edu/wpi/first/wpilibj/wpilibj-java/2019.1.1/wpilibj-java-2019.1.1-sources.jar!/edu/wpi/first/wpilibj/RobotController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="51" column="21" selection-start-line="51" selection-start-column="21" selection-end-line="51" selection-end-column="21" />
+          <folding>
+            <element signature="e#1758#1759#0" expanded="true" />
+            <element signature="e#1796#1797#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1800">
+          <caret line="132" column="46" selection-start-line="132" selection-start-column="46" selection-end-line="132" selection-end-column="46" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCNeutralMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="83" column="51" selection-start-line="83" selection-start-column="51" selection-end-line="83" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/vendordeps/REVRobotics.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="30" selection-start-line="21" selection-start-column="30" selection-end-line="21" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="133" selection-start-line="133" selection-end-line="133" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1207#1208#0" expanded="true" />
+            <element signature="e#1247#1248#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="441" selection-start-line="441" selection-end-line="441" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="580">
+          <caret line="115" selection-start-line="115" selection-end-line="115" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="690">
+        <state relative-caret-position="480">
           <caret line="48" lean-forward="true" selection-start-line="48" selection-end-line="48" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1024,76 +1050,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="16" column="33" lean-forward="true" selection-start-line="16" selection-start-column="33" selection-end-line="16" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="44" column="25" lean-forward="true" selection-start-line="44" selection-start-column="25" selection-end-line="44" selection-end-column="25" />
+        <state relative-caret-position="-1654">
+          <caret line="40" column="35" lean-forward="true" selection-start-line="40" selection-start-column="35" selection-end-line="40" selection-end-column="35" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6030">
-          <caret line="440" lean-forward="true" selection-start-line="440" selection-end-line="440" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="180" column="5" lean-forward="true" selection-start-line="180" selection-start-column="5" selection-end-line="180" selection-end-column="5" />
+        <state relative-caret-position="-3015">
+          <caret line="85" column="30" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#5909#5910#0" expanded="true" />
-            <element signature="e#5940#5941#0" expanded="true" />
-            <element signature="e#5990#5991#0" expanded="true" />
-            <element signature="e#6030#6031#0" expanded="true" />
-            <element signature="e#7691#7692#0" expanded="true" />
-            <element signature="e#7731#7732#0" expanded="true" />
-            <element signature="e#7779#7780#0" expanded="true" />
-            <element signature="e#7801#7802#0" expanded="true" />
-            <element signature="e#7854#7855#0" expanded="true" />
-            <element signature="e#7881#7882#0" expanded="true" />
-            <element signature="e#8105#8106#0" expanded="true" />
-            <element signature="e#8120#8121#0" expanded="true" />
-            <element signature="e#8177#8178#0" expanded="true" />
-            <element signature="e#8194#8195#0" expanded="true" />
-            <element signature="e#8420#8421#0" expanded="true" />
-            <element signature="e#8456#8457#0" expanded="true" />
-            <element signature="e#10256#10257#0" expanded="true" />
-            <element signature="e#10294#10295#0" expanded="true" />
-            <element signature="e#10519#10520#0" expanded="true" />
-            <element signature="e#10557#10558#0" expanded="true" />
-            <element signature="e#11284#11285#0" expanded="true" />
-            <element signature="e#11313#11314#0" expanded="true" />
-            <element signature="e#11379#11380#0" expanded="true" />
-            <element signature="e#11415#11416#0" expanded="true" />
-            <element signature="e#11910#11911#0" expanded="true" />
-            <element signature="e#11978#11979#0" expanded="true" />
-            <element signature="e#12364#12365#0" expanded="true" />
-            <element signature="e#12379#12380#0" expanded="true" />
-            <element signature="e#12429#12430#0" expanded="true" />
-            <element signature="e#12461#12462#0" expanded="true" />
-            <element signature="e#12511#12512#0" expanded="true" />
-            <element signature="e#12543#12544#0" expanded="true" />
-            <element signature="e#12579#12580#0" expanded="true" />
-            <element signature="e#12606#12607#0" expanded="true" />
-            <element signature="e#12655#12656#0" expanded="true" />
-            <element signature="e#12684#12685#0" expanded="true" />
-            <element signature="e#12734#12735#0" expanded="true" />
-            <element signature="e#12788#12789#0" expanded="true" />
-            <element signature="e#13696#13697#0" expanded="true" />
-            <element signature="e#13728#13729#0" expanded="true" />
           </folding>
         </state>
       </provider>
