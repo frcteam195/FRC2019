@@ -31,6 +31,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
 		super(deviceID, type);
+//		restoreFactoryDefaults(true);
 		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
@@ -43,6 +44,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
 		super(deviceID, type);
+//		restoreFactoryDefaults(true);
 		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
@@ -63,6 +65,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS) == CANError.kOK;
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
+			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
 			//Erase previously stored values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
@@ -198,16 +201,24 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		int retryCounter = 0;
 
 		do {
-			setSucceeded = setRampRate(rampRate) == CANError.kOK;
+			setSucceeded = setOpenLoopRampRate(rampRate) == CANError.kOK;
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+			ConsoleReporter.report("Failed to set Open Loop Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override
 	public void setMCClosedLoopRampRate(double rampRate) {
-		setMCOpenLoopRampRate(rampRate);
+		boolean setSucceeded;
+		int retryCounter = 0;
+
+		do {
+			setSucceeded = setClosedLoopRampRate(rampRate) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set Closed Loop Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override
