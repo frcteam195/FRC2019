@@ -11,6 +11,7 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.PercentOutput;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kDutyCycle;
@@ -21,6 +22,7 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.Position;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kPosition;
@@ -31,6 +33,7 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.Velocity;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kVelocity;
@@ -41,6 +44,7 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.Current;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kDutyCycle;
@@ -51,6 +55,7 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.Disabled;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kVoltage;
@@ -61,9 +66,32 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.MotionMagic;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kSmartMotion;
+		}
+	},
+	SmartVelocity(6) {
+		@Override
+		public ControlMode CTRE() {
+			return ControlMode.Velocity;
+		}
+
+		@Override
+		public ControlType Rev() {
+			return ControlType.kSmartVelocity;
+		}
+	},
+	MotionVoodooArbFF(7) {
+		@Override
+		public ControlMode CTRE() {
+			return ControlMode.Velocity;
+		}
+
+		@Override
+		public ControlType Rev() {
+			return ControlType.kVelocity;
 		}
 	},
 	Disabled(15) {
@@ -71,22 +99,18 @@ public enum MCControlMode {
 		public ControlMode CTRE() {
 			return ControlMode.Disabled;
 		}
+
 		@Override
 		public ControlType Rev() {
 			return ControlType.kDutyCycle;
 		}
 	};
 
-	public final int value;
-	MCControlMode(int initValue)
-	{
-		this.value = initValue;
-	}
-
 	// Keep static maps to do fast lookup on control types via int and other motor library types
 	private static HashMap<Integer, MCControlMode> intLookupMap = new HashMap<>();
 	private static HashMap<ControlMode, MCControlMode> ctreLookupMap = new HashMap<>();
 	private static HashMap<ControlType, MCControlMode> revLookupMap = new HashMap<>();
+
 	static {
 		for (MCControlMode type : MCControlMode.values()) {
 			intLookupMap.put(type.value, type);
@@ -103,7 +127,13 @@ public enum MCControlMode {
 		revLookupMap.put(ControlType.kVelocity, Velocity);
 		revLookupMap.put(ControlType.kVoltage, Voltage);
 		revLookupMap.put(ControlType.kSmartMotion, MotionMagic);
+		revLookupMap.put(ControlType.kSmartVelocity, SmartVelocity);
+	}
 
+	public final int value;
+
+	MCControlMode(int initValue) {
+		this.value = initValue;
 	}
 
 	public static MCControlMode valueOf(Object value) {
@@ -125,6 +155,7 @@ public enum MCControlMode {
 	}
 
 	public abstract ControlMode CTRE();
+
 	public abstract ControlType Rev();
 
 	@Override
