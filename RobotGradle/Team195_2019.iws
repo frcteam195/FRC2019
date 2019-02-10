@@ -6,11 +6,8 @@
       <change beforePath="$PROJECT_DIR$/RobotGradle.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RobotGradle.test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Team195_2019.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Team195_2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vendordeps/REVRobotics.json" beforeDir="false" afterPath="$PROJECT_DIR$/vendordeps/REVRobotics.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -122,71 +119,7 @@
     </system>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3772">
-              <caret line="387" selection-start-line="387" selection-end-line="387" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="711">
-              <caret line="130" column="5" lean-forward="true" selection-start-line="130" selection-start-column="5" selection-end-line="130" selection-end-column="5" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="435">
-              <caret line="438" column="26" lean-forward="true" selection-start-line="438" selection-start-column="26" selection-end-line="438" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.13.0/d556f9757205f08a4106a6072291b7a8f2f00b9c/api-java-5.13.0-sources.jar!/com/ctre/phoenix/motorcontrol/can/BaseMotorController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="2073" column="18" selection-start-line="2073" selection-start-column="18" selection-end-line="2073" selection-end-column="18" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCNeutralMode.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="843">
-              <caret line="118" selection-start-line="118" selection-end-line="118" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -216,7 +149,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/TuneableMotorController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/CKTalonSRX.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/TuneablePID.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/drivers/CKSparkMax.java" />
@@ -267,6 +199,7 @@
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" />
+        <option value="$PROJECT_DIR$/build.gradle" />
       </list>
     </option>
   </component>
@@ -294,104 +227,10 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="PackagesPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="frc2019" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-              <item name="motorcontrol" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="util" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team254.lib" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team254.lib" type="1f31426a:PackageElementNode" />
-              <item name="util" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.test" type="616d4139:PackageViewModuleNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -399,15 +238,22 @@
               <item name="RobotGradle" type="b2602c69:ProjectViewProjectNode" />
               <item name="RobotGradle" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
+          <expand>
             <path>
-              <item name="RobotGradle" type="b2602c69:ProjectViewProjectNode" />
-              <item name="RobotGradle" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="vendordeps" type="462c0819:PsiDirectoryNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
+              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -622,7 +468,9 @@
       <workItem from="1549401258429" duration="1411000" />
       <workItem from="1549427678068" duration="272000" />
       <workItem from="1549604764461" duration="2782000" />
-      <workItem from="1549675140777" duration="425000" />
+      <workItem from="1549675140777" duration="626000" />
+      <workItem from="1549816802030" duration="108000" />
+      <workItem from="1549817989877" duration="66000" />
     </task>
     <task id="LOCAL-00001" summary="Line indentation testing">
       <created>1547620138702</created>
@@ -677,7 +525,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="96222000" />
+    <option name="totallyTimeSpent" value="96597000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -690,9 +538,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2020757" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20695971" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -723,7 +570,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.24969475" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Gradle" order="3" weight="0.32967034" />
+      <window_info anchor="right" id="Gradle" order="3" visible="true" weight="0.32967034" />
       <window_info anchor="right" id="Maven" order="4" weight="0.32967034" />
       <window_info anchor="right" id="Palette" order="5" />
       <window_info anchor="right" id="Capture Analysis" order="6" />
@@ -755,13 +602,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/team195/frc2019/TestSystemTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/team195/frc2019/AutoModeTiming.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-50">
@@ -1092,16 +932,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="843">
-          <caret line="118" selection-start-line="118" selection-end-line="118" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="711">
@@ -1119,10 +949,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="843">
+          <caret line="118" selection-start-line="118" selection-end-line="118" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="435">
-          <caret line="438" column="26" lean-forward="true" selection-start-line="438" selection-start-column="26" selection-end-line="438" selection-end-column="26" />
+        <state relative-caret-position="321">
+          <caret line="107" column="47" selection-start-line="107" selection-start-column="47" selection-end-line="107" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="51" selection-start-line="13" selection-start-column="51" selection-end-line="13" selection-end-column="51" />
         </state>
       </provider>
     </entry>
