@@ -67,7 +67,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-
 	}
 
 	@Override
@@ -133,9 +132,11 @@ public class Robot extends TimedRobot {
 //                turn *= Constants.kLowSensitivityFactor;
 //            }
 			mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+			System.out.println("AvgVel:"+(Drive.getInstance().getLeftEncoderVelocityRPM() + Drive.getInstance().getLeftEncoderVelocityRPM())/2.0);
 
 
 		} catch (Throwable t) {
+			System.out.println(t.toString());
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}

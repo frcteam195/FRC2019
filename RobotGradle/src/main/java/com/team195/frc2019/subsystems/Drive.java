@@ -85,21 +85,31 @@ public class Drive extends Subsystem {
 
 		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.setInverted(false);
+		mLeftMaster.setOpenLoopRampRate(0.1);
+		mLeftMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
+		mLeftMaster.setMotionParameters(10000, 500);
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveA.setInverted(false);
+		mLeftSlaveA.setOpenLoopRampRate(0.1);
 
 		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveB.setInverted(false);
+		mLeftSlaveB.setOpenLoopRampRate(0.1);
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
+		mRightMaster.setOpenLoopRampRate(0.1);
+		mRightMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
+		mRightMaster.setMotionParameters(10000, 500);
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveA.setInverted(true);
+		mRightSlaveA.setOpenLoopRampRate(0.1);
 
 		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveB.setInverted(true);
+		mRightSlaveB.setOpenLoopRampRate(0.1);
 
 //        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
 
@@ -386,6 +396,7 @@ public class Drive extends Subsystem {
 	@Override
 	public synchronized void writePeriodicOutputs() {
 		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+//			System.out.println("SettingOut:" + mPeriodicIO.left_demand + ", " + mPeriodicIO.right_demand);
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		} else {

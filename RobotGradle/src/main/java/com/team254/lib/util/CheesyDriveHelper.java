@@ -34,7 +34,7 @@ public class CheesyDriveHelper {
     private double mNegInertiaAccumlator = 0.0;
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
-                                   boolean isHighGear) {
+                                   boolean isHighGear, double velScalingFactor) {
 
         wheel = handleDeadband(wheel, kWheelDeadband);
         throttle = handleDeadband(throttle, kThrottleDeadband);
@@ -134,7 +134,12 @@ public class CheesyDriveHelper {
             leftPwm += overPower * (-1.0 - rightPwm);
             rightPwm = -1.0;
         }
-        return new DriveSignal(leftPwm, rightPwm);
+        return new DriveSignal(leftPwm * velScalingFactor, rightPwm * velScalingFactor);
+    }
+
+    public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
+                                   boolean isHighGear) {
+        return cheesyDrive(throttle, wheel, isQuickTurn, isHighGear, 1);
     }
 
     public double handleDeadband(double val, double deadband) {
