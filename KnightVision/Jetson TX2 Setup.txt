@@ -1,3 +1,6 @@
+Autopower on Board Config. Jump R313 - outermost empty resistor on charge connector J27
+https://devtalk.nvidia.com/default/topic/999406/jetson-tx2/auto-power-on-implementation-based-on-oem-product-design-guide/post/5213584/#5213584
+
 sudo apt-get install build-essential nano cmake
 sudo apt-get update && sudo apt-get upgrade
 change passwd and root passwd
@@ -6,11 +9,13 @@ PermitRootLogin change to yes > in /etc/ssh/sshd_config
 
 Enter into /etc/rc.local
 #####
-for file in /startup
+for file in /startup/*
 do
 	"$file"
 done
 ######
+
+Install OpenCV3 on Jetson TX2 https://jkjung-avt.github.io/opencv3-on-tx2/
 
 
 #### CAN RESTORE FROM IMAGE TO SAVE TIME IF EXISTS sudo ./flash.sh -r -k APP jetson-tx2 mmcblk0p1
@@ -26,6 +31,14 @@ sudo nano /etc/init/tty1.conf
 
 
 
+
+
+
+
+
+
+
+####OLDDDDDD DO NOT NEED ANYMORE 
 
 sudo update-rc.d -f ondemand remove
 
