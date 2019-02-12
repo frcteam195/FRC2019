@@ -44,8 +44,6 @@ cd /tools
 wget https://raw.githubusercontent.com/guitar24t/JetsonTX2Scripts/master/TestCPUFreq.sh
 chmod -R 775 /tools
 
-echo "PATH=\"\$PATH:/tools\"" >> /etc/environment
-
 apt-get update && apt-get -y upgrade
 
 head -n 4 /etc/rc.local > file.tmp
