@@ -44,6 +44,14 @@ cd /tools
 wget https://raw.githubusercontent.com/guitar24t/JetsonTX2Scripts/master/TestCPUFreq.sh
 chmod -R 775 /tools
 
+mkdir /usr/lib/jvm
+cd /usr/lib/jvm
+wget http://cdn.azul.com/zulu-embedded/bin/zulu11.1.8-ca-jdk11-linux_aarch64.tar.gz
+tar -xzvf zulu11.1.8-ca-jdk11-linux_aarch64.tar.gz
+
+echo "JAVA_HOME=\"/usr/lib/jvm/zulu11.1.8-ca-jdk11-linux_aarch64\"" >> /etc/environment
+echo "export PATH=\"/usr/lib/jvm/zulu11.1.8-ca-jdk11-linux_aarch64/bin:\$PATH:/tools\"" >> /home/nvidia/.bashrc
+
 apt-get update && apt-get -y upgrade
 
 head -n 4 /etc/rc.local > file.tmp
