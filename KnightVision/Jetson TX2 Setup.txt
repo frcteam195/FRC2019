@@ -38,7 +38,6 @@ sudo nano /etc/init/tty1.conf
 
 
 
-####OLDDDDDD DO NOT NEED ANYMORE 
 
 sudo update-rc.d -f ondemand remove
 
