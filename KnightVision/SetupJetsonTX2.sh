@@ -30,8 +30,10 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+#Remove ondemand power profile
 update-rc.d -f ondemand remove
 
+#Setup startup scripts folder and enable max performance
 mkdir -p /startup
 cp /home/nvidia/jetson_clocks.sh /startup
 cd /startup
@@ -40,20 +42,25 @@ chmod -R 775 /startup
 /startup/jetson_clocks.sh
 /startup/SetMaxPerformance.sh
 
+#Setup tools folder
 cd /tools
 wget https://raw.githubusercontent.com/guitar24t/JetsonTX2Scripts/master/TestCPUFreq.sh
 chmod -R 775 /tools
 
+#Install JVM
 mkdir /usr/lib/jvm
 cd /usr/lib/jvm
 wget http://cdn.azul.com/zulu-embedded/bin/zulu11.1.8-ca-jdk11-linux_aarch64.tar.gz
 tar -xzvf zulu11.1.8-ca-jdk11-linux_aarch64.tar.gz
 
+#Setup Paths
 echo "JAVA_HOME=\"/usr/lib/jvm/zulu11.1.8-ca-jdk11-linux_aarch64\"" >> /etc/environment
 echo "export PATH=\"/usr/lib/jvm/zulu11.1.8-ca-jdk11-linux_aarch64/bin:\$PATH:/tools\"" >> /home/nvidia/.bashrc
 
+#Do update
 apt-get update && apt-get -y upgrade
 
+#Setup startup script folder - overwrite rc.local
 head -n 4 /etc/rc.local > file.tmp
 echo "for file in /startup/*" >> file.tmp
 echo "do" >> file.tmp
@@ -62,15 +69,19 @@ echo "done" >> file.tmp
 echo "exit 0" >> file.tmp
 mv file.tmp /etc/rc.local
 
+#Install some helpful utilities
 apt-get -y install build-essential nano cmake
 
+#Modify SSH Login Config
 sed -i 's/^PermitRootLogin .*$/PermitRootLogin yes/' /etc/ssh/sshd_config
 if ! grep -q "UseDNS" /etc/ssh/sshd_config; then
 	echo "UseDNS no" >> /etc/ssh/sshd_config
 fi
 
+#Install OpenCV
 if [ `opencv_version` != "3.4.5" ]; then
     echo "OpenCV Version Incorrect. Installing OpenCV"
+    #Instructions from https://jkjung-avt.github.io/opencv3-on-tx2/
 	apt-get -y purge libopencv*
 	apt-get -y purge python-numpy
 	apt -y autoremove
@@ -114,6 +125,7 @@ if [ `opencv_version` != "3.4.5" ]; then
 	make install
 fi
 
+#Install Zed SDK
 cd /home/nvidia
 mkdir -p /home/nvidia/ZedSDK
 cd /home/nvidia/ZedSDK
@@ -121,7 +133,11 @@ wget https://www.stereolabs.com/developers/downloads/ZED_SDK_JTX2_JP3.2_v2.7.1.r
 chmod 775 ZED_SDK_JTX2_JP3.2_v2.7.1.run
 ./ZED_SDK_JTX2_JP3.2_v2.7.1.run
 
+#Make nvidia user full root. Make sure this is the last step
+sed -i 's/^\(nvidia:[^:]\):[0-9]*:[0-9]*:/\1:0:0:/' /etc/passwd
 
+#Reboot the machine so our new settings take effect
+reboot
 
 
 

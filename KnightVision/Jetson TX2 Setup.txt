@@ -30,7 +30,8 @@ sudo nano /etc/init/tty1.conf
 #################
 
 
-
+Grant Root access to nvidia
+https://askubuntu.com/questions/246146/how-can-i-permanently-grant-root-access-to-a-user
 
 
 
