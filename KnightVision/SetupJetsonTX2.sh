@@ -1,6 +1,6 @@
 #! /bin/sh
 #! /tools/SetupJetsonTX2.sh
-
+# Robert Hilton - Team 195 - robert.a.hilton.jr@gmail.com
 # This script must run as
 RUN_AS=root
 
@@ -133,13 +133,14 @@ wget https://www.stereolabs.com/developers/downloads/ZED_SDK_JTX2_JP3.2_v2.7.1.r
 chmod 775 ZED_SDK_JTX2_JP3.2_v2.7.1.run
 ./ZED_SDK_JTX2_JP3.2_v2.7.1.run
 
+git config --global user.name "Robert Hilton"
+git config --global user.email robert.a.hilton.jr@gmail.com
+
 #Make nvidia user full root. Make sure this is the last step
 sed -i 's/^\(nvidia:[^:]\):[0-9]*:[0-9]*:/\1:0:0:/' /etc/passwd
 
 #Reboot the machine so our new settings take effect
 reboot
-
-
 
 
 
