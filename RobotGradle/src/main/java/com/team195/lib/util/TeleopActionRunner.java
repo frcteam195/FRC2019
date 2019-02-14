@@ -10,8 +10,9 @@ public class TeleopActionRunner {
 	private double m_update_rate = 1.0 / 50.0;    //20ms update rate
 	private Action action;
 	private boolean finished = false;
-	private double timeout;
+	private TimeoutTimer timeoutTimer;
 	private Thread t;
+	//TODO: Test the new timeout works properly
 
 	/**
 	 * Create an action runner with a timeout
@@ -20,7 +21,7 @@ public class TeleopActionRunner {
 	 */
 	public TeleopActionRunner(Action action, double timeout) {
 		this.action = action;
-		this.timeout = timeout;
+		timeoutTimer = new TimeoutTimer(timeout);
 	}
 
 	public TeleopActionRunner(Action action) {
@@ -32,13 +33,13 @@ public class TeleopActionRunner {
 	}
 
 	private void start() {
-		double startTime = Timer.getFPGATimestamp();
+		timeoutTimer.isTimedOut();
 		t = new Thread(() -> {
 			//t.setPriority(Thread.NORM_PRIORITY);
 
 			action.start();
 
-			while (!action.isFinished() && ((Timer.getFPGATimestamp() - startTime) < timeout)) {
+			while (!action.isFinished() && !timeoutTimer.isTimedOut()) {
 				action.update();
 				int waitTime = (int) (m_update_rate * 1000.0);
 
@@ -63,9 +64,9 @@ public class TeleopActionRunner {
 		if (t == null || !t.isAlive())
 			start();
 
-		if (waitForCompletion) {
+		if (waitForCompletion && timeoutTimer.getTimeLeft() > 0) {
 			try {
-				t.join((int) (timeout * 1000.0));
+				t.join((int) (timeoutTimer.getTimeLeft() * 1000.0));
 			} catch (InterruptedException ex) {
 				ConsoleReporter.report(action.getClass().getSimpleName() + " Action did not complete in time!", MessageLevel.ERROR);
 				ConsoleReporter.report(ex, MessageLevel.ERROR);

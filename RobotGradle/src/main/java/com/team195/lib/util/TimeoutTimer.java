@@ -18,6 +18,10 @@ public class TimeoutTimer {
 		return eTimer.hasElapsed() > timeout;
 	}
 
+	public double getTimeLeft() {
+		return Math.max(timeout - eTimer.hasElapsed(), 0);
+	}
+
 	public void reset() {
 		setFirstRun(true);
 	}

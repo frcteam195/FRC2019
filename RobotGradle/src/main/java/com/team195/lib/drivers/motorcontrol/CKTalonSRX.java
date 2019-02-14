@@ -18,6 +18,8 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	private int[] mMMVel = new int[4];
 	private double prevOutput = Double.MIN_VALUE;
 	private final PDPBreaker motorBreaker;
+	private boolean prevForwardLimitVal = false;
+	private boolean prevReverseLimitVal = false;
 
 	private final Configuration fastMasterConfig = new Configuration(5, 5, 20);
 	private final Configuration normalMasterConfig = new Configuration(10, 10, 20);
@@ -381,6 +383,48 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	@Override
 	public void writeToFlash() {
 
+	}
+
+	@Override
+	public boolean getForwardLimitValue() {
+		return getSensorCollection().isFwdLimitSwitchClosed();
+	}
+
+	@Override
+	public boolean getReverseLimitValue() {
+		return getSensorCollection().isRevLimitSwitchClosed();
+	}
+
+	@Override
+	public boolean getForwardLimitRisingEdge() {
+		boolean currentInput = getSensorCollection().isFwdLimitSwitchClosed();
+		boolean retVal = (currentInput != prevForwardLimitVal) && currentInput;
+		prevForwardLimitVal = currentInput;
+		return retVal;
+	}
+
+	@Override
+	public boolean getReverseLimitRisingEdge() {
+		boolean currentInput = getSensorCollection().isRevLimitSwitchClosed();
+		boolean retVal = (currentInput != prevReverseLimitVal) && currentInput;
+		prevReverseLimitVal = currentInput;
+		return retVal;
+	}
+
+	@Override
+	public boolean getForwardLimitFallingEdge() {
+		boolean currentInput = getSensorCollection().isFwdLimitSwitchClosed();
+		boolean retVal = (currentInput != prevForwardLimitVal) && !currentInput;
+		prevForwardLimitVal = currentInput;
+		return retVal;
+	}
+
+	@Override
+	public boolean getReverseLimitFallingEdge() {
+		boolean currentInput = getSensorCollection().isRevLimitSwitchClosed();
+		boolean retVal = (currentInput != prevReverseLimitVal) && !currentInput;
+		prevReverseLimitVal = currentInput;
+		return retVal;
 	}
 
 	@Override

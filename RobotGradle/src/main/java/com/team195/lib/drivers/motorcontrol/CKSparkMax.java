@@ -248,6 +248,36 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		burnFlash();
 	}
 
+	@Override
+	public boolean getForwardLimitValue() {
+		return false;
+	}
+
+	@Override
+	public boolean getReverseLimitValue() {
+		return false;
+	}
+
+	@Override
+	public boolean getForwardLimitRisingEdge() {
+		return false;
+	}
+
+	@Override
+	public boolean getReverseLimitRisingEdge() {
+		return false;
+	}
+
+	@Override
+	public boolean getForwardLimitFallingEdge() {
+		return false;
+	}
+
+	@Override
+	public boolean getReverseLimitFallingEdge() {
+		return false;
+	}
+
 	private synchronized void setCurrentSelectedSlot(int slotIdx) {
 		currentSelectedSlot = slotIdx;
 	}

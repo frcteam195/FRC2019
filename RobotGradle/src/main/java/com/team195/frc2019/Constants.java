@@ -102,7 +102,10 @@ public class Constants {
 
 
 	// Solenoids
-    public static final int kPTOShifterSolenoidId = 0; // PCM 0, Solenoid 4
+    public static final int kPTOShifterSolenoidId = 0;
+    public static final int kHatchBeakSolenoidId = 2;
+    public static final int kHatchPushSolenoidId = 4;
+
 
     // Control Board
     public static final boolean kUseGamepadForDriving = false;

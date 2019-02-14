@@ -1,11 +1,16 @@
 package com.team195.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.util.TeleopActionRunner;
 
 public class Turret extends Subsystem {
 
@@ -13,15 +18,25 @@ public class Turret extends Subsystem {
 
 	private final CKTalonSRX mTurretRotationMotor;
 	private final CKTalonSRX mTurretRollerMotor;
-
+	private final CKDoubleSolenoid mHatchBeakSolenoid;
+	private final CKDoubleSolenoid mHatchPushSolenoid;
 
 	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
 
 	private double mTurretSetpoint = 0;
 
+	private TeleopActionRunner mAutoHatchController = null;
+
 	private Turret() {
 		mTurretRotationMotor = new CKTalonSRX(Constants.kTurretMotorId, false, PDPBreaker.B30A);
 		mTurretRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
+		mTurretRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+		mHatchBeakSolenoid = new CKDoubleSolenoid(Constants.kHatchBeakSolenoidId);
+		mHatchBeakSolenoid.configReversed(false);
+		mHatchBeakSolenoid.set(false);
+		mHatchPushSolenoid = new CKDoubleSolenoid(Constants.kHatchPushSolenoidId);
+		mHatchPushSolenoid.configReversed(false);
+		mHatchPushSolenoid.set(false);
 	}
 
 	public static Turret getInstance() {
@@ -104,6 +119,14 @@ public class Turret extends Subsystem {
 					default:
 						break;
 				}
+
+				if (mAutoHatchController == null && mTurretRollerMotor.getForwardLimitRisingEdge()) {
+					mAutoHatchController = new TeleopActionRunner(AutomatedActions.pushOutHatch());
+					mAutoHatchController.runAction(false);
+				}
+
+				if (mAutoHatchController.isFinished())
+					mAutoHatchController = null;
 			}
 		}
 
@@ -112,6 +135,14 @@ public class Turret extends Subsystem {
 			stop();
 		}
 	};
+
+	public synchronized void setHatchPush(boolean hatchPush) {
+		mHatchPushSolenoid.set(hatchPush);
+	}
+
+	public synchronized void setBeak(boolean open) {
+		mHatchBeakSolenoid.set(open);
+	}
 
 	public synchronized void setTurretPosition(double turretPosition) {
 		mTurretSetpoint = turretPosition;

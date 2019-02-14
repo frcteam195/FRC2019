@@ -35,6 +35,18 @@ public interface TuneableMotorController {
 
 	void writeToFlash();
 
+	boolean getForwardLimitValue();
+
+	boolean getReverseLimitValue();
+
+	boolean getForwardLimitRisingEdge();
+
+	boolean getReverseLimitRisingEdge();
+
+	boolean getForwardLimitFallingEdge();
+
+	boolean getReverseLimitFallingEdge();
+
 	/**
 	 * Method to change control modes. Make sure this method only changes modes if the current mode is not the desired mode.
 	 *

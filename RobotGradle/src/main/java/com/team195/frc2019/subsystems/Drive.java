@@ -8,6 +8,7 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.CKSparkMax;
@@ -21,7 +22,6 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Drive extends Subsystem {
@@ -29,7 +29,7 @@ public class Drive extends Subsystem {
 	private static final int kLowGearVelocityControlSlot = 0;
 	private static Drive mInstance = new Drive();
 	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
-	private final Solenoid mPTOShifter;
+	private final CKDoubleSolenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
@@ -108,7 +108,9 @@ public class Drive extends Subsystem {
 		mRightSlaveB.setInverted(true);
 		mRightSlaveB.writeToFlash();
 
-		mPTOShifter = new Solenoid(Constants.kPTOShifterSolenoidId);
+		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
+		mPTOShifter.configReversed(false);
+		mPTOShifter.set(false);
 
 		reloadGains();
 
