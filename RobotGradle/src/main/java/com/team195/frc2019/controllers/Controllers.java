@@ -1,12 +1,12 @@
-package com.team195.frc2019;
+package com.team195.frc2019.controllers;
 
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 
 public class Controllers {
-	private CKDashJoystick driveJoystick;
-	private CKDashJoystick armControlJoystick;
-	private CKDashJoystick buttonBox1;
-	private CKDashJoystick buttonBox2;
+	private final CKDashJoystick driveJoystick;
+	private final CKDashJoystick armControlJoystick;
+	private final CKDashJoystick buttonBox1;
+	private final CKDashJoystick buttonBox2;
 	
 	private static Controllers instance = null;
 	

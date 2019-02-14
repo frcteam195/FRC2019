@@ -1,0 +1,81 @@
+package com.team195.frc2019.controllers;
+
+import com.team195.frc2019.Constants;
+import com.team195.frc2019.subsystems.Drive;
+import com.team195.frc2019.subsystems.Elevator;
+import com.team195.lib.drivers.dashjoy.CKDashJoystick;
+import com.team195.lib.util.ThreadRateControl;
+import com.team254.lib.util.CheesyDriveHelper;
+import com.team254.lib.util.CrashTracker;
+
+public class HIDController {
+	private static HIDController mInstance = new HIDController();
+	public static HIDController getInstance() {
+		return mInstance;
+	}
+
+	private final CKDashJoystick driveJoystick = Controllers.getInstance().getDriveJoystick();
+	private final CKDashJoystick armControlJoystick = Controllers.getInstance().getArmControlJoystick();
+	private final CKDashJoystick buttonBox1 = Controllers.getInstance().getButtonBox1();
+	private final CKDashJoystick buttonBox2 = Controllers.getInstance().getButtonBox2();
+
+	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
+	private Drive mDrive = Drive.getInstance();
+
+	private Thread controlThread = null;
+	private boolean runThread = true;
+
+	private static final int HID_RATE_CONTROL = 10;
+
+	private HIDController() {
+
+	}
+
+	public void start() {
+		if (controlThread == null || !controlThread.isAlive()) {
+			setRunState(true);
+			controlThread = new Thread(() -> {
+				ThreadRateControl threadRateControl = new ThreadRateControl();
+				threadRateControl.start();
+				while (runThread) {
+					try {
+						//User Control Interface code here
+
+						double throttle = driveJoystick.getNormalizedAxis(1, 0.04);
+						double turn = driveJoystick.getNormalizedAxis(4, 0.04);
+						boolean quickTurn = driveJoystick.getRawButton(5);
+
+						if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
+			            	throttle *= Constants.kLowSensitivityFactor;
+			                turn *= Constants.kLowSensitivityFactor;
+			            }
+						mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+
+
+					} catch (Throwable t) {
+						CrashTracker.logThrowableCrash(t);
+						throw t;
+					}
+					threadRateControl.doRateControl(HID_RATE_CONTROL);
+				}
+			});
+			controlThread.setPriority(Constants.kRobotThreadPriority);
+			controlThread.start();
+		}
+	}
+
+	public void stop() {
+		setRunState(false);
+		try {
+			controlThread.join(100);
+		} catch (Exception ignored) {
+
+		} finally {
+			controlThread = null;
+		}
+	}
+
+	private synchronized void setRunState(boolean run) {
+		runThread = run;
+	}
+}

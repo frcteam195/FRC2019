@@ -22,7 +22,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private double mHatchIntakeArmSetpoint = 0;
 
-	public HatchIntakeArm() {
+	private HatchIntakeArm() {
 		mHatchArmRotationMotor = new CKTalonSRX(Constants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
 

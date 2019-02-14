@@ -23,7 +23,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private double mElevatorSetpoint = 0;
 
-	public Elevator() {
+	private Elevator() {
 		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterId, false, PDPBreaker.B40A);
 		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveAId, mElevatorMaster, PDPBreaker.B40A);
 		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBId, mElevatorMaster, PDPBreaker.B30A);

@@ -22,7 +22,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private double mBallIntakeArmSetpoint = 0;
 
-	public BallIntakeArm() {
+	private BallIntakeArm() {
 		mBallArmRotationMotor = new CKTalonSRX(Constants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 

@@ -1,6 +1,7 @@
 package com.team195.frc2019;
 
 import com.team195.frc2019.auto.AutoModeExecutor;
+import com.team195.frc2019.controllers.HIDController;
 import com.team195.frc2019.controllers.LEDController;
 import com.team195.frc2019.loops.Looper;
 import com.team195.frc2019.monitors.ConnectionMonitor;
@@ -19,7 +20,6 @@ import edu.wpi.first.wpilibj.Timer;
 public class Robot extends TimedRobot {
 	private Looper mEnabledLooper = new Looper("EnabledLooper");
 	private Looper mDisabledLooper = new Looper("DisabledLooper");
-	private CheesyDriveHelper mCheesyDriveHelper = new CheesyDriveHelper();
 
 	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
@@ -29,12 +29,14 @@ public class Robot extends TimedRobot {
 		Elevator.getInstance(),
 		BallIntakeArm.getInstance(),
 		HatchIntakeArm.getInstance(),
+		Turret.getInstance(),
 		Infrastructure.getInstance()
 	);
 
 	private Drive mDrive = Drive.getInstance();
 	private LEDController mLED = LEDController.getInstance();
 	private Infrastructure mInfrastructure = Infrastructure.getInstance();
+	private HIDController hidController = HIDController.getInstance();
 
 	private AutoModeExecutor mAutoModeExecutor;
 
@@ -117,6 +119,7 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
+			hidController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -125,21 +128,9 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		double throttle = Controllers.getInstance().getDriveJoystick().getNormalizedAxis(1, 0.04);
-		double turn = Controllers.getInstance().getDriveJoystick().getNormalizedAxis(4, 0.04);
-		boolean quickTurn = Controllers.getInstance().getDriveJoystick().getRawButton(5);
-
 		try {
-			// When elevator is up, tune sensitivity on turn a little.
-//            if (mElevator.getInchesOffGround() > Constants.kElevatorLowSensitivityThreshold) {
-//                turn *= Constants.kLowSensitivityFactor;
-//            }
-			mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
-			System.out.println("AvgVel:"+(Drive.getInstance().getLeftEncoderVelocityRPM() + Drive.getInstance().getLeftEncoderVelocityRPM())/2.0);
-
 
 		} catch (Throwable t) {
-			System.out.println(t.toString());
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
@@ -172,6 +163,7 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		try {
 			CrashTracker.logDisabledInit();
+			hidController.stop();
 			mEnabledLooper.stop();
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
