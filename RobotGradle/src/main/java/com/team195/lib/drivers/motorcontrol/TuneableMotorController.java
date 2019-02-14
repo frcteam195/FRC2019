@@ -33,6 +33,8 @@ public interface TuneableMotorController {
 
 	void setEncoderPosition(double position);
 
+	void writeToFlash();
+
 	/**
 	 * Method to change control modes. Make sure this method only changes modes if the current mode is not the desired mode.
 	 *

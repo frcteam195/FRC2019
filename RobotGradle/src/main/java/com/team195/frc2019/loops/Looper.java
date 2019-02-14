@@ -25,11 +25,18 @@ public class Looper implements ILooper, Reportable {
     private double timestamp_ = 0;
     private double dt_ = 0;
     private String name = "";
+    private boolean isFirstStart = true;
+    private boolean isFirstRun = true;
 
     private final CrashTrackingRunnable runnable_ = new CrashTrackingRunnable() {
         @Override
         public void runCrashTracked() {
             synchronized (taskRunningLock_) {
+                if (isFirstRun) {
+                    Thread.currentThread().setPriority(Constants.kLooperThreadPriority);
+                    isFirstRun = false;
+                }
+
                 if (running_) {
                     double now = Timer.getFPGATimestamp();
                     loops_.forEach((l)->l.onLoop(now));
@@ -62,9 +69,13 @@ public class Looper implements ILooper, Reportable {
         if (!running_) {
             System.out.println("Starting loops");
             synchronized (taskRunningLock_) {
+                if (isFirstStart) {
+                    loops_.forEach((l) -> l.onFirstStart(timestamp_));
+                }
                 timestamp_ = Timer.getFPGATimestamp();
                 loops_.forEach((l)-> l.onStart(timestamp_));
                 running_ = true;
+                isFirstStart = false;
             }
             notifier_.startPeriodic(kPeriod);
         }

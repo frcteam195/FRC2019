@@ -49,6 +49,11 @@ public class RobotStateEstimator extends Subsystem {
 
     private class EnabledLoop implements Loop {
         @Override
+        public void onFirstStart(double timestamp) {
+
+        }
+
+        @Override
         public synchronized void onStart(double timestamp) {
             left_encoder_prev_distance_ = drive_.getLeftEncoderDistance();
             right_encoder_prev_distance_ = drive_.getRightEncoderDistance();

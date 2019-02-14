@@ -5,6 +5,7 @@ package com.team195.frc2019.loops;
  * calibration, etc.)
  */
 public interface Loop {
+    public void onFirstStart(double timestamp);
 
     public void onStart(double timestamp);
 

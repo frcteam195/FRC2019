@@ -76,15 +76,33 @@ public class Constants {
 
 
     // Drive
-    public static final int kLeftDriveMasterId =4;
+    public static final int kRightDriveMasterId = 1;
+	public static final int kRightDriveSlaveAId = 2;
+	public static final int kRightDriveSlaveBId = 3;
+    public static final int kLeftDriveMasterId = 4;
     public static final int kLeftDriveSlaveAId = 5;
     public static final int kLeftDriveSlaveBId = 6;
-    public static final int kRightDriveMasterId = 1;
-    public static final int kRightDriveSlaveAId = 2;
-    public static final int kRightDriveSlaveBId = 3;
 
-    // Solenoids
-    public static final int kShifterSolenoidId = 12; // PCM 0, Solenoid 4
+    // Elevator
+	public static final int kElevatorMasterId = 7;
+	public static final int kElevatorSlaveAId = 8;
+	public static final int kElevatorSlaveBId = 9;
+
+	//Ball Intake Arm
+	public static final int kBallIntakeRotationMotorId = 10;
+	public static final int kBallIntakeRollerMotorId = 11;
+
+	//Hatch Intake Arm
+	public static final int kHatchIntakeRotationMotorId = 12;
+	public static final int kHatchIntakeRollerMotorId = 13;
+
+	//Turret
+	public static final int kTurretMotorId = 14;
+	public static final int kBallShooterMotorId = 15;
+
+
+	// Solenoids
+    public static final int kPTOShifterSolenoidId = 0; // PCM 0, Solenoid 4
 
     // Control Board
     public static final boolean kUseGamepadForDriving = false;
@@ -102,6 +120,16 @@ public class Constants {
     public static final double kPDPBreakerModelB = -6.6305;
     public static final double kPDPBreakerModelC = 0.5;
     public static final double kPDPDefaultSafetyFactor = 4.0;
+
+
+
+    //Collision Thresholds
+    public static final double kBallIntakeArmPosToElevator = 0;
+	public static final double kHatchIntakeArmPosToElevator = 0;
+	public static final double kElevatorPosToBallIntakeArm = 0;
+	public static final double kElevatorPosToHatchIntakeArm = 0;
+
+
 
 
 
@@ -150,33 +178,6 @@ public class Constants {
     public static final int kActionTimeoutS = 2;
 
     public static final int kCANifierLEDId = 30;
-
-
-
-    /**
-     * Make an {@link Solenoid} instance for the single-number ID of the solenoid
-     * <p>
-     * Solenoids were wired in an inane method and also not labeled zero indexed.
-     * <p>
-     * Solenoids 1-4 are on PCM 1, Solenoids 7-4.
-     * Solenoids 5-8 are on PCM 0, Solenoids 0-3.
-     * Solenoids 9-12 are on PCM 0, Solenoids 7-4.
-     *
-     * @param solenoidId One of the kXyzSolenoidId constants
-     */
-    public static Solenoid makeSolenoidForId(int solenoidId) {
-        if (solenoidId <= 4) {
-            // These solenoids are on PCM 1, wired 1-4 to 7-4.
-            return new Solenoid(1, 8 - solenoidId);
-        } else if (solenoidId <= 8) {
-            // These solenoids are on PCM 0, wired 5-8 to 0-3.
-            return new Solenoid(0, solenoidId - 5);
-        } else if (solenoidId <= 12) {
-            // These solenoids are on PCM 0, wired 9-12 to 7-4.
-            return new Solenoid(0, 16 - solenoidId);
-        }
-        throw new IllegalArgumentException("Solenoid ID not valid: " + solenoidId);
-    }
 
     /**
      * @return the MAC address of the robot

@@ -37,6 +37,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		canPIDController.setOutputRange(-1, 1);
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 		setBrakeCoastMode(MCNeutralMode.Brake);
+		burnFlash();
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
@@ -48,6 +49,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		doDefaultConfig(normalSlaveConfig);
 		follow(masterSpark);
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
+		burnFlash();
 	}
 
 	private void doDefaultConfig(Configuration config) {
@@ -63,7 +65,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
 			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
-
+			setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
 			//Erase previously stored values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
@@ -239,6 +241,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public synchronized void setEncoderPosition(double position) {
 		canEncoder.setPosition(position);
+	}
+
+	@Override
+	public void writeToFlash() {
+		burnFlash();
 	}
 
 	private synchronized void setCurrentSelectedSlot(int slotIdx) {

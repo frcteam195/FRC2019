@@ -26,6 +26,9 @@ public class Robot extends TimedRobot {
 	private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance(
 		RobotStateEstimator.getInstance(),
 		Drive.getInstance(),
+		Elevator.getInstance(),
+		BallIntakeArm.getInstance(),
+		HatchIntakeArm.getInstance(),
 		Infrastructure.getInstance()
 	);
 

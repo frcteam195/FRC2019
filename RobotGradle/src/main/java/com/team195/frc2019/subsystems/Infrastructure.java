@@ -56,6 +56,11 @@ public class Infrastructure extends Subsystem {
     public void registerEnabledLoops(ILooper enabledLooper) {
         enabledLooper.register(new Loop() {
             @Override
+            public void onFirstStart(double timestamp) {
+
+            }
+
+            @Override
             public void onStart(double timestamp) {
 
             }

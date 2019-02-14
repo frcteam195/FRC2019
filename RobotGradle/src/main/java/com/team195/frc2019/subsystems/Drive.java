@@ -21,20 +21,18 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Drive extends Subsystem {
 
 	private static final int kLowGearVelocityControlSlot = 0;
-	private static final int kHighGearVelocityControlSlot = 1;
 	private static Drive mInstance = new Drive();
 	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
-	//    private final Solenoid mShifter;
+	private final Solenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
-	private boolean mAutoShift;
-	private boolean mIsHighGear;
 	private boolean mIsBrakeMode;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
@@ -42,6 +40,13 @@ public class Drive extends Subsystem {
 	private boolean mOverrideTrajectory = false;
 
 	private final Loop mLoop = new Loop() {
+		@Override
+		public void onFirstStart(double timestamp) {
+			synchronized (Drive.this) {
+
+			}
+		}
+
 		@Override
 		public void onStart(double timestamp) {
 			synchronized (Drive.this) {
@@ -63,14 +68,6 @@ public class Drive extends Subsystem {
 						System.out.println("Unexpected drive control state: " + mDriveControlState);
 						break;
 				}
-                /*
-                // TODO: fix this (tom)
-                if (mAutoShift) {
-                    handleAutoShift();
-                } else */
-				{
-					setHighGear(false);
-				}
 			}
 		}
 
@@ -85,41 +82,37 @@ public class Drive extends Subsystem {
 
 		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.setInverted(false);
-		mLeftMaster.setOpenLoopRampRate(0.1);
 		mLeftMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
 		mLeftMaster.setMotionParameters(10000, 500);
+		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveA.setInverted(false);
-		mLeftSlaveA.setOpenLoopRampRate(0.1);
+		mLeftSlaveA.writeToFlash();
 
 		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
 		mLeftSlaveB.setInverted(false);
-		mLeftSlaveB.setOpenLoopRampRate(0.1);
+		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
-		mRightMaster.setOpenLoopRampRate(0.1);
 		mRightMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
 		mRightMaster.setMotionParameters(10000, 500);
+		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveA.setInverted(true);
-		mRightSlaveA.setOpenLoopRampRate(0.1);
+		mRightSlaveA.writeToFlash();
 
 		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
 		mRightSlaveB.setInverted(true);
-		mRightSlaveB.setOpenLoopRampRate(0.1);
+		mRightSlaveB.writeToFlash();
 
-//        mShifter = Constants.makeSolenoidForId(Constants.kShifterSolenoidId);
+		mPTOShifter = new Solenoid(Constants.kPTOShifterSolenoidId);
 
 		reloadGains();
 
 		mGyro = new NavX();
-
-		// Force a solenoid message.
-		mIsHighGear = true;
-		setHighGear(false);
 
 		setOpenLoop(DriveSignal.NEUTRAL);
 
@@ -162,10 +155,9 @@ public class Drive extends Subsystem {
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
-			mAutoShift = true;
 
-			System.out.println("Switching to open loop");
-			System.out.println(signal);
+//			System.out.println("Switching to open loop");
+//			System.out.println(signal);
 			mDriveControlState = DriveControlState.OPEN_LOOP;
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
@@ -177,7 +169,6 @@ public class Drive extends Subsystem {
 	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
 		if (mDriveControlState != DriveControlState.PATH_FOLLOWING) {
 			setBrakeMode(true);
-			mAutoShift = false;
 			mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 			mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 
@@ -206,14 +197,11 @@ public class Drive extends Subsystem {
 	}
 
 	public boolean isHighGear() {
-		return mIsHighGear;
+		return false;
 	}
 
 	public synchronized void setHighGear(boolean wantsHighGear) {
-//        if (wantsHighGear != mIsHighGear) {
-//            mIsHighGear = wantsHighGear;
-//            mShifter.set(wantsHighGear);
-//        }
+
 	}
 
 	public boolean isBrakeMode() {
@@ -239,10 +227,10 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setHeading(Rotation2d heading) {
-        System.out.println("SET HEADING: " + heading.getDegrees());
+//        System.out.println("SET HEADING: " + heading.getDegrees());
 
         mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mGyro.getFusedHeading()).inverse());
-        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
+//        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.gyro_heading = heading;
 	}
@@ -282,7 +270,6 @@ public class Drive extends Subsystem {
 	public void zeroSensors() {
 		setHeading(Rotation2d.identity());
 		resetEncoders();
-		mAutoShift = true;
 	}
 
 	public double getLeftEncoderDistance() {
@@ -345,23 +332,18 @@ public class Drive extends Subsystem {
 		}
 	}
 
-	private void handleAutoShift() {
-		final double linear_velocity = Math.abs(getLinearVelocity());
-		final double angular_velocity = Math.abs(getAngularVelocity());
-		if (mIsHighGear && linear_velocity < Constants.kDriveDownShiftVelocity && angular_velocity < Constants
-				.kDriveDownShiftAngularVelocity) {
-			setHighGear(false);
-		} else if (!mIsHighGear && linear_velocity > Constants.kDriveUpShiftVelocity) {
-			setHighGear(true);
-		}
+	public void setPTO(boolean driveClimber) {
+		mPTOShifter.set(driveClimber);
 	}
 
 	public synchronized void reloadGains() {
 		mLeftMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
 		mLeftMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+		mLeftMaster.writeToFlash();
 
 		mRightMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
 		mRightMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+		mRightMaster.writeToFlash();
 	}
 
 	@Override
@@ -396,7 +378,6 @@ public class Drive extends Subsystem {
 	@Override
 	public synchronized void writePeriodicOutputs() {
 		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
-//			System.out.println("SettingOut:" + mPeriodicIO.left_demand + ", " + mPeriodicIO.right_demand);
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		} else {
@@ -455,9 +436,9 @@ public class Drive extends Subsystem {
 		retVal += "LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";";
 		retVal += "LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";";
 		retVal += "LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";";
-		retVal += "LeftOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";";
-		retVal += "LeftOutputVoltage:" + mLeftMaster.getMCOutputPercent()*mLeftMaster.getMCInputVoltage() + ";";
-		retVal += "LeftSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";";
+		retVal += "LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";";
+		retVal += "LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent()*mLeftMaster.getMCInputVoltage() + ";";
+		retVal += "LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";";
 
 		retVal += "RightDrivePos:" + mRightMaster.getVelocity() + ";";
 		retVal += "RightDriveVel:" + mRightMaster.getVelocity() + ";";
@@ -465,9 +446,9 @@ public class Drive extends Subsystem {
 		retVal += "RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";";
 		retVal += "RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";";
 		retVal += "RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";";
-		retVal += "RightOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";";
-		retVal += "RightOutputVoltage:" + mRightMaster.getMCOutputPercent()*mRightMaster.getMCInputVoltage() + ";";
-		retVal += "RightSupplyVoltage:" + mRightMaster.getBusVoltage() + ";";
+		retVal += "RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";";
+		retVal += "RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent()*mRightMaster.getMCInputVoltage() + ";";
+		retVal += "RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";";
 
 //		retVal += "AccelX:" + mGyro.getRawAccelX() + ";";
 //		retVal += "AccelY:" + mGyro.getRawAccelY() + ";";

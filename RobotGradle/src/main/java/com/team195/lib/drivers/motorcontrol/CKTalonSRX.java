@@ -379,6 +379,11 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public void writeToFlash() {
+
+	}
+
+	@Override
 	public void setControlMode(MCControlMode controlMode) {
 		if (getMotionControlMode() != controlMode) {
 			switch (controlMode) {
