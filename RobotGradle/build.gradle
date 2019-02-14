@@ -6,6 +6,7 @@ buildscript {
     dependencies {
         classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
         classpath 'gov.nist.math:jama:1.0.3'
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
     }
 }
 
@@ -13,7 +14,11 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2019.2.1"
     id 'idea'
+    id 'war'
 }
+
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'com.bmuschko.tomcat'
 
 def TEAM = 195
 def ROBOT_MAIN_CLASS = "com.team195.frc2019.Main"
@@ -61,7 +66,22 @@ dependencies {
     testCompile 'junit:junit:4.12'
     
     
+    def tomcatVersion = '7.0.57'
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
+            "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
+    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
+        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+    }
+
+    compile("org.springframework:spring-webmvc:4.3.0.RELEASE")
+    compile("javax.servlet:javax.servlet-api:3.0.1")
+    compile("javax.servlet:jstl:1.2") 
+    
 }
+
+// context where tomcat is deployed, by default localhost:8080/
+tomcatRun.contextPath = '/'
+tomcatRunWar.contextPath = '/'
 
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
