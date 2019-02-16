@@ -73,7 +73,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		retVal += "BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";";
 		retVal += "BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent()*mBallArmRollerMotor.getMCInputVoltage() + ";";
 		retVal += "BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";";
-		retVal += "BallArmIntakeControlMode:" + mBallArmRollerMotor.toString() + ";";
+//		retVal += "BallArmIntakeControlMode:" + mBallIntakeArmControlMode.toString() + ";";
 		return retVal;
 	}
 
