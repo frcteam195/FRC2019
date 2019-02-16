@@ -1,5 +1,6 @@
 package com.team195.lib.drivers.dashjoy;
 
+import com.team195.frc2019.Constants;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
@@ -97,5 +98,31 @@ public class CKDashJoystick {
 			val = Math.signum(val) * ((Math.abs(val) - deadband) / (1.0 - deadband));
 
 		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
+	}
+
+	public boolean isAxisInputActive() {
+		for (int i = 0; i < backupJoystick.getAxisCount(); i++) {
+			if (Math.abs(getRawAxis(i)) > Constants.kJoystickJogThreshold) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isButtonInputActive() {
+		for (int i = 1; i <= backupJoystick.getButtonCount(); i++) {
+			if (getRawButton(i)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isPOVInputActive() {
+		return getPOV() != -1;
+	}
+
+	public boolean isJoystickInputActive() {
+		return isAxisInputActive() || isButtonInputActive() || isPOVInputActive();
 	}
 }

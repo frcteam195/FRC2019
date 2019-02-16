@@ -13,7 +13,7 @@ public abstract class AutoModeBase {
 
     protected abstract void routine() throws AutoModeEndedException;
 
-    public void run() {
+    public synchronized void run() {
         mActive = true;
 
         try {
@@ -30,7 +30,7 @@ public abstract class AutoModeBase {
         System.out.println("Auto mode done");
     }
 
-    public void stop() {
+    public synchronized void stop() {
         mActive = false;
     }
 

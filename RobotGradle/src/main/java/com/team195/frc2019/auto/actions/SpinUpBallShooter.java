@@ -1,23 +1,20 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 
-public class BeakOpenAction implements Action {
+public class SpinUpBallShooter implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
+	private double mOutputSpeed;
 
-	private boolean mOpen;
-
-	public BeakOpenAction(boolean open) {
-		mOpen = open;
+	public SpinUpBallShooter(double outputSpeed) {
+		mOutputSpeed = outputSpeed;
 	}
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut();
+		return mTurret.isShooterAtSetpoint(50);
 	}
 
 	@Override
@@ -31,6 +28,6 @@ public class BeakOpenAction implements Action {
 
 	@Override
 	public void start() {
-		mTurret.setBeak(mOpen);
+		mTurret.setBallShooterVelocity(mOutputSpeed);
 	}
 }

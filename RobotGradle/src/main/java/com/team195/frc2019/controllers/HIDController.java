@@ -1,6 +1,7 @@
 package com.team195.frc2019.controllers;
 
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.frc2019.subsystems.Elevator;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
@@ -8,9 +9,14 @@ import com.team195.lib.util.ThreadRateControl;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 
+import java.util.function.Function;
+
 public class HIDController {
-	private static HIDController mInstance = new HIDController();
-	public static HIDController getInstance() {
+	private static HIDController mInstance = null;
+	public static HIDController getInstance(Function<Void, AutoModeExecutor> getAutoModeExecutor) {
+		if (mInstance == null)
+			mInstance = new HIDController(getAutoModeExecutor);
+
 		return mInstance;
 	}
 
@@ -25,10 +31,12 @@ public class HIDController {
 	private Thread controlThread = null;
 	private boolean runThread = true;
 
+	private final Function<Void, AutoModeExecutor> mGetAutoModeExecutor;
+
 	private static final int HID_RATE_CONTROL = 10;
 
-	private HIDController() {
-
+	private HIDController(Function<Void, AutoModeExecutor> getAutoModeExecutor) {
+		mGetAutoModeExecutor = getAutoModeExecutor;
 	}
 
 	public void start() {
@@ -39,19 +47,23 @@ public class HIDController {
 				threadRateControl.start();
 				while (runThread) {
 					try {
-						//User Control Interface code here
+						AutoModeExecutor autoModeExecutor = mGetAutoModeExecutor.apply(null);
+						if (autoModeExecutor != null && autoModeExecutor.isRunning()) {
+							if (driveJoystick.isAxisInputActive())
+								autoModeExecutor.stop();
+						} else {
+							//User Control Interface code here
 
-						double throttle = driveJoystick.getNormalizedAxis(1, 0.04);
-						double turn = driveJoystick.getNormalizedAxis(4, 0.04);
-						boolean quickTurn = driveJoystick.getRawButton(5);
+							double throttle = driveJoystick.getNormalizedAxis(1, 0.04);
+							double turn = driveJoystick.getNormalizedAxis(4, 0.04);
+							boolean quickTurn = driveJoystick.getRawButton(5);
 
-						if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
-			            	throttle *= Constants.kLowSensitivityFactor;
-			                turn *= Constants.kLowSensitivityFactor;
-			            }
-						mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
-
-
+							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
+								throttle *= Constants.kLowSensitivityFactor;
+								turn *= Constants.kLowSensitivityFactor;
+							}
+							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+						}
 					} catch (Throwable t) {
 						CrashTracker.logThrowableCrash(t);
 						throw t;

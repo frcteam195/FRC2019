@@ -9,7 +9,7 @@ public class AutoModeExecutor {
     private AutoModeBase m_auto_mode;
     private Thread m_thread = null;
 
-    public void setAutoMode(AutoModeBase new_auto_mode) {
+    public synchronized void setAutoMode(AutoModeBase new_auto_mode) {
         m_auto_mode = new_auto_mode;
         m_thread = new Thread(new CrashTrackingRunnable() {
             @Override
@@ -27,12 +27,19 @@ public class AutoModeExecutor {
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         if (m_auto_mode != null) {
             m_auto_mode.stop();
         }
 
         m_thread = null;
+    }
+
+    public boolean isRunning() {
+        if (m_thread != null) {
+           return  m_thread.isAlive();
+        }
+        return false;
     }
 
     public AutoModeBase getAutoMode() {

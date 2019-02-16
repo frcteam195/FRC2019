@@ -66,7 +66,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
 			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
 			setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
-			//Erase previously stored values
+			//Erase previously stored output values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)

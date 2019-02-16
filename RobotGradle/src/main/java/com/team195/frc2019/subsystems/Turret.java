@@ -7,6 +7,7 @@ import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.lib.drivers.CKDoubleSolenoid;
+import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
@@ -17,26 +18,34 @@ public class Turret extends Subsystem {
 	private static Turret mInstance = new Turret();
 
 	private final CKTalonSRX mTurretRotationMotor;
-	private final CKTalonSRX mTurretRollerMotor;
+	private final CKTalonSRX mBallShooterRollerMotor;
 	private final CKDoubleSolenoid mHatchBeakSolenoid;
 	private final CKDoubleSolenoid mHatchPushSolenoid;
+	private final CKSolenoid mBallPushSolenoid;
 
 	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
+	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
 
 	private double mTurretSetpoint = 0;
+	private double mBallShooterSetpoint = 0;
 
 	private TeleopActionRunner mAutoHatchController = null;
 
 	private Turret() {
 		mTurretRotationMotor = new CKTalonSRX(Constants.kTurretMotorId, false, PDPBreaker.B30A);
-		mTurretRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
-		mTurretRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+
+		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
+		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+
 		mHatchBeakSolenoid = new CKDoubleSolenoid(Constants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.configReversed(false);
 		mHatchBeakSolenoid.set(false);
+
 		mHatchPushSolenoid = new CKDoubleSolenoid(Constants.kHatchPushSolenoidId);
 		mHatchPushSolenoid.configReversed(false);
 		mHatchPushSolenoid.set(false);
+
+		mBallPushSolenoid = new CKSolenoid(Constants.kBallPushSolenoidId);
 	}
 
 	public static Turret getInstance() {
@@ -72,11 +81,11 @@ public class Turret extends Subsystem {
 		retVal += "TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent()* mTurretRotationMotor.getMCInputVoltage() + ";";
 		retVal += "TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";";
 		retVal += "TurretControlMode:" + mTurretControlMode.toString() + ";";
-		retVal += "TurretIntakeCurrent:" + mTurretRollerMotor.getMCOutputCurrent() + ";";
-		retVal += "TurretIntakeOutputDutyCycle:" + mTurretRollerMotor.getMCOutputPercent() + ";";
-		retVal += "TurretIntakeOutputVoltage:" + mTurretRollerMotor.getMCOutputPercent()* mTurretRollerMotor.getMCInputVoltage() + ";";
-		retVal += "TurretIntakeSupplyVoltage:" + mTurretRollerMotor.getMCInputVoltage() + ";";
-		retVal += "TurretIntakeControlMode:" + mTurretRollerMotor.toString() + ";";
+		retVal += "TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";";
+		retVal += "TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";";
+		retVal += "TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent()* mBallShooterRollerMotor.getMCInputVoltage() + ";";
+		retVal += "TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";";
+		retVal += "TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";";
 		return retVal;
 	}
 
@@ -120,12 +129,26 @@ public class Turret extends Subsystem {
 						break;
 				}
 
-				if (mAutoHatchController == null && mTurretRollerMotor.getForwardLimitRisingEdge()) {
+				switch (mBallShooterControlMode) {
+					case VELOCITY:
+						mBallShooterRollerMotor.set(MCControlMode.SmartVelocity, mBallShooterSetpoint, 0, 0);
+						break;
+					case CURRENT:
+						mBallShooterRollerMotor.set(MCControlMode.Current, mBallShooterSetpoint, 0, 0);
+						break;
+					case OPEN_LOOP:
+						mBallShooterRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallShooterSetpoint, -1), 1), 0, 0);
+						break;
+					default:
+						break;
+				}
+
+				if (mAutoHatchController == null && mBallShooterRollerMotor.getForwardLimitRisingEdge()) {
 					mAutoHatchController = new TeleopActionRunner(AutomatedActions.pushOutHatch());
 					mAutoHatchController.runAction(false);
 				}
 
-				if (mAutoHatchController.isFinished())
+				if (mAutoHatchController != null && mAutoHatchController.isFinished())
 					mAutoHatchController = null;
 			}
 		}
@@ -135,6 +158,10 @@ public class Turret extends Subsystem {
 			stop();
 		}
 	};
+
+	public synchronized void setBallPush(boolean ballPush) {
+		mBallPushSolenoid.set(ballPush);
+	}
 
 	public synchronized void setHatchPush(boolean hatchPush) {
 		mHatchPushSolenoid.set(hatchPush);
@@ -148,12 +175,43 @@ public class Turret extends Subsystem {
 		mTurretSetpoint = turretPosition;
 	}
 
+	public synchronized void setBallShooterCurrent(double ballShooterCurrent) {
+		setBallShooterControlMode(BallShooterControlMode.CURRENT);
+		mBallShooterSetpoint = ballShooterCurrent;
+	}
+
+	public synchronized void setBallShooterVelocity(double ballShooterVelocity) {
+		setBallShooterControlMode(BallShooterControlMode.VELOCITY);
+		mBallShooterSetpoint = ballShooterVelocity;
+	}
+
+	public synchronized void setBallShooterOpenLoop(double ballShooterOutput) {
+		setBallShooterControlMode(BallShooterControlMode.OPEN_LOOP);
+		mBallShooterSetpoint = ballShooterOutput;
+	}
+
 	private synchronized void setTurretControlMode(TurretControlMode turretControlMode) {
-		mTurretControlMode = turretControlMode;
+		if (mTurretControlMode != turretControlMode)
+			mTurretControlMode = turretControlMode;
+	}
+
+	private synchronized void setBallShooterControlMode(BallShooterControlMode ballShooterControlMode) {
+		if (mBallShooterControlMode != ballShooterControlMode)
+			mBallShooterControlMode = ballShooterControlMode;
+	}
+
+	public boolean isShooterAtSetpoint(double rpmDelta) {
+		return Math.abs(mBallShooterSetpoint - mBallShooterRollerMotor.getVelocity()) < Math.abs(rpmDelta);
 	}
 
 	public enum TurretControlMode {
 		POSITION,
+		OPEN_LOOP;
+	}
+
+	public enum BallShooterControlMode {
+		VELOCITY,
+		CURRENT,
 		OPEN_LOOP;
 	}
 }

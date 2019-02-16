@@ -1,12 +1,13 @@
 package com.team195.frc2019.auto.actions;
 
+import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 
 public class HatchPushAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(0.1);
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
 
 	private boolean mPushOut;
 

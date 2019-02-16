@@ -37,9 +37,14 @@ public class SubsystemManager implements ILooper {
 			}
 		}
 
-		mAllSubsystems.addAll(Arrays.asList(subsystems));
+		if (subsystems != null && subsystems.length > 0)
+			mAllSubsystems.addAll(Arrays.asList(subsystems));
 
 		return instance;
+	}
+
+	public void addAdditionalReportable(Reportable reportable) {
+		additionalReportables.add(reportable);
 	}
 
 	public boolean checkSubsystemFaulted() {

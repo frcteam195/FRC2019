@@ -36,9 +36,9 @@ public class Robot extends TimedRobot {
 	private Drive mDrive = Drive.getInstance();
 	private LEDController mLED = LEDController.getInstance();
 	private Infrastructure mInfrastructure = Infrastructure.getInstance();
-	private HIDController hidController = HIDController.getInstance();
-
 	private AutoModeExecutor mAutoModeExecutor;
+
+	private HIDController mHIDController = HIDController.getInstance((t) -> mAutoModeExecutor);
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
 
 			DashJoyReceiver.getInstance();
 
+			mSubsystemManager.addAdditionalReportable(RobotState.getInstance());
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
@@ -88,6 +89,7 @@ public class Robot extends TimedRobot {
 			mAutoModeExecutor.start();
 
 			mEnabledLooper.start();
+			mHIDController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -119,7 +121,7 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
-			hidController.start();
+			mHIDController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -143,6 +145,7 @@ public class Robot extends TimedRobot {
 
 			mDisabledLooper.stop();
 			mEnabledLooper.stop();
+			mHIDController.stop();
 
 			if (mSubsystemManager.checkSystemsPassDiagnostics())
 				ConsoleReporter.report("System passed test!", MessageLevel.DEFCON1);
@@ -163,7 +166,7 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		try {
 			CrashTracker.logDisabledInit();
-			hidController.stop();
+			mHIDController.stop();
 			mEnabledLooper.stop();
 			if (mAutoModeExecutor != null) {
 				mAutoModeExecutor.stop();
@@ -185,7 +188,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
-//			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
+			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;

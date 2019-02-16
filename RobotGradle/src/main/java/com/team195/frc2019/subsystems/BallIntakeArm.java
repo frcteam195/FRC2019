@@ -3,6 +3,7 @@ package com.team195.frc2019.subsystems;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
@@ -18,6 +19,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private final MotionInterferenceChecker ballArmUpCheck;
 
+	private final CKSolenoid mBallIntakeBarDropSolenoid;
+
 	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.POSITION;
 
 	private double mBallIntakeArmSetpoint = 0;
@@ -29,6 +32,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		ballArmUpCheck = new MotionInterferenceChecker(
 				(t) -> Elevator.getInstance().getPosition() > Constants.kElevatorPosToBallIntakeArm
 		);
+
+		mBallIntakeBarDropSolenoid = new CKSolenoid(Constants.kBallIntakeBarSolenoidId);
 	}
 
 	public static BallIntakeArm getInstance() {

@@ -104,9 +104,12 @@ public class Constants {
 	// Solenoids
     public static final int kPTOShifterSolenoidId = 0;
     public static final int kBallIntakeBarSolenoidId = 2;
-    public static final int kHatchBeakSolenoidId = 8;
-    public static final int kHatchPushSolenoidId = 10;
-    public static final int kBallPushSolenoidId = 12;
+    public static final int kHatchBeakSolenoidId = 3;
+    public static final int kHatchPushSolenoidId = 5;
+    public static final int kBallPushSolenoidId = 7;
+//    public static final int kHatchBeakSolenoidId = 8;
+//    public static final int kHatchPushSolenoidId = 10;
+//    public static final int kBallPushSolenoidId = 12;
 
 
     // Control Board

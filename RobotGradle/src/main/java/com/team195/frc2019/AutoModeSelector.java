@@ -52,26 +52,29 @@ public class AutoModeSelector {
     }
 
     public AutoModeBase getAutoMode() {
-        switch (mCachedDesiredMode) {
-            case CrossAutoLine:
-//                switch(mCachedStartingPosition) {
-//                    case Left:
-//                        break;
-//                    case Center:
-//                        break;
-//                    case Right:
-//                        break;
-//                    case Invalid:
-//                        break;
-//                }
-                return new CrossAutoLineMode();
-            case Characterization:
-                return new CharacterizeHighGearStraight();
-            case DoNothing:
-                return new DoNothingMode();
-            default:
-                return new CrossAutoLineMode();
+        if (mCachedDesiredMode != null && mCachedStartingPosition != null) {
+            switch (mCachedDesiredMode) {
+                case CrossAutoLine:
+                    switch (mCachedStartingPosition) {
+                        case Left:
+                            break;
+                        case Center:
+                            break;
+                        case Right:
+                            break;
+                        case Invalid:
+                            break;
+                    }
+                    return new CrossAutoLineMode();
+                case Characterization:
+                    return new CharacterizeHighGearStraight();
+                case DoNothing:
+                    return new DoNothingMode();
+                default:
+                    return new CrossAutoLineMode();
+            }
         }
+        return new DoNothingMode();
     }
 
 }

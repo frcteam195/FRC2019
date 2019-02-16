@@ -1,6 +1,7 @@
 package com.team195.frc2019;
 
 import com.team195.frc2019.subsystems.Drive;
+import com.team195.lib.util.Reportable;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Translation2d;
@@ -11,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.Map;
 
-public class RobotState {
+public class RobotState implements Reportable {
 	private static RobotState instance_ = new RobotState();
 
 	public static RobotState getInstance() {
@@ -105,11 +106,14 @@ public class RobotState {
 		return vehicle_velocity_measured_;
 	}
 
-	public void outputToSmartDashboard() {
+	@Override
+	public String generateReport() {
 		Pose2d odometry = getLatestFieldToVehicle().getValue();
-		SmartDashboard.putNumber("Robot Pose X", odometry.getTranslation().x());
-		SmartDashboard.putNumber("Robot Pose Y", odometry.getTranslation().y());
-		SmartDashboard.putNumber("Robot Pose Theta", odometry.getRotation().getDegrees());
-		SmartDashboard.putNumber("Robot Linear Velocity", vehicle_velocity_measured_.dx);
+		String s = "";
+		s += "RobotPoseX:" + odometry.getTranslation().x() + ";";
+		s += "RobotPoseY:" + odometry.getTranslation().y() + ";";
+		s += "RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";";
+		s += "RobotLinearVelocity:" + vehicle_velocity_measured_.dx + ";";
+		return s;
 	}
 }

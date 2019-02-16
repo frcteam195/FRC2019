@@ -41,7 +41,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		super(deviceId);
 		motorBreaker = breakerCurrent;
 		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
-		System.out.println("\n\n\n\nSomething\n\n\n\n");
+		setBrakeCoastMode(MCNeutralMode.Brake);
 	}
 
 	public CKTalonSRX(int deviceId, TalonSRX masterTalon, PDPBreaker breakerCurrent) {
@@ -49,6 +49,7 @@ public class CKTalonSRX extends TalonSRX implements TuneableMotorController {
 		motorBreaker = breakerCurrent;
 		doDefaultConfig(normalSlaveConfig);
 		follow(masterTalon);
+		setBrakeCoastMode(MCNeutralMode.Brake);
 	}
 
 	private void doDefaultConfig(Configuration config) {
