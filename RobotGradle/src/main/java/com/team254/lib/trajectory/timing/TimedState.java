@@ -74,7 +74,7 @@ public class TimedState<S extends State<S>> implements State<TimedState<S>> {
         boolean reversing = velocity() < 0.0 || (Util.epsilonEquals(velocity(), 0.0) && acceleration() < 0.0);
         final double new_v = velocity() + acceleration() * delta_t;
         final double new_s = (reversing ? -1.0 : 1.0) * (velocity() * delta_t + .5 * acceleration() * delta_t * delta_t);
-        // System.out.println("x: " + x + " , new_t: " + new_t + ", new_s: " + new_s + " , distance: " + state()
+        // ConsoleReporter.report("x: " + x + " , new_t: " + new_t + ", new_s: " + new_s + " , distance: " + state()
         // .distance(other.state()));
         return new TimedState<S>(state().interpolate(other.state(), new_s / state().distance(other.state())),
                 new_t,

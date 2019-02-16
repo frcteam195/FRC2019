@@ -1,6 +1,7 @@
 package com.team195.frc2019.paths;
 
 import com.team195.frc2019.planners.DriveMotionPlanner;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
@@ -43,9 +44,9 @@ public class TrajectoryGenerator {
 
     public void generateTrajectories() {
         if (mTrajectorySet == null) {
-            System.out.println("Generating trajectories...");
+            ConsoleReporter.report("Generating trajectories...");
             mTrajectorySet = new TrajectorySet();
-            System.out.println("Finished trajectory generation");
+            ConsoleReporter.report("Finished trajectory generation");
         }
     }
 

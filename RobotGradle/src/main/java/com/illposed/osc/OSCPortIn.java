@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
  * receiver = new OSCPortIn(OSCPort.DEFAULT_SC_OSC_PORT());
  * OSCListener listener = new OSCListener() {
  * 	public void acceptMessage(java.util.Date time, OSCMessage message) {
- * 		System.out.println("Message received!");
+ * 		ConsoleReporter.report("Message received!");
  * 	}
  * };
  * receiver.addListener("/message/receiving", listener);

@@ -5,6 +5,7 @@ import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.actions.CollectAccelerationData;
 import com.team195.frc2019.auto.actions.CollectVelocityData;
 import com.team195.frc2019.auto.actions.WaitAction;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team254.lib.physics.DriveCharacterization;
 
 import java.util.ArrayList;
@@ -25,8 +26,8 @@ public class CharacterizeHighGearStraight extends AutoModeBase {
 
         DriveCharacterization.CharacterizationConstants constants = DriveCharacterization.characterizeDrive(velocityData, accelerationData);
 
-        System.out.println("ks: " + constants.ks);
-        System.out.println("kv: " + constants.kv);
-        System.out.println("ka: " + constants.ka);
+        ConsoleReporter.report("ks: " + constants.ks);
+        ConsoleReporter.report("kv: " + constants.kv);
+        ConsoleReporter.report("ka: " + constants.ka);
     }
 }

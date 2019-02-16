@@ -49,6 +49,7 @@ public class Robot extends TimedRobot {
 		try {
 			CrashTracker.logRobotInit();
 			ConsoleReporter.getInstance().start();
+			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 
 			DashJoyReceiver.getInstance();
 
@@ -73,6 +74,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
+
 	}
 
 	@Override

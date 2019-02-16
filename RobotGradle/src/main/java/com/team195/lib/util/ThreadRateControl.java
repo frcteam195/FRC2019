@@ -3,29 +3,28 @@ package com.team195.lib.util;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team254.lib.util.MovingAverage;
+import edu.wpi.first.hal.NotifierJNI;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ThreadRateControl {
-	private double startTime;
-	private double endTime;
-	private int elapsedTimeMS;
-	private boolean started;
-	private double mPrevStartTime;
-	private double mLoopTimeMS;
-	private MovingAverage mAverageLoopTime;
+	private MovingAverage mAverageLoopTime = new MovingAverage(20);
 
-	private double prevDtCalcTime;
+	private final int m_notifier = NotifierJNI.initializeNotifier();
 
+	private boolean started = false;
+	private double prevDtCalcTime = 0;
+
+	private final ElapsedTimer eTimer = new ElapsedTimer();
 
 	public ThreadRateControl() {
-		startTime = 0;
-		mPrevStartTime = 0;
-		mLoopTimeMS = 0;
-		endTime = 0;
-		elapsedTimeMS = 0;
-		prevDtCalcTime = 0;
-		started = false;
-		mAverageLoopTime = new MovingAverage(20);
+
+	}
+
+	@Override
+	@SuppressWarnings("NoFinalizer")
+	protected void finalize() {
+		NotifierJNI.stopNotifier(m_notifier);
+		NotifierJNI.cleanNotifier(m_notifier);
 	}
 
 	public synchronized void start(boolean resetStart) {
@@ -36,8 +35,7 @@ public class ThreadRateControl {
 
 	public synchronized void start() {
 		if (!started) {
-			startTime = Timer.getFPGATimestamp();
-			mPrevStartTime = startTime;
+			eTimer.start();
 			getDt();
 			started = true;
 		} else {
@@ -50,29 +48,18 @@ public class ThreadRateControl {
 	 * @param minLoopTime Time in ms
 	 */
 	public synchronized void doRateControl(int minLoopTime) {
-		mLoopTimeMS = (startTime - mPrevStartTime) * 1000;
-		mAverageLoopTime.addNumber(mLoopTimeMS);
-		if (startTime != 0) {
-			do {
-				endTime = Timer.getFPGATimestamp();
-				elapsedTimeMS = (int) ((endTime - startTime) * 1000);
-				if (elapsedTimeMS < minLoopTime) {
-					try {
-						Thread.sleep(minLoopTime - elapsedTimeMS);
-					} catch (Exception ex) {
-						ConsoleReporter.report(ex);
-					}
-				}
-			} while (elapsedTimeMS < minLoopTime);
-		} else {
-			ConsoleReporter.report("Thread rate control called without setting a start time! Check your loops!", MessageLevel.ERROR);
+		double remainingTime = ((minLoopTime / 1000.0) - eTimer.hasElapsed());
+		if (remainingTime > 0) {
+			//Subtract constant offset for code delay (currently 150us)
+			NotifierJNI.updateNotifierAlarm(m_notifier, (long) (((Timer.getFPGATimestamp() + remainingTime) * 1e6) - 150));
+			NotifierJNI.waitForNotifierAlarm(m_notifier);
 		}
-		mPrevStartTime = startTime;
-		startTime = Timer.getFPGATimestamp();
+		mAverageLoopTime.addNumber(eTimer.hasElapsed());
+		eTimer.start();
 	}
 
 	public double getLoopTime() {
-		return mLoopTimeMS;
+		return mAverageLoopTime.getLastSample();
 	}
 
 	public double getAverageLoopTime() {

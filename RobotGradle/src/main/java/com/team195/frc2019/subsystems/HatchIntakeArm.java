@@ -18,9 +18,9 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private final MotionInterferenceChecker hatchArmUpCheck;
 
-	private HatchIntakeArmControlMode mHatchIntakeArmControlMode = HatchIntakeArmControlMode.POSITION;
+	private HatchArmControlMode mHatchArmControlMode = HatchArmControlMode.POSITION;
 
-	private double mHatchIntakeArmSetpoint = 0;
+	private double mHatchArmSetpoint = 0;
 
 	private HatchIntakeArm() {
 		mHatchArmRotationMotor = new CKTalonSRX(Constants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
@@ -44,7 +44,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	public boolean isSystemFaulted() {
 		boolean systemFaulted = !mHatchArmRotationMotor.isEncoderPresent();
 		if (systemFaulted)
-			setHatchIntakeArmControlMode(HatchIntakeArmControlMode.OPEN_LOOP);
+			setHatchArmControlMode(HatchArmControlMode.OPEN_LOOP);
 		return systemFaulted;
 	}
 
@@ -58,17 +58,17 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		String retVal = "";
 		retVal += "HatchArmPos:" + mHatchArmRotationMotor.getVelocity() + ";";
 		retVal += "HatchArmVel:" + mHatchArmRotationMotor.getVelocity() + ";";
-		retVal += "HatchArmOutput:" + mHatchIntakeArmSetpoint + ";";
+		retVal += "HatchArmOutput:" + mHatchArmSetpoint + ";";
 		retVal += "HatchArmCurrent:" + mHatchArmRotationMotor.getMCOutputCurrent() + ";";
 		retVal += "HatchArmOutputDutyCycle:" + mHatchArmRotationMotor.getMCOutputPercent() + ";";
 		retVal += "HatchArmOutputVoltage:" + mHatchArmRotationMotor.getMCOutputPercent()*mHatchArmRotationMotor.getMCInputVoltage() + ";";
 		retVal += "HatchArmSupplyVoltage:" + mHatchArmRotationMotor.getMCInputVoltage() + ";";
-		retVal += "HatchArmControlMode:" + mHatchIntakeArmControlMode.toString() + ";";
+		retVal += "HatchArmControlMode:" + mHatchArmControlMode.toString() + ";";
 		retVal += "HatchArmIntakeCurrent:" + mHatchArmRollerMotor.getMCOutputCurrent() + ";";
 		retVal += "HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";";
 		retVal += "HatchArmIntakeOutputVoltage:" + mHatchArmRollerMotor.getMCOutputPercent()*mHatchArmRollerMotor.getMCInputVoltage() + ";";
 		retVal += "HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";";
-		retVal += "HatchArmIntakeControlMode:" + mHatchArmRollerMotor.toString() + ";";
+//		retVal += "HatchArmIntakeControlMode:" + mHatchIntakeArmControlMode.toString() + ";";
 		return retVal;
 	}
 
@@ -101,15 +101,15 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onLoop(double timestamp) {
 			synchronized (HatchIntakeArm.this) {
-				switch (mHatchIntakeArmControlMode) {
+				switch (mHatchArmControlMode) {
 					case POSITION:
-						if (mHatchIntakeArmSetpoint > Constants.kHatchIntakeArmPosToElevator && !hatchArmUpCheck.hasPassedConditions())
+						if (mHatchArmSetpoint > Constants.kHatchIntakeArmPosToElevator && !hatchArmUpCheck.hasPassedConditions())
 							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kHatchIntakeArmPosToElevator, 0, 0);
 						else
-							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchIntakeArmSetpoint, 0, 0);
+							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
-						mHatchArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchIntakeArmSetpoint, -1), 1), 0, 0);
+						mHatchArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchArmSetpoint, -1), 1), 0, 0);
 						break;
 					default:
 						break;
@@ -128,15 +128,15 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		return mHatchArmRotationMotor.getPosition();
 	}
 
-	public synchronized void setHatchIntakeArmPosition(double armPosition) {
-		mHatchIntakeArmSetpoint = armPosition;
+	public synchronized void setHatchArmPosition(double armPosition) {
+		mHatchArmSetpoint = armPosition;
 	}
 
-	private synchronized void setHatchIntakeArmControlMode(HatchIntakeArmControlMode hatchIntakeArmControlMode) {
-		mHatchIntakeArmControlMode = hatchIntakeArmControlMode;
+	private synchronized void setHatchArmControlMode(HatchArmControlMode hatchArmControlMode) {
+		mHatchArmControlMode = hatchArmControlMode;
 	}
 
-	public enum HatchIntakeArmControlMode {
+	public enum HatchArmControlMode {
 		POSITION,
 		OPEN_LOOP;
 	}

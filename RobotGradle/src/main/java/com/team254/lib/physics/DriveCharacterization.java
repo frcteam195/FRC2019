@@ -1,5 +1,6 @@
 package com.team254.lib.physics;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team254.lib.util.PolynomialRegression;
 import com.team254.lib.util.Util;
 
@@ -60,7 +61,7 @@ public class DriveCharacterization {
             return constants;
         }
         PolynomialRegression p = new PolynomialRegression(points, 1);
-        System.out.println("r^2: " + p.R2());
+        ConsoleReporter.report("r^2: " + p.R2());
         constants.ks = p.beta(0);
         constants.kv = p.beta(1);
         return constants;
@@ -72,7 +73,7 @@ public class DriveCharacterization {
         }
 
         PolynomialRegression p = new PolynomialRegression(points, 1);
-        System.out.println("r^2: " + p.R2());
+        ConsoleReporter.report("r^2: " + p.R2());
         velocityChacterization.ka = p.beta(1);
         return velocityChacterization;
     }
