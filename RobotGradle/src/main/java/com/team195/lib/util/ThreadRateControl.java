@@ -3,6 +3,7 @@ package com.team195.lib.util;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team254.lib.util.MovingAverage;
+import edu.wpi.first.hal.NotifierJNI;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ThreadRateControl {
@@ -13,6 +14,8 @@ public class ThreadRateControl {
 	private double mPrevStartTime;
 	private double mLoopTimeMS;
 	private MovingAverage mAverageLoopTime;
+
+	private final int m_notifier = NotifierJNI.initializeNotifier();
 
 	private double prevDtCalcTime;
 
@@ -26,6 +29,13 @@ public class ThreadRateControl {
 		prevDtCalcTime = 0;
 		started = false;
 		mAverageLoopTime = new MovingAverage(20);
+	}
+
+	@Override
+	@SuppressWarnings("NoFinalizer")
+	protected void finalize() {
+		NotifierJNI.stopNotifier(m_notifier);
+		NotifierJNI.cleanNotifier(m_notifier);
 	}
 
 	public synchronized void start(boolean resetStart) {
@@ -58,7 +68,8 @@ public class ThreadRateControl {
 				elapsedTimeMS = (int) ((endTime - startTime) * 1000);
 				if (elapsedTimeMS < minLoopTime) {
 					try {
-						Thread.sleep(minLoopTime - elapsedTimeMS);
+						NotifierJNI.updateNotifierAlarm(m_notifier, (long) ((minLoopTime - elapsedTimeMS) * 1000));
+						NotifierJNI.waitForNotifierAlarm(m_notifier);
 					} catch (Exception ex) {
 						ConsoleReporter.report(ex);
 					}
