@@ -2,10 +2,29 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b9ed637-5271-42da-b75f-b413d8c023ca" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/RobotGradle.test.iml" beforeDir="false" afterPath="$PROJECT_DIR$/RobotGradle.test.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Team195_2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/illposed/osc/OSCPortIn.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/illposed/osc/OSCPortIn.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/DriveTrajectory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/DriveTrajectory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/OpenLoopDrive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/OpenLoopDrive.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CharacterizeHighGearStraight.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CharacterizeHighGearStraight.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CrossAutoLineMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CrossAutoLineMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DoNothingMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DoNothingMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/TestMode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/TestMode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Looper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Looper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/paths/TrajectoryGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/paths/TrajectoryGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/drivers/TalonSRXChecker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/drivers/TalonSRXChecker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/physics/DriveCharacterization.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/physics/DriveCharacterization.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimedState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimedState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimingUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimingUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/util/InterpolatingTreeMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/util/InterpolatingTreeMap.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team254/lib/util/MovingAverage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team254/lib/util/MovingAverage.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -77,24 +96,6 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="RobotGradle" type="f1a62948:ProjectNode" />
-                <item name="Source Sets" type="e897c970:GradleViewContributor$SourceSetsNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RobotGradle" type="f1a62948:ProjectNode" />
-                <item name="Source Sets" type="e897c970:GradleViewContributor$SourceSetsNode" />
-                <item name="main" type="396b929e:GradleViewContributor$SourceSetNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RobotGradle" type="f1a62948:ProjectNode" />
-                <item name="Source Sets" type="e897c970:GradleViewContributor$SourceSetsNode" />
-                <item name="main" type="396b929e:GradleViewContributor$SourceSetNode" />
-                <item name="Dependencies" type="6de06a37:ExternalSystemViewDefaultContributor$MyDependenciesNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RobotGradle" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
               <path>
@@ -115,11 +116,6 @@
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="gradlerio" type="c8890929:TasksNode$1" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RobotGradle" type="f1a62948:ProjectNode" />
-                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -132,33 +128,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
-              <caret line="19" column="30" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="30" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2019.3.1/833de3f0c566a45afc1cdc74f037040f7f362f0/wpilibj-java-2019.3.1-sources.jar!/edu/wpi/first/wpilibj/TimedRobot.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-560">
-              <caret line="21" column="41" lean-forward="true" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
-              <folding>
-                <element signature="e#1674#1706#0" expanded="true" />
-                <element signature="e#2688#2727#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="70" column="61" selection-start-line="70" selection-start-column="61" selection-end-line="70" selection-end-column="61" />
+            <state relative-caret-position="2291">
+              <caret line="157" column="46" lean-forward="true" selection-start-line="157" selection-start-column="46" selection-end-line="157" selection-end-column="46" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -167,12 +138,14 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="31" column="5" lean-forward="true" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
+            <state relative-caret-position="483">
+              <caret line="69" column="21" lean-forward="true" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
               <folding>
-                <element signature="e#822#854#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#3079#3080#0" expanded="true" />
+                <element signature="e#3101#3102#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -203,6 +176,7 @@
       <find>timeout</find>
       <find>diagnost</find>
       <find>Something</find>
+      <find>System.out.println</find>
     </findStrings>
     <replaceStrings>
       <replace>Elevator</replace>
@@ -225,57 +199,57 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/dashjoy/DashJoyReceiver.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/StartingPosition.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DesiredMode.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/PDPBreaker.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneablePIDOSC.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/reporters/LogDataReporter.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/Point2D.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/Interpolating2DTreeMap.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/MCControlMode.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/util/CheesyDriveHelper.java" />
-        <option value="$PROJECT_DIR$/vendordeps/REVRobotics.json" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/MotionInterferenceChecker.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/InterferenceSystem.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Loop.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Looper.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/RobotStateEstimator.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/Controllers.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKDoubleSolenoid.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKSingleSolenoid.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/PushHatchOut.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/TimeoutTimer.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/TeleopActionRunner.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKSolenoid.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ShiftHelper.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SpinUpBallShooter.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoConstants.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/BallPushAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/BeakOpenAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/HatchPushAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeExecutor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/dashjoy/CKDashJoystick.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/RobotState.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/team195/frc2019/AutoModeTiming.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/AutomatedActions.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeBase.java" />
         <option value="$PROJECT_DIR$/build.gradle" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/SubsystemManager.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/AutoModeSelector.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Turret.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/util/MovingAverage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/AutoModeBase.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CrossAutoLineMode.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/loops/Looper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/DoNothingMode.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/paths/TrajectoryGenerator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/physics/DriveCharacterization.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimedState.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/trajectory/timing/TimingUtil.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/util/InterpolatingTreeMap.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/TestMode.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/modes/CharacterizeHighGearStraight.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/OpenLoopDrive.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/DriveTrajectory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team254/lib/drivers/TalonSRXChecker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/illposed/osc/OSCPortIn.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java" />
       </list>
     </option>
   </component>
@@ -307,7 +281,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -319,101 +292,57 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="frc2019" type="1f31426a:PackageElementNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
               <item name="frc2019" type="1f31426a:PackageElementNode" />
-              <item name="loops" type="1f31426a:PackageElementNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
               <item name="frc2019" type="1f31426a:PackageElementNode" />
-              <item name="monitors" type="1f31426a:PackageElementNode" />
+              <item name="controllers" type="1f31426a:PackageElementNode" />
             </path>
             <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
+              <item name="Team195_2019" type="58d84e3e:PackageViewProjectNode" />
               <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
               <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
               <item name="com" type="1f31426a:PackageElementNode" />
               <item name="team195" type="1f31426a:PackageElementNode" />
               <item name="frc2019" type="1f31426a:PackageElementNode" />
-              <item name="subsystems" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="drivers" type="1f31426a:PackageElementNode" />
-              <item name="motorcontrol" type="1f31426a:PackageElementNode" />
-            </path>
-            <path>
-              <item name="RobotGradle" type="58d84e3e:PackageViewProjectNode" />
-              <item name="RobotGradle" type="eaaa3913:PackageViewModuleGroupNode" />
-              <item name="RobotGradle.main" type="616d4139:PackageViewModuleNode" />
-              <item name="com" type="1f31426a:PackageElementNode" />
-              <item name="team195" type="1f31426a:PackageElementNode" />
-              <item name="lib" type="1f31426a:PackageElementNode" />
-              <item name="util" type="1f31426a:PackageElementNode" />
+              <item name="reporters" type="1f31426a:PackageElementNode" />
             </path>
           </expand>
           <select />
@@ -430,9 +359,9 @@
     <property name="MemberChooser.sorted" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550348272860" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550355471975" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/Team195_2019.ipr" />
-    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="vcs.Perforce" />
@@ -501,6 +430,25 @@
         <option name="taskNames">
           <list>
             <option value="riologRoborio" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="RobotGradle [riolog]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="riolog" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -590,6 +538,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.RobotGradle [riolog]" />
         <item itemvalue="Gradle.RobotGradle [riologRoborio]" />
         <item itemvalue="Gradle.Team195_2019 [discoverRoborio]" />
         <item itemvalue="Gradle.Team195_2019 [deploy]" />
@@ -668,6 +617,7 @@
       <workItem from="1550341168292" duration="200000" />
       <workItem from="1550342873297" duration="10000" />
       <workItem from="1550343031825" duration="1300000" />
+      <workItem from="1550352006823" duration="3299000" />
     </task>
     <task id="LOCAL-00001" summary="Line indentation testing">
       <created>1547620138702</created>
@@ -722,7 +672,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135519000" />
+    <option name="totallyTimeSpent" value="138818000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -735,9 +685,8 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23626374" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23870574" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -800,43 +749,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/CollectAccelerationData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/BeakOpenAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="98" selection-start-line="9" selection-start-column="98" selection-end-line="9" selection-end-column="98" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/BallPushAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="23" column="26" lean-forward="true" selection-start-line="23" selection-start-column="26" selection-end-line="23" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/OpenLoopDrive.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="13" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Kinematics.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
@@ -907,18 +819,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
           <caret line="52" column="1" lean-forward="true" selection-start-line="52" selection-start-column="1" selection-end-line="52" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1095">
-          <caret line="73" column="48" selection-start-line="73" selection-start-column="48" selection-end-line="73" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#3079#3080#0" expanded="true" />
-            <element signature="e#3101#3102#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1081,13 +981,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="14" column="31" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Turret.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="875">
@@ -1109,16 +1002,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
           <caret line="36" column="5" lean-forward="true" selection-start-line="36" selection-start-column="5" selection-end-line="36" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="30" selection-start-line="19" selection-start-column="30" selection-end-line="19" selection-end-column="30" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1204,14 +1087,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ElapsedTimer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="15" column="18" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="18" />
+          <folding>
+            <element signature="e#258#259#0" expanded="true" />
+            <element signature="e#308#309#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/edu.wpi.first.wpilibj/wpilibj-java/2019.3.1/833de3f0c566a45afc1cdc74f037040f7f362f0/wpilibj-java-2019.3.1-sources.jar!/edu/wpi/first/wpilibj/TimedRobot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-560">
-          <caret line="21" column="41" lean-forward="true" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
-          <folding>
-            <element signature="e#1674#1706#0" expanded="true" />
-            <element signature="e#2688#2727#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="15">
+          <caret line="21" column="41" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
         </state>
       </provider>
     </entry>
@@ -1225,12 +1115,69 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team254/lib/util/MovingAverage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="257">
+          <caret line="23" column="18" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/reporters/ConsoleReporter.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-222">
+          <caret line="21" column="42" selection-start-line="21" selection-start-column="42" selection-end-line="21" selection-end-column="42" />
+          <folding>
+            <element signature="e#2126#2127#0" expanded="true" />
+            <element signature="e#2170#2171#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="181" column="36" lean-forward="true" selection-start-line="181" selection-start-column="36" selection-end-line="181" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/util/ThreadRateControl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="31" column="5" lean-forward="true" selection-start-line="31" selection-start-column="5" selection-end-line="31" selection-end-column="5" />
+        <state relative-caret-position="900">
+          <caret line="64" column="18" selection-start-line="64" selection-start-column="18" selection-end-line="64" selection-end-column="18" />
           <folding>
-            <element signature="e#822#854#0" expanded="true" />
+            <element signature="e#1638#1639#0" expanded="true" />
+            <element signature="e#1684#1685#0" expanded="true" />
+            <element signature="e#1723#1724#0" expanded="true" />
+            <element signature="e#1766#1767#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team254/lib/drivers/TalonSRXChecker.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="25" lean-forward="true" selection-start-line="25" selection-end-line="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2291">
+          <caret line="157" column="46" lean-forward="true" selection-start-line="157" selection-start-column="46" selection-end-line="157" selection-end-column="46" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="69" column="21" lean-forward="true" selection-start-line="69" selection-start-column="21" selection-end-line="69" selection-end-column="21" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3079#3080#0" expanded="true" />
+            <element signature="e#3101#3102#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1241,10 +1188,12 @@
       <state key="ArtifactsStructureConfigurable.UI">
         <settings>
           <artifact-editor />
+          <last-edited>Gradle : RobotGradle.war</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
                 <option value="0.2" />
+                <option value="0.5" />
               </list>
             </option>
           </splitter-proportions>
@@ -1252,7 +1201,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>Spring</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1287,7 +1236,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>RobotGradle</last-edited>
+          <last-edited>main|RobotGradle</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -1300,7 +1249,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
-          <last-edited>Gradle: com.ctre.phoenix:api-java:5.12.0</last-edited>
+          <last-edited>Gradle: com.ctre.phoenix:api-java:5.13.0</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>

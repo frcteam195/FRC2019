@@ -65,7 +65,7 @@ public class Drive extends Subsystem {
 						updatePathFollower();
 						break;
 					default:
-						System.out.println("Unexpected drive control state: " + mDriveControlState);
+						ConsoleReporter.report("Unexpected drive control state: " + mDriveControlState, MessageLevel.DEFCON1);
 						break;
 				}
 			}
@@ -158,8 +158,6 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
 
-//			System.out.println("Switching to open loop");
-//			System.out.println(signal);
 			mDriveControlState = DriveControlState.OPEN_LOOP;
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
@@ -229,10 +227,10 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setHeading(Rotation2d heading) {
-//        System.out.println("SET HEADING: " + heading.getDegrees());
+        ConsoleReporter.report("SET HEADING: " + heading.getDegrees());
 
         mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mGyro.getFusedHeading()).inverse());
-//        System.out.println("Gyro offset: " + mGyroOffset.getDegrees());
+//        ConsoleReporter.report("Gyro offset: " + mGyroOffset.getDegrees());
 
         mPeriodicIO.gyro_heading = heading;
 	}

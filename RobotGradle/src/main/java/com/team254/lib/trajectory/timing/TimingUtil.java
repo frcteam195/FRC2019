@@ -123,9 +123,9 @@ public class TimingUtil {
                     // pass.
                     break;
                 }
-                // System.out.println("(intermediate) i: " + i + ", " + constraint_state.toString());
+                // ConsoleReporter.report("(intermediate) i: " + i + ", " + constraint_state.toString());
             }
-            // System.out.println("i: " + i + ", " + constraint_state.toString());
+            // ConsoleReporter.report("i: " + i + ", " + constraint_state.toString());
             predecessor = constraint_state;
         }
 

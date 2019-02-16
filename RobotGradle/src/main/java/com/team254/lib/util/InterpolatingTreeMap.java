@@ -1,5 +1,8 @@
 package com.team254.lib.util;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,7 +49,7 @@ public class InterpolatingTreeMap<K extends InverseInterpolable<K> & Comparable<
 
     @Override
     public void putAll(Map<? extends K, ? extends V> map) {
-        System.out.println("Unimplemented Method");
+        ConsoleReporter.report("Unimplemented Method", MessageLevel.DEFCON1);
     }
 
     /**

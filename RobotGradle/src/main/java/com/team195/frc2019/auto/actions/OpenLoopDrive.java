@@ -1,5 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,7 +26,7 @@ public class OpenLoopDrive implements Action {
 
     @Override
     public void update() {
-        System.out.println((Timer.getFPGATimestamp() - mStartTime) + " > " + mDuration);
+        ConsoleReporter.report((Timer.getFPGATimestamp() - mStartTime) + " > " + mDuration);
 
     }
 

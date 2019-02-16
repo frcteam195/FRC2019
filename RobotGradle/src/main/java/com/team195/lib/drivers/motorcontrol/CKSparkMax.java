@@ -86,7 +86,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		//TODO: Remove if not necessary after testing position units
 		demand = convertDemandToNativeUnits(controlMode, demand);
 
-//		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode != currentControlMode) {
+		if (demand + arbitraryFeedForward != prevOutput || currentSelectedSlot != slotIdx || controlMode != currentControlMode) {
 			currentControlMode = controlMode;
 			setpoint = demand;
 
@@ -94,7 +94,6 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			int retryCounter = 1;
 
 			do {
-//				System.out.println(getPosition());
 				setSucceeded = canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward) == CANError.kOK;
 			} while (!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
 
@@ -102,7 +101,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 				ConsoleReporter.report("Failed to set output Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 
 			prevOutput = demand + arbitraryFeedForward;
-//		}
+		}
 	}
 
 	public synchronized void setMinimumSetpointOutput(double minSetpointOutput) {

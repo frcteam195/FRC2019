@@ -1,6 +1,7 @@
 package com.team195.frc2019.loops;
 
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.lib.util.Reportable;
 import com.team254.lib.util.CrashTrackingRunnable;
 import edu.wpi.first.wpilibj.Notifier;
@@ -67,7 +68,7 @@ public class Looper implements ILooper, Reportable {
 
     public synchronized void start() {
         if (!running_) {
-            System.out.println("Starting loops");
+            ConsoleReporter.report("Starting loops");
             synchronized (taskRunningLock_) {
                 if (isFirstStart) {
                     loops_.forEach((l) -> l.onFirstStart(timestamp_));
@@ -83,7 +84,7 @@ public class Looper implements ILooper, Reportable {
 
     public synchronized void stop() {
         if (running_) {
-            System.out.println("Stopping loops");
+            ConsoleReporter.report("Stopping loops");
             notifier_.stop();
             synchronized (taskRunningLock_) {
                 running_ = false;

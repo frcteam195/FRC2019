@@ -4,12 +4,13 @@ import com.team195.frc2019.auto.AutoModeEndedException;
 import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.actions.DriveTrajectory;
 import com.team195.frc2019.paths.TrajectoryGenerator;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 
 public class TestMode extends AutoModeBase {
     @Override
     protected void routine() throws AutoModeEndedException {
-        System.out.println("Test mode");
+        ConsoleReporter.report("Test mode");
 //        Drive.getInstance().startLogging();
 
         runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToFarScale.get(true), true));

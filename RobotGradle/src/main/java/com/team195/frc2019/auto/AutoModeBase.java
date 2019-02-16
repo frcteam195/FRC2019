@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto;
 
 import com.team195.frc2019.auto.actions.Action;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -27,7 +28,7 @@ public abstract class AutoModeBase {
     }
 
     public void done() {
-        System.out.println("Auto mode done");
+        ConsoleReporter.report("Auto mode done");
     }
 
     public synchronized void stop() {

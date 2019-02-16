@@ -1,5 +1,6 @@
 package com.team195.frc2019;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.lib.util.RGBColor;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -205,10 +206,10 @@ public class Constants {
                         }
                         return ret.toString();
                     } else {
-                        System.out.println("Address doesn't exist or is not accessible");
+                        ConsoleReporter.report("Address doesn't exist or is not accessible");
                     }
                 } else {
-                    System.out.println("Network Interface for the specified address is not found.");
+                    ConsoleReporter.report("Network Interface for the specified address is not found.");
                 }
             }
         } catch (SocketException e) {
