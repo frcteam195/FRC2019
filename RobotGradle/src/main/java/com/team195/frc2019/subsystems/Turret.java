@@ -1,5 +1,6 @@
 package com.team195.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
@@ -11,6 +12,7 @@ import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.TeleopActionRunner;
 
 public class Turret extends Subsystem {
@@ -23,7 +25,7 @@ public class Turret extends Subsystem {
 	private final CKDoubleSolenoid mHatchPushSolenoid;
 	private final CKSolenoid mBallPushSolenoid;
 
-	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
+	private TurretControlMode mTurretControlMode = TurretControlMode.OPEN_LOOP;
 	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
 
 	private double mTurretSetpoint = 0;
@@ -32,7 +34,21 @@ public class Turret extends Subsystem {
 	private TeleopActionRunner mAutoHatchController = null;
 
 	private Turret() {
+		//Encoder on 50:1
+		//Turret gear is another 36:254 or 36:252
 		mTurretRotationMotor = new CKTalonSRX(Constants.kTurretMotorId, false, PDPBreaker.B30A);
+		mTurretRotationMotor.setInverted(true);
+		mTurretRotationMotor.setSensorPhase(true);
+		mTurretRotationMotor.setPIDF(Constants.kTurretPositionKp, Constants.kTurretPositionKi, Constants.kTurretPositionKd, Constants.kTurretPositionKf);
+		mTurretRotationMotor.setMotionParameters(Constants.kTurretPositionCruiseVel, Constants.kTurretPositionMMAccel);
+		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
+
+//		TuneablePIDOSC x;
+//		try {
+//			x = new TuneablePIDOSC("Turret", 5804, true, mTurretRotationMotor);
+//		} catch (Exception ignored) {
+//
+//		}
 
 		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
@@ -92,6 +108,8 @@ public class Turret extends Subsystem {
 	@Override
 	public void zeroSensors() {
 		mTurretRotationMotor.setEncoderPosition(0);
+		if (mTurretControlMode == TurretControlMode.POSITION)
+			mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override
@@ -120,7 +138,7 @@ public class Turret extends Subsystem {
 			synchronized (Turret.this) {
 				switch (mTurretControlMode) {
 					case POSITION:
-						mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
+//						mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
 						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mTurretSetpoint, -1), 1), 0, 0);

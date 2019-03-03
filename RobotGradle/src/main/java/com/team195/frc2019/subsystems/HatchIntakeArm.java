@@ -1,11 +1,13 @@
 package com.team195.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 
@@ -24,6 +26,19 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private HatchIntakeArm() {
 		mHatchArmRotationMotor = new CKTalonSRX(Constants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
+		mHatchArmRotationMotor.setInverted(true);
+		mHatchArmRotationMotor.setSensorPhase(true);
+		mHatchArmRotationMotor.setPIDF(Constants.kHatchArmPositionKp, Constants.kHatchArmPositionKi, Constants.kHatchArmPositionKd, Constants.kHatchArmPositionKf);
+		mHatchArmRotationMotor.setMotionParameters(Constants.kHatchArmPositionCruiseVel, Constants.kHatchArmPositionMMAccel);
+		mHatchArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
+
+//		TuneablePIDOSC x;
+//		try {
+//			x = new TuneablePIDOSC("Hatch Arm", 5804, true, mHatchArmRotationMotor);
+//		} catch (Exception ignored) {
+//
+//		}
+
 		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
 
 		hatchArmUpCheck = new MotionInterferenceChecker(
@@ -75,6 +90,8 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mHatchArmRotationMotor.setEncoderPosition(0);
+		if (mHatchArmControlMode == HatchArmControlMode.POSITION)
+			mHatchArmRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override
@@ -103,10 +120,10 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (HatchIntakeArm.this) {
 				switch (mHatchArmControlMode) {
 					case POSITION:
-						if (mHatchArmSetpoint > Constants.kHatchIntakeArmPosToElevator && !hatchArmUpCheck.hasPassedConditions())
-							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kHatchIntakeArmPosToElevator, 0, 0);
-						else
-							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
+//						if (mHatchArmSetpoint > Constants.kHatchIntakeArmPosToElevator && !hatchArmUpCheck.hasPassedConditions())
+//							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kHatchIntakeArmPosToElevator, 0, 0);
+//						else
+//							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
 						mHatchArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchArmSetpoint, -1), 1), 0, 0);

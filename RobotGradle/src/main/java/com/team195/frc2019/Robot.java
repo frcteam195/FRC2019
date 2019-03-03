@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void robotPeriodic() {
-
+//		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
 	}
 
 	@Override

@@ -72,7 +72,7 @@ public class HIDController {
 				}
 			});
 			controlThread.setPriority(Constants.kRobotThreadPriority);
-			controlThread.start();
+//			controlThread.start();
 		}
 	}
 

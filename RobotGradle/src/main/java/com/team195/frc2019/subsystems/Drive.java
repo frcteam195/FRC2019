@@ -86,12 +86,10 @@ public class Drive extends Subsystem {
 		mLeftMaster.setMotionParameters(10000, 500);
 		mLeftMaster.writeToFlash();
 
-		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
-		mLeftSlaveA.setInverted(false);
+		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveA.writeToFlash();
 
-		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A);
-		mLeftSlaveB.setInverted(false);
+		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
@@ -100,12 +98,10 @@ public class Drive extends Subsystem {
 		mRightMaster.setMotionParameters(10000, 500);
 		mRightMaster.writeToFlash();
 
-		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
-		mRightSlaveA.setInverted(true);
+		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, true);
 		mRightSlaveA.writeToFlash();
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A);
-		mRightSlaveB.setInverted(true);
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, true);
 		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
@@ -239,26 +235,6 @@ public class Drive extends Subsystem {
 	public synchronized void stop() {
 		setOpenLoop(DriveSignal.NEUTRAL);
 	}
-
-//	@Override
-//	public void outputTelemetry() {
-//		SmartDashboard.putNumber("Right Drive Distance", mPeriodicIO.right_distance);
-//		SmartDashboard.putNumber("Right Drive Ticks", mPeriodicIO.right_position_rotations);
-//		SmartDashboard.putNumber("Left Drive Ticks", mPeriodicIO.left_position_rotations);
-//		SmartDashboard.putNumber("Left Drive Distance", mPeriodicIO.left_distance);
-//		SmartDashboard.putNumber("Right Linear Velocity", getRightLinearVelocity());
-//		SmartDashboard.putNumber("Left Linear Velocity", getLeftLinearVelocity());
-//
-//		SmartDashboard.putNumber("x err", mPeriodicIO.error.getTranslation().x());
-//		SmartDashboard.putNumber("y err", mPeriodicIO.error.getTranslation().y());
-//		SmartDashboard.putNumber("theta err", mPeriodicIO.error.getRotation().getDegrees());
-//		if (getHeading() != null) {
-//			SmartDashboard.putNumber("Gyro Heading", getHeading().getDegrees());
-//		}
-//		if (mCSVWriter != null) {
-//			mCSVWriter.write();
-//		}
-//	}
 
 	public synchronized void resetEncoders() {
         mLeftMaster.setEncoderPosition(0);

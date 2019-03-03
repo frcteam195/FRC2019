@@ -27,9 +27,6 @@
             <element id="library" level="project" name="Gradle: edu.wpi.first.cscore:cscore-java:2019.3.1" />
             <element id="library" level="project" name="Gradle: edu.wpi.first.cameraserver:cameraserver-java:2019.3.1" />
             <element id="library" level="project" name="Gradle: edu.wpi.first.hal:hal-java:2019.3.1" />
-            <element id="library" level="project" name="Gradle: com.ctre.phoenix:api-java:5.13.0" />
-            <element id="library" level="project" name="Gradle: com.ctre.phoenix:wpiapi-java:5.13.0" />
-            <element id="library" level="project" name="Gradle: com.revrobotics.frc:SparkMax-java:1.1.8" />
             <element id="library" level="project" name="Gradle: gov.nist.math:jama:1.0.3" />
             <element id="library" level="project" name="Gradle: org.springframework:spring-webmvc:4.3.0.RELEASE" />
             <element id="library" level="project" name="Gradle: javax.servlet:javax.servlet-api:3.0.1" />
@@ -41,6 +38,9 @@
             <element id="library" level="project" name="Gradle: org.springframework:spring-expression:4.3.0.RELEASE" />
             <element id="library" level="project" name="Gradle: org.springframework:spring-core:4.3.0.RELEASE" />
             <element id="library" level="project" name="Gradle: commons-logging:commons-logging:1.2" />
+            <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.14.0/ed148ed31f0d0475c7037afd308dc2e0b3dd70fa/api-java-5.14.0.jar" />
+            <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/wpiapi-java/5.14.0/f3b0ef8e6778566021daedc6522f1866e3e25188/wpiapi-java-5.14.0.jar" />
+            <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.1.9/e7b118e6fd873ea74e7ccbce278e0979a323c30e/SparkMax-java-1.1.9.jar" />
           </element>
         </element>
       </root>
@@ -267,22 +267,22 @@
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
   </component>
   <component name="libraryTable">
-    <library name="Gradle: com.ctre.phoenix:api-java:5.13.0">
+    <library name="Gradle: com.ctre.phoenix:api-java:5.14.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.13.0/f9b2c1e7b6f2cabc3204e791386c47a856654fc5/api-java-5.13.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.14.0/ed148ed31f0d0475c7037afd308dc2e0b3dd70fa/api-java-5.14.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.13.0/d556f9757205f08a4106a6072291b7a8f2f00b9c/api-java-5.13.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/api-java/5.14.0/71d5827e312fb56659224d954c38c21f8cd2fd39/api-java-5.14.0-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.ctre.phoenix:wpiapi-java:5.13.0">
+    <library name="Gradle: com.ctre.phoenix:wpiapi-java:5.14.0">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/wpiapi-java/5.13.0/d37ff722315cf93181d9f28b10a6bbcb023306ff/wpiapi-java-5.13.0.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/wpiapi-java/5.14.0/f3b0ef8e6778566021daedc6522f1866e3e25188/wpiapi-java-5.14.0.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/wpiapi-java/5.13.0/1176e3b7dc8b05a37d92c1e2fc398cef726ede28/wpiapi-java-5.13.0-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.ctre.phoenix/wpiapi-java/5.14.0/a2537f6a2eb04b93096727e3dd4df09c20c5399b/wpiapi-java-5.14.0-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: com.kauailabs.navx.frc:navx-java:3.1.366">
@@ -294,13 +294,13 @@
         <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.kauailabs.navx.frc/navx-java/3.1.366/50bfa74f146e110b7edc72b5d337e81c21345f7f/navx-java-3.1.366-sources.jar!/" />
       </SOURCES>
     </library>
-    <library name="Gradle: com.revrobotics.frc:SparkMax-java:1.1.8">
+    <library name="Gradle: com.revrobotics.frc:SparkMax-java:1.1.9">
       <CLASSES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.1.8/bdf997c6143fcfcf39f5493f693ddb744b9361c1/SparkMax-java-1.1.8.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.1.9/e7b118e6fd873ea74e7ccbce278e0979a323c30e/SparkMax-java-1.1.9.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>
-        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.1.8/e7d4ea2785a8889df00f24ae26b8b7566298308b/SparkMax-java-1.1.8-sources.jar!/" />
+        <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.revrobotics.frc/SparkMax-java/1.1.9/d733d1e5c190e3c86975673a3a3c6546e346af6e/SparkMax-java-1.1.9-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Gradle: commons-logging:commons-logging:1.2">

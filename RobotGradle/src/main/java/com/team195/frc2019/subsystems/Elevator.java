@@ -1,11 +1,15 @@
 package com.team195.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 
@@ -24,9 +28,23 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	private double mElevatorSetpoint = 0;
 
 	private Elevator() {
-		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterId, false, PDPBreaker.B40A);
-		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveAId, mElevatorMaster, PDPBreaker.B40A);
-		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBId, mElevatorMaster, PDPBreaker.B30A);
+		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
+		mElevatorMaster.setSensorPhase(true);
+		mElevatorMaster.setInverted(false);
+		mElevatorMaster.setPIDF(Constants.kElevatorPositionKp, Constants.kElevatorPositionKi, Constants.kElevatorPositionKd, Constants.kElevatorPositionKf);
+		mElevatorMaster.setMotionParameters(Constants.kElevatorPositionCruiseVel, Constants.kElevatorPositionMMAccel);
+		mElevatorMaster.setControlMode(MCControlMode.MotionMagic);
+
+//		TuneablePIDOSC x;
+//		try {
+//			x = new TuneablePIDOSC("Elevator", 5804, true, mElevatorMaster);
+//		} catch (Exception ignored) {
+//
+//		}
+
+		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B30A, false);
+
+		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
 
 		elevatorDownCheck = new MotionInterferenceChecker(
 				(t) -> BallIntakeArm.getInstance().getPosition() < Constants.kBallIntakeArmPosToElevator,
@@ -75,6 +93,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mElevatorMaster.setEncoderPosition(0);
+		if (mElevatorControlMode == ElevatorControlMode.POSITION)
+			mElevatorMaster.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override
@@ -103,14 +123,14 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 			synchronized (Elevator.this) {
 				switch (mElevatorControlMode) {
 					case POSITION:
-						if ((mElevatorSetpoint < Constants.kElevatorPosToBallIntakeArm || mElevatorSetpoint < Constants.kElevatorPosToHatchIntakeArm)
-								&& !elevatorDownCheck.hasPassedConditions())
-							mElevatorMaster.set(MCControlMode.MotionMagic, Math.max(Constants.kElevatorPosToBallIntakeArm, Constants.kElevatorPosToHatchIntakeArm), 0, 0);
-						else
-							mElevatorMaster.set(MCControlMode.MotionMagic, mElevatorSetpoint, 0, 0);
+//						if ((mElevatorSetpoint < Constants.kElevatorPosToBallIntakeArm || mElevatorSetpoint < Constants.kElevatorPosToHatchIntakeArm)
+//								&& !elevatorDownCheck.hasPassedConditions())
+//							mElevatorMaster.set(MCControlMode.MotionMagic, Math.max(Constants.kElevatorPosToBallIntakeArm, Constants.kElevatorPosToHatchIntakeArm), 0, 0);
+//						else
+//							mElevatorMaster.set(MCControlMode.MotionMagic, mElevatorSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
-						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
+//						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
 						break;
 					default:
 						break;

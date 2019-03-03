@@ -62,6 +62,27 @@ public class Constants {
     public static final int kDriveLowGearVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
 
+    public static final double kElevatorPositionKp = 3.4;
+    public static final double kElevatorPositionKi = 0.0;
+    public static final double kElevatorPositionKd = 8.0;
+    public static final double kElevatorPositionKf = 0.099689;
+    public static final int kElevatorPositionCruiseVel = 1000;
+    public static final int kElevatorPositionMMAccel = 700;
+
+    public static final double kTurretPositionKp = 3.4;
+    public static final double kTurretPositionKi = 0.0;
+    public static final double kTurretPositionKd = 8.0;
+    public static final double kTurretPositionKf = 0.099689;
+    public static final int kTurretPositionCruiseVel = 1000;
+    public static final int kTurretPositionMMAccel = 700;
+
+    public static final double kHatchArmPositionKp = 3.4;
+    public static final double kHatchArmPositionKi = 0.0;
+    public static final double kHatchArmPositionKd = 8.0;
+    public static final double kHatchArmPositionKf = 0.099689;
+    public static final int kHatchArmPositionCruiseVel = 1000;
+    public static final int kHatchArmPositionMMAccel = 700;
+
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
     // Port assignments should match up with the spreadsheet here:
@@ -85,9 +106,9 @@ public class Constants {
     public static final int kLeftDriveSlaveBId = 6;
 
     // Elevator
-	public static final int kElevatorMasterId = 7;
-	public static final int kElevatorSlaveAId = 8;
-	public static final int kElevatorSlaveBId = 9;
+	public static final int kElevatorMasterLeftId = 8;
+	public static final int kElevatorSlaveALeftId = 9;
+	public static final int kElevatorSlaveBRightId = 7;
 
 	//Ball Intake Arm
 	public static final int kBallIntakeRotationMotorId = 10;
@@ -105,12 +126,12 @@ public class Constants {
 	// Solenoids
     public static final int kPTOShifterSolenoidId = 0;
     public static final int kBallIntakeBarSolenoidId = 2;
-    public static final int kHatchBeakSolenoidId = 3;
-    public static final int kHatchPushSolenoidId = 5;
-    public static final int kBallPushSolenoidId = 7;
-//    public static final int kHatchBeakSolenoidId = 8;
-//    public static final int kHatchPushSolenoidId = 10;
-//    public static final int kBallPushSolenoidId = 12;
+//    public static final int kHatchBeakSolenoidId = 3;
+//    public static final int kHatchPushSolenoidId = 5;
+//    public static final int kBallPushSolenoidId = 7;
+    public static final int kHatchBeakSolenoidId = 8;
+    public static final int kHatchPushSolenoidId = 10;
+    public static final int kBallPushSolenoidId = 12;
 
 
     // Control Board

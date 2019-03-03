@@ -21,12 +21,21 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private final CKSolenoid mBallIntakeBarDropSolenoid;
 
-	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.POSITION;
+	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.OPEN_LOOP;
 
 	private double mBallIntakeArmSetpoint = 0;
 
 	private BallIntakeArm() {
 		mBallArmRotationMotor = new CKTalonSRX(Constants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
+		mBallArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
+
+//		TuneablePIDOSC x;
+//		try {
+//			x = new TuneablePIDOSC("Ball Arm", 5804, true, mBallArmRotationMotor);
+//		} catch (Exception ignored) {
+//
+//		}
+
 		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 
 		ballArmUpCheck = new MotionInterferenceChecker(
@@ -80,6 +89,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mBallArmRotationMotor.setEncoderPosition(0);
+		if (mBallIntakeArmControlMode == BallIntakeArmControlMode.POSITION)
+			mBallArmRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override
@@ -108,10 +119,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				switch (mBallIntakeArmControlMode) {
 					case POSITION:
-						if (mBallIntakeArmSetpoint > Constants.kBallIntakeArmPosToElevator && !ballArmUpCheck.hasPassedConditions())
-							mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmPosToElevator, 0, 0);
-						else
-							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
+//						if (mBallIntakeArmSetpoint > Constants.kBallIntakeArmPosToElevator && !ballArmUpCheck.hasPassedConditions())
+//							mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmPosToElevator, 0, 0);
+//						else
+//							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
 						mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeArmSetpoint, -1), 1), 0, 0);

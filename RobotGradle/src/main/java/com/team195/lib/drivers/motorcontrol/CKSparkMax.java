@@ -40,14 +40,14 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		burnFlash();
 	}
 
-	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent) {
+	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent, boolean invert) {
 		super(deviceID, type);
 		restoreFactoryDefaults();
 		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
 		doDefaultConfig(normalSlaveConfig);
-		follow(masterSpark);
+		follow(masterSpark, invert);
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 		burnFlash();
 	}
