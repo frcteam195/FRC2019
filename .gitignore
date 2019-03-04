@@ -9,6 +9,7 @@
 
 **/.gradle/
 **/build/
+**/out/
 
 # Created by https://www.gitignore.io/api/c++,java,eclipse
 
