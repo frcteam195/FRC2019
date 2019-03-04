@@ -62,26 +62,56 @@ public class Constants {
     public static final int kDriveLowGearVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
 
+
+    //17.25:1
     public static final double kElevatorPositionKp = 3.4;
     public static final double kElevatorPositionKi = 0.0;
     public static final double kElevatorPositionKd = 8.0;
-    public static final double kElevatorPositionKf = 0.099689;
-    public static final int kElevatorPositionCruiseVel = 1000;
-    public static final int kElevatorPositionMMAccel = 700;
+    public static final double kElevatorPositionKf = 0.1380124477;
+    public static final int kElevatorPositionCruiseVel = 850;
+    public static final int kElevatorPositionMMAccel = 600;
+    //Units in rotations
+    public static final double kElevatorPositionForwardSoftLimit = 6.3;
+    public static final double kElevatorPositionReverseSoftLimit = 0;
 
-    public static final double kTurretPositionKp = 3.4;
+    //50:1
+    public static final double kTurretPositionKp = 4.3;
     public static final double kTurretPositionKi = 0.0;
     public static final double kTurretPositionKd = 8.0;
-    public static final double kTurretPositionKf = 0.099689;
-    public static final int kTurretPositionCruiseVel = 1000;
-    public static final int kTurretPositionMMAccel = 700;
+    public static final double kTurretPositionKf = 0.400360;
+    public static final int kTurretPositionCruiseVel = 350;
+    public static final int kTurretPositionMMAccel = 600;
 
-    public static final double kHatchArmPositionKp = 3.4;
+    //TODO: Tune
+    //100:1
+    public static final double kHatchArmPositionKp = 2.4;
     public static final double kHatchArmPositionKi = 0.0;
-    public static final double kHatchArmPositionKd = 8.0;
-    public static final double kHatchArmPositionKf = 0.099689;
-    public static final int kHatchArmPositionCruiseVel = 1000;
-    public static final int kHatchArmPositionMMAccel = 700;
+    public static final double kHatchArmPositionKd = 6.0;
+    public static final double kHatchArmPositionKf = 0.8000721603;
+    public static final int kHatchArmPositionCruiseVel = 100;
+    public static final int kHatchArmPositionMMAccel = 60;
+    //Units in rotations
+    public static final double kHatchArmForwardSoftLimit = 0;
+    public static final double kHatchArmReverseSoftLimit = 0;
+
+
+    //200:1
+    public static final double kBallIntakeArmUpPositionKp = 7.3;
+    public static final double kBallIntakeArmUpPositionKi = 0.0;
+    public static final double kBallIntakeArmUpPositionKd = 100.0;
+    public static final double kBallIntakeArmUpPositionKf = 1.6;
+    public static final int kBallIntakeArmUpPositionCruiseVel = 90;
+    public static final int kBallIntakeArmUpPositionMMAccel = 55;
+
+    //100:1
+    public static final double kBallIntakeArmDownPositionKp = 3.7;
+    public static final double kBallIntakeArmDownPositionKi = 0.0;
+    public static final double kBallIntakeArmDownPositionKd = 50.0;
+    public static final double kBallIntakeArmDownPositionKf = 0.8000721603;
+    public static final int kBallIntakeArmDownPositionCruiseVel = 160;
+    public static final int kBallIntakeArmDownPositionMMAccel = 200;
+    //Units in rotations
+    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!
@@ -129,9 +159,9 @@ public class Constants {
 //    public static final int kHatchBeakSolenoidId = 3;
 //    public static final int kHatchPushSolenoidId = 5;
 //    public static final int kBallPushSolenoidId = 7;
-    public static final int kHatchBeakSolenoidId = 8;
-    public static final int kHatchPushSolenoidId = 10;
-    public static final int kBallPushSolenoidId = 12;
+    public static final int kHatchBeakSolenoidId = 9;
+    public static final int kHatchPushSolenoidId = 8;
+    public static final int kBallPushSolenoidId = 11;
 
 
     // Control Board
@@ -159,7 +189,7 @@ public class Constants {
 	public static final double kElevatorPosToHatchIntakeArm = 0;
 
 
-    public static final double kElevatorLowSensitivityThreshold = 0;
+    public static final double kElevatorLowSensitivityThreshold = 2.5;
     public static final double kLowSensitivityFactor = 0.5;
 
 

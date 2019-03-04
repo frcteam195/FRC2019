@@ -6,6 +6,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class AutomatedActions {
+	private static boolean unfolded = false;
+
+	public static boolean isUnfolded() {
+		return unfolded;
+	}
+
+	public static Action unfold() {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+//		actionArrayList.add(new SetElevatorHeightAction(2));
+//		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
+//		actionArrayList.add(new HatchPushAction(false));
+
+		return new SeriesAction(actionArrayList);
+	}
+
 	public static Action pushOutHatch() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 

@@ -23,6 +23,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	private HatchArmControlMode mHatchArmControlMode = HatchArmControlMode.POSITION;
 
 	private double mHatchArmSetpoint = 0;
+	private double mHatchRollerSetpoint = 0;
 
 	private HatchIntakeArm() {
 		mHatchArmRotationMotor = new CKTalonSRX(Constants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
@@ -30,6 +31,11 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		mHatchArmRotationMotor.setSensorPhase(true);
 		mHatchArmRotationMotor.setPIDF(Constants.kHatchArmPositionKp, Constants.kHatchArmPositionKi, Constants.kHatchArmPositionKd, Constants.kHatchArmPositionKf);
 		mHatchArmRotationMotor.setMotionParameters(Constants.kHatchArmPositionCruiseVel, Constants.kHatchArmPositionMMAccel);
+		zeroSensors();
+		mHatchArmRotationMotor.configForwardSoftLimitThreshold(Constants.kHatchArmForwardSoftLimit);
+		mHatchArmRotationMotor.configForwardSoftLimitEnable(true);
+		mHatchArmRotationMotor.configReverseSoftLimitThreshold(Constants.kHatchArmReverseSoftLimit);
+		mHatchArmRotationMotor.configReverseSoftLimitEnable(true);
 		mHatchArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -40,6 +46,8 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 //		}
 
 		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
+		mHatchArmRollerMotor.setInverted(true);
+
 
 		hatchArmUpCheck = new MotionInterferenceChecker(
 				(t) -> Elevator.getInstance().getPosition() > Constants.kElevatorPosToHatchIntakeArm
@@ -83,7 +91,6 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		retVal += "HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";";
 		retVal += "HatchArmIntakeOutputVoltage:" + mHatchArmRollerMotor.getMCOutputPercent()*mHatchArmRollerMotor.getMCInputVoltage() + ";";
 		retVal += "HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";";
-//		retVal += "HatchArmIntakeControlMode:" + mHatchIntakeArmControlMode.toString() + ";";
 		return retVal;
 	}
 
@@ -131,6 +138,8 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 					default:
 						break;
 				}
+
+				mHatchArmRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchRollerSetpoint, -1), 1), 0, 0);
 			}
 		}
 
@@ -147,6 +156,10 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public synchronized void setHatchArmPosition(double armPosition) {
 		mHatchArmSetpoint = armPosition;
+	}
+
+	public synchronized void setHatchRollerSpeed(double rollerSpeed) {
+		mHatchRollerSetpoint = rollerSpeed;
 	}
 
 	private synchronized void setHatchArmControlMode(HatchArmControlMode hatchArmControlMode) {

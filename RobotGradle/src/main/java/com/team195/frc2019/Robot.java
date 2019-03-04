@@ -42,6 +42,7 @@ public class Robot extends TimedRobot {
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
+		Thread.currentThread().setPriority(Constants.kRobotThreadPriority);
 	}
 
 	@Override
@@ -65,7 +66,6 @@ public class Robot extends TimedRobot {
 			CriticalSystemsMonitor.getInstance();
 			ConnectionMonitor.getInstance();
 			LogDataReporter.getInstance();
-
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;

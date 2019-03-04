@@ -22,7 +22,7 @@ public class Turret extends Subsystem {
 	private final CKTalonSRX mTurretRotationMotor;
 	private final CKTalonSRX mBallShooterRollerMotor;
 	private final CKDoubleSolenoid mHatchBeakSolenoid;
-	private final CKDoubleSolenoid mHatchPushSolenoid;
+	private final CKSolenoid mHatchPushSolenoid;
 	private final CKSolenoid mBallPushSolenoid;
 
 	private TurretControlMode mTurretControlMode = TurretControlMode.OPEN_LOOP;
@@ -41,6 +41,7 @@ public class Turret extends Subsystem {
 		mTurretRotationMotor.setSensorPhase(true);
 		mTurretRotationMotor.setPIDF(Constants.kTurretPositionKp, Constants.kTurretPositionKi, Constants.kTurretPositionKd, Constants.kTurretPositionKf);
 		mTurretRotationMotor.setMotionParameters(Constants.kTurretPositionCruiseVel, Constants.kTurretPositionMMAccel);
+		zeroSensors();
 		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -57,11 +58,12 @@ public class Turret extends Subsystem {
 		mHatchBeakSolenoid.configReversed(false);
 		mHatchBeakSolenoid.set(false);
 
-		mHatchPushSolenoid = new CKDoubleSolenoid(Constants.kHatchPushSolenoidId);
-		mHatchPushSolenoid.configReversed(false);
+		mHatchPushSolenoid = new CKSolenoid(Constants.kHatchPushSolenoidId);
 		mHatchPushSolenoid.set(false);
 
 		mBallPushSolenoid = new CKSolenoid(Constants.kBallPushSolenoidId);
+		mBallPushSolenoid.setInverted(false);
+		mBallPushSolenoid.set(false);
 	}
 
 	public static Turret getInstance() {
@@ -187,6 +189,10 @@ public class Turret extends Subsystem {
 
 	public synchronized void setBeak(boolean open) {
 		mHatchBeakSolenoid.set(open);
+	}
+
+	public synchronized void setBeakOff() {
+		mHatchBeakSolenoid.turnOff();
 	}
 
 	public synchronized void setTurretPosition(double turretPosition) {

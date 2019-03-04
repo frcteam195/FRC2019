@@ -33,7 +33,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.setInverted(false);
 		mElevatorMaster.setPIDF(Constants.kElevatorPositionKp, Constants.kElevatorPositionKi, Constants.kElevatorPositionKd, Constants.kElevatorPositionKf);
 		mElevatorMaster.setMotionParameters(Constants.kElevatorPositionCruiseVel, Constants.kElevatorPositionMMAccel);
+		zeroSensors();
 		mElevatorMaster.setControlMode(MCControlMode.MotionMagic);
+		mElevatorMaster.configForwardSoftLimitThreshold(Constants.kElevatorPositionForwardSoftLimit);
+		mElevatorMaster.configForwardSoftLimitEnable(true);
+		mElevatorMaster.configReverseSoftLimitThreshold(Constants.kElevatorPositionReverseSoftLimit);
+		mElevatorMaster.configReverseSoftLimitEnable(true);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -127,7 +132,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 //								&& !elevatorDownCheck.hasPassedConditions())
 //							mElevatorMaster.set(MCControlMode.MotionMagic, Math.max(Constants.kElevatorPosToBallIntakeArm, Constants.kElevatorPosToHatchIntakeArm), 0, 0);
 //						else
-//							mElevatorMaster.set(MCControlMode.MotionMagic, mElevatorSetpoint, 0, 0);
+							mElevatorMaster.set(MCControlMode.MotionMagic, mElevatorSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
 //						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
@@ -151,6 +156,10 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	public synchronized void setElevatorPosition(double elevatorPosition) {
 		mElevatorSetpoint = elevatorPosition;
+	}
+
+	public boolean isElevatorAtSetpoint(double posDelta) {
+		return Math.abs(mElevatorSetpoint - mElevatorMaster.getPosition()) < Math.abs(posDelta);
 	}
 
 	private synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {

@@ -98,14 +98,13 @@ public class Drive extends Subsystem {
 		mRightMaster.setMotionParameters(10000, 500);
 		mRightMaster.writeToFlash();
 
-		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, true);
+		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveA.writeToFlash();
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, true);
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
-		mPTOShifter.configReversed(false);
 		mPTOShifter.set(false);
 
 		reloadGains();

@@ -2,8 +2,7 @@ package com.team195.frc2019.controllers;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
-import com.team195.frc2019.subsystems.Drive;
-import com.team195.frc2019.subsystems.Elevator;
+import com.team195.frc2019.subsystems.*;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 import com.team195.lib.util.ThreadRateControl;
 import com.team254.lib.util.CheesyDriveHelper;
@@ -54,7 +53,7 @@ public class HIDController {
 						} else {
 							//User Control Interface code here
 
-							double throttle = driveJoystick.getNormalizedAxis(1, 0.04);
+							double throttle = -driveJoystick.getNormalizedAxis(1, 0.04);
 							double turn = driveJoystick.getNormalizedAxis(4, 0.04);
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
@@ -63,6 +62,13 @@ public class HIDController {
 								turn *= Constants.kLowSensitivityFactor;
 							}
 							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+
+							if (driveJoystick.getRisingEdgeButton(1)) {
+//								Drive.getInstance().setPTO(true);
+							}
+							else if (driveJoystick.getRisingEdgeButton(2)) {
+//								Drive.getInstance().setPTO(false);
+							}
 						}
 					} catch (Throwable t) {
 						CrashTracker.logThrowableCrash(t);
@@ -72,7 +78,7 @@ public class HIDController {
 				}
 			});
 			controlThread.setPriority(Constants.kRobotThreadPriority);
-//			controlThread.start();
+			controlThread.start();
 		}
 	}
 

@@ -11,6 +11,7 @@ import com.team195.lib.util.Reportable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once
@@ -23,6 +24,8 @@ public class SubsystemManager implements ILooper {
 	private List<Loop> mLoops = new ArrayList<>();
 
 	private List<Reportable> additionalReportables = new ArrayList<>();
+
+	public static ReentrantLock monitorUsageControl = new ReentrantLock();
 
 	private SubsystemManager() {
 
@@ -49,7 +52,14 @@ public class SubsystemManager implements ILooper {
 
 	public boolean checkSubsystemFaulted() {
 		ArrayList<Boolean> retVals = new ArrayList<>();
-		mAllSubsystems.forEach((s) -> retVals.add(s.isSystemFaulted()));
+		try {
+			monitorUsageControl.lock();
+			mAllSubsystems.forEach((s) -> retVals.add(s.isSystemFaulted()));
+		} catch (Exception ex) {
+			ConsoleReporter.report(ex);
+		} finally {
+			monitorUsageControl.unlock();
+		}
 		for (boolean b : retVals) {
 			if (b)
 				return true;
@@ -69,8 +79,15 @@ public class SubsystemManager implements ILooper {
 
 	public String generateReport() {
 		StringBuilder sb = new StringBuilder();
-		mAllSubsystems.forEach((s) -> sb.append(s.generateReport()));
-		additionalReportables.forEach((s) -> sb.append(s.generateReport()));
+		try {
+			monitorUsageControl.lock();
+			mAllSubsystems.forEach((s) -> sb.append(s.generateReport()));
+			additionalReportables.forEach((s) -> sb.append(s.generateReport()));
+		} catch (Exception ex) {
+			ConsoleReporter.report(ex);
+		} finally {
+			monitorUsageControl.unlock();
+		}
 		return sb.toString();
 	}
 

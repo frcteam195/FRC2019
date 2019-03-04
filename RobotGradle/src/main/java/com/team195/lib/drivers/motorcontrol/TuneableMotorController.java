@@ -25,7 +25,7 @@ public interface TuneableMotorController {
 
 	void setMCClosedLoopRampRate(double rampRate);
 
-	void setMotionParameters(int cruiseVel, int cruiseAccel);
+	void setMotionParameters(double cruiseVel, double cruiseAccel);
 
 	void setPIDGainSlot(int slotIdx);
 

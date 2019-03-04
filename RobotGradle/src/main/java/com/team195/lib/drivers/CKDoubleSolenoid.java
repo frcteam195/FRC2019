@@ -24,4 +24,8 @@ public class CKDoubleSolenoid extends DoubleSolenoid {
 
 		set(setVal);
 	}
+
+	public void turnOff() {
+		set(Value.kOff);
+	}
 }

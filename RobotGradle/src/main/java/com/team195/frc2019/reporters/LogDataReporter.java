@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LogDataReporter {
 	private static final int portNumber = Constants.LOG_OSC_REPORTER_PORT;
-	private static final int MIN_LOG_REPORTER_LOOP_MS = 50;
+	private static final int MIN_LOG_REPORTER_LOOP_MS = 100;
 
 	private static LogDataReporter instance = null;
 

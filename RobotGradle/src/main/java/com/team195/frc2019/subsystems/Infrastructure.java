@@ -14,7 +14,7 @@ public class Infrastructure extends Subsystem {
     private boolean mIsDuringAuto = false;
 
     private Infrastructure() {
-        mCompressor = new Compressor();
+        mCompressor = new Compressor(0);
         mCompressor.start();
 
 //        mSuperstructure = Superstructure.getInstance();
@@ -72,11 +72,11 @@ public class Infrastructure extends Subsystem {
 //                            SuperstructureStateMachine.SystemState.MOVING_TO_POSITION;
 //                    boolean isIntaking = mIntake.getWantedAction() == IntakeStateMachine.WantedAction.WANT_CUBE
 //                            && !mIntake.hasCube();
-//                    if (elevatorMoving || mIsDuringAuto || isIntaking) {
-//                        stopCompressor();
-//                    } else {
-//                        startCompressor();
-//                    }
+                    if (mIsDuringAuto) {
+                        stopCompressor();
+                    } else {
+                        startCompressor();
+                    }
                 }
             }
 

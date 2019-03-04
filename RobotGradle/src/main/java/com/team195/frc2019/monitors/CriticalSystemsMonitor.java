@@ -4,11 +4,7 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.SubsystemManager;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
-import com.team195.frc2019.subsystems.Subsystem;
-import com.team195.lib.util.CriticalSystemStatus;
 import com.team195.lib.util.ThreadRateControl;
-
-import java.util.ArrayList;
 
 public class CriticalSystemsMonitor {
 	private static final int MIN_SYSTEM_MONITOR_LOOP_MS = 250;

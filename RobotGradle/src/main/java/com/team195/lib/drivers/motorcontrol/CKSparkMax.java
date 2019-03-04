@@ -65,7 +65,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
 			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
-			setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
+			setSucceeded &= setOpenLoopRampRate(1) == CANError.kOK;
 			//Erase previously stored output values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
@@ -214,7 +214,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
-	public synchronized void setMotionParameters(int cruiseVel, int cruiseAccel) {
+	public synchronized void setMotionParameters(double cruiseVel, double cruiseAccel) {
 		canPIDController.setSmartMotionMaxVelocity(cruiseVel, currentSelectedSlot);
 		canPIDController.setSmartMotionMaxAccel(cruiseAccel, currentSelectedSlot);
 	}
