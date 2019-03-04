@@ -2,27 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2b9ed637-5271-42da-b75f-b413d8c023ca" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetElevatorHeightAction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Team195_2019.iws" beforeDir="false" afterPath="$PROJECT_DIR$/Team195_2019.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Robot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/SubsystemManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/SubsystemManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/AutomatedActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/AutomatedActions.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/controllers/HIDController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/monitors/CriticalSystemsMonitor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/monitors/CriticalSystemsMonitor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/reporters/LogDataReporter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/reporters/LogDataReporter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Drive.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/HatchIntakeArm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Infrastructure.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Turret.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Turret.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKDoubleSolenoid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKDoubleSolenoid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKSolenoid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/CKSolenoid.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/TuneableMotorController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -144,7 +124,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
+            <state relative-caret-position="2055">
               <caret line="160" selection-start-line="160" selection-end-line="162" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -156,8 +136,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6">
-              <caret line="97" column="11" lean-forward="true" selection-start-line="97" selection-start-column="11" selection-end-line="97" selection-end-column="11" />
+            <state relative-caret-position="1365">
+              <caret line="97" column="11" selection-start-line="97" selection-start-column="11" selection-end-line="97" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -165,8 +145,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/AutomatedActions.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="225">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#256#257#0" expanded="true" />
                 <element signature="e#278#279#0" expanded="true" />
@@ -175,11 +155,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
+            <state relative-caret-position="240">
+              <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -188,16 +168,16 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetElevatorHeightAction.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="390">
-              <caret line="32" lean-forward="true" selection-start-line="4" selection-start-column="37" selection-end-line="32" />
+              <caret line="32" selection-start-line="4" selection-start-column="37" selection-end-line="32" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="153" column="34" lean-forward="true" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="34" />
+            <state relative-caret-position="633">
+              <caret line="182" column="34" selection-start-line="182" selection-start-column="19" selection-end-line="182" selection-end-column="34" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -307,8 +287,8 @@
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKSparkMax.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java" />
       </list>
     </option>
   </component>
@@ -341,7 +321,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="ProjectPane" />
       <pane id="PackagesPane">
         <subPane>
           <expand>
@@ -461,6 +440,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="ProjectPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -741,6 +721,7 @@
       <workItem from="1551586212466" duration="9744000" />
       <workItem from="1551647281382" duration="2121000" />
       <workItem from="1551658119432" duration="17963000" />
+      <workItem from="1551736460705" duration="602000" />
     </task>
     <task id="LOCAL-00001" summary="Line indentation testing">
       <created>1547620138702</created>
@@ -795,7 +776,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="172698000" />
+    <option name="totallyTimeSpent" value="173300000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -810,7 +791,7 @@
     <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2722833" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2753358" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -1281,13 +1262,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetElevatorHeightAction.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="32" lean-forward="true" selection-start-line="4" selection-start-column="37" selection-end-line="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/lib/drivers/motorcontrol/CKTalonSRX.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="283">
@@ -1299,17 +1273,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2055">
+          <caret line="160" selection-start-line="160" selection-end-line="162" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/Constants.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6">
-          <caret line="97" column="11" lean-forward="true" selection-start-line="97" selection-start-column="11" selection-end-line="97" selection-end-column="11" />
+        <state relative-caret-position="1365">
+          <caret line="97" column="11" selection-start-line="97" selection-start-column="11" selection-end-line="97" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/AutomatedActions.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="225">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
             <element signature="e#256#257#0" expanded="true" />
             <element signature="e#278#279#0" expanded="true" />
@@ -1317,10 +1301,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/Elevator.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetElevatorHeightAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="160" selection-start-line="160" selection-end-line="162" selection-end-column="5" />
+        <state relative-caret-position="390">
+          <caret line="32" selection-start-line="4" selection-start-column="37" selection-end-line="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="633">
+          <caret line="182" column="34" selection-start-line="182" selection-start-column="19" selection-end-line="182" selection-end-column="34" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1329,18 +1320,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/auto/actions/SetBallArmRotationAction.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="15" column="26" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/team195/frc2019/subsystems/BallIntakeArm.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="153" column="34" lean-forward="true" selection-start-line="153" selection-start-column="34" selection-end-line="153" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="240">
+          <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
         </state>
       </provider>
     </entry>

@@ -13,7 +13,7 @@ public class SetBallArmRotationAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mBallArm.isElevatorAtSetpoint(0.2);
+		return mBallArm.isArmAtSetpoint(0.2);
 	}
 
 	@Override
