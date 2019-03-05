@@ -30,7 +30,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	private final CKSolenoid mHatchPushSolenoid;
 	private final CKSolenoid mBallPushSolenoid;
 
-	private TurretControlMode mTurretControlMode = TurretControlMode.OPEN_LOOP;
+	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
 	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
 
 	private final MotionInterferenceChecker turretAnyPositionCheck;

@@ -1,6 +1,7 @@
 package com.team195.frc2019.subsystems.positions;
 
 public class ElevatorPositions {
+	public static final double Down = 0;
 	public static final double BallHandoff = 0;
 	public static final double HatchHandoff = 0;
 	public static final double CargoHatch = 0;

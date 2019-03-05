@@ -21,9 +21,9 @@ public class MotionInterferenceChecker {
 
 	public boolean hasPassedConditions() {
 		if (mLogicOperation == LogicOperation.OR)
-			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a && b);
+			return conditionList.stream().map(f -> f.apply(null)).reduce(false, (a, b) -> a || b);
 		else
-			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a || b);
+			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a && b);
 	}
 
 	public enum LogicOperation {

@@ -12,6 +12,7 @@ import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
@@ -38,6 +39,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mBallArmRollerMotor.setInverted(true);
+		mBallArmRollerMotor.setSensorPhase(true);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(FeedbackDevice.CTRE_MagEncoder_Relative);
@@ -117,6 +119,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmForwardSoftLimit, 0, 0);
 	}
 
+	public void setSensorsForReset() {
+		mBallArmRotationMotor.setEncoderPosition(0);
+	}
+
 	@Override
 	public void registerEnabledLoops(ILooper in) {
 		in.register(mLoop);
@@ -128,7 +134,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
 
-				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
+//				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}
 

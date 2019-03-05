@@ -8,6 +8,7 @@ import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 
@@ -142,7 +143,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 						if (hatchArmAnyPositionCheck.hasPassedConditions())
 							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
 						else if (hatchArmPauseDownCheck.hasPassedConditions())
-							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Math.max(mHatchArmSetpoint, HatchArmPositions.CollisionThreshold), 0, 0);
+							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Math.max(mHatchArmSetpoint, HatchArmPositions.CollisionThreshold + HatchArmPositions.PositionDelta), 0, 0);
 						else if (hatchArmPauseUpCheck.hasPassedConditions())
 							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Math.min(mHatchArmSetpoint, HatchArmPositions.Inside), 0, 0);
 						break;
@@ -187,6 +188,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public enum HatchArmControlMode {
 		POSITION,
-		OPEN_LOOP;
+		OPEN_LOOP,
+		DISABLED;
 	}
 }

@@ -2,8 +2,14 @@ package com.team195.frc2019.controllers;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
+import com.team195.frc2019.auto.actions.AutomatedActions;
+import com.team195.frc2019.auto.actions.SetBallArmRotationAction;
 import com.team195.frc2019.subsystems.*;
+import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
+import com.team195.frc2019.subsystems.positions.ElevatorPositions;
+import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
+import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
@@ -64,10 +70,25 @@ public class HIDController {
 							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
 							if (driveJoystick.getRisingEdgeButton(1)) {
-//								Drive.getInstance().setPTO(true);
+								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
 							}
 							else if (driveJoystick.getRisingEdgeButton(2)) {
-//								Drive.getInstance().setPTO(false);
+								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
+							}
+							else if (driveJoystick.getRisingEdgeButton(3)) {
+								Elevator.getInstance().setElevatorPosition(2);
+								Turret.getInstance().setTurretPosition(1);
+							}
+							else if (driveJoystick.getRisingEdgeButton(4)) {
+								Elevator.getInstance().setElevatorPosition(ElevatorPositions.Down);
+							}
+							else if (driveJoystick.getRisingEdgeButton(5)) {
+								BallIntakeArm.getInstance().setSensorsForReset();
+								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
+							}
+							else if (driveJoystick.getRisingEdgeButton(6)) {
+								BallIntakeArm.getInstance().zeroSensors();
+								(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 							}
 						}
 					} catch (Throwable t) {

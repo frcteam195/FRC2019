@@ -91,7 +91,7 @@ public class Constants {
     public static final int kHatchArmPositionCruiseVel = 100;
     public static final int kHatchArmPositionMMAccel = 60;
     //Units in rotations
-    public static final double kHatchArmForwardSoftLimit = 0;
+    public static final double kHatchArmForwardSoftLimit = 0.6174;
     public static final double kHatchArmReverseSoftLimit = 0;
 
 
@@ -106,10 +106,10 @@ public class Constants {
     //100:1
     public static final double kBallIntakeArmDownPositionKp = 3.7;
     public static final double kBallIntakeArmDownPositionKi = 0.0;
-    public static final double kBallIntakeArmDownPositionKd = 50.0;
+    public static final double kBallIntakeArmDownPositionKd = 12.0;
     public static final double kBallIntakeArmDownPositionKf = 0.8000721603;
     public static final int kBallIntakeArmDownPositionCruiseVel = 160;
-    public static final int kBallIntakeArmDownPositionMMAccel = 200;
+    public static final int kBallIntakeArmDownPositionMMAccel = 320;
     //Units in rotations
     public static final double kBallIntakeArmForwardSoftLimit = 0.174;
 
