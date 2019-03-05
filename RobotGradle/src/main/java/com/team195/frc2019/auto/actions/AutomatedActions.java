@@ -1,6 +1,8 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.auto.AutoConstants;
+import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
+import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,9 +17,9 @@ public class AutomatedActions {
 	public static Action unfold() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-//		actionArrayList.add(new SetElevatorHeightAction(2));
-//		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
-//		actionArrayList.add(new HatchPushAction(false));
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		actionArrayList.add(new WaitAction(AutoConstants.kWaitForArmFall));
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
 		return new SeriesAction(actionArrayList);
 	}

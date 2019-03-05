@@ -6,9 +6,11 @@ import java.util.function.Function;
 
 public class MotionInterferenceChecker {
 	private ArrayList<Function<Void, Boolean>> conditionList = new ArrayList<>();
+	private LogicOperation mLogicOperation = LogicOperation.AND;
 
 	@SafeVarargs
-	public MotionInterferenceChecker(Function<Void, Boolean>... conditions) {
+	public MotionInterferenceChecker(LogicOperation logicOperation, Function<Void, Boolean>... conditions) {
+		mLogicOperation = logicOperation;
 		conditionList.addAll(Arrays.asList(conditions));
 	}
 
@@ -18,6 +20,14 @@ public class MotionInterferenceChecker {
 	}
 
 	public boolean hasPassedConditions() {
-		return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a && b);
+		if (mLogicOperation == LogicOperation.OR)
+			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a && b);
+		else
+			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a || b);
+	}
+
+	public enum LogicOperation {
+		AND,
+		OR;
 	}
 }

@@ -13,7 +13,7 @@ public class SetBallArmRotationAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mBallArm.isArmAtSetpoint(0.2);
+		return mBallArm.isArmAtSetpoint(0.05);
 	}
 
 	@Override
@@ -22,13 +22,13 @@ public class SetBallArmRotationAction implements Action {
 
 	@Override
 	public void done() {
-
+		if (mRotation <= 0)
+			mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
 	}
 
 	@Override
 	public void start() {
-		mBallArm.setBallIntakeArmPosition(0);
-		mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
 		mBallArm.setBallIntakeArmPosition(mRotation);
+		mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
 	}
 }

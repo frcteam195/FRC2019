@@ -182,13 +182,6 @@ public class Constants {
     public static final double kPDPDefaultSafetyFactor = 4.0;
 
 
-    //Collision Thresholds
-    public static final double kBallIntakeArmPosToElevator = 0;
-	public static final double kHatchIntakeArmPosToElevator = 0;
-	public static final double kElevatorPosToBallIntakeArm = 0;
-	public static final double kElevatorPosToHatchIntakeArm = 0;
-
-
     public static final double kElevatorLowSensitivityThreshold = 2.5;
     public static final double kLowSensitivityFactor = 0.5;
 

@@ -45,10 +45,10 @@ public class ThreadRateControl {
 
 	/**
 	 * Do rate control for loops
-	 * @param minLoopTime Time in ms
+	 * @param minLoopTimeMs Time in ms
 	 */
-	public synchronized void doRateControl(int minLoopTime) {
-		double remainingTime = ((minLoopTime / 1000.0) - eTimer.hasElapsed());
+	public synchronized void doRateControl(int minLoopTimeMs) {
+		double remainingTime = ((minLoopTimeMs / 1000.0) - eTimer.hasElapsed());
 		if (remainingTime > 0) {
 			//Subtract constant offset for code delay (currently 150us)
 			NotifierJNI.updateNotifierAlarm(m_notifier, (long) (((Timer.getFPGATimestamp() + remainingTime) * 1e6) - 150));

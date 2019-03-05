@@ -7,15 +7,20 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
+import com.team195.frc2019.subsystems.positions.ElevatorPositions;
+import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
+import com.team195.lib.util.InterferenceSystem;
+import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
 
-public class Turret extends Subsystem {
+public class Turret extends Subsystem implements InterferenceSystem {
 
 	private static Turret mInstance = new Turret();
 
@@ -27,6 +32,8 @@ public class Turret extends Subsystem {
 
 	private TurretControlMode mTurretControlMode = TurretControlMode.OPEN_LOOP;
 	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
+
+	private final MotionInterferenceChecker turretAnyPositionCheck;
 
 	private double mTurretSetpoint = 0;
 	private double mBallShooterSetpoint = 0;
@@ -64,6 +71,11 @@ public class Turret extends Subsystem {
 		mBallPushSolenoid = new CKSolenoid(Constants.kBallPushSolenoidId);
 		mBallPushSolenoid.setInverted(false);
 		mBallPushSolenoid.set(false);
+
+		turretAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> (Elevator.getInstance().getPosition() >= ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta),
+				(t) -> (Elevator.getInstance().getSetpoint() >= ElevatorPositions.CollisionThresholdBallArm)
+		);
 	}
 
 	public static Turret getInstance() {
@@ -140,7 +152,10 @@ public class Turret extends Subsystem {
 			synchronized (Turret.this) {
 				switch (mTurretControlMode) {
 					case POSITION:
-//						mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
+						if (turretAnyPositionCheck.hasPassedConditions())
+							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
+						else
+							mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 						break;
 					case OPEN_LOOP:
 						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mTurretSetpoint, -1), 1), 0, 0);
@@ -226,6 +241,16 @@ public class Turret extends Subsystem {
 
 	public boolean isShooterAtSetpoint(double rpmDelta) {
 		return Math.abs(mBallShooterSetpoint - mBallShooterRollerMotor.getVelocity()) < Math.abs(rpmDelta);
+	}
+
+	@Override
+	public double getPosition() {
+		return mTurretRotationMotor.getPosition();
+	}
+
+	@Override
+	public double getSetpoint() {
+		return mTurretSetpoint;
 	}
 
 	public enum TurretControlMode {

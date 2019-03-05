@@ -36,18 +36,13 @@ public class TeleopActionRunner {
 		timeoutTimer.isTimedOut();
 		t = new Thread(() -> {
 			//t.setPriority(Thread.NORM_PRIORITY);
-
+			ThreadRateControl threadRateControl = new ThreadRateControl();
+			threadRateControl.start();
 			action.start();
 
 			while (!action.isFinished() && !timeoutTimer.isTimedOut()) {
 				action.update();
-				int waitTime = (int) (m_update_rate * 1000.0);
-
-				try {
-					Thread.sleep(waitTime);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+				threadRateControl.doRateControl((int)(m_update_rate * 1000.0));
 			}
 
 			action.done();

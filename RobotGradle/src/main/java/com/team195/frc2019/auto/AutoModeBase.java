@@ -2,6 +2,7 @@ package com.team195.frc2019.auto;
 
 import com.team195.frc2019.auto.actions.Action;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.lib.util.ThreadRateControl;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -11,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public abstract class AutoModeBase {
     protected double mUpdateRate = 1.0 / 50.0;
     protected boolean mActive = false;
+    private ThreadRateControl threadRateControl = new ThreadRateControl();
 
     protected abstract void routine() throws AutoModeEndedException;
 
@@ -49,17 +51,12 @@ public abstract class AutoModeBase {
 
     public void runAction(Action action) throws AutoModeEndedException {
         isActiveWithThrow();
+        threadRateControl.start();
         action.start();
 
         while (isActiveWithThrow() && !action.isFinished()) {
             action.update();
-            long waitTime = (long) (mUpdateRate * 1000.0);
-
-            try {
-                Thread.sleep(waitTime);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            threadRateControl.doRateControl((int)(mUpdateRate * 1000.0));
         }
 
         action.done();

@@ -1,13 +1,13 @@
 package com.team195.frc2019.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.subsystems.positions.ElevatorPositions;
+import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
-import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 
@@ -18,7 +18,9 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	private final CKTalonSRX mHatchArmRotationMotor;
 	private final CKTalonSRX mHatchArmRollerMotor;
 
-	private final MotionInterferenceChecker hatchArmUpCheck;
+	private final MotionInterferenceChecker hatchArmAnyPositionCheck;
+	private final MotionInterferenceChecker hatchArmPauseDownCheck;
+	private final MotionInterferenceChecker hatchArmPauseUpCheck;
 
 	private HatchArmControlMode mHatchArmControlMode = HatchArmControlMode.POSITION;
 
@@ -49,8 +51,18 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		mHatchArmRollerMotor.setInverted(true);
 
 
-		hatchArmUpCheck = new MotionInterferenceChecker(
-				(t) -> Elevator.getInstance().getPosition() > Constants.kElevatorPosToHatchIntakeArm
+		hatchArmAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> (Elevator.getInstance().getPosition() > ElevatorPositions.CollisionThresholdHatchArm)
+		);
+
+		hatchArmPauseDownCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> (mHatchArmSetpoint < HatchArmPositions.CollisionThreshold),
+				(t) -> (getPosition() > HatchArmPositions.CollisionThreshold + HatchArmPositions.PositionDelta)
+		);
+
+		hatchArmPauseUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> (mHatchArmSetpoint >= HatchArmPositions.Inside),
+				(t) -> (getPosition() < HatchArmPositions.PositionDelta)
 		);
 	}
 
@@ -127,10 +139,12 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (HatchIntakeArm.this) {
 				switch (mHatchArmControlMode) {
 					case POSITION:
-//						if (mHatchArmSetpoint > Constants.kHatchIntakeArmPosToElevator && !hatchArmUpCheck.hasPassedConditions())
-//							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kHatchIntakeArmPosToElevator, 0, 0);
-//						else
-//							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
+						if (hatchArmAnyPositionCheck.hasPassedConditions())
+							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, mHatchArmSetpoint, 0, 0);
+						else if (hatchArmPauseDownCheck.hasPassedConditions())
+							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Math.max(mHatchArmSetpoint, HatchArmPositions.CollisionThreshold), 0, 0);
+						else if (hatchArmPauseUpCheck.hasPassedConditions())
+							mHatchArmRotationMotor.set(MCControlMode.MotionMagic, Math.min(mHatchArmSetpoint, HatchArmPositions.Inside), 0, 0);
 						break;
 					case OPEN_LOOP:
 						mHatchArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchArmSetpoint, -1), 1), 0, 0);
@@ -152,6 +166,11 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public double getPosition() {
 		return mHatchArmRotationMotor.getPosition();
+	}
+
+	@Override
+	public double getSetpoint() {
+		return mHatchArmSetpoint;
 	}
 
 	public synchronized void setHatchArmPosition(double armPosition) {

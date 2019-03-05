@@ -3,14 +3,18 @@ package com.team195.frc2019.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.subsystems.positions.ElevatorPositions;
+import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
+import com.team195.lib.util.TeleopActionRunner;
 
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
@@ -31,6 +35,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private BallIntakeArm() {
 		mBallArmRotationMotor = new CKTalonSRX(Constants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mBallArmRotationMotor.setSensorPhase(true);
+
+		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
+		mBallArmRollerMotor.setInverted(true);
+
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(FeedbackDevice.CTRE_MagEncoder_Relative);
 		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmUpPositionKp, Constants.kBallIntakeArmUpPositionKi, Constants.kBallIntakeArmUpPositionKd, Constants.kBallIntakeArmUpPositionKf);
@@ -52,11 +60,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
-		mBallArmRollerMotor.setInverted(true);
-
-		ballArmUpCheck = new MotionInterferenceChecker(
-				(t) -> Elevator.getInstance().getPosition() > Constants.kElevatorPosToBallIntakeArm
+		ballArmUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> Elevator.getInstance().getPosition() < ElevatorPositions.CollisionThresholdBallArm,
+				(t) -> Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta)
 		);
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(Constants.kBallIntakeBarSolenoidId);
@@ -105,10 +111,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void zeroSensors() {
-		mBallArmRotationMotor.setEncoderPosition(0);
+		mBallArmRotationMotor.setEncoderPosition(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRollerMotor.setEncoderPosition(0);
 		if (mBallIntakeArmControlMode == BallIntakeArmControlMode.POSITION)
-			mBallArmRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
+			mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmForwardSoftLimit, 0, 0);
 	}
 
 	@Override
@@ -121,6 +127,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		public void onFirstStart(double timestamp) {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
+
+				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}
 
@@ -137,16 +145,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				switch (mBallIntakeArmControlMode) {
 					case POSITION:
-//						if (mBallIntakeArmSetpoint > Constants.kBallIntakeArmPosToElevator && !ballArmUpCheck.hasPassedConditions())
-//							mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmPosToElevator, 0, 0);
-//						else
-//							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
-//
 						int rotationPIDSlot = 0;
-						if (mBallIntakeArmSetpoint == 0)
+						if (mBallIntakeArmSetpoint <= 0)
 							rotationPIDSlot = 1;
 
-						mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, rotationPIDSlot, 0);
+						if (ballArmUpCheck.hasPassedConditions())
+							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, rotationPIDSlot, 0);
+
 						break;
 					case OPEN_LOOP:
 						mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeArmSetpoint, -1), 1), 0, 0);
@@ -170,6 +175,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public double getPosition() {
 		return mBallArmRotationMotor.getPosition();
+	}
+
+	@Override
+	public double getSetpoint() {
+		return mBallIntakeArmSetpoint;
 	}
 
 	public synchronized void setBallIntakeArmPosition(double armPosition) {
