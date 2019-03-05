@@ -2,10 +2,12 @@ package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
@@ -16,6 +18,7 @@ import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
+import com.team195.lib.util.ThreadRateControl;
 
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
@@ -23,12 +26,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private final CKTalonSRX mBallArmRotationMotor;
 	private final CKTalonSRX mBallArmRollerMotor;
+	private final ThreadRateControl trc = new ThreadRateControl();
 
 	private final MotionInterferenceChecker ballArmUpCheck;
 
 	private final CKSolenoid mBallIntakeBarDropSolenoid;
 
-	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.OPEN_LOOP;
+	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.DISABLED;
 
 	private double mBallIntakeArmSetpoint = 0;
 	private double mBallIntakeRollerSetpoint = 0;
@@ -49,11 +53,16 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, Constants.kBallIntakeRollerMotorId);
 		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmDownPositionKp, Constants.kBallIntakeArmDownPositionKi, Constants.kBallIntakeArmDownPositionKd, Constants.kBallIntakeArmDownPositionKf);
 		mBallArmRotationMotor.setMotionParameters(Constants.kBallIntakeArmDownPositionCruiseVel, Constants.kBallIntakeArmDownPositionMMAccel);
+
+		mBallArmRotationMotor.setPIDGainSlot(0);
+		trc.start();
+		trc.doRateControl(100);
 		zeroSensors();
+		trc.doRateControl(100);
 		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
-		mBallArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
+		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -114,9 +123,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mBallArmRotationMotor.setEncoderPosition(Constants.kBallIntakeArmForwardSoftLimit);
+		zeroRemoteSensor();
+//		if (mBallIntakeArmControlMode == BallIntakeArmControlMode.POSITION)
+//			mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmForwardSoftLimit, 0, 0);
+	}
+
+	public void zeroRemoteSensor() {
 		mBallArmRollerMotor.setEncoderPosition(0);
-		if (mBallIntakeArmControlMode == BallIntakeArmControlMode.POSITION)
-			mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmForwardSoftLimit, 0, 0);
 	}
 
 	public void setSensorsForReset() {
@@ -134,7 +147,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
 
-//				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
+				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}
 
@@ -164,7 +177,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 						break;
 					case DISABLED:
 					default:
-						mBallArmRotationMotor.set(MCControlMode.Disabled, 0, 0, 0);
+						mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 						break;
 				}
 
@@ -180,7 +193,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getPosition() {
-		return mBallArmRotationMotor.getPosition();
+		return mBallArmRotationMotor.getLocalQuadPosition();
+	}
+
+	public double getRemotePosition() {
+		return mBallArmRollerMotor.getPosition();
 	}
 
 	@Override

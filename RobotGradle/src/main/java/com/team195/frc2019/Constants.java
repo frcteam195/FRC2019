@@ -64,7 +64,7 @@ public class Constants {
 
 
     //17.25:1
-    public static final double kElevatorPositionKp = 3.4;
+    public static final double kElevatorPositionKp = 1.9;
     public static final double kElevatorPositionKi = 0.0;
     public static final double kElevatorPositionKd = 8.0;
     public static final double kElevatorPositionKf = 0.1380124477;

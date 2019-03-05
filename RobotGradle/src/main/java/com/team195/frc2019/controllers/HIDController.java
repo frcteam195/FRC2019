@@ -87,11 +87,13 @@ public class HIDController {
 								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
 							}
 							else if (driveJoystick.getRisingEdgeButton(6)) {
-								BallIntakeArm.getInstance().zeroSensors();
-								(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
+								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Down))).runAction();
 							}
 						}
-					} catch (Throwable t) {
+					} catch (Exception ignored) {
+
+					}
+					catch (Throwable t) {
 						CrashTracker.logThrowableCrash(t);
 						throw t;
 					}

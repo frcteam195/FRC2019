@@ -45,26 +45,17 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.configReverseSoftLimitThreshold(Constants.kElevatorPositionReverseSoftLimit);
 		mElevatorMaster.configReverseSoftLimitEnable(true);
 
-//		TuneablePIDOSC x;
-//		try {
-//			x = new TuneablePIDOSC("Elevator", 5804, true, mElevatorMaster);
-//		} catch (Exception ignored) {
-//
-//		}
+		TuneablePIDOSC x;
+		try {
+			x = new TuneablePIDOSC("Elevator", 5804, true, mElevatorMaster);
+		} catch (Exception ignored) {
+
+		}
 
 		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B30A, false);
 
 		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
 
-		elevatorAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
-				(t) -> (BallIntakeArm.getInstance().getSetpoint() <= BallIntakeArmPositions.CollisionThreshold
-						&& BallIntakeArm.getInstance().getPosition() <= BallIntakeArmPositions.CollisionThreshold + BallIntakeArmPositions.PositionDelta),
-				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
-						&& HatchIntakeArm.getInstance().getPosition() > HatchArmPositions.CollisionThreshold)
-						|| (HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Inside
-						&& HatchIntakeArm.getInstance().getPosition() < HatchArmPositions.PositionDelta)),
-				(t) -> (Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta))
-		);
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR,
 				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() > HatchArmPositions.Inside)
@@ -73,10 +64,19 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 						&& (HatchIntakeArm.getInstance().getPosition() > HatchArmPositions.CollisionThreshold + HatchArmPositions.PositionDelta))
 		);
 
-		requestMoveElevatorDownCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
-				(t) -> (BallIntakeArm.getInstance().getSetpoint() > BallIntakeArmPositions.CollisionThreshold),
-				(t) -> (BallIntakeArm.getInstance().getPosition() < BallIntakeArmPositions.CollisionThreshold + BallIntakeArmPositions.PositionDelta),
-				(t) -> (getPosition() >= ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta)
+		requestMoveElevatorDownCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR,
+				(t) -> (BallIntakeArm.getInstance().getPosition() > BallIntakeArmPositions.CollisionThreshold - BallIntakeArmPositions.PositionDelta)
+						&& (getSetpoint() >= ElevatorPositions.CollisionThresholdBallArm),
+				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Up)
+		);
+
+		elevatorAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+				(t) -> (!requestMoveElevatorDownCheck.hasPassedConditions()),
+				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
+						&& HatchIntakeArm.getInstance().getPosition() > HatchArmPositions.CollisionThreshold)
+						|| (HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Inside
+						&& HatchIntakeArm.getInstance().getPosition() < HatchArmPositions.PositionDelta))
+//				(t) -> (Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta))
 		);
 	}
 
@@ -151,25 +151,15 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 			synchronized (Elevator.this) {
 				switch (mElevatorControlMode) {
 					case POSITION:
-						boolean eAny = elevatorAnyPositionCheck.hasPassedConditions();
-						boolean eUp = requestMoveElevatorUpCheck.hasPassedConditions();
-						boolean eDown = requestMoveElevatorDownCheck.hasPassedConditions();
-						System.out.println("Any: " + eAny + ", Up: " + eUp + ", Down: " + eDown);
-
-						System.out.println((HatchIntakeArm.getInstance().getSetpoint() > HatchArmPositions.Inside)
-								&& (HatchIntakeArm.getInstance().getPosition() < HatchArmPositions.CollisionThreshold + HatchArmPositions.PositionDelta));
-						System.out.println((HatchIntakeArm.getInstance().getSetpoint() < HatchArmPositions.CollisionThreshold)
-								&& (HatchIntakeArm.getInstance().getPosition() > HatchArmPositions.CollisionThreshold + HatchArmPositions.PositionDelta));
-
-						if (eAny)
+						if (elevatorAnyPositionCheck.hasPassedConditions())
 							mElevatorMaster.set(MCControlMode.MotionMagic, mElevatorSetpoint, 0, 0);
-						else if (eUp)
+						else if (requestMoveElevatorUpCheck.hasPassedConditions())
 							mElevatorMaster.set(MCControlMode.MotionMagic, Math.max(mElevatorSetpoint, ElevatorPositions.CollisionThresholdHatchArm + ElevatorPositions.PositionDelta), 0, 0);
-						else if (eDown)
+						else if (requestMoveElevatorDownCheck.hasPassedConditions())
 							mElevatorMaster.set(MCControlMode.MotionMagic, Math.min(mElevatorSetpoint, ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta), 0, 0);
 						break;
 					case OPEN_LOOP:
-//						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
+						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
 						break;
 					default:
 						break;

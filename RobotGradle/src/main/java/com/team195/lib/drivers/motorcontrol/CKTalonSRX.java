@@ -8,6 +8,7 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.ThreadRateControl;
+import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 
@@ -17,12 +18,18 @@ public class CKTalonSRX implements TuneableMotorController {
 	//We can't extend TalonSRX due to some JNI object packing issue where following does not work
 	//it seems getBaseID() is broken on extension
 	private final TalonSRX mTalonSRX;
+	private final ThreadRateControl trc = new ThreadRateControl();
 	private int currentSelectedSlot = 0;
 	private ArrayList<FeedbackConfiguration> mFeedbackConfig = new ArrayList<>();
 	private double prevOutput = Double.MIN_VALUE;
 	private final PDPBreaker motorBreaker;
 	private boolean prevForwardLimitVal = false;
 	private boolean prevReverseLimitVal = false;
+
+	private double storedLocalQuadPosition = 0;
+	private TimeoutTimer cachedLocalQuadTimeout = new TimeoutTimer(0.1);
+
+	private boolean sensorInverted = false;
 
 	private static final Configuration fastMasterConfig = new Configuration(5, 5, 20);
 	private static final Configuration normalMasterConfig = new Configuration(10, 10, 20);
@@ -130,6 +137,7 @@ public class CKTalonSRX implements TuneableMotorController {
 	}
 
 	public void setSensorPhase(boolean inverted) {
+		sensorInverted = inverted;
 		mTalonSRX.setSensorPhase(inverted);
 	}
 
@@ -203,6 +211,21 @@ public class CKTalonSRX implements TuneableMotorController {
 			ConsoleReporter.report("Failed to enable Talon ID" + mTalonSRX.getDeviceID() +  " reverse soft limit!!!", MessageLevel.DEFCON1);
 	}
 
+	public double getLocalQuadPosition() {
+		if (mFeedbackConfig.get(currentSelectedSlot).feedbackDevice == FeedbackDevice.CTRE_MagEncoder_Relative) {
+			return getPosition();
+		}
+		else {
+			if (cachedLocalQuadTimeout.isTimedOut()) {
+				double tmpPos = convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1));
+				if (mTalonSRX.getLastError() == ErrorCode.OK)
+					setCachedLocalQuadEncoderValue(tmpPos);
+				cachedLocalQuadTimeout.reset();
+			}
+			return storedLocalQuadPosition;
+		}
+	}
+
 	public synchronized void setAbsoluteEncoderOffset(double offset) {
 		absoluteEncoderOffset = offset;
 	}
@@ -228,6 +251,8 @@ public class CKTalonSRX implements TuneableMotorController {
 					setFeedbackDevice(f);
 					break;
 			}
+//			trc.start(true);
+//			trc.doRateControl(100);
 		}
 	}
 
@@ -440,8 +465,13 @@ public class CKTalonSRX implements TuneableMotorController {
 		mTalonSRX.setNeutralMode(neutralMode.CTRE());
 	}
 
+	private synchronized void setCachedLocalQuadEncoderValue(double val) {
+		storedLocalQuadPosition = val;
+	}
+
 	@Override
 	public void setEncoderPosition(double position) {
+		setCachedLocalQuadEncoderValue(position);
 		boolean setSucceeded;
 		int retryCounter = 0;
 
@@ -514,7 +544,9 @@ public class CKTalonSRX implements TuneableMotorController {
 				case MotionVoodooArbFF:
 					set(controlMode, getPosition(), currentSelectedSlot, 0);
 					break;
+				case Disabled:
 				default:
+					mTalonSRX.set(ControlMode.Disabled, 0);
 					break;
 			}
 		}
