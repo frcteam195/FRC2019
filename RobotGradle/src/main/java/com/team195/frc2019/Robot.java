@@ -23,10 +23,11 @@ public class Robot extends TimedRobot {
 
 	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
+	//All consume 20% CPU
 	private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance(
-		RobotStateEstimator.getInstance(),
-		Drive.getInstance(),
-		Elevator.getInstance(),
+		RobotStateEstimator.getInstance(), //10ms average
+		Drive.getInstance(),        //0
+		Elevator.getInstance(),     //20-40ms
 		BallIntakeArm.getInstance(),
 		HatchIntakeArm.getInstance(),
 		Turret.getInstance(),
@@ -65,6 +66,7 @@ public class Robot extends TimedRobot {
 
 			CriticalSystemsMonitor.getInstance();
 			ConnectionMonitor.getInstance();
+
 			LogDataReporter.getInstance();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -75,6 +77,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 //		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
+//		ConsoleReporter.report(mEnabledLooper.generateReport());
 	}
 
 	@Override

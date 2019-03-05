@@ -2,7 +2,7 @@ package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.subsystems.Elevator;
 
-public class SetElevatorHeightAction  implements Action {
+public class SetElevatorHeightAction implements Action {
 	private static final Elevator mElevator = Elevator.getInstance();
 
 	private double mHeight;

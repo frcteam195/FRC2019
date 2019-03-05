@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.AutomatedActions;
+import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
@@ -26,12 +27,15 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	private final CKTalonSRX mTurretRotationMotor;
 	private final CKTalonSRX mBallShooterRollerMotor;
-	private final CKDoubleSolenoid mHatchBeakSolenoid;
+	private final CKSolenoid mHatchBeakSolenoid;
+	private final CKSolenoid mHatchBeakFeedSolenoid;
 	private final CKSolenoid mHatchPushSolenoid;
 	private final CKSolenoid mBallPushSolenoid;
 
 	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
 	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
+
+	private boolean beakListenerEnabled = true;
 
 	private final MotionInterferenceChecker turretAnyPositionCheck;
 
@@ -61,9 +65,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 
-		mHatchBeakSolenoid = new CKDoubleSolenoid(Constants.kHatchBeakSolenoidId);
-		mHatchBeakSolenoid.configReversed(false);
+		mHatchBeakSolenoid = new CKSolenoid(Constants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);
+
+		mHatchBeakFeedSolenoid = new CKSolenoid(Constants.kHatchBeakFeedSolenoidId);
+		mHatchBeakFeedSolenoid.set(false);
 
 		mHatchPushSolenoid = new CKSolenoid(Constants.kHatchPushSolenoidId);
 		mHatchPushSolenoid.set(false);
@@ -72,10 +78,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallPushSolenoid.setInverted(false);
 		mBallPushSolenoid.set(false);
 
-		turretAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+		turretAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
 				(t) -> (Elevator.getInstance().getPosition() >= ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta),
 				(t) -> (Elevator.getInstance().getSetpoint() >= ElevatorPositions.CollisionThresholdBallArm),
-				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Down)
+				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Down),
+				(t) -> (Math.abs(BallIntakeArm.getInstance().getPosition()) < BallIntakeArmPositions.CollisionThreshold)
 		);
 	}
 
@@ -179,13 +186,15 @@ public class Turret extends Subsystem implements InterferenceSystem {
 						break;
 				}
 
-				if (mAutoHatchController == null && mBallShooterRollerMotor.getForwardLimitRisingEdge()) {
-					mAutoHatchController = new TeleopActionRunner(AutomatedActions.pushOutHatch());
-					mAutoHatchController.runAction(false);
-				}
+				if (beakListenerEnabled) {
+					if (mAutoHatchController == null && mBallShooterRollerMotor.getReverseLimitRisingEdge()) {
+						mAutoHatchController = new TeleopActionRunner(new SetBeakAction(true));
+						mAutoHatchController.runAction(false);
+					}
 
-				if (mAutoHatchController != null && mAutoHatchController.isFinished())
-					mAutoHatchController = null;
+					if (mAutoHatchController != null && mAutoHatchController.isFinished())
+						mAutoHatchController = null;
+				}
 			}
 		}
 
@@ -195,6 +204,10 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		}
 	};
 
+	public synchronized void setBeakListened(boolean enabled) {
+		beakListenerEnabled = enabled;
+	}
+
 	public synchronized void setBallPush(boolean ballPush) {
 		mBallPushSolenoid.set(ballPush);
 	}
@@ -203,12 +216,12 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mHatchPushSolenoid.set(hatchPush);
 	}
 
-	public synchronized void setBeak(boolean open) {
-		mHatchBeakSolenoid.set(open);
+	public synchronized void setBeak(boolean closed) {
+		mHatchBeakSolenoid.set(closed);
 	}
 
-	public synchronized void setBeakOff() {
-		mHatchBeakSolenoid.turnOff();
+	public synchronized void setBeakFeedOff(boolean off) {
+		mHatchBeakFeedSolenoid.set(off);
 	}
 
 	public synchronized void setTurretPosition(double turretPosition) {

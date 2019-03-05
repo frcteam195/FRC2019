@@ -4,6 +4,7 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.auto.actions.SetBallArmRotationAction;
+import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
@@ -70,25 +71,51 @@ public class HIDController {
 							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
 							if (driveJoystick.getRisingEdgeButton(1)) {
-								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
+//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
+//								Turret.getInstance().setBeak(true);
+//								Thread.sleep(100);
+//								Turret.getInstance().setBeakFeedOff(true);
+								(new TeleopActionRunner(new SetBeakAction(false))).runAction();
 							}
 							else if (driveJoystick.getRisingEdgeButton(2)) {
-								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
+//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
+//								Turret.getInstance().setBeak(false);
+								(new TeleopActionRunner(new SetBeakAction(true))).runAction();
 							}
 							else if (driveJoystick.getRisingEdgeButton(3)) {
+//								HatchIntakeArm.getInstance().setHatchRollerSpeed(0.3);
 								Elevator.getInstance().setElevatorPosition(2);
-								Turret.getInstance().setTurretPosition(1);
 							}
 							else if (driveJoystick.getRisingEdgeButton(4)) {
-								Elevator.getInstance().setElevatorPosition(ElevatorPositions.Down);
+								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
 							}
 							else if (driveJoystick.getRisingEdgeButton(5)) {
-								BallIntakeArm.getInstance().setSensorsForReset();
-								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
+								(new TeleopActionRunner(AutomatedActions.hatchHandoff(),10)).runAction();
 							}
 							else if (driveJoystick.getRisingEdgeButton(6)) {
 								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Down))).runAction();
 							}
+
+//							if (driveJoystick.getRisingEdgeButton(1)) {
+//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(2)) {
+//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(3)) {
+//								Elevator.getInstance().setElevatorPosition(2);
+//								Turret.getInstance().setTurretPosition(1);
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(4)) {
+//								Elevator.getInstance().setElevatorPosition(ElevatorPositions.Down);
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(5)) {
+//								BallIntakeArm.getInstance().setSensorsForReset();
+//								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(6)) {
+//								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Down))).runAction();
+//							}
 						}
 					} catch (Exception ignored) {
 

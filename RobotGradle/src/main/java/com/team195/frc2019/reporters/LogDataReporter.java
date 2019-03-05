@@ -84,48 +84,49 @@ public class LogDataReporter {
 			if (!s.isEmpty())
 				args.add(s + ";");
 
-		try {
-			String[] procCmd = {
-					"/bin/sh",
-					"-c",
-					"grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage \"%\"}'"
-			};
-			Process cpuProc = Runtime.getRuntime().exec(procCmd);
-
-			cpuProc.waitFor(10, TimeUnit.MILLISECONDS);
-			String s;
-			StringBuilder sb = new StringBuilder();
-			BufferedReader stdInput = new BufferedReader(new InputStreamReader(cpuProc.getInputStream()));
-			while ((s = stdInput.readLine()) != null) {
-				sb.append(s);
-			}
-
-			args.add("CPULoad_System:" + sb.toString() + ";");
-
-
-
-			String[] memCmd = {
-					"/bin/sh",
-					"-c",
-					"cat /proc/meminfo | awk '/Mem.*\\s*[0-9](\\d*)/{print $2}'"
-			};
-			Process memProc = Runtime.getRuntime().exec(memCmd);
-
-			memProc.waitFor(10, TimeUnit.MILLISECONDS);
-			s = "";
-			int[] memArray = new int[3];	//Total, Free, Available mem
-			stdInput = new BufferedReader(new InputStreamReader(memProc.getInputStream()));
-			for (int i = 0; i < 3; i++) {
-				if ((s = stdInput.readLine()) != null)
-					memArray[i] = Integer.parseInt(s);
-			}
-
-			args.add("TotalMemory:" + memArray[0] + ";");
-			args.add("FreeMemory:" + memArray[1] + ";");
-			args.add("AvailableMemory:" + memArray[2] + ";");
-		} catch (Exception e) {
-
-		}
+			//Consumes all CPU. Come up with better way to measure CPU usage
+//		try {
+//			String[] procCmd = {
+//					"/bin/sh",
+//					"-c",
+//					"grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage \"%\"}'"
+//			};
+//			Process cpuProc = Runtime.getRuntime().exec(procCmd);
+//
+//			cpuProc.waitFor(10, TimeUnit.MILLISECONDS);
+//			String s;
+//			StringBuilder sb = new StringBuilder();
+//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(cpuProc.getInputStream()));
+//			while ((s = stdInput.readLine()) != null) {
+//				sb.append(s);
+//			}
+//
+//			args.add("CPULoad_System:" + sb.toString() + ";");
+//
+//
+//
+//			String[] memCmd = {
+//					"/bin/sh",
+//					"-c",
+//					"cat /proc/meminfo | awk '/Mem.*\\s*[0-9](\\d*)/{print $2}'"
+//			};
+//			Process memProc = Runtime.getRuntime().exec(memCmd);
+//
+//			memProc.waitFor(10, TimeUnit.MILLISECONDS);
+//			s = "";
+//			int[] memArray = new int[3];	//Total, Free, Available mem
+//			stdInput = new BufferedReader(new InputStreamReader(memProc.getInputStream()));
+//			for (int i = 0; i < 3; i++) {
+//				if ((s = stdInput.readLine()) != null)
+//					memArray[i] = Integer.parseInt(s);
+//			}
+//
+//			args.add("TotalMemory:" + memArray[0] + ";");
+//			args.add("FreeMemory:" + memArray[1] + ";");
+//			args.add("AvailableMemory:" + memArray[2] + ";");
+//		} catch (Exception e) {
+//
+//		}
 
 		return new OSCMessage("/LogData", args);
 	}

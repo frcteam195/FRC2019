@@ -5,4 +5,5 @@ public class AutoConstants {
     public final static double kWaitForHatchPush = 0.2;
     public final static double kWaitForArmFall = 0.2;
     public final static double kDefaultSolenoidWait = 0.1;
+    public final static double kDefaultRollerSpinUpWait = 0.1;
 }

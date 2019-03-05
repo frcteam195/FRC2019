@@ -3,7 +3,8 @@ package com.team195.frc2019.subsystems.positions;
 public class ElevatorPositions {
 	public static final double Down = 0;
 	public static final double BallHandoff = 0;
-	public static final double HatchHandoff = 0;
+//	public static final double HatchHandoff = 0.8381;
+	public static final double HatchHandoff = 0.6543;
 	public static final double CargoHatch = 0;
 	public static final double CargoBall = 0;
 	public static final double HatchPickupStation = 0;
@@ -17,4 +18,5 @@ public class ElevatorPositions {
 	public static final double CollisionThresholdHatchArm = 0.715;
 	public static final double CollisionThresholdBallArm = 1.0;
 	public static final double PositionDelta = 0.1;
+	public static final double HatchLiftOffset = 0.2;
 }

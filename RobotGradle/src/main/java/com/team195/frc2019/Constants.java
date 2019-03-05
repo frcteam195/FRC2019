@@ -160,6 +160,7 @@ public class Constants {
 //    public static final int kHatchPushSolenoidId = 5;
 //    public static final int kBallPushSolenoidId = 7;
     public static final int kHatchBeakSolenoidId = 9;
+    public static final int kHatchBeakFeedSolenoidId = 10;
     public static final int kHatchPushSolenoidId = 8;
     public static final int kBallPushSolenoidId = 11;
 
@@ -198,7 +199,7 @@ public class Constants {
     public static final int kConnectionMonitorThreadPriority = 7;
     public static final int kLEDThreadPriority = Thread.MIN_PRIORITY;
     public static final int kConsoleReporterThreadPriority = Thread.NORM_PRIORITY;
-    public static final int kLogDataReporterThreadPriority = 6;
+    public static final int kLogDataReporterThreadPriority = 4;
 
 
     public static final String DASHBOARD_IP = "10.1.95.14";

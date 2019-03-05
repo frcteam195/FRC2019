@@ -71,7 +71,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		ballArmUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
+		ballArmUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
 				(t) -> Elevator.getInstance().getPosition() < ElevatorPositions.CollisionThresholdBallArm,
 				(t) -> Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta)
 		);
@@ -147,7 +147,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
 
-				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
+//				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}
 
