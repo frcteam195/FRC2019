@@ -12,8 +12,8 @@ public class CheesyDriveHelper {
     private static final double kWheelDeadband = 0.02;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
-    private static final double kHighWheelNonLinearity = 0.65;
-    private static final double kLowWheelNonLinearity = 0.5;
+    private static final double kHighWheelNonLinearity = 0.85;
+    private static final double kLowWheelNonLinearity = 0.76;
 
     private static final double kHighNegInertiaScalar = 4.0;
 
@@ -22,8 +22,8 @@ public class CheesyDriveHelper {
     private static final double kLowNegInertiaCloseScalar = 4.0;
     private static final double kLowNegInertiaFarScalar = 5.0;
 
-    private static final double kHighSensitivity = 0.65;
-    private static final double kLowSensitiity = 0.65;
+    private static final double kHighSensitivity = 0.5;
+    private static final double kLowSensitiity = 0.5;
 
     private static final double kQuickStopDeadband = 0.5;
     private static final double kQuickStopWeight = 0.1;
@@ -36,8 +36,8 @@ public class CheesyDriveHelper {
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
                                    boolean isHighGear, double velScalingFactor) {
 
-        wheel = handleDeadband(wheel, kWheelDeadband);
-        throttle = handleDeadband(throttle, kThrottleDeadband);
+//        wheel = handleDeadband(wheel, kWheelDeadband);
+//        throttle = handleDeadband(throttle, kThrottleDeadband);
 
         double negInertia = wheel - mOldWheel;
         mOldWheel = wheel;
@@ -142,7 +142,7 @@ public class CheesyDriveHelper {
         return cheesyDrive(throttle, wheel, isQuickTurn, isHighGear, 1);
     }
 
-    public double handleDeadband(double val, double deadband) {
-        return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
-    }
+//    public double handleDeadband(double val, double deadband) {
+//        return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
+//    }
 }

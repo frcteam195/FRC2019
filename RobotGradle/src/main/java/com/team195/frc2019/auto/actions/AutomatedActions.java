@@ -56,10 +56,11 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
-	public static Action placeHatch(double elevatorPosition) {
+	public static Action placeHatch(double elevatorPosition, Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
 		actionArrayList.add(new SetElevatorHeightAction(elevatorPosition));
+		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 100));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
 		actionArrayList.add(new SetBeakAction(false));
@@ -71,10 +72,11 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
-	public static Action shootBall(double elevatorPosition) {
+	public static Action shootBall(double elevatorPosition, Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
 		actionArrayList.add(new SetElevatorHeightAction(elevatorPosition));
+		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 100));
 		actionArrayList.add(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedNormal));
 		actionArrayList.add(new SetBallPushAction(true));
 		actionArrayList.add(new WaitAction(AutoConstants.kWaitForBallPush));

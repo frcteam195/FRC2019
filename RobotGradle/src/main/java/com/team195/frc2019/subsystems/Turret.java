@@ -79,8 +79,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallPushSolenoid.set(false);
 
 		turretAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
-				(t) -> (Elevator.getInstance().getPosition() >= ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta),
-				(t) -> (Elevator.getInstance().getSetpoint() >= ElevatorPositions.CollisionThresholdBallArm),
+				(t) -> (Elevator.getInstance().getPosition() >= ElevatorPositions.CollisionThresholdTurret - ElevatorPositions.PositionDelta),
+				(t) -> (Elevator.getInstance().getSetpoint() >= ElevatorPositions.CollisionThresholdTurret),
 				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Down),
 				(t) -> (Math.abs(BallIntakeArm.getInstance().getPosition()) < BallIntakeArmPositions.CollisionThreshold)
 		);

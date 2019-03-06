@@ -59,8 +59,8 @@ public class HIDController {
 						} else {
 							//User Control Interface code here
 
-							double throttle = -driveJoystick.getNormalizedAxis(1, 0.04);
-							double turn = driveJoystick.getNormalizedAxis(4, 0.04);
+							double throttle = -driveJoystick.getNormalizedAxis(1, 0.04)/2.0;
+							double turn = driveJoystick.getNormalizedAxis(4, 0.04)/2.0;
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
@@ -82,31 +82,31 @@ public class HIDController {
 								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> buttonBox1.getRawButton(1)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(2)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.CargoBall))).runAction();
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.CargoBall, (t) -> buttonBox1.getRawButton(2)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(3)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallLow))).runAction();
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallLow, (t) -> buttonBox1.getRawButton(3)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(4)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallMed))).runAction();
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallMed, (t) -> buttonBox1.getRawButton(4)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(5)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallHigh))).runAction();
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallHigh, (t) -> buttonBox1.getRawButton(5)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(7)) {
 								(new TeleopActionRunner(AutomatedActions.pickupHatchFeederStation())).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(8)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.CargoHatch))).runAction();
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.CargoHatch, (t) -> buttonBox1.getRawButton(8)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(9)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchLow))).runAction();
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchLow, (t) -> buttonBox1.getRawButton(9)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(10)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchMed))).runAction();
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchMed, (t) -> buttonBox1.getRawButton(10)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(11)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchHigh))).runAction();
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchHigh, (t) -> buttonBox1.getRawButton(11)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(12)) {
 								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)))).runAction();

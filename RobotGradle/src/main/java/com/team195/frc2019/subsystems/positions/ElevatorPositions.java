@@ -15,6 +15,7 @@ public class ElevatorPositions {
 	public static final double RocketBallMed = 3.6074;
 	public static final double RocketBallHigh = 6.0085;
 	//Keep elevator here unless intaking a ball
+	public static final double CollisionThresholdTurret = 0.3;
 	public static final double CollisionThresholdHatchArm = 0.715;
 	public static final double CollisionThresholdBallArm = 1.0;
 	public static final double PositionDelta = 0.1;
