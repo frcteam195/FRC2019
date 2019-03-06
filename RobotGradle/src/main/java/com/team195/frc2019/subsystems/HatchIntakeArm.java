@@ -39,7 +39,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		mHatchArmRotationMotor.configForwardSoftLimitEnable(true);
 		mHatchArmRotationMotor.configReverseSoftLimitThreshold(Constants.kHatchArmReverseSoftLimit);
 		mHatchArmRotationMotor.configReverseSoftLimitEnable(true);
-		mHatchArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
+		mHatchArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -111,8 +111,6 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mHatchArmRotationMotor.setEncoderPosition(0);
-		if (mHatchArmControlMode == HatchArmControlMode.POSITION)
-			mHatchArmRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override

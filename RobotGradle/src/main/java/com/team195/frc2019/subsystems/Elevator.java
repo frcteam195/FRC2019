@@ -38,7 +38,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.setPIDF(Constants.kElevatorPositionKp, Constants.kElevatorPositionKi, Constants.kElevatorPositionKd, Constants.kElevatorPositionKf);
 		mElevatorMaster.setMotionParameters(Constants.kElevatorPositionCruiseVel, Constants.kElevatorPositionMMAccel);
 		zeroSensors();
-		mElevatorMaster.setControlMode(MCControlMode.MotionMagic);
+		mElevatorMaster.setControlMode(MCControlMode.Disabled);
 		mElevatorMaster.configForwardSoftLimitThreshold(Constants.kElevatorPositionForwardSoftLimit);
 		mElevatorMaster.configForwardSoftLimitEnable(true);
 		mElevatorMaster.configReverseSoftLimitThreshold(Constants.kElevatorPositionReverseSoftLimit);
@@ -111,8 +111,6 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mElevatorMaster.setEncoderPosition(0);
-		if (mElevatorControlMode == ElevatorControlMode.POSITION)
-			mElevatorMaster.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}
 
 	@Override

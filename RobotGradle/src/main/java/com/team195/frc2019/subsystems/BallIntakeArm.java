@@ -125,8 +125,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	public void zeroSensors() {
 		mBallArmRotationMotor.setEncoderPosition(Constants.kBallIntakeArmForwardSoftLimit);
 		zeroRemoteSensor();
-//		if (mBallIntakeArmControlMode == BallIntakeArmControlMode.POSITION)
-//			mBallArmRotationMotor.set(MCControlMode.MotionMagic, Constants.kBallIntakeArmForwardSoftLimit, 0, 0);
 	}
 
 	public void zeroRemoteSensor() {

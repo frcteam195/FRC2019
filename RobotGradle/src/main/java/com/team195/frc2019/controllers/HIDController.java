@@ -69,12 +69,10 @@ public class HIDController {
 							}
 							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
-							if (driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold) {
-								//Left Trigger - Ground hatch intake
-
-							} else if (driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold) {
-								//Right Trigger - Ball Intake
-
+							if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
+								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold))).runAction();
+							} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
+								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold))).runAction();
 							}
 
 
@@ -131,6 +129,7 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
 								//Flash LEDs
+								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
 							}
 
 							if (armControlJoystick.getRisingEdgeButton(2)) {
@@ -141,6 +140,7 @@ public class HIDController {
 
 							if (armControlJoystick.getRisingEdgeButton(1)) {
 								//Flash LEDs to signal Human Player
+								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
 							}
 							else if (armControlJoystick.getRisingEdgeButton(3)) {
 								//Ball Outtake turret and arm
@@ -169,16 +169,16 @@ public class HIDController {
 
 							switch (armControlJoystick.getPOV()) {
 								case 0:
-									Turret.getInstance().setTurretPosition(TurretPositions.Home);
+									(new TeleopActionRunner(new SetTurretPositionAction(TurretPositions.Home))).runAction();
 									break;
 								case 90:
-									Turret.getInstance().setTurretPosition(TurretPositions.Left90);
+									(new TeleopActionRunner(new SetTurretPositionAction(TurretPositions.Left90))).runAction();
 									break;
 								case 180:
-									Turret.getInstance().setTurretPosition(TurretPositions.Back180);
+									(new TeleopActionRunner(new SetTurretPositionAction(TurretPositions.Back180))).runAction();
 									break;
 								case 270:
-									Turret.getInstance().setTurretPosition(TurretPositions.Right90);
+									(new TeleopActionRunner(new SetTurretPositionAction(TurretPositions.Right90))).runAction();
 									break;
 								default:
 									break;

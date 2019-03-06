@@ -377,7 +377,7 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.setSelectedSensorPosition(convertRotationsToNativeUnits(position), 0, Constants.kCANTimeoutMs));
 	}
 
-	public synchronized void runTalonFunctionWithRetry(Function<Void, ErrorCode> talonCall) {
+	private synchronized void runTalonFunctionWithRetry(Function<Void, ErrorCode> talonCall) {
 		boolean setSucceeded;
 		int retryCounter = 0;
 
@@ -584,7 +584,7 @@ public class CKTalonSRX implements TuneableMotorController {
 		double motionMagicVel;
 		double motionMagicAccel;
 
-		public FeedbackConfiguration(FeedbackDevice feedbackDevice, int remoteDeviceId, double closedLoopRampRate, double motionMagicVel, double motionMagicAccel) {
+		FeedbackConfiguration(FeedbackDevice feedbackDevice, int remoteDeviceId, double closedLoopRampRate, double motionMagicVel, double motionMagicAccel) {
 			this.feedbackDevice = feedbackDevice;
 			this.remoteDeviceId = remoteDeviceId;
 			this.closedLoopRampRate = closedLoopRampRate;
@@ -592,27 +592,27 @@ public class CKTalonSRX implements TuneableMotorController {
 			this.motionMagicAccel = motionMagicAccel;
 		}
 
-		public FeedbackConfiguration() {
+		FeedbackConfiguration() {
 			this(FeedbackDevice.CTRE_MagEncoder_Relative, -1, 0, 0, 0);
 		}
 
-		public synchronized void setFeedbackDevice(FeedbackDevice feedbackDevice) {
+		synchronized void setFeedbackDevice(FeedbackDevice feedbackDevice) {
 			this.feedbackDevice = feedbackDevice;
 		}
 
-		public synchronized void setRemoteDeviceId(int remoteDeviceId) {
+		synchronized void setRemoteDeviceId(int remoteDeviceId) {
 			this.remoteDeviceId = remoteDeviceId;
 		}
 
-		public synchronized void setClosedLoopRampRate(double closedLoopRampRate) {
+		synchronized void setClosedLoopRampRate(double closedLoopRampRate) {
 			this.closedLoopRampRate = closedLoopRampRate;
 		}
 
-		public synchronized void setMotionMagicVel(double motionMagicVel) {
+		synchronized void setMotionMagicVel(double motionMagicVel) {
 			this.motionMagicVel = motionMagicVel;
 		}
 
-		public synchronized void setMotionMagicAccel(double motionMagicAccel) {
+		synchronized void setMotionMagicAccel(double motionMagicAccel) {
 			this.motionMagicAccel = motionMagicAccel;
 		}
 	}

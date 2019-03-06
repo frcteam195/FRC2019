@@ -61,7 +61,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mTurretRotationMotor.configForwardSoftLimitEnable(true);
 		mTurretRotationMotor.configReverseSoftLimitThreshold(Constants.kTurretReverseSoftLimit);
 		mTurretRotationMotor.configReverseSoftLimitEnable(true);
-		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
+		mTurretRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
 //		try {

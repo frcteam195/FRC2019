@@ -10,6 +10,7 @@ public class CKDashJoystick {
 	private final int mPort;
 
 	private boolean[] prevButtonVal;
+	private boolean[] prevTriggerVal;
 
 	private Joystick backupJoystick;
 
@@ -21,9 +22,14 @@ public class CKDashJoystick {
 	public CKDashJoystick(int port) {
 		mPort = port;
 		prevButtonVal = new boolean[DashJoyController.BUTTON_ARR_SIZE];
+		prevTriggerVal = new boolean[DashJoyController.MAX_AXES];
 
 		for (int i = 0; i < prevButtonVal.length; i++) {
 			prevButtonVal[i] = false;
+		}
+
+		for (int i = 0; i < prevTriggerVal.length; i++) {
+			prevTriggerVal[i] = false;
 		}
 
 		backupJoystick = new Joystick(mPort);
@@ -87,6 +93,12 @@ public class CKDashJoystick {
 		}
 	}
 
+	private synchronized void setPrevTriggerVal(int idx, boolean val) {
+		if (idx <= prevTriggerVal.length) {
+			prevTriggerVal[idx] = val;
+		}
+	}
+
 	private boolean isTimestampValid() {
 		return (HALUtil.getFPGATime() - dashJoyController.getLastUpdateTimestamp()) < EXPIRATION_TIME;
 	}
@@ -116,6 +128,17 @@ public class CKDashJoystick {
 			}
 		}
 		return false;
+	}
+
+	public boolean getRisingEdgeTrigger(int axis, double threshold) {
+		try {
+			boolean currentButton = Math.abs(getRawAxis(axis)) > threshold;
+			boolean retVal = (currentButton != prevTriggerVal[axis]) && currentButton;
+			setPrevTriggerVal(axis, currentButton);
+			return retVal;
+		} catch(Exception ex) {
+			return false;
+		}
 	}
 
 	public boolean isPOVInputActive() {
