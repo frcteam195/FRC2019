@@ -11,7 +11,7 @@ public class TurretPositions {
 	public static final double Back180 = Turret.convertTurretDegreesToRotations(180);
 
 	//Ball Shooter
-	public static final double BallShootSpeedNormal = 0.6;
-	public static final double BallShootSpeedIntake = -0.3;
+	public static final double BallShootSpeedNormal = 1;
+	public static final double BallShootSpeedIntake = -1;
 	public static final double BallShootSpeedOff = 0;
 }

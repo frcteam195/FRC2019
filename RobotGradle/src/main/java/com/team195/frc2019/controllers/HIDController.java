@@ -167,24 +167,18 @@ public class HIDController {
 								//Rehome turret
 							}
 
-							//POV
-							//0: Turret Forward
-							//90: Turret Right 90
-							//180: Turret Degrees 180 backwards
-							//270: Turret 90 Left
-
 							switch (armControlJoystick.getPOV()) {
 								case 0:
 									Turret.getInstance().setTurretPosition(TurretPositions.Home);
 									break;
 								case 90:
-									Turret.getInstance().setTurretPosition(TurretPositions.Right90);
+									Turret.getInstance().setTurretPosition(TurretPositions.Left90);
 									break;
 								case 180:
 									Turret.getInstance().setTurretPosition(TurretPositions.Back180);
 									break;
 								case 270:
-									Turret.getInstance().setTurretPosition(TurretPositions.Left90);
+									Turret.getInstance().setTurretPosition(TurretPositions.Right90);
 									break;
 								default:
 									break;

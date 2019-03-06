@@ -66,6 +66,7 @@ public class AutomatedActions {
 		actionArrayList.add(new SetHatchPushAction(false));
 		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush * 2));
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.Resting));
+		actionArrayList.add(new SetTurretPositionAction(TurretPositions.Home));
 
 		return new SeriesAction(actionArrayList);
 	}
@@ -75,10 +76,12 @@ public class AutomatedActions {
 
 		actionArrayList.add(new SetElevatorHeightAction(elevatorPosition));
 		actionArrayList.add(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedNormal));
-		actionArrayList.add(new SetBallPushAction(false));
+		actionArrayList.add(new SetBallPushAction(true));
 		actionArrayList.add(new WaitAction(AutoConstants.kWaitForBallPush));
+		actionArrayList.add(new SetBallPushAction(false));
 		actionArrayList.add(new SetBallShooterOpenLoopAction(0));
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.Resting));
+		actionArrayList.add(new SetTurretPositionAction(TurretPositions.Home));
 
 		return new SeriesAction(actionArrayList);
 	}
