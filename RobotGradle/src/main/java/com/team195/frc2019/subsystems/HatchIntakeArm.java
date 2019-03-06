@@ -50,6 +50,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mHatchArmRollerMotor.setInverted(true);
+		mHatchArmRollerMotor.setMCOpenLoopRampRate(0.2);
 
 
 		hatchArmAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
@@ -73,7 +74,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void stop() {
-
+		mHatchArmRotationMotor.set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
 	@Override

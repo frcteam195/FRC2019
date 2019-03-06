@@ -4,10 +4,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.RobotState;
 import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -20,6 +22,8 @@ import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
+import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Translation2d;
 
 public class Turret extends Subsystem implements InterferenceSystem {
 
@@ -53,6 +57,10 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mTurretRotationMotor.setPIDF(Constants.kTurretPositionKp, Constants.kTurretPositionKi, Constants.kTurretPositionKd, Constants.kTurretPositionKf);
 		mTurretRotationMotor.setMotionParameters(Constants.kTurretPositionCruiseVel, Constants.kTurretPositionMMAccel);
 		zeroSensors();
+		mTurretRotationMotor.configForwardSoftLimitThreshold(Constants.kTurretForwardSoftLimit);
+		mTurretRotationMotor.configForwardSoftLimitEnable(true);
+		mTurretRotationMotor.configReverseSoftLimitThreshold(Constants.kTurretReverseSoftLimit);
+		mTurretRotationMotor.configReverseSoftLimitEnable(true);
 		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -64,6 +72,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+		mBallShooterRollerMotor.setMCOpenLoopRampRate(0.2);
 
 		mHatchBeakSolenoid = new CKSolenoid(Constants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);
@@ -92,7 +101,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void stop() {
-
+		mTurretRotationMotor.set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
 	@Override
@@ -159,6 +168,22 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		public void onLoop(double timestamp) {
 			synchronized (Turret.this) {
 				switch (mTurretControlMode) {
+					case AUTO_TRACK:
+						Pose2d robotCurrentPos = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+						Translation2d currentRocketTarget;
+
+						if (robotCurrentPos.getTranslation().x() > 0)
+							//Track Left Rocket
+							currentRocketTarget = TrajectoryGenerator.kLeftRocketPose.getTranslation();
+						else
+							//Track Right Rocket
+							currentRocketTarget = TrajectoryGenerator.kRightRocketPose.getTranslation();
+
+						double desiredTurretAngleDeg = Math.toDegrees(Math.atan2((currentRocketTarget.y() - robotCurrentPos.getTranslation().y()),
+								(currentRocketTarget.x() - robotCurrentPos.getTranslation().x()))) - robotCurrentPos.getRotation().getDegrees();
+
+						mTurretSetpoint = convertTurretDegreesToRotations(desiredTurretAngleDeg);
+						//Fall through on purpose to set position -> no break;
 					case POSITION:
 						if (turretAnyPositionCheck.hasPassedConditions())
 							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
@@ -287,6 +312,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	public enum TurretControlMode {
 		POSITION,
 		OPEN_LOOP,
+		AUTO_TRACK,
 		DISABLED;
 	}
 

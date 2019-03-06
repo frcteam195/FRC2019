@@ -1,6 +1,7 @@
 package com.team195.frc2019;
 
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.RGBColor;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -81,6 +82,9 @@ public class Constants {
     public static final double kTurretPositionKf = 0.400360;
     public static final int kTurretPositionCruiseVel = 350;
     public static final int kTurretPositionMMAccel = 600;
+    //Units in rotations
+    public static final double kTurretForwardSoftLimit = Turret.convertTurretDegreesToRotations(225);
+    public static final double kTurretReverseSoftLimit = -kTurretForwardSoftLimit;
 
     //TODO: Tune
     //100:1
@@ -92,7 +96,6 @@ public class Constants {
     public static final int kHatchArmPositionMMAccel = 60;
     //Units in rotations
     public static final double kHatchArmForwardSoftLimit = 0.6174;
-
     public static final double kHatchArmReverseSoftLimit = 0;
 
 

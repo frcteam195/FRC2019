@@ -76,6 +76,15 @@ public class TrajectoryGenerator {
         return mMotionPlanner.generateTrajectory(reversed, waypoints, constraints, start_vel, end_vel, max_vel, max_accel, max_voltage);
     }
 
+
+    public static final Pose2d kLeftRocketPose = new Pose2d(227, 145, Rotation2d.fromDegrees(0));
+    public static final Pose2d kRightRocketPose = kLeftRocketPose.mirror();
+
+
+
+
+
+
     // CRITICAL POSES
     // Origin is the center of the robot when the robot is placed against the middle of the alliance station wall.
     // +x is towards the center of the field.
