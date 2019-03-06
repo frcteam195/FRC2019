@@ -68,11 +68,6 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Up)
 		);
 
-//		elevatorAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND,
-//				(t) -> (!requestMoveElevatorDownCheck.hasPassedConditions()),
-//
-////				(t) -> (Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta))
-//		);
 	}
 
 	public static Elevator getInstance() {
