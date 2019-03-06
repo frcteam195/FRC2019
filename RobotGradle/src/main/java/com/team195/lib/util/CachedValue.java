@@ -7,6 +7,8 @@ public class CachedValue<T> {
 
 	private T mCachedValue;
 
+	private boolean initialized = false;
+
 	private Function<Void, T> mUpdateFunction;
 
 	public CachedValue(double updateTimeoutMs, Function<Void, T> updateFunction) {
@@ -15,9 +17,24 @@ public class CachedValue<T> {
 	}
 
 	public synchronized T getValue() {
-		if (mTimeoutTimer.isTimedOut()) {
-			mCachedValue = mUpdateFunction.apply(null);
+		if (!initialized) {
+			setCachedValue(mUpdateFunction.apply(null));
+			initialized = true;
 		}
+
+		if (mTimeoutTimer.isTimedOut()) {
+			setCachedValue(mUpdateFunction.apply(null));
+			mTimeoutTimer.reset();
+		}
+
 		return mCachedValue;
+	}
+
+	public synchronized void setValue(T value) {
+		setCachedValue(value);
+	}
+
+	private synchronized void setCachedValue(T value) {
+		mCachedValue = value;
 	}
 }
