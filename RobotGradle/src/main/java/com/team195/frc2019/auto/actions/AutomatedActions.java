@@ -45,7 +45,7 @@ public class AutomatedActions {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 		actionArrayList.add(new SetHandoffCollisionAvoidanceAction(false));
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchHandoff), new SetBeakAction(false))));
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(0.3), new SetHatchArmRotationAction(HatchArmPositions.Handoff))));
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(0.3), new SetHatchArmRotationAction(HatchArmPositions.Handoff, 0.15))));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchHandoff + ElevatorPositions.HatchLiftOffset),
 				                                             new SetHatchArmRollerAction(-0.2))));
