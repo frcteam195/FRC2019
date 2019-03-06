@@ -94,18 +94,16 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public String generateReport() {
-		String retVal = "";
-		retVal += "ElevatorPos:" + mElevatorMaster.getVelocity() + ";";
-		retVal += "ElevatorVel:" + mElevatorMaster.getVelocity() + ";";
-		retVal += "ElevatorOutput:" + mElevatorSetpoint + ";";
-		retVal += "Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";";
-		retVal += "Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";";
-		retVal += "Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";";
-		retVal += "ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";";
-		retVal += "ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent()*mElevatorMaster.getMCInputVoltage() + ";";
-		retVal += "ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";";
-		retVal += "ElevatorControlMode:" + mElevatorControlMode.toString() + ";";
-		return retVal;
+		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
+				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
+				"ElevatorOutput:" + mElevatorSetpoint + ";" +
+				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
+				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
+				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
+				"ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";" +
+				"ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent() * mElevatorMaster.getMCInputVoltage() + ";" +
+				"ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";" +
+				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";";
 	}
 
 	@Override

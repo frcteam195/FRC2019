@@ -403,41 +403,36 @@ public class Drive extends Subsystem {
 
 	@Override
 	public String generateReport() {
-		String retVal = "";
 
-		retVal += "LeftDrivePos:" + mLeftMaster.getVelocity() + ";";
-		retVal += "LeftDriveVel:" + mLeftMaster.getVelocity() + ";";
-		retVal += "LeftDriveOutput:" + mPeriodicIO.left_demand + ";";
-		retVal += "LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";";
-		retVal += "LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";";
-		retVal += "LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";";
-		retVal += "LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";";
-		retVal += "LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent()*mLeftMaster.getMCInputVoltage() + ";";
-		retVal += "LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";";
-
-		retVal += "RightDrivePos:" + mRightMaster.getVelocity() + ";";
-		retVal += "RightDriveVel:" + mRightMaster.getVelocity() + ";";
-		retVal += "RightDriveOutput:" + mPeriodicIO.right_demand + ";";
-		retVal += "RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";";
-		retVal += "RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";";
-		retVal += "RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";";
-		retVal += "RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";";
-		retVal += "RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent()*mRightMaster.getMCInputVoltage() + ";";
-		retVal += "RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";";
-
-//		retVal += "AccelX:" + mGyro.getRawAccelX() + ";";
-//		retVal += "AccelY:" + mGyro.getRawAccelY() + ";";
-//		retVal += "AccelZ:" + mGyro.getRawAccelZ() + ";";
+		//		sb.append("AccelX:" + mGyro.getRawAccelX() + ";");
+//		sb.append("AccelY:" + mGyro.getRawAccelY() + ";");
+//		sb.append("AccelZ:" + mGyro.getRawAccelZ() + ";");
 //
-//		retVal += "Gyro:" + mGyro.getRawYawDegrees() + ";";
-//		retVal += "GyroRate:" + mGyro.getYawRateDegreesPerSec() + ";";
+//		sb.append("Gyro:" + mGyro.getRawYawDegrees() + ";");
+//		sb.append("GyroRate:" + mGyro.getYawRateDegreesPerSec() + ";");
 
-		retVal += "DriveMode:" + mDriveControlState.toString() + ";";
-//		retVal += "RobotPosition:" + PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue().toString() + ";";
+		//		sb.append("RobotPosition:" + PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue().toString() + ";");
 
-		retVal += "IsDriveFaulted:" + isSystemFaulted() + ";";
-
-		return retVal;
+		return  "LeftDrivePos:" + mLeftMaster.getVelocity() + ";" +
+				"LeftDriveVel:" + mLeftMaster.getVelocity() + ";" +
+				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
+				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
+				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
+				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
+				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
+				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
+				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
+				"RightDrivePos:" + mRightMaster.getVelocity() + ";" +
+				"RightDriveVel:" + mRightMaster.getVelocity() + ";" +
+				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
+				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
+				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
+				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
+				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
+				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
+				"RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";" +
+				"DriveMode:" + mDriveControlState.toString() + ";" +
+				"IsDriveFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

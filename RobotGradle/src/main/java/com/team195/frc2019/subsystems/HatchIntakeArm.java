@@ -92,20 +92,18 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public String generateReport() {
-		String retVal = "";
-		retVal += "HatchArmPos:" + mHatchArmRotationMotor.getVelocity() + ";";
-		retVal += "HatchArmVel:" + mHatchArmRotationMotor.getVelocity() + ";";
-		retVal += "HatchArmOutput:" + mHatchArmSetpoint + ";";
-		retVal += "HatchArmCurrent:" + mHatchArmRotationMotor.getMCOutputCurrent() + ";";
-		retVal += "HatchArmOutputDutyCycle:" + mHatchArmRotationMotor.getMCOutputPercent() + ";";
-		retVal += "HatchArmOutputVoltage:" + mHatchArmRotationMotor.getMCOutputPercent()*mHatchArmRotationMotor.getMCInputVoltage() + ";";
-		retVal += "HatchArmSupplyVoltage:" + mHatchArmRotationMotor.getMCInputVoltage() + ";";
-		retVal += "HatchArmControlMode:" + mHatchArmControlMode.toString() + ";";
-		retVal += "HatchArmIntakeCurrent:" + mHatchArmRollerMotor.getMCOutputCurrent() + ";";
-		retVal += "HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";";
-		retVal += "HatchArmIntakeOutputVoltage:" + mHatchArmRollerMotor.getMCOutputPercent()*mHatchArmRollerMotor.getMCInputVoltage() + ";";
-		retVal += "HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";";
-		return retVal;
+		return  "HatchArmPos:" + mHatchArmRotationMotor.getVelocity() + ";" +
+				"HatchArmVel:" + mHatchArmRotationMotor.getVelocity() + ";" +
+				"HatchArmOutput:" + mHatchArmSetpoint + ";" +
+				"HatchArmCurrent:" + mHatchArmRotationMotor.getMCOutputCurrent() + ";" +
+				"HatchArmOutputDutyCycle:" + mHatchArmRotationMotor.getMCOutputPercent() + ";" +
+				"HatchArmOutputVoltage:" + mHatchArmRotationMotor.getMCOutputPercent() * mHatchArmRotationMotor.getMCInputVoltage() + ";" +
+				"HatchArmSupplyVoltage:" + mHatchArmRotationMotor.getMCInputVoltage() + ";" +
+				"HatchArmControlMode:" + mHatchArmControlMode.toString() + ";" +
+				"HatchArmIntakeCurrent:" + mHatchArmRollerMotor.getMCOutputCurrent() + ";" +
+				"HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";" +
+				"HatchArmIntakeOutputVoltage:" + mHatchArmRollerMotor.getMCOutputPercent() * mHatchArmRollerMotor.getMCInputVoltage() + ";" +
+				"HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";";
 	}
 
 	@Override

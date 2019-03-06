@@ -109,11 +109,9 @@ public class RobotState implements Reportable {
 	@Override
 	public String generateReport() {
 		Pose2d odometry = getLatestFieldToVehicle().getValue();
-		String s = "";
-		s += "RobotPoseX:" + odometry.getTranslation().x() + ";";
-		s += "RobotPoseY:" + odometry.getTranslation().y() + ";";
-		s += "RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";";
-		s += "RobotLinearVelocity:" + vehicle_velocity_measured_.dx + ";";
-		return s;
+		return  "RobotPoseX:" + odometry.getTranslation().x() + ";" +
+				"RobotPoseY:" + odometry.getTranslation().y() + ";" +
+				"RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";" +
+				"RobotLinearVelocity:" + vehicle_velocity_measured_.dx + ";";
 	}
 }

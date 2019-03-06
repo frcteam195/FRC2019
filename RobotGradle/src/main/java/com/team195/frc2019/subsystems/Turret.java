@@ -119,21 +119,19 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public String generateReport() {
-		String retVal = "";
-		retVal += "TurretPos:" + mTurretRotationMotor.getVelocity() + ";";
-		retVal += "TurretVel:" + mTurretRotationMotor.getVelocity() + ";";
-		retVal += "TurretOutput:" + mTurretSetpoint + ";";
-		retVal += "TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";";
-		retVal += "TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";";
-		retVal += "TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent()* mTurretRotationMotor.getMCInputVoltage() + ";";
-		retVal += "TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";";
-		retVal += "TurretControlMode:" + mTurretControlMode.toString() + ";";
-		retVal += "TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";";
-		retVal += "TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";";
-		retVal += "TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent()* mBallShooterRollerMotor.getMCInputVoltage() + ";";
-		retVal += "TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";";
-		retVal += "TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";";
-		return retVal;
+		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
+				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
+				"TurretOutput:" + mTurretSetpoint + ";" +
+				"TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";" +
+				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
+				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
+				"TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";" +
+				"TurretControlMode:" + mTurretControlMode.toString() + ";" +
+				"TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";" +
+				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
+				"TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent() * mBallShooterRollerMotor.getMCInputVoltage() + ";" +
+				"TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";" +
+				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";";
 	}
 
 	@Override

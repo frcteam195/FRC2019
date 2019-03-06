@@ -104,21 +104,18 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public String generateReport() {
-		String retVal = "";
-		retVal += "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";";
-		retVal += "BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";";
-		retVal += "BallArmOutput:" + mBallIntakeArmSetpoint + ";";
-		retVal += "BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";";
-		retVal += "BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";";
-		retVal += "BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent()*mBallArmRotationMotor.getMCInputVoltage() + ";";
-		retVal += "BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";";
-		retVal += "BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";";
-		retVal += "BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";";
-		retVal += "BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";";
-		retVal += "BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent()*mBallArmRollerMotor.getMCInputVoltage() + ";";
-		retVal += "BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";";
-//		retVal += "BallArmIntakeControlMode:" + mBallIntakeArmControlMode.toString() + ";";
-		return retVal;
+		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
+				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
+				"BallArmOutput:" + mBallIntakeArmSetpoint + ";" +
+				"BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";" +
+				"BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";" +
+				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
+				"BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";" +
+				"BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";" +
+				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
+				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
+				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +
+				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";";
 	}
 
 	@Override
