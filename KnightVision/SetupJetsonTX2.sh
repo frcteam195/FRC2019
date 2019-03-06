@@ -111,15 +111,15 @@ if [ `opencv_version` != "3.4.5" ]; then
 	mkdir -p /home/nvidia/OpenCV345
 	cd /home/nvidia/OpenCV345
 	wget https://github.com/opencv/opencv/archive/3.4.5.zip -O opencv-3.4.5.zip
-	wget https://github.com/opencv/opencv_contrib/archive/3.4.zip -O opencv_contrib.zip
+	wget https://github.com/opencv/opencv_contrib/archive/3.4.5.zip -O opencv_contrib-3.4.5.zip
 	unzip opencv-3.4.5.zip
-	unzip opencv_contrib.zip
-	cp -r opencv_contrib-3.4 opencv-3.4.5/
+	unzip opencv_contrib-3.4.5.zip
+	cp -r opencv_contrib-3.4.5 opencv-3.4.5/
 	cd opencv-3.4.5
 	mkdir build
 	cd build
 	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local \
-			-D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.4/modules \
+			-D OPENCV_EXTRA_MODULES_PATH=../opencv_contrib-3.4.5/modules \
 			-D OPENCV_ENABLE_NONFREE=ON \
 			-D WITH_CUDA=ON -D CUDA_ARCH_BIN="6.2" -D CUDA_ARCH_PTX="" \
 			-D WITH_CUBLAS=ON -D ENABLE_FAST_MATH=ON -D CUDA_FAST_MATH=ON \
