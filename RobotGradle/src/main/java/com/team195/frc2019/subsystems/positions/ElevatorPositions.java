@@ -1,9 +1,12 @@
 package com.team195.frc2019.subsystems.positions;
 
 public class ElevatorPositions {
+	//About 11.3261943987 inches per rotation
+
 	public static final double Down = 0;
 	public static final double BallHandoff = 0;
-	public static final double HatchHandoff = 0.6743;
+//	public static final double HatchHandoff = 0.6743;
+	public static final double HatchHandoff = 0.66;
 	public static final double CargoHatch = 0.3188;
 	public static final double CargoBall = 2.2681;
 	public static final double HatchPickupStation = CargoHatch;

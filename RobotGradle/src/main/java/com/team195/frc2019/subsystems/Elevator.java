@@ -81,7 +81,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void stop() {
-
+		mElevatorMaster.set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
 	@Override
