@@ -149,7 +149,7 @@ public class HIDController {
 							else if (armControlJoystick.getRisingEdgeButton(4)) {
 								//Close Beak and Hatch roller outtake hold
 								Turret.getInstance().setBeak(true);
-								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> armControlJoystick.getRawButton(4)))).runAction();
+//								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> armControlJoystick.getRawButton(4)))).runAction();
 							}
 							else if (armControlJoystick.getRisingEdgeButton(5)) {
 								Turret.getInstance().setHatchPush(false);

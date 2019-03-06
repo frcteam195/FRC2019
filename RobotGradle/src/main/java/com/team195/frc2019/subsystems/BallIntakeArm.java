@@ -44,6 +44,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mBallArmRollerMotor.setInverted(true);
 		mBallArmRollerMotor.setSensorPhase(true);
+		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(FeedbackDevice.CTRE_MagEncoder_Relative);
