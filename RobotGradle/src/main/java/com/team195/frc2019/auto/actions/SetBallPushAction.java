@@ -1,20 +1,23 @@
 package com.team195.frc2019.auto.actions;
 
+import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 
-public class SpinUpBallShooter implements Action {
+public class SetBallPushAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 
-	private double mOutputSpeed;
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
 
-	public SpinUpBallShooter(double outputSpeed) {
-		mOutputSpeed = outputSpeed;
+	private boolean mPushOut;
+
+	public SetBallPushAction(boolean pushOut) {
+		mPushOut = pushOut;
 	}
 
 	@Override
 	public boolean isFinished() {
-		return mTurret.isShooterAtSetpoint(50);
+		return mTimeoutTimer.isTimedOut();
 	}
 
 	@Override
@@ -28,6 +31,6 @@ public class SpinUpBallShooter implements Action {
 
 	@Override
 	public void start() {
-		mTurret.setBallShooterVelocity(mOutputSpeed);
+		mTurret.setBallPush(mPushOut);
 	}
 }

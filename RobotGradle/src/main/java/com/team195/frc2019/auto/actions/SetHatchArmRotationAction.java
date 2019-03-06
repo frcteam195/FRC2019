@@ -6,14 +6,21 @@ public class SetHatchArmRotationAction implements Action {
 	private static final HatchIntakeArm mHatchArm = HatchIntakeArm.getInstance();
 
 	private double mRotation;
+	private double mPosDelta;
 
 	public SetHatchArmRotationAction(double armRotation) {
-		mRotation = armRotation;
+		this(armRotation, 0.05);
 	}
+
+	public SetHatchArmRotationAction(double armRotation, double posDelta) {
+		mRotation = armRotation;
+		mPosDelta = posDelta;
+	}
+
 
 	@Override
 	public boolean isFinished() {
-		return mHatchArm.isArmAtSetpoint(0.05);
+		return mHatchArm.isArmAtSetpoint(mPosDelta);
 	}
 
 	@Override

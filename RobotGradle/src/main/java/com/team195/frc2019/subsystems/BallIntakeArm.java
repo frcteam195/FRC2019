@@ -191,6 +191,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		}
 	};
 
+	public void dropClimbBar() {
+		mBallIntakeBarDropSolenoid.set(true);
+	}
+
 	@Override
 	public double getPosition() {
 		return mBallArmRotationMotor.getLocalQuadPosition();

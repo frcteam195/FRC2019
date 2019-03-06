@@ -46,7 +46,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	private Turret() {
 		//Encoder on 50:1
-		//Turret gear is another 36:254 or 36:252
+		//Turret gear is another 36:252
 		mTurretRotationMotor = new CKTalonSRX(Constants.kTurretMotorId, false, PDPBreaker.B30A);
 		mTurretRotationMotor.setInverted(true);
 		mTurretRotationMotor.setSensorPhase(true);
@@ -169,6 +169,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mTurretSetpoint, -1), 1), 0, 0);
 						break;
 					default:
+						mTurretRotationMotor.set(MCControlMode.Disabled, 0, 0, 0);
 						break;
 				}
 
@@ -203,6 +204,10 @@ public class Turret extends Subsystem implements InterferenceSystem {
 			stop();
 		}
 	};
+
+	public synchronized boolean getLimitSwitchValue() {
+		return mBallShooterRollerMotor.getReverseLimitValue();
+	}
 
 	public synchronized void setBeakListened(boolean enabled) {
 		beakListenerEnabled = enabled;
@@ -243,7 +248,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallShooterSetpoint = ballShooterOutput;
 	}
 
-	private synchronized void setTurretControlMode(TurretControlMode turretControlMode) {
+	public synchronized void setTurretControlMode(TurretControlMode turretControlMode) {
 		if (mTurretControlMode != turretControlMode)
 			mTurretControlMode = turretControlMode;
 	}
@@ -253,8 +258,20 @@ public class Turret extends Subsystem implements InterferenceSystem {
 			mBallShooterControlMode = ballShooterControlMode;
 	}
 
+	public boolean isTurretAtSetpoint(double posDelta) {
+		return Math.abs(mTurretSetpoint - mTurretRotationMotor.getPosition()) < Math.abs(posDelta);
+	}
+
 	public boolean isShooterAtSetpoint(double rpmDelta) {
 		return Math.abs(mBallShooterSetpoint - mBallShooterRollerMotor.getVelocity()) < Math.abs(rpmDelta);
+	}
+
+	public static double convertRotationsToTurretDegrees(double rotations) {
+		return rotations / (Constants.kTurretLargeGearTeeth / Constants.kTurretSmallGearTeeth / 360.0);
+	}
+
+	public static double convertTurretDegreesToRotations(double degrees) {
+		return degrees * (Constants.kTurretLargeGearTeeth / Constants.kTurretSmallGearTeeth / 360.0);
 	}
 
 	@Override
@@ -269,7 +286,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	public enum TurretControlMode {
 		POSITION,
-		OPEN_LOOP;
+		OPEN_LOOP,
+		DISABLED;
 	}
 
 	public enum BallShooterControlMode {

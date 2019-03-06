@@ -1,18 +1,15 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.auto.AutoConstants;
-import com.team195.frc2019.subsystems.Turret;
+import com.team195.frc2019.subsystems.BallIntakeArm;
 import com.team195.lib.util.TimeoutTimer;
 
-public class HatchPushAction implements Action {
-	private static final Turret mTurret = Turret.getInstance();
+public class DropBallArmClimbBarAction implements Action {
+	private static final BallIntakeArm mBallIntakeArm = BallIntakeArm.getInstance();
 
 	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
 
-	private boolean mPushOut;
-
-	public HatchPushAction(boolean pushOut) {
-		mPushOut = pushOut;
+	public DropBallArmClimbBarAction() {
 	}
 
 	@Override
@@ -31,6 +28,6 @@ public class HatchPushAction implements Action {
 
 	@Override
 	public void start() {
-		mTurret.setHatchPush(mPushOut);
+		mBallIntakeArm.dropClimbBar();
 	}
 }

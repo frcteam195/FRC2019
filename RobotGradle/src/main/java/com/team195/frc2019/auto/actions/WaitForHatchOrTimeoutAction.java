@@ -4,20 +4,23 @@ import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 
-public class BallPushAction implements Action {
+public class WaitForHatchOrTimeoutAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
+	private final TimeoutTimer mTimeoutTimer;
 
-	private boolean mPushOut;
 
-	public BallPushAction(boolean pushOut) {
-		mPushOut = pushOut;
+	public WaitForHatchOrTimeoutAction() {
+		this(AutoConstants.kLimitSwitchTriggerTimeout);
+	}
+
+	public WaitForHatchOrTimeoutAction(double timeout) {
+		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut();
+		return (mTimeoutTimer.isTimedOut() || mTurret.getLimitSwitchValue());
 	}
 
 	@Override
@@ -31,6 +34,6 @@ public class BallPushAction implements Action {
 
 	@Override
 	public void start() {
-		mTurret.setBallPush(mPushOut);
+
 	}
 }

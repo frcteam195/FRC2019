@@ -175,6 +175,10 @@ public class Constants {
     public static final int kMainTurnJoystickPort = 1;
     public static final double kJoystickThreshold = 0.5;
     public static final double kJoystickJogThreshold = 0.4;
+    public static final double kJoystickTriggerThreshold = 0.3;
+
+    public static final double kTurretSmallGearTeeth = 36;
+    public static final double kTurretLargeGearTeeth = 252;
 
     //Breaker model for trip time output in seconds y = a*(current_percent_over_rating)^b + c
     public static final double kPDPBreakerModelA = 282.2962;
@@ -230,7 +234,7 @@ public class Constants {
     public static final double kCollisionDetectionJerkThreshold = 950;
     public static final double kTippingThresholdDeg = 11;
 
-    public static final int kActionTimeoutS = 2;
+    public static final int kActionTimeoutS = 10;
 
     public static final int kCANifierLEDId = 30;
 

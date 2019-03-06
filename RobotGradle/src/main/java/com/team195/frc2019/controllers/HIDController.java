@@ -2,13 +2,12 @@ package com.team195.frc2019.controllers;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
-import com.team195.frc2019.auto.actions.AutomatedActions;
-import com.team195.frc2019.auto.actions.SetBallArmRotationAction;
-import com.team195.frc2019.auto.actions.SetBeakAction;
+import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
+import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
@@ -70,52 +69,126 @@ public class HIDController {
 							}
 							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
-							if (driveJoystick.getRisingEdgeButton(1)) {
-//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
-//								Turret.getInstance().setBeak(true);
-//								Thread.sleep(100);
-//								Turret.getInstance().setBeakFeedOff(true);
-								(new TeleopActionRunner(new SetBeakAction(false))).runAction();
+							if (driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold) {
+								//Left Trigger - Ground hatch intake
+
+							} else if (driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold) {
+								//Right Trigger - Ball Intake
+
 							}
-							else if (driveJoystick.getRisingEdgeButton(2)) {
-//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
-//								Turret.getInstance().setBeak(false);
-								(new TeleopActionRunner(new SetBeakAction(true))).runAction();
+
+
+							if (buttonBox1.getRisingEdgeButton(1)) {
+								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> buttonBox1.getRawButton(1)))).runAction();
 							}
-							else if (driveJoystick.getRisingEdgeButton(3)) {
-//								HatchIntakeArm.getInstance().setHatchRollerSpeed(0.3);
-								Elevator.getInstance().setElevatorPosition(2);
+							else if (buttonBox1.getRisingEdgeButton(2)) {
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.CargoBall))).runAction();
 							}
-							else if (driveJoystick.getRisingEdgeButton(4)) {
-								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
+							else if (buttonBox1.getRisingEdgeButton(3)) {
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallLow))).runAction();
 							}
-							else if (driveJoystick.getRisingEdgeButton(5)) {
-								(new TeleopActionRunner(AutomatedActions.hatchHandoff(),10)).runAction();
+							else if (buttonBox1.getRisingEdgeButton(4)) {
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallMed))).runAction();
 							}
-							else if (driveJoystick.getRisingEdgeButton(6)) {
+							else if (buttonBox1.getRisingEdgeButton(5)) {
+								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallHigh))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(7)) {
+								(new TeleopActionRunner(AutomatedActions.pickupHatchFeederStation())).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(8)) {
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.CargoHatch))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(9)) {
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchLow))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(10)) {
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchMed))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(11)) {
+								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchHigh))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(12)) {
+								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(13)) {
+								BallIntakeArm.getInstance().setSensorsForReset();
+								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
+							}
+							else if (buttonBox1.getRisingEdgeButton(14)) {
 								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Down))).runAction();
 							}
 
-//							if (driveJoystick.getRisingEdgeButton(1)) {
-//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Outside);
-//							}
-//							else if (driveJoystick.getRisingEdgeButton(2)) {
-//								HatchIntakeArm.getInstance().setHatchArmPosition(HatchArmPositions.Inside);
-//							}
-//							else if (driveJoystick.getRisingEdgeButton(3)) {
-//								Elevator.getInstance().setElevatorPosition(2);
-//								Turret.getInstance().setTurretPosition(1);
-//							}
-//							else if (driveJoystick.getRisingEdgeButton(4)) {
-//								Elevator.getInstance().setElevatorPosition(ElevatorPositions.Down);
-//							}
-//							else if (driveJoystick.getRisingEdgeButton(5)) {
-//								BallIntakeArm.getInstance().setSensorsForReset();
-//								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Up))).runAction();
-//							}
-//							else if (driveJoystick.getRisingEdgeButton(6)) {
-//								(new TeleopActionRunner(new SetBallArmRotationAction(BallIntakeArmPositions.Down))).runAction();
-//							}
+
+							if (buttonBox2.getRisingEdgeButton(6)) {
+								(new TeleopActionRunner(new DropBallArmClimbBarAction())).runAction();
+							}
+							else if (buttonBox2.getRisingEdgeButton(7)) {
+								//Climb
+							}
+							else if (buttonBox2.getRisingEdgeButton(8)) {
+								//Reverse Climb
+							}
+							else if (buttonBox2.getRisingEdgeButton(14)) {
+								//Flash LEDs
+							}
+
+							if (armControlJoystick.getRisingEdgeButton(2)) {
+								//Manual turret spin and twist Z axis 2
+								(new TeleopActionRunner(new SetTurretOpenLoopAction((t) -> armControlJoystick.getRawButton(2),
+																					(t) -> armControlJoystick.getRawAxis(2)), 100)).runAction();
+							}
+
+							if (armControlJoystick.getRisingEdgeButton(1)) {
+								//Flash LEDs to signal Human Player
+							}
+							else if (armControlJoystick.getRisingEdgeButton(3)) {
+								//Ball Outtake turret and arm
+								(new TeleopActionRunner(AutomatedActions.ballOuttake((t) -> armControlJoystick.getRawButton(3)))).runAction();
+							}
+							else if (armControlJoystick.getRisingEdgeButton(4)) {
+								//Close Beak and Hatch roller outtake hold
+								Turret.getInstance().setBeak(true);
+								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> armControlJoystick.getRawButton(4)))).runAction();
+							}
+							else if (armControlJoystick.getRisingEdgeButton(5)) {
+								Turret.getInstance().setHatchPush(false);
+							}
+							else if (armControlJoystick.getRisingEdgeButton(6)) {
+								Turret.getInstance().setHatchPush(true);
+							}
+							else if (armControlJoystick.getRisingEdgeButton(7)) {
+								//Rehome Elevator
+							}
+							else if (armControlJoystick.getRisingEdgeButton(9)) {
+								//Rehome Arm
+							}
+							else if (armControlJoystick.getRisingEdgeButton(11)) {
+								//Rehome turret
+							}
+
+							//POV
+							//0: Turret Forward
+							//90: Turret Right 90
+							//180: Turret Degrees 180 backwards
+							//270: Turret 90 Left
+
+							switch (armControlJoystick.getPOV()) {
+								case 0:
+									Turret.getInstance().setTurretPosition(TurretPositions.Home);
+									break;
+								case 90:
+									Turret.getInstance().setTurretPosition(TurretPositions.Right90);
+									break;
+								case 180:
+									Turret.getInstance().setTurretPosition(TurretPositions.Back180);
+									break;
+								case 270:
+									Turret.getInstance().setTurretPosition(TurretPositions.Left90);
+									break;
+								default:
+									break;
+							}
 						}
 					} catch (Exception ignored) {
 
