@@ -91,8 +91,7 @@ public class Constants {
     public static final int kHatchArmPositionCruiseVel = 100;
     public static final int kHatchArmPositionMMAccel = 60;
     //Units in rotations
-//    public static final double kHatchArmForwardSoftLimit = 0.6174;
-    public static final double kHatchArmForwardSoftLimit = 0.6;
+    public static final double kHatchArmForwardSoftLimit = 0.6174;
 
     public static final double kHatchArmReverseSoftLimit = 0;
 
