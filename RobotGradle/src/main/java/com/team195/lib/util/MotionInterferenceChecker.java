@@ -9,9 +9,8 @@ public class MotionInterferenceChecker {
 	private LogicOperation mLogicOperation = LogicOperation.AND;
 
 	private boolean cachingEnabled = false;
-	private boolean cachedValue = false;
-	private boolean initialized = false;
-	private TimeoutTimer cacheUpdateTimer = new TimeoutTimer(0.1);
+
+	private final CachedValue<Boolean> mCachedValue = new CachedValue<>(100, (t) -> checkLogic());
 
 	private boolean enabled = true;
 
@@ -42,16 +41,7 @@ public class MotionInterferenceChecker {
 
 	public boolean hasPassedConditions() {
 		if (cachingEnabled) {
-			if (!initialized) {
-				cachedValue = checkLogic();
-				initialized = true;
-			}
-
-			if (cacheUpdateTimer.isTimedOut()) {
-				cachedValue = checkLogic();
-			}
-
-			return cachedValue;
+			return mCachedValue.getValue();
 		}
 		else
 			return checkLogic();
