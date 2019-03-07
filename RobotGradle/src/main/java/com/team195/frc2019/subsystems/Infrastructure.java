@@ -41,8 +41,7 @@ public class Infrastructure extends Subsystem {
     }
 
     private void stopCompressor() {
-        ConsoleReporter.report("Stopping compressor!");
-        //mCompressor.stop();
+        mCompressor.stop();
     }
 
     public synchronized void setIsDuringAuto(boolean isDuringAuto) {

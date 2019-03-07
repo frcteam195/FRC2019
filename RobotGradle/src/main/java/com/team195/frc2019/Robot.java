@@ -146,7 +146,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testInit() {
 		try {
-			ConsoleReporter.report("Starting check systems.", MessageLevel.INFO);
+			ConsoleReporter.report("Starting systems check!", MessageLevel.INFO);
 
 			mDisabledLooper.stop();
 			mEnabledLooper.stop();

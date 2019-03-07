@@ -58,9 +58,10 @@ public class HIDController {
 								autoModeExecutor.stop();
 						} else {
 							//User Control Interface code here
+							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 0.5;
 
-							double throttle = -driveJoystick.getSmoothedAxis(1, 0.04, 3)/2.0;
-							double turn = driveJoystick.getSmoothedAxis(4, 0.04, 3)/2.0;
+							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;//getSmoothedAxis(1, 0.04, 3) * scalingFactor;
+							double turn = driveJoystick.getRawAxis(4) * scalingFactor;//getSmoothedAxis(4, 0.04, 3) * scalingFactor;
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
