@@ -2,6 +2,7 @@ package com.team195.frc2019.subsystems;
 
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import edu.wpi.first.wpilibj.Compressor;
 
 public class Infrastructure extends Subsystem {
@@ -40,12 +41,13 @@ public class Infrastructure extends Subsystem {
     }
 
     private void stopCompressor() {
-        mCompressor.stop();
+        ConsoleReporter.report("Stopping compressor!");
+        //mCompressor.stop();
     }
 
     public synchronized void setIsDuringAuto(boolean isDuringAuto) {
         mIsDuringAuto = isDuringAuto;
-        if (isDuringAuto) stopCompressor();
+//        if (isDuringAuto) stopCompressor();
     }
 
     public synchronized boolean isDuringAuto() {
@@ -73,7 +75,7 @@ public class Infrastructure extends Subsystem {
 //                    boolean isIntaking = mIntake.getWantedAction() == IntakeStateMachine.WantedAction.WANT_CUBE
 //                            && !mIntake.hasCube();
                     if (mIsDuringAuto) {
-                        stopCompressor();
+                        //stopCompressor();
                     } else {
                         startCompressor();
                     }

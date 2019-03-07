@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
 				mAutoModeExecutor.stop();
 			}
 
-			mInfrastructure.setIsDuringAuto(true);
+//			mInfrastructure.setIsDuringAuto(true);
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 

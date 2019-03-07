@@ -57,6 +57,11 @@ public class CKDashJoystick {
 		return normalizeJoystickWithDeadband(getRawAxis(axis), deadband);
 	}
 
+	public double getSmoothedAxis(int axis, double deadband, double power) {
+		double x = getRawAxis(axis);
+		double sign = Math.signum(x);
+		return sign * Math.pow(Math.abs(normalizeJoystickWithDeadband(x, deadband)), power);
+	}
 
 	public boolean getRawButton(int button) {
 		if (isTimestampValid())

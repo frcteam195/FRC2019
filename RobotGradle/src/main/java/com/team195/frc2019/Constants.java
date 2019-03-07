@@ -95,7 +95,8 @@ public class Constants {
     public static final int kHatchArmPositionCruiseVel = 100;
     public static final int kHatchArmPositionMMAccel = 60;
     //Units in rotations
-    public static final double kHatchArmForwardSoftLimit = 0.6174;
+//    public static final double kHatchArmForwardSoftLimit = 0.6174;
+    public static final double kHatchArmForwardSoftLimit = 0.622;
     public static final double kHatchArmReverseSoftLimit = 0;
 
 
@@ -238,7 +239,7 @@ public class Constants {
     public static final double kCollisionDetectionJerkThreshold = 950;
     public static final double kTippingThresholdDeg = 11;
 
-    public static final int kActionTimeoutS = 10;
+    public static final int kActionTimeoutS = 30;
 
     public static final int kCANifierLEDId = 30;
 
