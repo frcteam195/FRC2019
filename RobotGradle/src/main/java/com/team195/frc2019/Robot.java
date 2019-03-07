@@ -31,7 +31,8 @@ public class Robot extends TimedRobot {
 		BallIntakeArm.getInstance(),
 		HatchIntakeArm.getInstance(),
 		Turret.getInstance(),
-		Infrastructure.getInstance()
+		Infrastructure.getInstance(),
+		VisionTracker.getInstance()
 	);
 
 	private Drive mDrive = Drive.getInstance();

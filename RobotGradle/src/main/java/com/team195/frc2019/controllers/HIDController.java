@@ -60,8 +60,8 @@ public class HIDController {
 							//User Control Interface code here
 							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 0.5;
 
-							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;//getSmoothedAxis(1, 0.04, 3) * scalingFactor;
-							double turn = driveJoystick.getRawAxis(4) * scalingFactor;//getSmoothedAxis(4, 0.04, 3) * scalingFactor;
+							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;//getNormalizedAxis(1, 0.1) * scalingFactor;
+							double turn = driveJoystick.getRawAxis(4) * scalingFactor;//getNormalizedAxis(4, 0.1) * scalingFactor;
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
@@ -75,7 +75,6 @@ public class HIDController {
 							} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
 								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold))).runAction();
 							}
-
 
 							if (buttonBox1.getRisingEdgeButton(1)) {
 								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> buttonBox1.getRawButton(1)))).runAction();
@@ -166,6 +165,8 @@ public class HIDController {
 							}
 							else if (armControlJoystick.getRisingEdgeButton(11)) {
 								//Rehome turret
+								Turret.getInstance().zeroSensors();
+								Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
 							}
 
 							switch (armControlJoystick.getPOV()) {

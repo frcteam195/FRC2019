@@ -72,7 +72,7 @@ public class VisionTracker extends Subsystem {
 
 	@Override
 	public void stop() {
-
+		setVisionEnabled(false);
 	}
 
 	@Override
@@ -83,6 +83,14 @@ public class VisionTracker extends Subsystem {
 	@Override
 	public boolean runDiagnostics() {
 		return true;
+	}
+
+	public boolean isVisionEnabled() {
+		return mVisionEnabled;
+	}
+
+	public boolean isTargetFound() {
+		return mVisionEnabled && mPeriodicIO.targetValid > 0;
 	}
 
 	public double getTargetDistance() {

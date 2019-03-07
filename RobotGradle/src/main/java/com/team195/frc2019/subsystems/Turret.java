@@ -29,6 +29,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	private static Turret mInstance = new Turret();
 
+	private final VisionTracker mVisionTracker = VisionTracker.getInstance();
+
 	private final CKTalonSRX mTurretRotationMotor;
 	private final CKTalonSRX mBallShooterRollerMotor;
 	private final CKSolenoid mHatchBeakSolenoid;
@@ -182,6 +184,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 						mTurretSetpoint = convertTurretDegreesToRotations(desiredTurretAngleDeg);
 						//Fall through on purpose to set position -> no break;
+					case VISION_TRACK:
+						//Preempts Auto Track
+						if (mVisionTracker.isTargetFound())
+							mTurretSetpoint = convertTurretDegreesToRotations(mVisionTracker.getTargetHorizAngleDev());
+						//Fall through on purpose to set position -> no break;
 					case POSITION:
 						if (turretAnyPositionCheck.hasPassedConditions())
 							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
@@ -311,6 +318,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		POSITION,
 		OPEN_LOOP,
 		AUTO_TRACK,
+		VISION_TRACK,
 		DISABLED;
 	}
 
