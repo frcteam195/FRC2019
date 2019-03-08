@@ -119,29 +119,40 @@ public class VisionTracker extends Subsystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
-		mPeriodicIO.targetValid = mCurrentTargetingLimelightNT.getEntry("tv").getDouble(0);
-		mPeriodicIO.targetHorizontalDeviation = mCurrentTargetingLimelightNT.getEntry("tx").getDouble(0);
-		mPeriodicIO.targetVerticalDeviation = mCurrentTargetingLimelightNT.getEntry("ty").getDouble(0);
-		mPeriodicIO.targetArea = mCurrentTargetingLimelightNT.getEntry("ta").getDouble(0);
-		mPeriodicIO.targetSkew = mCurrentTargetingLimelightNT.getEntry("ts").getDouble(0);
-		mPeriodicIO.targetLatency = mCurrentTargetingLimelightNT.getEntry("tl").getDouble(0);
-		mPeriodicIO.targetShortSide = mCurrentTargetingLimelightNT.getEntry("tshort").getDouble(0);
-		mPeriodicIO.targetLongSide = mCurrentTargetingLimelightNT.getEntry("tlong").getDouble(0);
-		mPeriodicIO.targetHorizontalSide = mCurrentTargetingLimelightNT.getEntry("thor").getDouble(0);
-		mPeriodicIO.targetVerticalSide = mCurrentTargetingLimelightNT.getEntry("tvert").getDouble(0);
-		mPeriodicIO.getPipelineValue = mCurrentTargetingLimelightNT.getEntry("getpipe").getDouble(0);
-		mPeriodicIO.cameraTranslationRotation = mCurrentTargetingLimelightNT.getEntry("camtran").getDouble(0);
-		mPeriodicIO.targetDistance = mTargetMode == TargetMode.ROCKET_BALL ?
-				(Constants.kRocketBallTargetHeight - Constants.kLimelightFrontMountedHeightToFloor) /
-						Math.atan(Constants.kLimelightFrontMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation) :
-				(Constants.kHatchTargetHeight - Constants.kLimelightBackMountedHeightToFloor) /
-						Math.atan(Constants.kLimelightBackMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation);
+		try {
+			mPeriodicIO.targetValid = mCurrentTargetingLimelightNT.getEntry("tv").getDouble(0);
+			mPeriodicIO.targetHorizontalDeviation = mCurrentTargetingLimelightNT.getEntry("tx").getDouble(0);
+			mPeriodicIO.targetVerticalDeviation = mCurrentTargetingLimelightNT.getEntry("ty").getDouble(0);
+			mPeriodicIO.targetArea = mCurrentTargetingLimelightNT.getEntry("ta").getDouble(0);
+			mPeriodicIO.targetSkew = mCurrentTargetingLimelightNT.getEntry("ts").getDouble(0);
+			mPeriodicIO.targetLatency = mCurrentTargetingLimelightNT.getEntry("tl").getDouble(0);
+			mPeriodicIO.targetShortSide = mCurrentTargetingLimelightNT.getEntry("tshort").getDouble(0);
+			mPeriodicIO.targetLongSide = mCurrentTargetingLimelightNT.getEntry("tlong").getDouble(0);
+			mPeriodicIO.targetHorizontalSide = mCurrentTargetingLimelightNT.getEntry("thor").getDouble(0);
+			mPeriodicIO.targetVerticalSide = mCurrentTargetingLimelightNT.getEntry("tvert").getDouble(0);
+			mPeriodicIO.getPipelineValue = mCurrentTargetingLimelightNT.getEntry("getpipe").getDouble(0);
+			mPeriodicIO.cameraTranslationRotation = mCurrentTargetingLimelightNT.getEntry("camtran").getDouble(0);
+			mPeriodicIO.targetDistance = mTargetMode == TargetMode.ROCKET_BALL ?
+					(Constants.kRocketBallTargetHeight - Constants.kLimelightFrontMountedHeightToFloor) /
+							Math.atan(Constants.kLimelightFrontMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation) :
+					(Constants.kHatchTargetHeight - Constants.kLimelightBackMountedHeightToFloor) /
+							Math.atan(Constants.kLimelightBackMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation);
+		}
+		catch (Exception ignored) {
+			;
+		}
 	}
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
+		try {
 		limelightFrontNT.getValue().getEntry("pipeline").setNumber(mPeriodicIO.pipelineFront);
 		limelightBackNT.getValue().getEntry("pipeline").setNumber(mPeriodicIO.pipelineBack);
+
+		}
+		catch (Exception ignored) {
+			;
+		}
 
 //		NetworkTableEntry ledMode = mCurrentTargetingLimelightNT.getValue().getEntry("ledMode");
 //		NetworkTableEntry camMode = mCurrentTargetingLimelightNT.getValue().getEntry("camMode");

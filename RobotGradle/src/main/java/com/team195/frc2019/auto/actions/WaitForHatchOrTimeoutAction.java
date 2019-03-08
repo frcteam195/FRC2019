@@ -20,7 +20,7 @@ public class WaitForHatchOrTimeoutAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return (mTimeoutTimer.isTimedOut() || mTurret.getLimitSwitchValue());
+		return (mTimeoutTimer.isTimedOut() || !mTurret.getLimitSwitchValue());
 	}
 
 	@Override

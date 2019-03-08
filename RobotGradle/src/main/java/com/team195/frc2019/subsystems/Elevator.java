@@ -32,7 +32,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	private double mElevatorSetpoint = 0;
 
 	private Elevator() {
-		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
+		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterLeftId, false, PDPBreaker.B10A);
 		mElevatorMaster.setSensorPhase(true);
 		mElevatorMaster.setInverted(false);
 		mElevatorMaster.setPIDF(Constants.kElevatorPositionKp, Constants.kElevatorPositionKi, Constants.kElevatorPositionKd, Constants.kElevatorPositionKf);
@@ -51,9 +51,9 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B30A, false);
+		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B10A, false);
 
-		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
+		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B10A, true);
 
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,

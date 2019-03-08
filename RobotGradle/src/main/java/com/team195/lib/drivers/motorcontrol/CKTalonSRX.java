@@ -126,6 +126,11 @@ public class CKTalonSRX implements TuneableMotorController {
 		return mTalonSRX.configForwardLimitSwitchSource(type, normalOpenOrClose);
 	}
 
+	public ErrorCode configReverseLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
+
+		return mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose);
+	}
+
 	public void setSensorPhase(boolean inverted) {
 		sensorInverted = inverted;
 		runTalonFunctionWithRetry((t) -> {

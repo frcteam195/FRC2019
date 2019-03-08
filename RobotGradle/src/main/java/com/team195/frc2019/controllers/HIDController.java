@@ -58,7 +58,7 @@ public class HIDController {
 								autoModeExecutor.stop();
 						} else {
 							//User Control Interface code here
-							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 0.5;
+							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
 							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;//getNormalizedAxis(1, 0.1) * scalingFactor;
 							double turn = driveJoystick.getRawAxis(4) * scalingFactor;//getNormalizedAxis(4, 0.1) * scalingFactor;
