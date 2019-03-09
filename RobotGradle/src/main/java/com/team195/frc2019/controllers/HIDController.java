@@ -13,6 +13,7 @@ import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
+import com.team254.lib.util.DriveSignal;
 
 import java.util.function.Function;
 
@@ -60,15 +61,24 @@ public class HIDController {
 							//User Control Interface code here
 							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
-							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;//getNormalizedAxis(1, 0.1) * scalingFactor;
-							double turn = driveJoystick.getRawAxis(4) * scalingFactor;//getNormalizedAxis(4, 0.1) * scalingFactor;
+//							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;
+//							double turn = driveJoystick.getRawAxis(4) * scalingFactor;
+
+							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
+							double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
+
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
 								throttle *= Constants.kLowSensitivityFactor;
 								turn *= Constants.kLowSensitivityFactor;
 							}
-							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+
+
+
+//							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
+
+							mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(turn + throttle, 1), -1), Math.max(Math.min(turn - throttle, 1), -1)));
 
 							if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
 								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold))).runAction();
