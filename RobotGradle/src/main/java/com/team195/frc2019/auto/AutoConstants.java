@@ -7,6 +7,6 @@ public class AutoConstants {
     public final static double kDefaultSolenoidWait = 0.1;
     public final static double kDefaultRollerSpinUpWait = 0.1;
     public final static double kDefaultBallShootWait = 0.3;
-    public final static double kLimitSwitchTriggerTimeout = 1;
+    public final static double kLimitSwitchTriggerTimeout = 2;
     public final static double kDefaultButtonTimeout = 2;
 }

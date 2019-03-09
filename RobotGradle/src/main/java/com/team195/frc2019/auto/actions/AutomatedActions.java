@@ -88,6 +88,8 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
+
+
 	public static Action intakeBallOn(Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 

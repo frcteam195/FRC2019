@@ -218,7 +218,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				}
 
 				if (beakListenerEnabled) {
-					if (mAutoHatchController == null && mBallShooterRollerMotor.getReverseLimitRisingEdge()) {
+					if (mAutoHatchController == null && mBallShooterRollerMotor.getReverseLimitFallingEdge()) {
 						mAutoHatchController = new TeleopActionRunner(new SetBeakAction(true));
 						mAutoHatchController.runAction(false);
 					}

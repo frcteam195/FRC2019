@@ -144,8 +144,9 @@ public class Constants {
 	public static final int kElevatorMasterLeftId = 8;
 	public static final int kElevatorSlaveALeftId = 9;
 	public static final int kElevatorSlaveBRightId = 7;
+    public static final int kElevatorSlaveCRightId = 16;
 
-	//Ball Intake Arm
+    //Ball Intake Arm
 	public static final int kBallIntakeRotationMotorId = 10;
 	public static final int kBallIntakeRollerMotorId = 11;
 

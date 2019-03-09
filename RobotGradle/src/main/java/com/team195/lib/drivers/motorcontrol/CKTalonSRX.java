@@ -84,13 +84,7 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs));
-		runTalonFunctionWithRetry((t) -> mTalonSRX.configContinuousCurrentLimit(motorBreaker.value, Constants.kLongCANTimeoutMs));
-		runTalonFunctionWithRetry((t) -> mTalonSRX.configPeakCurrentLimit(motorBreaker.value * 2, Constants.kLongCANTimeoutMs));
-		runTalonFunctionWithRetry((t) -> mTalonSRX.configPeakCurrentDuration(getMSDurationForBreakerLimit(motorBreaker.value * 2, motorBreaker.value), Constants.kLongCANTimeoutMs));
-		runTalonFunctionWithRetry((t) -> {
-			mTalonSRX.enableCurrentLimit(true);
-			return mTalonSRX.getLastError();
-		});
+		configCurrentLimit(motorBreaker.value - 10, motorBreaker.value, getMSDurationForBreakerLimit(motorBreaker.value * 2, motorBreaker.value, 4));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVoltageCompSaturation(12));
 		runTalonFunctionWithRetry((t) -> {
 			mTalonSRX.enableVoltageCompensation(true);
@@ -106,6 +100,16 @@ public class CKTalonSRX implements TuneableMotorController {
 		for (int i = 0; i < 4; i++) {
 			mFeedbackConfig.add(new FeedbackConfiguration());
 		}
+	}
+
+	public void configCurrentLimit(int continuousCurrentValueA, int thresholdCurrentA, int durationOverThresholdToEnableLimitingMs) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configContinuousCurrentLimit(continuousCurrentValueA, Constants.kLongCANTimeoutMs));
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configPeakCurrentLimit(thresholdCurrentA, Constants.kLongCANTimeoutMs));
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configPeakCurrentDuration(durationOverThresholdToEnableLimitingMs, Constants.kLongCANTimeoutMs));
+		runTalonFunctionWithRetry((t) -> {
+			mTalonSRX.enableCurrentLimit(true);
+			return mTalonSRX.getLastError();
+		});
 	}
 
 	public void setFeedbackDevice(FeedbackDevice feedbackDevice) {
