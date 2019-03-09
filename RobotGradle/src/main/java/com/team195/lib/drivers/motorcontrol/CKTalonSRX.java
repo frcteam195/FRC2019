@@ -84,7 +84,7 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVelocityMeasurementWindow(1, Constants.kLongCANTimeoutMs));
-		configCurrentLimit(motorBreaker.value - 10, motorBreaker.value, getMSDurationForBreakerLimit(motorBreaker.value * 2, motorBreaker.value, 4));
+		configCurrentLimit(motorBreaker.value - 10, motorBreaker.value, getMSDurationForBreakerLimit(motorBreaker.value * 2, motorBreaker.value, 8));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configVoltageCompSaturation(12));
 		runTalonFunctionWithRetry((t) -> {
 			mTalonSRX.enableVoltageCompensation(true);
