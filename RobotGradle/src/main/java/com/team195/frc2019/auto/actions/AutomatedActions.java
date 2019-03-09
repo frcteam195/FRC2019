@@ -19,6 +19,16 @@ public class AutomatedActions {
 		return unfolded;
 	}
 
+	public static Action homeElevator() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetElevatorOpenLoopAction(0));
+		actionList.add(new WaitAction(3.5));
+		actionList.add(new SetElevatorHomeAction());
+
+		return new SeriesAction(actionList);
+	}
+
 	public static Action unfold() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
@@ -36,6 +46,8 @@ public class AutomatedActions {
 							new SetBeakAction(false))));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitForHatchOrTimeoutAction());
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
+		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetHatchPushAction(false));
 
 		return new SeriesAction(actionArrayList);

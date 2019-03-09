@@ -192,7 +192,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		return Math.abs(mElevatorSetpoint - mElevatorMaster.getPosition()) < Math.abs(posDelta);
 	}
 
-	private synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {
+	public synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {
 		mElevatorControlMode = elevatorControlMode;
 	}
 

@@ -10,6 +10,7 @@ public class ElevatorPositions {
 	public static final double CargoHatch = 0.3188;
 	public static final double CargoBall = 2.2681;
 	public static final double HatchPickupStation = CargoHatch;
+	public static final double HatchPickupStationLift = HatchPickupStation + 0.3;
 	public static final double Resting = CargoHatch;
 	public static final double RocketHatchLow = CargoHatch;
 	public static final double RocketHatchMed = 2.7358;
