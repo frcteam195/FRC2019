@@ -65,7 +65,7 @@ public class HIDController {
 //							double turn = driveJoystick.getRawAxis(4) * scalingFactor;
 
 							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
-							double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
+							double turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
 
 							boolean quickTurn = driveJoystick.getRawButton(5);
 
