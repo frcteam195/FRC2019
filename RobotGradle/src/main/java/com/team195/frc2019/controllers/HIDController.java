@@ -80,31 +80,31 @@ public class HIDController {
 								(new TeleopActionRunner(AutomatedActions.intakeBallOn((t) -> buttonBox1.getRawButton(1)))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(2)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.CargoBall, (t) -> buttonBox1.getRawButton(2)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.CargoBall))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(3)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallLow, (t) -> buttonBox1.getRawButton(3)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketBallLow))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(4)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallMed, (t) -> buttonBox1.getRawButton(4)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketBallMed))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(5)) {
-								(new TeleopActionRunner(AutomatedActions.shootBall(ElevatorPositions.RocketBallHigh, (t) -> buttonBox1.getRawButton(5)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketBallHigh))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(7)) {
 								(new TeleopActionRunner(AutomatedActions.pickupHatchFeederStation())).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(8)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.CargoHatch, (t) -> buttonBox1.getRawButton(8)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.CargoHatch))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(9)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchLow, (t) -> buttonBox1.getRawButton(9)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(10)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchMed, (t) -> buttonBox1.getRawButton(10)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketHatchMed))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(11)) {
-								(new TeleopActionRunner(AutomatedActions.placeHatch(ElevatorPositions.RocketHatchHigh, (t) -> buttonBox1.getRawButton(11)))).runAction();
+								(new TeleopActionRunner(new SetElevatorHeightAction(ElevatorPositions.RocketHatchHigh))).runAction();
 							}
 							else if (buttonBox1.getRisingEdgeButton(12)) {
 								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)))).runAction();
@@ -126,6 +126,12 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(8)) {
 								//Reverse Climb
+							}
+							else if (buttonBox2.getRisingEdgeButton(9)) {
+								(new TeleopActionRunner(AutomatedActions.shootBall())).runAction();
+							}
+							else if (buttonBox2.getRisingEdgeButton(10)) {
+								(new TeleopActionRunner(AutomatedActions.placeHatch())).runAction();
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
 								//Flash LEDs

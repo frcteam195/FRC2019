@@ -54,7 +54,9 @@ public class Robot extends TimedRobot {
 			ConsoleReporter.getInstance().start();
 			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 
-			DashJoyReceiver.getInstance();
+			//Some weirdness with button detection, so disable for now
+			//TODO: Fix dashboard DirectInput detection for button box
+//			DashJoyReceiver.getInstance();
 
 			mSubsystemManager.addAdditionalReportable(RobotState.getInstance());
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);

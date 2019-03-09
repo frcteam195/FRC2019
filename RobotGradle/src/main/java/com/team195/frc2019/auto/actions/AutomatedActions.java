@@ -72,6 +72,17 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
+	public static Action placeHatch() {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(true));
+		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
+		actionArrayList.add(new SetBeakAction(false));
+		actionArrayList.add(new SetHatchPushAction(false));
+
+		return new SeriesAction(actionArrayList);
+	}
+
 	public static Action shootBall(double elevatorPosition, Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
@@ -88,12 +99,32 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
+	public static Action shootBall() {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedNormal));
+		actionArrayList.add(new SetBallPushAction(true));
+		actionArrayList.add(new WaitAction(AutoConstants.kWaitForBallPush));
+		actionArrayList.add(new SetBallPushAction(false));
+		actionArrayList.add(new SetBallShooterOpenLoopAction(0));
+
+		return new SeriesAction(actionArrayList);
+	}
+
+	public static Action elevatorDown() {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Resting),
+				new SetTurretPositionAction(TurretPositions.Home))));
+
+		return new SeriesAction(actionArrayList);
+	}
 
 	public static Action intakeBallOn(Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.Down));
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
+				new SetTurretPositionAction(TurretPositions.Home))));
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedIntake),
 															 new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake))));
 		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 20));
