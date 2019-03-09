@@ -78,7 +78,7 @@ public class HIDController {
 
 //							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
-							mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(turn + throttle, 1), -1), Math.max(Math.min(turn - throttle, 1), -1)));
+							mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 
 							if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
 								(new TeleopActionRunner(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold))).runAction();
