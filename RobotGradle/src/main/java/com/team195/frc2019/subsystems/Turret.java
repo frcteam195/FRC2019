@@ -10,6 +10,7 @@ import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.paths.TrajectoryGenerator;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -109,8 +110,9 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	@Override
 	public boolean isSystemFaulted() {
 		boolean systemFaulted = !mTurretRotationMotor.isEncoderPresent();
+		systemFaulted |= mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
-			setTurretControlMode(TurretControlMode.OPEN_LOOP);
+			setTurretControlMode(TurretControlMode.DISABLED);
 		return systemFaulted;
 	}
 
@@ -128,6 +130,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
 				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
 				"TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";" +
+				"TurretRotationMotorHasReset:" + mTurretRotationMotor.hasMotorControllerReset().getMessage() + ";" +
+				"TurretRollerMotorHasReset:" + mBallShooterRollerMotor.hasMotorControllerReset().getMessage() + ";" +
 				"TurretControlMode:" + mTurretControlMode.toString() + ";" +
 				"TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";" +
 				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
