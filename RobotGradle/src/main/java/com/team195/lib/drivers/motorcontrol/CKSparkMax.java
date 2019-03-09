@@ -248,6 +248,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
+	public void disableSoftLimits() {
+
+	}
+
+	@Override
 	public boolean getForwardLimitValue() {
 		return false;
 	}

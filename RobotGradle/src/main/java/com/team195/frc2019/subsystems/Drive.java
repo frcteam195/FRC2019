@@ -15,6 +15,7 @@ import com.team195.lib.drivers.motorcontrol.CKSparkMax;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
@@ -22,13 +23,18 @@ import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
+import com.team254.lib.util.Util;
 import edu.wpi.first.wpilibj.Timer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Drive extends Subsystem {
 
 	private static final int kLowGearVelocityControlSlot = 0;
 	private static Drive mInstance = new Drive();
-	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
+	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA;//, mLeftSlaveB, mRightSlaveB;
 	private final CKDoubleSolenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
 	private CKIMU mGyro;
@@ -89,8 +95,8 @@ public class Drive extends Subsystem {
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveA.writeToFlash();
 
-		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveB.writeToFlash();
+//		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
+//		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
@@ -101,8 +107,8 @@ public class Drive extends Subsystem {
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveA.writeToFlash();
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveB.writeToFlash();
+//		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
+//		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
@@ -209,11 +215,11 @@ public class Drive extends Subsystem {
 			MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
 			mRightMaster.setBrakeCoastMode(mode);
 			mRightSlaveA.setBrakeCoastMode(mode);
-			mRightSlaveB.setBrakeCoastMode(mode);
+//			mRightSlaveB.setBrakeCoastMode(mode);
 
 			mLeftMaster.setBrakeCoastMode(mode);
 			mLeftSlaveA.setBrakeCoastMode(mode);
-			mLeftSlaveB.setBrakeCoastMode(mode);
+//			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
 	}
 
@@ -365,40 +371,75 @@ public class Drive extends Subsystem {
 
 	@Override
 	public boolean runDiagnostics() {
-//        boolean leftSide = TalonSRXChecker.CheckTalons(this,
-//                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
-//                    {
-//                        add(new TalonSRXChecker.TalonSRXConfig("left_master", mLeftMaster));
-//                        add(new TalonSRXChecker.TalonSRXConfig("left_slave", mLeftSlaveA));
-//                        add(new TalonSRXChecker.TalonSRXConfig("left_slave1", mLeftSlaveB));
-//                    }
-//                }, new TalonSRXChecker.CheckerConfig() {
-//                    {
-//                        mCurrentFloor = 2;
-//                        mRPMFloor = 1500;
-//                        mCurrentEpsilon = 2.0;
-//                        mRPMEpsilon = 250;
-//                        mRPMSupplier = () -> mLeftMaster.getSelectedSensorVelocity(0);
-//                    }
-//                });
-//        boolean rightSide = TalonSRXChecker.CheckTalons(this,
-//                new ArrayList<TalonSRXChecker.TalonSRXConfig>() {
-//                    {
-//                        add(new TalonSRXChecker.TalonSRXConfig("right_master", mRightMaster));
-//                        add(new TalonSRXChecker.TalonSRXConfig("right_slave", mRightSlaveA));
-//                        add(new TalonSRXChecker.TalonSRXConfig("right_slave1", mRightSlaveB));
-//                    }
-//                }, new TalonSRXChecker.CheckerConfig() {
-//                    {
-//                        mCurrentFloor = 2;
-//                        mRPMFloor = 1500;
-//                        mCurrentEpsilon = 2.0;
-//                        mRPMEpsilon = 250;
-//                        mRPMSupplier = () -> mRightMaster.getSelectedSensorVelocity(0);
-//                    }
-//                });
-//        return leftSide && rightSide;
-		return false;
+		if (Constants.ENABLE_DRIVE_TEST) {
+			ConsoleReporter.report("Testing DRIVE---------------------------------");
+			final double kLowCurrentThres = Constants.kDriveBaseTestLowCurrentThresh;
+			final double kLowRpmThres = Constants.kDriveBaseTestLowRPMThresh;
+
+			ArrayList<MotorDiagnostics> mAllMotorsDiagArr = new ArrayList<>();
+			ArrayList<MotorDiagnostics> mLeftDiagArr = new ArrayList<>();
+			ArrayList<MotorDiagnostics> mRightDiagArr = new ArrayList<>();
+			mLeftDiagArr.add(new MotorDiagnostics("Drive Left Master", mLeftMaster));
+			mLeftDiagArr.add(new MotorDiagnostics("Drive Left Slave 1", mLeftSlaveA, mLeftMaster));
+//		mLeftDiagArr.add(new MotorDiagnostics("Drive Left Slave 2", mLeftSlaveB, mLeftMaster));
+			mRightDiagArr.add(new MotorDiagnostics("Drive Right Master", mRightMaster));
+			mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 1", mRightSlaveA, mRightMaster));
+//		mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 2", mRightSlaveB, mRightMaster));
+
+			mAllMotorsDiagArr.addAll(mLeftDiagArr);
+			mAllMotorsDiagArr.addAll(mRightDiagArr);
+
+			boolean failure = false;
+
+			for (MotorDiagnostics mD : mAllMotorsDiagArr) {
+				mD.setZero();
+			}
+
+			for (MotorDiagnostics mD : mAllMotorsDiagArr) {
+				mD.runTest();
+
+				if (mD.isCurrentUnderThreshold(kLowCurrentThres)) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " Current Low !!!!!!!!!!");
+					failure = true;
+				}
+
+				if (mD.isRPMUnderThreshold(kLowRpmThres)) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " RPM Low !!!!!!!!!!");
+					failure = true;
+				}
+
+				if (!mD.isSensorInPhase()) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " Sensor Out of Phase !!!!!!!!!!");
+					failure = true;
+				}
+			}
+
+			if (mLeftDiagArr.size() > 0 && mRightDiagArr.size() > 0 && mAllMotorsDiagArr.size() > 0) {
+				List<Double> leftMotorCurrents = mLeftDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
+				if (!Util.allCloseTo(leftMotorCurrents, leftMotorCurrents.get(0), Constants.kDriveBaseTestCurrentDelta)) {
+					failure = true;
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Drive Left2Cube Currents Different !!!!!!!!!!");
+				}
+
+				List<Double> rightMotorCurrents = mRightDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
+				if (!Util.allCloseTo(rightMotorCurrents, rightMotorCurrents.get(0), Constants.kDriveBaseTestCurrentDelta)) {
+					failure = true;
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Drive Right2Cube Currents Different !!!!!!!!!!");
+				}
+
+				List<Double> driveMotorRPMs = mAllMotorsDiagArr.stream().map(MotorDiagnostics::getMotorRPM).collect(Collectors.toList());
+				if (!Util.allCloseTo(driveMotorRPMs, driveMotorRPMs.get(0), Constants.kDriveBaseTestRPMDelta)) {
+					failure = true;
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!!! Drive RPMs different !!!!!!!!!!!!!!!!!!!");
+				}
+			} else {
+				ConsoleReporter.report("Drive Testing Error Occurred in system. Please check code!", MessageLevel.ERROR);
+			}
+
+			return !failure;
+		}
+		else
+			return true;
 	}
 
 	@Override
@@ -418,7 +459,9 @@ public class Drive extends Subsystem {
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
 				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
 				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
-				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
+				"LeftDrive1HasReset:" + mLeftMaster.hasMotorControllerReset() + ";" +
+				"LeftDrive2HasReset:" + mLeftSlaveA.hasMotorControllerReset() + ";" +
+//				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
 				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
 				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
 				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
@@ -427,7 +470,9 @@ public class Drive extends Subsystem {
 				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
 				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
 				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
-				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
+				"RightDrive1HasReset:" + mRightMaster.hasMotorControllerReset() + ";" +
+				"RightDrive2HasReset:" + mRightSlaveA.hasMotorControllerReset() + ";" +
+//				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
 				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
 				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
 				"RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";" +

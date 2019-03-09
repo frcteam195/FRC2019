@@ -208,6 +208,31 @@ public class Constants {
 
 
 
+    //////////////////////////////////////
+    //TEST CONSTRAINTS
+    public static final boolean ENABLE_DRIVE_TEST = false;
+    public static final boolean ENABLE_ELEVATOR_TEST = true;
+
+    public static final double kDriveBaseTestLowCurrentThresh = 2;
+    public static final double kDriveBaseTestLowRPMThresh = 100;
+    public static final double kDriveBaseTestCurrentDelta = 5.0;
+    public static final double kDriveBaseTestRPMDelta = 40.0;
+
+
+    public static final double kElevatorTestLowCurrentThresh = 2;
+    public static final double kElevatorTestLowRPMThresh = 15;
+    public static final double kElevatorTestCurrentDelta = 5.0;
+    public static final double kElevatorTestRPMDelta = 50.0;
+    public static final double kElevatorTestSpeed = 0.5;
+    public static final double kElevatorTestDuration = 1;
+    //////////////////////////////////////
+
+
+
+
+
+
+
 
     //Thread prioritization - 5 is default
     public static final int kRobotThreadPriority = 9;
@@ -237,10 +262,6 @@ public class Constants {
     public static final RGBColor kGotCubeColor = kDefaultColor;
     public static final RGBColor kElevatorHomeColor = new RGBColor(0, 0, 255);
 
-
-    public static final boolean ENABLE_DRIVE_DIAG = true;
-    public static final boolean ENABLE_CUBE_HANDLER_DIAG = true;
-    public static final boolean ENABLE_CLIMBER_DIAG = false;
 
     //TODO: Tune collision detection
     // Collision Detection

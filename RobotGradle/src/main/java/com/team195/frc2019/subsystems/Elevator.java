@@ -5,6 +5,7 @@ import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
+import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -15,6 +16,12 @@ import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
+import com.team195.lib.util.MotorDiagnostics;
+import com.team254.lib.util.Util;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Elevator extends Subsystem implements InterferenceSystem {
 
@@ -92,7 +99,63 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public boolean runDiagnostics() {
-		return false;
+		if (Constants.ENABLE_ELEVATOR_TEST) {
+			ConsoleReporter.report("Testing Elevator---------------------------------");
+			final double kLowCurrentThres = Constants.kElevatorTestLowCurrentThresh;
+			final double kLowRpmThres = Constants.kElevatorTestLowRPMThresh;
+
+			ArrayList<MotorDiagnostics> mElevatorDiagArr = new ArrayList<>();
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Master", mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 1", mElevatorSlaveA, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 2", mElevatorSlaveB, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 3", mElevatorSlaveC, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
+
+			boolean failure = false;
+
+			for (MotorDiagnostics mD : mElevatorDiagArr) {
+				mD.setZero();
+			}
+
+			for (MotorDiagnostics mD : mElevatorDiagArr) {
+				mD.runTest();
+
+				if (mD.isCurrentUnderThreshold(kLowCurrentThres)) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " Current Low !!!!!!!!!!");
+					failure = true;
+				}
+
+				if (mD.isRPMUnderThreshold(kLowRpmThres)) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " RPM Low !!!!!!!!!!");
+					failure = true;
+				}
+
+				if (!mD.isSensorInPhase()) {
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " Sensor Out of Phase !!!!!!!!!!");
+					failure = true;
+				}
+
+			}
+
+			if (mElevatorDiagArr.size() > 0) {
+				List<Double> elevatorMotorCurrents = mElevatorDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
+				if (!Util.allCloseTo(elevatorMotorCurrents, elevatorMotorCurrents.get(0), Constants.kElevatorTestCurrentDelta)) {
+					failure = true;
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Elevator Motor Currents Different !!!!!!!!!!");
+				}
+
+				List<Double> elevatorMotorRPMs = mElevatorDiagArr.stream().map(MotorDiagnostics::getMotorRPM).collect(Collectors.toList());
+				if (!Util.allCloseTo(elevatorMotorRPMs, elevatorMotorRPMs.get(0), Constants.kElevatorTestRPMDelta)) {
+					failure = true;
+					ConsoleReporter.report("!!!!!!!!!!!!!!!!!!! Elevator RPMs different !!!!!!!!!!!!!!!!!!!");
+				}
+			} else {
+				ConsoleReporter.report("Elevator Testing Error Occurred in system. Please check code!", MessageLevel.ERROR);
+			}
+
+			return !failure;
+		}
+		else
+			return true;
 	}
 
 	@Override

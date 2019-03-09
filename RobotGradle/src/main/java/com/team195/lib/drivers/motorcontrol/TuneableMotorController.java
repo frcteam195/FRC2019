@@ -35,6 +35,8 @@ public interface TuneableMotorController {
 
 	void writeToFlash();
 
+	void disableSoftLimits();
+
 	boolean getForwardLimitValue();
 
 	boolean getReverseLimitValue();

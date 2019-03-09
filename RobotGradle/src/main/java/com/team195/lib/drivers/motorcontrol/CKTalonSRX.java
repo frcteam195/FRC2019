@@ -404,6 +404,12 @@ public class CKTalonSRX implements TuneableMotorController {
 	}
 
 	@Override
+	public void disableSoftLimits() {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configForwardSoftLimitEnable(false, Constants.kLongCANTimeoutMs));
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseSoftLimitEnable(false, Constants.kLongCANTimeoutMs));
+	}
+
+	@Override
 	public boolean getForwardLimitValue() {
 		return mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
 	}
