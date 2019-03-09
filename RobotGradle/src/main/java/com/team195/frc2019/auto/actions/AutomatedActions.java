@@ -1,8 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.auto.AutoConstants;
-import com.team195.frc2019.subsystems.BallIntakeArm;
-import com.team195.frc2019.subsystems.Turret;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -198,5 +196,4 @@ public class AutomatedActions {
 
 		return new SeriesAction(actionArrayList);
 	}
-
 }

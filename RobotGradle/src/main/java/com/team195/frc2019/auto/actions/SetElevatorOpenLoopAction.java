@@ -30,6 +30,6 @@ public class SetElevatorOpenLoopAction implements Action {
 	@Override
 	public void start() {
 		mElevator.setElevatorControlMode(ElevatorControlMode.OPEN_LOOP);
-		mElevator.setElevatorPosition(0);
+		mElevator.setElevatorPosition(mSpeed);
 	}
 }

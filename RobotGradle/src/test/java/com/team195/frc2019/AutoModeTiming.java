@@ -1,7 +1,6 @@
 package com.team195.frc2019;
 
 import com.team195.frc2019.paths.TrajectoryGenerator;
-import com.team195.frc2019.auto.AutoConstants;
 import org.junit.jupiter.api.Test;
 
 public class AutoModeTiming {

@@ -4,7 +4,6 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.Action;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
-import edu.wpi.first.wpilibj.Timer;
 
 public class TeleopActionRunner {
 	private double m_update_rate = 1.0 / 50.0;    //20ms update rate

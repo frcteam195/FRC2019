@@ -2,23 +2,18 @@ package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.team195.frc2019.Constants;
-import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.DiagnosticMessage;
-import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
-import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
-import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
 
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {

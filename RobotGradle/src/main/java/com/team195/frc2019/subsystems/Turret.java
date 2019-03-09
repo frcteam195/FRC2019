@@ -1,11 +1,9 @@
 package com.team195.frc2019.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
-import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
@@ -13,13 +11,10 @@ import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
-import com.team195.frc2019.subsystems.positions.HatchArmPositions;
-import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
-import com.team195.lib.drivers.motorcontrol.TuneablePIDOSC;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;

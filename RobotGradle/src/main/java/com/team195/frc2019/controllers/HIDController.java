@@ -6,7 +6,6 @@ import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
-import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 import com.team195.lib.util.TeleopActionRunner;

@@ -5,7 +5,6 @@ import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.actions.DriveTrajectory;
 import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.ConsoleReporter;
-import com.team195.frc2019.subsystems.Drive;
 
 public class TestMode extends AutoModeBase {
     @Override

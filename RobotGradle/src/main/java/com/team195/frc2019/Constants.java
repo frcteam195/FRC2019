@@ -3,7 +3,6 @@ package com.team195.frc2019;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.RGBColor;
-import edu.wpi.first.wpilibj.Solenoid;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;

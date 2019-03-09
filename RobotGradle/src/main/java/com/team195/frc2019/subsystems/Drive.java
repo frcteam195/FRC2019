@@ -60,6 +60,10 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				setOpenLoop(new DriveSignal(0, 0));
 				setBrakeMode(false);
+				mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+				mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+				mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+				mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
 			}
 		}
 
@@ -71,23 +75,19 @@ public class Drive extends Subsystem {
 						if((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
 							mLastBrakeSwitch = Timer.getFPGATimestamp();
 							mMasterBrake = !mMasterBrake;
-						}
 
-						if(mMasterBrake) {
-							mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-							mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-							mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-							mLeftSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
-							mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-							mRightSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
-						}
-						else {
-							mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-							mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-							mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
-							mLeftSlaveB.setBrakeCoastMode(MCNeutralMode.Brake);
-							mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
-							mRightSlaveB.setBrakeCoastMode(MCNeutralMode.Brake);
+							if(mMasterBrake) {
+								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+								mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+							}
+							else {
+								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+								mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+							}
 						}
 						break;
 					case PATH_FOLLOWING:
