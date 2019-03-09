@@ -7,6 +7,7 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
@@ -92,8 +93,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public boolean isSystemFaulted() {
 		boolean systemFaulted = !mBallArmRotationMotor.isEncoderPresent();
+		systemFaulted |= mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
-			setBallIntakeArmControlMode(BallIntakeArmControlMode.OPEN_LOOP);
+			setBallIntakeArmControlMode(BallIntakeArmControlMode.DISABLED);
 		return systemFaulted;
 	}
 
@@ -112,6 +114,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
 				"BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";" +
 				"BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";" +
+				"BallArmRotationMotorHasReset:" + mBallArmRotationMotor.hasMotorControllerReset().getMessage() + ";" +
+				"BallArmRollerMotorHasReset:" + mBallArmRollerMotor.hasMotorControllerReset().getMessage() + ";" +
 				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
 				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
 				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +

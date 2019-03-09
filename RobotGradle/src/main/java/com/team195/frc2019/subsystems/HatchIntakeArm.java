@@ -3,6 +3,7 @@ package com.team195.frc2019.subsystems;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
@@ -80,8 +81,9 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public boolean isSystemFaulted() {
 		boolean systemFaulted = !mHatchArmRotationMotor.isEncoderPresent();
+		systemFaulted |= mHatchArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
-			setHatchArmControlMode(HatchArmControlMode.OPEN_LOOP);
+			setHatchArmControlMode(HatchArmControlMode.DISABLED);
 		return systemFaulted;
 	}
 
@@ -99,6 +101,8 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 				"HatchArmOutputDutyCycle:" + mHatchArmRotationMotor.getMCOutputPercent() + ";" +
 				"HatchArmOutputVoltage:" + mHatchArmRotationMotor.getMCOutputPercent() * mHatchArmRotationMotor.getMCInputVoltage() + ";" +
 				"HatchArmSupplyVoltage:" + mHatchArmRotationMotor.getMCInputVoltage() + ";" +
+				"HatchArmRotationMotorHasReset:" + mHatchArmRotationMotor.hasMotorControllerReset().getMessage() + ";" +
+				"HatchArmRollerMotorHasReset:" + mHatchArmRollerMotor.hasMotorControllerReset().getMessage() + ";" +
 				"HatchArmControlMode:" + mHatchArmControlMode.toString() + ";" +
 				"HatchArmIntakeCurrent:" + mHatchArmRollerMotor.getMCOutputCurrent() + ";" +
 				"HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";" +
@@ -149,7 +153,9 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 					case OPEN_LOOP:
 						mHatchArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mHatchArmSetpoint, -1), 1), 0, 0);
 						break;
+					case DISABLED:
 					default:
+						mHatchArmRotationMotor.set(MCControlMode.Disabled, 0, 0, 0);
 						break;
 				}
 

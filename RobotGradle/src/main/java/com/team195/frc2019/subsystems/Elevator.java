@@ -4,6 +4,7 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -83,8 +84,9 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public boolean isSystemFaulted() {
 		boolean systemFaulted = !mElevatorMaster.isEncoderPresent();
+		systemFaulted |= mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
-			setElevatorControlMode(ElevatorControlMode.OPEN_LOOP);
+			setElevatorControlMode(ElevatorControlMode.DISABLED);
 		return systemFaulted;
 	}
 
@@ -101,9 +103,14 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
 				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
 				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
+				"Elevator4Current:" + mElevatorSlaveC.getMCOutputCurrent() + ";" +
 				"ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";" +
 				"ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent() * mElevatorMaster.getMCInputVoltage() + ";" +
 				"ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";" +
+				"Elevator1HasReset:" + mElevatorMaster.hasMotorControllerReset().getMessage() + ";" +
+				"Elevator2HasReset:" + mElevatorSlaveA.hasMotorControllerReset().getMessage() + ";" +
+				"Elevator3HasReset:" + mElevatorSlaveB.hasMotorControllerReset().getMessage() + ";" +
+				"Elevator4HasReset:" + mElevatorSlaveC.hasMotorControllerReset().getMessage() + ";" +
 				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";";
 	}
 
@@ -157,6 +164,9 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 					case OPEN_LOOP:
 						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
 						break;
+					case DISABLED:
+						mElevatorMaster.set(MCControlMode.Disabled, 0, 0, 0);
+						break;
 					default:
 						break;
 				}
@@ -192,12 +202,13 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		return Math.abs(mElevatorSetpoint - mElevatorMaster.getPosition()) < Math.abs(posDelta);
 	}
 
-	private synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {
+	private synchronized void setElevatorControlMode(ElevatorControlMode elevatorControlMode) {
 		mElevatorControlMode = elevatorControlMode;
 	}
 
 	public enum ElevatorControlMode {
 		POSITION,
-		OPEN_LOOP;
+		OPEN_LOOP,
+		DISABLED;
 	}
 }
