@@ -70,7 +70,7 @@ public class HIDController {
 								turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
 							}
 							else {
-								turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.55;
+								turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.475;
 							}
 							// double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.65;
 							// turn *= 0.75;
