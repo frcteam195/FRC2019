@@ -51,6 +51,28 @@ public class AutomatedActions {
 		return new SeriesAction(actionArrayList);
 	}
 
+	public static Action reverseHatchPickup() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation));
+		// actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		// actionList.add(new WaitAction(0.3));
+		actionList.add(new SetTurretPositionAction(TurretPositions.Back180));
+		actionList.add(new WaitAction(0.1));
+		actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
+
+		return new SeriesAction(actionList);
+	}
+
+	public static Action lowerIntakeAndResetTurret() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		actionList.add(new SetTurretPositionAction(TurretPositions.Home));
+
+		return new SeriesAction(actionList);
+	}
+
 	public static Action hatchHandoff() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 		actionArrayList.add(new SetHandoffCollisionAvoidanceAction(false));

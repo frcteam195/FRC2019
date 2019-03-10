@@ -192,8 +192,13 @@ public class HIDController {
 							}
 							else if (armControlJoystick.getRisingEdgeButton(11)) {
 								//Rehome turret
-								Turret.getInstance().zeroSensors();
-								Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
+								// Turret.getInstance().zeroSensors();
+								// Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
+
+								(new TeleopActionRunner(AutomatedActions.reverseHatchPickup())).runAction();
+							}
+							else if (armControlJoystick.getRisingEdgeButton(12)) {
+								(new TeleopActionRunner(AutomatedActions.lowerIntakeAndResetTurret())).runAction();
 							}
 
 							switch (armControlJoystick.getPOV()) {
