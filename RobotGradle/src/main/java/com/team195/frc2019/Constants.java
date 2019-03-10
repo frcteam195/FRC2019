@@ -70,8 +70,9 @@ public class Constants {
     public static final double kElevatorPositionKf = 0.1380124477;
     public static final int kElevatorPositionCruiseVel = 850;
     public static final int kElevatorPositionMMAccel = 600;
-    //Units in rotations
-    public static final double kElevatorPositionForwardSoftLimit = 6.3;
+	//Units in rotations
+	public static final double kNewPulleyFactor = 1.25;
+    public static final double kElevatorPositionForwardSoftLimit = 6.3 * kNewPulleyFactor;
     public static final double kElevatorPositionReverseSoftLimit = 0;
 
     //50:1

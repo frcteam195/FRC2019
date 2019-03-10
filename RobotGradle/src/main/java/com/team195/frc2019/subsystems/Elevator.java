@@ -38,6 +38,10 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private double mElevatorSetpoint = 0;
 
+	private static final int mContinuousCurrentLimit = 8;
+	private static final int mPeakCurrentLimit = 12;
+	private static final int mPeakCurrentDurationMS = 250;
+
 	private Elevator() {
 		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
 		mElevatorMaster.setSensorPhase(true);
@@ -50,6 +54,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.configForwardSoftLimitEnable(true);
 		mElevatorMaster.configReverseSoftLimitThreshold(Constants.kElevatorPositionReverseSoftLimit);
 		mElevatorMaster.configReverseSoftLimitEnable(true);
+		mElevatorMaster.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -59,9 +64,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 //		}
 
 		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B40A, false);
+		mElevatorSlaveA.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
 		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
+		mElevatorSlaveB.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 		mElevatorSlaveC = new CKTalonSRX(Constants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
+		mElevatorSlaveC.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
 				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
