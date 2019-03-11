@@ -23,6 +23,38 @@ public class AutomatedActions {
 		return unfolded;
 	}
 
+	public static AutomatedAction homeElevator() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetElevatorOpenLoopAction(0));
+		actionList.add(new WaitAction(3.5));
+		actionList.add(new SetElevatorHomeAction());
+
+		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Elevator.getInstance());
+	}
+
+	public static AutomatedAction reverseHatchPickup() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation));
+		// actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		// actionList.add(new WaitAction(0.3));
+		actionList.add(new SetTurretPositionAction(TurretPositions.Back180));
+		actionList.add(new WaitAction(0.1));
+		actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance(), BallIntakeArm.getInstance());
+	}
+
+	public static AutomatedAction lowerIntakeAndResetTurret() {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		actionList.add(new SetTurretPositionAction(TurretPositions.Home));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Turret.getInstance());
+	}
+
 	public static AutomatedAction unfold() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
