@@ -2,72 +2,103 @@ package com.team195.lib.util;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.actions.Action;
+import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.subsystems.Subsystem;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
+import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class TeleopActionRunner {
-	private double m_update_rate = 1.0 / 50.0;    //20ms update rate
-	private Action action;
-	private boolean finished = false;
-	private TimeoutTimer timeoutTimer;
-	private Thread t;
-	//TODO: Test the new timeout works properly
+	private static double m_update_rate = 1.0 / 50.0;    //20ms update rate
+	private static HashSet<AutomatedAction> mActionList = new HashSet<>();
+	private static ReentrantLock mActionLock = new ReentrantLock();
 
-	/**
-	 * Create an action runner with a timeout
-	 * @param action Action to run
-	 * @param timeout Timeout in seconds.
-	 */
-	public TeleopActionRunner(Action action, double timeout) {
-		this.action = action;
-		timeoutTimer = new TimeoutTimer(timeout);
-	}
-
-	public TeleopActionRunner(Action action) {
-		this(action, Constants.kActionTimeoutS);
-	}
-
-	public boolean isFinished() {
-		return finished;
-	}
-
-	private void start() {
-		timeoutTimer.isTimedOut();
-		t = new Thread(() -> {
-			//t.setPriority(Thread.NORM_PRIORITY);
+	static {
+		Thread mRunnerThread = new Thread(() -> {
 			ThreadRateControl threadRateControl = new ThreadRateControl();
 			threadRateControl.start();
-			action.start();
 
-			while (!action.isFinished() && !timeoutTimer.isTimedOut()) {
-				action.update();
-				threadRateControl.doRateControl((int)(m_update_rate * 1000.0));
+			while (true) {
+				try {
+					mActionLock.lock();
+					mActionList.forEach((action) -> {
+						if (!action.isStarted())
+							action.start();
+						action.update();
+					});
+					mActionList.removeIf((action) -> {
+						boolean finished = false;
+						if (action.isFinished()) {
+							finished = true;
+							action.done();
+						}
+						return finished;
+					});
+				}
+				catch (Exception ignored) {
+
+				}
+				finally {
+					mActionLock.unlock();
+				}
+				threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
 			}
 
-			action.done();
-			finished = true;
 		});
-		t.start();
+		mRunnerThread.start();
 	}
 
-	public boolean runAction() {
-		return runAction(false);
+	public boolean runAction(AutomatedAction action) {
+		return runAction(action, false);
 	}
 
-	public boolean runAction(boolean waitForCompletion) {
-		if (t == null || !t.isAlive())
-			start();
+	public boolean runAction(AutomatedAction action, boolean waitForCompletion) {
+		try {
+			mActionLock.lock();
+			mActionList.removeIf((xAction) -> {
+				for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
+					if (action.getRequiredSubsystems().contains(xSubsystem))
+						return true;
+				}
+				return false;
+			});
+			mActionList.add(action);
+		}
+		catch (Exception ignored) {
 
-		if (waitForCompletion && timeoutTimer.getTimeLeft() > 0) {
-			try {
-				t.join((int) (timeoutTimer.getTimeLeft() * 1000.0));
-			} catch (InterruptedException ex) {
-				ConsoleReporter.report(action.getClass().getSimpleName() + " Action did not complete in time!", MessageLevel.ERROR);
-				ConsoleReporter.report(ex, MessageLevel.ERROR);
-			}
+		}
+		finally {
+			mActionLock.unlock();
 		}
 
-		return finished;
+		if (waitForCompletion) {
+			boolean completed = false;
+			ThreadRateControl threadRateControl = new ThreadRateControl();
+			threadRateControl.start();
+
+			TimeoutTimer timeoutTimer = new TimeoutTimer(action.getTimeout());
+			while (!timeoutTimer.isTimedOut() && !completed) {
+				try {
+					mActionLock.lock();
+					completed = !mActionList.contains(action);
+				} catch (Exception ignored) {
+
+				} finally {
+					mActionLock.unlock();
+				}
+				threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
+			}
+
+			if (!completed)
+				ConsoleReporter.report(action.getClass().getSimpleName() + " Action did not complete in time!", MessageLevel.ERROR);
+
+			return completed;
+		}
+
+		return true;
 	}
 }
