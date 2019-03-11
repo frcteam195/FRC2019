@@ -3,10 +3,7 @@ package com.team195.frc2019.auto.autonomy;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.auto.actions.*;
-import com.team195.frc2019.subsystems.BallIntakeArm;
-import com.team195.frc2019.subsystems.Elevator;
-import com.team195.frc2019.subsystems.HatchIntakeArm;
-import com.team195.frc2019.subsystems.Turret;
+import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.HatchArmPositions;
@@ -72,6 +69,8 @@ public class AutomatedActions {
 							new SetBeakAction(false))));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitForHatchOrTimeoutAction());
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
+		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetHatchPushAction(false));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
@@ -193,6 +192,10 @@ public class AutomatedActions {
 				new DropBallArmClimbBarAction())));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
+	}
+
+	public static AutomatedAction enableHatchVision(Function<Void, Boolean> buttonValueGetter) {
+		return AutomatedAction.fromAction(new SetVisionEnabledHatchSteerAction(buttonValueGetter), Constants.kActionTimeoutS, Drive.getInstance());
 	}
 
 	public static AutomatedAction setTurretOpenLoop(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisGetterMethod) {

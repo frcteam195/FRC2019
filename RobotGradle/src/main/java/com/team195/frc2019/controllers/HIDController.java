@@ -5,6 +5,7 @@ import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
@@ -67,12 +68,16 @@ public class HIDController {
 
 							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
 							double turn;
-							if(Math.abs(throttle) > 0.5) {
-								// turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
-								turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
+							if (VisionTracker.getInstance().isVisionEnabled()) {
+								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.005, 1), -1);
 							}
 							else {
-								turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.475;
+								if (Math.abs(throttle) > 0.5) {
+									// turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
+									turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
+								} else {
+									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.475;
+								}
 							}
 							// double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.65;
 							// turn *= 0.75;
@@ -151,6 +156,9 @@ public class HIDController {
 							else if (buttonBox2.getRisingEdgeButton(10)) {
 								TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(false), 1));
 							}
+							else if (buttonBox2.getRisingEdgeButton(11)) {
+								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> buttonBox2.getRawButton(11)));
+							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
 								//Flash LEDs
 								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
@@ -214,12 +222,13 @@ public class HIDController {
 									break;
 							}
 						}
-					} catch (Exception ignored) {
-
+					} catch (Exception ex) {
+						ConsoleReporter.report(ex);
 					}
 					catch (Throwable t) {
+						ConsoleReporter.report(t);
 						CrashTracker.logThrowableCrash(t);
-						throw t;
+//						throw t;
 					}
 					threadRateControl.doRateControl(HID_RATE_CONTROL);
 				}

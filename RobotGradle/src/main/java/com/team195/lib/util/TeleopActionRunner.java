@@ -39,8 +39,8 @@ public class TeleopActionRunner {
 						return finished;
 					});
 				}
-				catch (Exception ignored) {
-
+				catch (Exception ex) {
+					ConsoleReporter.report(ex);
 				}
 				finally {
 					mActionLock.unlock();
@@ -68,8 +68,8 @@ public class TeleopActionRunner {
 			});
 			mActionList.add(action);
 		}
-		catch (Exception ignored) {
-
+		catch (Exception ex) {
+			ConsoleReporter.report(ex);
 		}
 		finally {
 			mActionLock.unlock();
@@ -85,8 +85,8 @@ public class TeleopActionRunner {
 				try {
 					mActionLock.lock();
 					completed = !mActionList.contains(action);
-				} catch (Exception ignored) {
-
+				} catch (Exception ex) {
+					ConsoleReporter.report(ex);
 				} finally {
 					mActionLock.unlock();
 				}

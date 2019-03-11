@@ -59,6 +59,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
+		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
