@@ -259,8 +259,8 @@ public class Constants {
     public static final boolean REPORT_TO_DRIVERSTATION_INSTEAD_OF_CONSOLE = false;
     public static final RGBColor kDefaultColor = new RGBColor(210, 0, 120);  //Default purple color
     public static final RGBColor kCommLossColor = new RGBColor(255, 0, 0);
-    public static final RGBColor kRequestCubeColor = new RGBColor(0, 255, 0);
-    public static final RGBColor kGotCubeColor = kDefaultColor;
+    public static final RGBColor kRequestGamePieceColor = new RGBColor(0, 255, 0);
+    public static final RGBColor kGotGamePieceColor = kDefaultColor;
     public static final RGBColor kElevatorHomeColor = new RGBColor(0, 0, 255);
 
 

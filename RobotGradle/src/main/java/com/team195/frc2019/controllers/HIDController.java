@@ -164,6 +164,7 @@ public class HIDController {
 
 							if (armControlJoystick.getRisingEdgeButton(1)) {
 								//Flash LEDs to signal Human Player
+								LEDController.getInstance().setLEDColor(Constants.kRequestGamePieceColor);
 								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
 							}
 							else if (armControlJoystick.getRisingEdgeButton(3)) {
