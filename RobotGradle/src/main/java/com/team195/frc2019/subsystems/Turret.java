@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.auto.actions.SetBeakAction;
+import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.paths.TrajectoryGenerator;
@@ -217,13 +218,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				}
 
 				if (beakListenerEnabled) {
-					if (mAutoHatchController == null && mBallShooterRollerMotor.getReverseLimitFallingEdge()) {
-						mAutoHatchController = new TeleopActionRunner(new SetBeakAction(true));
-						mAutoHatchController.runAction(false);
-					}
-
-					if (mAutoHatchController != null && mAutoHatchController.isFinished())
-						mAutoHatchController = null;
+					if (mBallShooterRollerMotor.getReverseLimitFallingEdge())
+						TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 1));
 				}
 			}
 		}

@@ -52,11 +52,11 @@ public class TeleopActionRunner {
 		mRunnerThread.start();
 	}
 
-	public boolean runAction(AutomatedAction action) {
+	public static boolean runAction(AutomatedAction action) {
 		return runAction(action, false);
 	}
 
-	public boolean runAction(AutomatedAction action, boolean waitForCompletion) {
+	public static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
 		try {
 			mActionLock.lock();
 			mActionList.removeIf((xAction) -> {
