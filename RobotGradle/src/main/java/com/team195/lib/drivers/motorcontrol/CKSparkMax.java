@@ -5,7 +5,6 @@ import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
-import com.team195.lib.util.ThreadRateControl;
 
 import java.util.Optional;
 
@@ -65,7 +64,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
 			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
 			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
-			setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
+			// setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
+			setSucceeded &= setOpenLoopRampRate(0.075) == CANError.kOK;
 			//Erase previously stored output values
 			set(MCControlMode.PercentOut, 0, 0, 0);
 		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);

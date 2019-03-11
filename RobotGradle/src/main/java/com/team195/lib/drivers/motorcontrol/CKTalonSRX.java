@@ -9,7 +9,6 @@ import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.ThreadRateControl;
-import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 

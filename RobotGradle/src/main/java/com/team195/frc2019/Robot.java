@@ -11,7 +11,6 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.LogDataReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
-import com.team195.lib.drivers.dashjoy.DashJoyReceiver;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -129,7 +128,7 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
-			mDrive.setBrakeMode(true);
+			// mDrive.setBrakeMode(true);
 			mHIDController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);

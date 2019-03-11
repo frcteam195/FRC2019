@@ -3,7 +3,6 @@ package com.team195.frc2019;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.RGBColor;
-import edu.wpi.first.wpilibj.Solenoid;
 
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -71,8 +70,9 @@ public class Constants {
     public static final double kElevatorPositionKf = 0.1380124477;
     public static final int kElevatorPositionCruiseVel = 850;
     public static final int kElevatorPositionMMAccel = 600;
-    //Units in rotations
-    public static final double kElevatorPositionForwardSoftLimit = 6.3;
+	//Units in rotations
+	public static final double kNewPulleyFactor = 1.25;
+    public static final double kElevatorPositionForwardSoftLimit = 6.3 * kNewPulleyFactor;
     public static final double kElevatorPositionReverseSoftLimit = 0;
 
     //50:1
@@ -96,7 +96,8 @@ public class Constants {
     public static final int kHatchArmPositionMMAccel = 60;
     //Units in rotations
 //    public static final double kHatchArmForwardSoftLimit = 0.6174;
-    public static final double kHatchArmForwardSoftLimit = 0.622;
+	// public static final double kHatchArmForwardSoftLimit = 0.622;
+	public static final double kHatchArmForwardSoftLimit = 0.700;
     public static final double kHatchArmReverseSoftLimit = 0;
 
 

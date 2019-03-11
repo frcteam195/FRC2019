@@ -2,7 +2,6 @@ package com.team195.frc2019.subsystems;
 
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
-import com.team195.frc2019.reporters.ConsoleReporter;
 import edu.wpi.first.wpilibj.Compressor;
 
 public class Infrastructure extends Subsystem {

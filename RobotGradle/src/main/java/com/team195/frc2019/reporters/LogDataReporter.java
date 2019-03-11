@@ -8,12 +8,9 @@ import com.team195.frc2019.SubsystemManager;
 import com.team195.lib.util.ThreadRateControl;
 import edu.wpi.first.wpilibj.DriverStation;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 public class LogDataReporter {
 	private static final int portNumber = Constants.LOG_OSC_REPORTER_PORT;

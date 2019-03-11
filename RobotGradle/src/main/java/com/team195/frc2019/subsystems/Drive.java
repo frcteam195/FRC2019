@@ -44,6 +44,8 @@ public class Drive extends Subsystem {
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
+	private boolean mMasterBrake = true;
+	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
 
 	private final Loop mLoop = new Loop() {
 		@Override
@@ -58,6 +60,10 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				setOpenLoop(new DriveSignal(0, 0));
 				setBrakeMode(false);
+				mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+				mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+				mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+				mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
 			}
 		}
 
@@ -66,6 +72,23 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				switch (mDriveControlState) {
 					case OPEN_LOOP:
+						if((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
+							mLastBrakeSwitch = Timer.getFPGATimestamp();
+							mMasterBrake = !mMasterBrake;
+
+							if(mMasterBrake) {
+								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+								mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+							}
+							else {
+								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+								mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+							}
+						}
 						break;
 					case PATH_FOLLOWING:
 						updatePathFollower();
