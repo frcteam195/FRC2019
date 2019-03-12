@@ -3,6 +3,9 @@ package com.team195.frc2019.auto.autonomy;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.auto.actions.*;
+import com.team195.frc2019.auto.actions.climb.SetClimbRackDownAction;
+import com.team195.frc2019.auto.actions.climb.SetClimbRackUpAction;
+import com.team195.frc2019.auto.actions.climb.SetIntakeBarForwardClimbAction;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
@@ -21,21 +24,50 @@ public class AutomatedActions {
 	}
 
 	public static AutomatedAction homeElevator() {
-		ArrayList<Action> actionList = new ArrayList<>();
+		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-//		actionList.add(new SetElevatorOpenLoopAction(0));
-//		actionList.add(new WaitAction(3.5));
-//		actionList.add(new SetElevatorHomeAction());
+//		actionArrayList.add(new SetElevatorOpenLoopAction(0));
+//		actionArrayList.add(new WaitAction(3.5));
+//		actionArrayList.add(new SetElevatorHomeAction());
 
-		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Elevator.getInstance());
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
 	}
 
-	public static AutomatedAction climb(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisFrontGetterMethod, Function<Void, Double> axisBackGetterMethod) {
-		ArrayList<Action> actionList = new ArrayList<>();
+	public static AutomatedAction intakeClimb(Function<Void, Boolean> buttonValueGetter) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-		actionList.add(new SetOpenLoopDriveAction(buttonGetterMethod, axisBackGetterMethod, axisFrontGetterMethod));
+		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake));
+		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter));
+		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 
-		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Drive.getInstance());
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
+	}
+
+	public static AutomatedAction climbOpen(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisFrontGetterMethod, Function<Void, Double> axisBackGetterMethod) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetDrivePTOAction(true));
+//		actionList.add(new SetBallIntakeAction(1));
+		actionArrayList.add(new SetOpenLoopDriveAction(buttonGetterMethod, axisBackGetterMethod, axisFrontGetterMethod));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance());
+	}
+
+	public static AutomatedAction climbAutomated(Function<Void, Boolean> buttonGetterMethod) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetDrivePTOAction(true));
+		actionArrayList.add(new SetIntakeBarForwardClimbAction());
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake),
+				new SetClimbRackDownAction(buttonGetterMethod))));
+		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
+		actionArrayList.add(new SetClimbRackUpAction());
+//		actionArrayList.add(new SetDrivePTOAction(false));
+//		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
+//		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
+//		actionArrayList.add(new OpenLoopDrive(0.1, 0.1, 1));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance(), BallIntakeArm.getInstance());
 	}
 
 	public static AutomatedAction reverseHatchPickup() {
@@ -200,6 +232,7 @@ public class AutomatedActions {
 				new SetTurretPositionAction(TurretPositions.Home))));
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallArmRotationAction(BallIntakeArmPositions.Up),
 				new DropBallArmClimbBarAction())));
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance(), Turret.getInstance());
 	}
@@ -220,11 +253,12 @@ public class AutomatedActions {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(HatchArmPositions.RollerIntake),
-				new SetHatchArmRotationAction(HatchArmPositions.Outside))));
+				new SetHatchArmRotationAction(HatchArmPositions.Outside),
+				new SetHatchPushAction(false))));
 		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 10));
 		actionArrayList.add(hatchHandoff());
 
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, HatchIntakeArm.getInstance());
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance(), HatchIntakeArm.getInstance());
 	}
 
 	public static AutomatedAction hatchArmOutIntake(Function<Void, Boolean> buttonValueGetter) {

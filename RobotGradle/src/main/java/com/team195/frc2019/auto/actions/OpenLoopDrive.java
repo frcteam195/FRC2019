@@ -11,7 +11,7 @@ public class OpenLoopDrive implements Action {
     private double mStartTime;
     private final double mDuration, mLeft, mRight;
 
-    public OpenLoopDrive(double left, double right, double duration, boolean finishWhenSeesCube) {
+    public OpenLoopDrive(double left, double right, double duration) {
         mDuration = duration;
         mLeft = left;
         mRight = right;

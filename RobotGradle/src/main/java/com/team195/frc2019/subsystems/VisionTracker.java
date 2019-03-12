@@ -108,6 +108,10 @@ public class VisionTracker extends Subsystem {
 		return mVisionEnabled ? mPeriodicIO.targetHorizontalDeviation : 0;
 	}
 
+	public double getTargetVertAngleDev() {
+		return mVisionEnabled ? mPeriodicIO.targetVerticalDeviation : 0;
+	}
+
 	public synchronized void setVisionEnabled(boolean enabled) {
 		mVisionEnabled = enabled;
 	}

@@ -192,6 +192,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		}
 	};
 
+	public void configureClimbCurrentLimit() {
+//		mBallArmRollerMotor.configCurrentLimit();
+	}
+
 	public void dropClimbBar() {
 		mBallIntakeBarDropSolenoid.set(true);
 	}

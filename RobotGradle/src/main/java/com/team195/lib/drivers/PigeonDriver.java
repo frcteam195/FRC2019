@@ -34,6 +34,16 @@ public class PigeonDriver implements CKIMU {
 	}
 
 	@Override
+	public double getPitch() {
+		return 0;
+	}
+
+	@Override
+	public double getRoll() {
+		return 0;
+	}
+
+	@Override
 	public boolean isPresent() {
 		return pigeonIMU.clearStickyFaults() == ErrorCode.OK;
 	}

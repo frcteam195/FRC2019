@@ -46,6 +46,7 @@ public class Drive extends Subsystem {
 	private boolean mOverrideTrajectory = false;
 	private boolean mMasterBrake = true;
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
+	private boolean mBrakeSwitchEnabled = true;
 
 	private final Loop mLoop = new Loop() {
 		@Override
@@ -72,21 +73,22 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				switch (mDriveControlState) {
 					case OPEN_LOOP:
-						if((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
-							mLastBrakeSwitch = Timer.getFPGATimestamp();
-							mMasterBrake = !mMasterBrake;
+						if (mBrakeSwitchEnabled) {
+							if ((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
+								mLastBrakeSwitch = Timer.getFPGATimestamp();
+								mMasterBrake = !mMasterBrake;
 
-							if(mMasterBrake) {
-								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-								mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-							}
-							else {
-								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-								mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
-								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								if (mMasterBrake) {
+									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+									mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+								} else {
+									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+									mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								}
 							}
 						}
 						break;
@@ -154,6 +156,16 @@ public class Drive extends Subsystem {
 		mMotionPlanner = new DriveMotionPlanner();
 	}
 
+	public void configureClimbCurrentLimit() {
+		int cL = 50;
+		mBrakeSwitchEnabled = false;
+		setBrakeMode(true);
+		mLeftMaster.setSmartCurrentLimit(cL);
+		mLeftSlaveA.setSmartCurrentLimit(cL);
+		mRightMaster.setSmartCurrentLimit(cL);
+		mRightSlaveA.setSmartCurrentLimit(cL);
+	}
+
 	public static Drive getInstance() {
 		return mInstance;
 	}
@@ -192,6 +204,26 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
 		mPeriodicIO.left_feedforward = 0.0;
+		mPeriodicIO.right_feedforward = 0.0;
+	}
+
+	public synchronized void setOpenLoopLeft(double leftSignal) {
+		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+			setBrakeMode(false);
+
+			mDriveControlState = DriveControlState.OPEN_LOOP;
+		}
+		mPeriodicIO.left_demand = leftSignal;
+		mPeriodicIO.left_feedforward = 0.0;
+	}
+
+	public synchronized void setOpenLoopRight(double rightSignal) {
+		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
+			setBrakeMode(false);
+
+			mDriveControlState = DriveControlState.OPEN_LOOP;
+		}
+		mPeriodicIO.right_demand = rightSignal;
 		mPeriodicIO.right_feedforward = 0.0;
 	}
 
@@ -249,6 +281,14 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 //			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
+	}
+
+	public synchronized double getPitch() {
+		return mPeriodicIO.gyro_pitch;
+	}
+
+	public synchronized double getRoll() {
+		return mPeriodicIO.gyro_roll;
 	}
 
 	public synchronized Rotation2d getHeading() {
@@ -364,6 +404,8 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
 		mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
+		mPeriodicIO.gyro_pitch = mGyro.getPitch();
+		mPeriodicIO.gyro_roll = mGyro.getRoll();
 
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
@@ -546,6 +588,8 @@ public class Drive extends Subsystem {
 		public double left_velocity_RPM;
 		public double right_velocity_RPM;
 		public Rotation2d gyro_heading = Rotation2d.identity();
+		public double gyro_pitch;
+		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();
 
 		// OUTPUTS

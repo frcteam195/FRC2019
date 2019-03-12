@@ -61,7 +61,7 @@ public class HIDController {
 								autoModeExecutor.stop();
 						} else {
 							//User Control Interface code here
-							double scalingFactor = driveJoystick.getRawButton(6) ? 0.6 : 1;
+							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
 //							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;
 //							double turn = driveJoystick.getRawAxis(4) * scalingFactor;
@@ -69,7 +69,8 @@ public class HIDController {
 							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
 							double turn;
 							if (VisionTracker.getInstance().isVisionEnabled()) {
-								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.005, 1), -1);
+//								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.005, 1), -1);
+								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetVertAngleDev() * 0.01, 1), -1);
 							}
 							else {
 								if (Math.abs(throttle) > 0.5) {
@@ -91,9 +92,19 @@ public class HIDController {
 
 //							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
 
-							mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
+							if (buttonBox2.getRisingEdgeButton(7)) {
+								BallIntakeArm.getInstance().configureClimbCurrentLimit();
+//								Drive.getInstance().configureClimbCurrentLimit();
+								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(7), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1)/3.0, (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
+							}
+							else if (!buttonBox2.getRawButton(7)) {
+//								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
+							}
 
-							if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
+							if (driveJoystick.getRisingEdgeButton(1)) {
+								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
+							}
+							else if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
 								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));
 							} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
 								TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold));
@@ -141,17 +152,21 @@ public class HIDController {
 							}
 
 
-							if (buttonBox2.getRisingEdgeButton(6)) {
+							if (buttonBox2.getRisingEdgeButton(5)) {
+								TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> buttonBox2.getRawButton(5)));
+							}
+							else if (buttonBox2.getRisingEdgeButton(6)) {
 //								(new TeleopActionRunner(new DropBallArmClimbBarAction())).runAction();
+								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
 							}
-							else if (buttonBox2.getRisingEdgeButton(7)) {
-								//Climb
-							}
+//							else if (buttonBox2.getRisingEdgeButton(7)) {
+//								//Climb
+//							}
 							else if (buttonBox2.getRisingEdgeButton(8)) {
-								//Reverse Climb
+								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(8)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(9)) {
-							    TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> armControlJoystick.getRawButton(3)));
+							    TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> buttonBox2.getRawButton(9)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(10)) {
 								TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(false), 1));

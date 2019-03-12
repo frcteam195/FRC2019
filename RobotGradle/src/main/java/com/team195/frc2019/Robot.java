@@ -71,6 +71,8 @@ public class Robot extends TimedRobot {
 			ConnectionMonitor.getInstance();
 			TeleopActionRunner.init();
 
+			Drive.getInstance().zeroSensors();
+
 			LogDataReporter.getInstance();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -82,6 +84,9 @@ public class Robot extends TimedRobot {
 	public void robotPeriodic() {
 //		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
 //		ConsoleReporter.report(mEnabledLooper.generateReport());
+//		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance() + ", RigthDrivePos:" + Drive.getInstance().getRightEncoderDistance());
+		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
+//		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
 	}
 
 	@Override

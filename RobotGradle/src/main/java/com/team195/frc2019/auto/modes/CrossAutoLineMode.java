@@ -12,6 +12,6 @@ public class CrossAutoLineMode extends AutoModeBase {
     protected void routine() throws AutoModeEndedException {
         ConsoleReporter.report("Running Cross auto line");
         runAction(new WaitAction(5.0));
-        runAction(new OpenLoopDrive(-0.3, -0.3, 5.0, false));
+        runAction(new OpenLoopDrive(-0.3, -0.3, 5.0));
     }
 }

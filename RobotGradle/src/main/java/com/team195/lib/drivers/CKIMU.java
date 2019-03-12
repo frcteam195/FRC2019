@@ -4,6 +4,10 @@ public interface CKIMU {
 
 	double getFusedHeading();
 
+	double getPitch();
+
+	double getRoll();
+
 	boolean isPresent();
 
 	boolean reset();
