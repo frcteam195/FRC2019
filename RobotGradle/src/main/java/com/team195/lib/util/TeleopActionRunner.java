@@ -65,11 +65,11 @@ public class TeleopActionRunner {
 		;
 	}
 
-	public synchronized static boolean runAction(AutomatedAction action) {
+	public static boolean runAction(AutomatedAction action) {
 		return runAction(action, false);
 	}
 
-	public synchronized static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
+	public static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
 		ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
 		if (mActionLock.tryLock()) {
 			try {
