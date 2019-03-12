@@ -76,7 +76,7 @@ public class HIDController {
 									// turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
 									turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
 								} else {
-									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.475;
+									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.35;
 								}
 							}
 							// double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.65;
@@ -157,7 +157,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(false), 1));
 							}
 							else if (buttonBox2.getRisingEdgeButton(11)) {
-								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> buttonBox2.getRawButton(11)));
+
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
 								//Flash LEDs
@@ -183,10 +183,11 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.placeHatch());
 							}
 							else if (armControlJoystick.getRisingEdgeButton(5)) {
-								TeleopActionRunner.runAction(new AutomatedAction(new SetHatchPushAction(false), 1));
+//								TeleopActionRunner.runAction(new AutomatedAction(new SetHatchPushAction(false), 1));
 							}
 							else if (armControlJoystick.getRisingEdgeButton(6)) {
-								TeleopActionRunner.runAction(new AutomatedAction(new SetHatchPushAction(true), 1));
+//								TeleopActionRunner.runAction(new AutomatedAction(new SetHatchPushAction(true), 1));
+								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> armControlJoystick.getRawButton(6)));
 							}
 							else if (armControlJoystick.getRisingEdgeButton(7)) {
 								//Rehome Elevator

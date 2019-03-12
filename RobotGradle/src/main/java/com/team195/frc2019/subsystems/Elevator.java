@@ -246,6 +246,11 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "Elevator";
+		}
 	};
 
 	public void setCollisionAvoidanceEnabled(boolean enabled) {

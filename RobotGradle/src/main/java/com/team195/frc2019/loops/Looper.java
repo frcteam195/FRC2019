@@ -2,6 +2,7 @@ package com.team195.frc2019.loops;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.Reportable;
 import com.team254.lib.util.CrashTrackingRunnable;
 import edu.wpi.first.wpilibj.Notifier;
@@ -40,7 +41,10 @@ public class Looper implements ILooper, Reportable {
                 if (running_) {
                     double now = Timer.getFPGATimestamp();
                     try {
-                        loops_.forEach((l) -> l.onLoop(now));
+                        loops_.forEach((l) -> {
+                            ConsoleReporter.report(l.getName() + " Loop Running", MessageLevel.INFO);
+                            l.onLoop(now);
+                        });
                     }
                     catch (Exception ex) {
                         ConsoleReporter.report(ex);

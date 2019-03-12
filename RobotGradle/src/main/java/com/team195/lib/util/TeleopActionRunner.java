@@ -24,55 +24,71 @@ public class TeleopActionRunner {
 
 			while (true) {
 				try {
-					mActionLock.lock();
-					mActionList.forEach((action) -> {
-						if (!action.isStarted())
-							action.start();
-						action.update();
-					});
-					mActionList.removeIf((action) -> {
-						boolean finished = false;
-						if (action.isFinished()) {
-							finished = true;
-							action.done();
+					ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+					if (mActionLock.tryLock()) {
+						try {
+							if (mActionList.size() > 0) {
+								mActionList.forEach((action) -> {
+									if (!action.isStarted())
+										action.start();
+									action.update();
+								});
+								mActionList.removeIf((action) -> {
+									boolean finished = false;
+									ConsoleReporter.report(action.getClass().getSimpleName() + " Action Running!", MessageLevel.INFO);
+									if (action.isFinished()) {
+										finished = true;
+										action.done();
+									}
+									return finished;
+								});
+							}
+						} catch (Exception ex) {
+							ConsoleReporter.report(ex);
+						} finally {
+							ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+							mActionLock.unlock();
 						}
-						return finished;
-					});
+						threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
+					}
 				}
 				catch (Exception ex) {
 					ConsoleReporter.report(ex);
 				}
-				finally {
-					mActionLock.unlock();
-				}
-				threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
 			}
 
 		});
 		mRunnerThread.start();
 	}
 
-	public static boolean runAction(AutomatedAction action) {
+	public synchronized static void init() {
+		;
+	}
+
+	public synchronized static boolean runAction(AutomatedAction action) {
 		return runAction(action, false);
 	}
 
-	public static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
-		try {
-			mActionLock.lock();
-			mActionList.removeIf((xAction) -> {
-				for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
-					if (action.getRequiredSubsystems().contains(xSubsystem))
-						return true;
+	public synchronized static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
+		ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+		if (mActionLock.tryLock()) {
+			try {
+				if (mActionList.size() > 0) {
+					mActionList.removeIf((xAction) -> {
+						for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
+							if (action.getRequiredSubsystems().contains(xSubsystem))
+								return true;
+						}
+						return false;
+					});
 				}
-				return false;
-			});
-			mActionList.add(action);
-		}
-		catch (Exception ex) {
-			ConsoleReporter.report(ex);
-		}
-		finally {
-			mActionLock.unlock();
+				mActionList.add(action);
+			} catch (Exception ex) {
+				ConsoleReporter.report(ex);
+			} finally {
+				ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+				mActionLock.unlock();
+			}
 		}
 
 		if (waitForCompletion) {
@@ -82,13 +98,16 @@ public class TeleopActionRunner {
 
 			TimeoutTimer timeoutTimer = new TimeoutTimer(action.getTimeout());
 			while (!timeoutTimer.isTimedOut() && !completed) {
-				try {
-					mActionLock.lock();
-					completed = !mActionList.contains(action);
-				} catch (Exception ex) {
-					ConsoleReporter.report(ex);
-				} finally {
-					mActionLock.unlock();
+				ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+				if (mActionLock.tryLock()) {
+					try {
+						completed = !mActionList.contains(action);
+					} catch (Exception ex) {
+						ConsoleReporter.report(ex);
+					} finally {
+						ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+						mActionLock.unlock();
+					}
 				}
 				threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
 			}

@@ -44,16 +44,15 @@ public class VisionTracker extends Subsystem {
 		@Override
 		public void onLoop(double timestamp) {
 			synchronized (VisionTracker.this) {
-				mPeriodicIO.pipelineFront = mVisionEnabled ? 1 : 0;
-				mPeriodicIO.pipelineBack = mVisionEnabled ? 1 : 0;
-
 				switch (mTargetMode) {
 					case ROCKET_BALL:
+						mPeriodicIO.pipelineFront = mVisionEnabled ? 1 : 0;
 						mCurrentTargetingLimelightNT = limelightFrontNT.getValue();
 						break;
 					case HATCH:
 					case CARGO_BALL:
 					default:
+						mPeriodicIO.pipelineBack = mVisionEnabled ? 1 : 0;
 						mCurrentTargetingLimelightNT = limelightBackNT.getValue();
 						break;
 				}
@@ -63,6 +62,11 @@ public class VisionTracker extends Subsystem {
 		@Override
 		public void onStop(double timestamp) {
 			stop();
+		}
+
+		@Override
+		public String getName() {
+			return "VisionTracker";
 		}
 	};
 

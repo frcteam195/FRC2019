@@ -84,6 +84,11 @@ public class Infrastructure extends Subsystem {
             public void onStop(double timestamp) {
 
             }
+
+            @Override
+            public String getName() {
+                return "Infrastructure";
+            }
         });
     }
 

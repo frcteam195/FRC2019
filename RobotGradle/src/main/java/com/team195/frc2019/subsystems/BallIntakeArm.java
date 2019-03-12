@@ -185,6 +185,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "BallIntakeArm";
+		}
 	};
 
 	public void dropClimbBar() {

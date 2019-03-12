@@ -168,6 +168,11 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "HatchIntakeArm";
+		}
 	};
 
 	public void setCollisionAvoidanceEnabled(boolean enabled) {

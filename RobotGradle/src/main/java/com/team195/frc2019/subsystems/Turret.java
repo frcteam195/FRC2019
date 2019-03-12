@@ -230,6 +230,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "Turret";
+		}
 	};
 
 	public synchronized boolean getLimitSwitchValue() {

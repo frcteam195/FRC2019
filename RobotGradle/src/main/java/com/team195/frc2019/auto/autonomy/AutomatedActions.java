@@ -23,11 +23,19 @@ public class AutomatedActions {
 	public static AutomatedAction homeElevator() {
 		ArrayList<Action> actionList = new ArrayList<>();
 
-		actionList.add(new SetElevatorOpenLoopAction(0));
-		actionList.add(new WaitAction(3.5));
-		actionList.add(new SetElevatorHomeAction());
+//		actionList.add(new SetElevatorOpenLoopAction(0));
+//		actionList.add(new WaitAction(3.5));
+//		actionList.add(new SetElevatorHomeAction());
 
 		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Elevator.getInstance());
+	}
+
+	public static AutomatedAction climb(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisFrontGetterMethod, Function<Void, Double> axisBackGetterMethod) {
+		ArrayList<Action> actionList = new ArrayList<>();
+
+		actionList.add(new SetOpenLoopDriveAction(buttonGetterMethod, axisBackGetterMethod, axisFrontGetterMethod));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionList), Constants.kActionTimeoutS, Drive.getInstance());
 	}
 
 	public static AutomatedAction reverseHatchPickup() {
@@ -188,10 +196,12 @@ public class AutomatedActions {
 	public static AutomatedAction prepareClimb() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
+				new SetTurretPositionAction(TurretPositions.Home))));
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallArmRotationAction(BallIntakeArmPositions.Up),
 				new DropBallArmClimbBarAction())));
 
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance(), Turret.getInstance());
 	}
 
 	public static AutomatedAction enableHatchVision(Function<Void, Boolean> buttonValueGetter) {

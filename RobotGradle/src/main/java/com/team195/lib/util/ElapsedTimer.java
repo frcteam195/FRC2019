@@ -9,7 +9,7 @@ public class ElapsedTimer {
 		
 	}
 	
-	public void start() {
+	public synchronized void start() {
 		startTime = Timer.getFPGATimestamp();
 	}
 	

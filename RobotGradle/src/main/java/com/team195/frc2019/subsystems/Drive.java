@@ -104,6 +104,11 @@ public class Drive extends Subsystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "Drive";
+		}
 	};
 
 	private Drive() {

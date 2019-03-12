@@ -11,6 +11,7 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.LogDataReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
+import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -68,6 +69,7 @@ public class Robot extends TimedRobot {
 
 			CriticalSystemsMonitor.getInstance();
 			ConnectionMonitor.getInstance();
+			TeleopActionRunner.init();
 
 			LogDataReporter.getInstance();
 		} catch (Throwable t) {
