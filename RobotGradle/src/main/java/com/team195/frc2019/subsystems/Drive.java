@@ -11,10 +11,7 @@ import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
-import com.team195.lib.drivers.motorcontrol.CKSparkMax;
-import com.team195.lib.drivers.motorcontrol.MCControlMode;
-import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
-import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.*;
 import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
@@ -118,8 +115,9 @@ public class Drive extends Subsystem {
 
 		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.setInverted(false);
-		mLeftMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
-		mLeftMaster.setMotionParameters(10000, 500);
+		mLeftMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
+		mLeftMaster.setDFilter(0.25);
+		mLeftMaster.setMotionParameters(2000, 1000);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
@@ -130,8 +128,9 @@ public class Drive extends Subsystem {
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
-		mRightMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
-		mRightMaster.setMotionParameters(10000, 500);
+		mRightMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
+		mRightMaster.setDFilter(0.25);
+		mRightMaster.setMotionParameters(2000, 1000);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
@@ -153,17 +152,17 @@ public class Drive extends Subsystem {
 		mIsBrakeMode = true;
 		setBrakeMode(false);
 
+
 		mMotionPlanner = new DriveMotionPlanner();
 	}
 
 	public void configureClimbCurrentLimit() {
-		int cL = 50;
 		mBrakeSwitchEnabled = false;
 		setBrakeMode(true);
-		mLeftMaster.setSmartCurrentLimit(cL);
-		mLeftSlaveA.setSmartCurrentLimit(cL);
-		mRightMaster.setSmartCurrentLimit(cL);
-		mRightSlaveA.setSmartCurrentLimit(cL);
+		mLeftMaster.setSmartCurrentLimit(50);
+		mLeftSlaveA.setSmartCurrentLimit(50);
+		mRightMaster.setSmartCurrentLimit(25);
+		mRightSlaveA.setSmartCurrentLimit(25);
 	}
 
 	public static Drive getInstance() {
@@ -207,24 +206,28 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_feedforward = 0.0;
 	}
 
-	public synchronized void setOpenLoopLeft(double leftSignal) {
-		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-			setBrakeMode(false);
+	public synchronized void setClimbLeft(double leftPos) {
+		if (mDriveControlState != DriveControlState.CLIMB) {
+			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.OPEN_LOOP;
+			mDriveControlState = DriveControlState.CLIMB;
 		}
-		mPeriodicIO.left_demand = leftSignal;
+		mPeriodicIO.left_demand = leftPos;
 		mPeriodicIO.left_feedforward = 0.0;
 	}
 
-	public synchronized void setOpenLoopRight(double rightSignal) {
-		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-			setBrakeMode(false);
+	public synchronized void setClimbRight(double rightSignal) {
+		if (mDriveControlState != DriveControlState.CLIMB) {
+			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.OPEN_LOOP;
+			mDriveControlState = DriveControlState.CLIMB;
 		}
 		mPeriodicIO.right_demand = rightSignal;
 		mPeriodicIO.right_feedforward = 0.0;
+	}
+
+	public DriveControlState getDriveControlState() {
+		return mDriveControlState;
 	}
 
 	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
@@ -431,11 +434,14 @@ public class Drive extends Subsystem {
 		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
-		} else {
+		} else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
 			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
 					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
+		} else if (mDriveControlState == DriveControlState.CLIMB) {
+			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
+			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		}
 	}
 
@@ -571,6 +577,8 @@ public class Drive extends Subsystem {
 	public enum DriveControlState {
 		OPEN_LOOP,
 		PATH_FOLLOWING,
+		VELOCITY,
+		CLIMB
 	}
 
 	public enum ShifterState {

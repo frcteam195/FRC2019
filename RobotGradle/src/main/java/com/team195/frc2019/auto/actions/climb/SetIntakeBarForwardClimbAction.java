@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions.climb;
 
 import com.team195.frc2019.auto.actions.Action;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.BallIntakeArm;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.TimeoutTimer;
@@ -20,21 +21,22 @@ public class SetIntakeBarForwardClimbAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut() || (mDrive.getRoll() > 27);
+		return mTimeoutTimer.isTimedOut() || (mDrive.getRoll() > 18);
 	}
 
 	@Override
 	public void update() {
-
+		ConsoleReporter.report("Climbing:");
 	}
 
 	@Override
 	public void done() {
-		mDrive.setOpenLoopRight(0.4);
+		mDrive.setClimbRight(0.1);
 	}
 
 	@Override
 	public void start() {
-		mDrive.setOpenLoopRight(0.9);
+		mDrive.configureClimbCurrentLimit();
+		mDrive.setClimbRight(0.5);
 	}
 }

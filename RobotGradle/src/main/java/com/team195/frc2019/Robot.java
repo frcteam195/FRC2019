@@ -85,7 +85,8 @@ public class Robot extends TimedRobot {
 //		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
 //		ConsoleReporter.report(mEnabledLooper.generateReport());
 //		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance() + ", RigthDrivePos:" + Drive.getInstance().getRightEncoderDistance());
-		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
+//		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
+		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance());
 //		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
 	}
 

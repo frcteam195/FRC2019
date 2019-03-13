@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions.climb;
 
 import com.team195.frc2019.auto.actions.Action;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.TimeoutTimer;
 
@@ -30,11 +31,12 @@ public class SetClimbRackDownAction implements Action {
 
 	@Override
 	public void done() {
-		mDrive.stop();
+		mDrive.setClimbLeft(0.1);
 	}
 
 	@Override
 	public void start() {
-		mDrive.setOpenLoopLeft(0.8);
+		mDrive.zeroSensors();
+		mDrive.setClimbLeft(0.75);
 	}
 }

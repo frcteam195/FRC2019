@@ -5,6 +5,7 @@ import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.auto.actions.climb.SetClimbRackDownAction;
 import com.team195.frc2019.auto.actions.climb.SetClimbRackUpAction;
+import com.team195.frc2019.auto.actions.climb.SetDriveRampDownPowerAction;
 import com.team195.frc2019.auto.actions.climb.SetIntakeBarForwardClimbAction;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
@@ -60,12 +61,13 @@ public class AutomatedActions {
 		actionArrayList.add(new SetIntakeBarForwardClimbAction());
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake),
 				new SetClimbRackDownAction(buttonGetterMethod))));
-		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
+		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetClimbRackUpAction());
-//		actionArrayList.add(new SetDrivePTOAction(false));
+		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
+		actionArrayList.add(new SetDrivePTOAction(false));
 //		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
 //		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
-//		actionArrayList.add(new OpenLoopDrive(0.1, 0.1, 1));
+		actionArrayList.add(new SetDriveRampDownPowerAction(0.4));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance(), BallIntakeArm.getInstance());
 	}

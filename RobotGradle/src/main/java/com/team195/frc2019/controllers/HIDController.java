@@ -96,7 +96,7 @@ public class HIDController {
 //								Drive.getInstance().configureClimbCurrentLimit();
 								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(7), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1)/3.0, (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
 							}
-							else if (!buttonBox2.getRawButton(7)) {
+							else if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 							}
 
