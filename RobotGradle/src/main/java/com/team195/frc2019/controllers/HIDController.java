@@ -3,6 +3,7 @@ package com.team195.frc2019.controllers;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.auto.actions.*;
+import com.team195.frc2019.auto.actions.climb.SetBallIntakeArmRotationOpenLoopAction;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -151,16 +152,9 @@ public class HIDController {
 							}
 
 
-							if (buttonBox2.getRisingEdgeButton(5)) {
-								TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> buttonBox2.getRawButton(5)));
-							}
-							else if (buttonBox2.getRisingEdgeButton(6)) {
-//								(new TeleopActionRunner(new DropBallArmClimbBarAction())).runAction();
+							if (buttonBox2.getRisingEdgeButton(7)) {
 								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
 							}
-//							else if (buttonBox2.getRisingEdgeButton(7)) {
-//								//Climb
-//							}
 							else if (buttonBox2.getRisingEdgeButton(8)) {
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(8)));
 							}

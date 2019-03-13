@@ -114,6 +114,8 @@ public class AutomatedActions {
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
 		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetHatchPushAction(false));
+		actionArrayList.add(new WaitAction(0.2));
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}
@@ -232,9 +234,7 @@ public class AutomatedActions {
 
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
 				new SetTurretPositionAction(TurretPositions.Home))));
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallArmRotationAction(BallIntakeArmPositions.Up),
-				new DropBallArmClimbBarAction())));
-		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		actionArrayList.add(new DropBallArmClimbBarAction());
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance(), Turret.getInstance());
 	}
