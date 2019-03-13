@@ -81,6 +81,11 @@ public class RobotStateEstimator extends Subsystem {
         public void onStop(double timestamp) {
             // no-op
         }
+
+        @Override
+        public String getName() {
+            return "RobotStateEstimator";
+        }
     }
 }
 

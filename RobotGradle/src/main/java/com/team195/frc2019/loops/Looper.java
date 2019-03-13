@@ -2,6 +2,7 @@ package com.team195.frc2019.loops;
 
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.Reportable;
 import com.team254.lib.util.CrashTrackingRunnable;
 import edu.wpi.first.wpilibj.Notifier;
@@ -39,7 +40,15 @@ public class Looper implements ILooper, Reportable {
 
                 if (running_) {
                     double now = Timer.getFPGATimestamp();
-                    loops_.forEach((l)->l.onLoop(now));
+                    try {
+                        loops_.forEach((l) -> {
+                            ConsoleReporter.report(l.getName() + " Loop Running", MessageLevel.INFO);
+                            l.onLoop(now);
+                        });
+                    }
+                    catch (Exception ex) {
+                        ConsoleReporter.report(ex);
+                    }
                     dt_ = now - timestamp_;
                     timestamp_ = now;
                 }
@@ -70,10 +79,21 @@ public class Looper implements ILooper, Reportable {
             ConsoleReporter.report("Starting loops");
             synchronized (taskRunningLock_) {
                 if (isFirstStart) {
-                    loops_.forEach((l) -> l.onFirstStart(timestamp_));
+                    timestamp_ = Timer.getFPGATimestamp();
+                    try {
+                        loops_.forEach((l) -> l.onFirstStart(timestamp_));
+                    }
+                    catch (Exception ex) {
+                        ConsoleReporter.report(ex);
+                    }
                 }
                 timestamp_ = Timer.getFPGATimestamp();
-                loops_.forEach((l)-> l.onStart(timestamp_));
+                try {
+                    loops_.forEach((l)-> l.onStart(timestamp_));
+                }
+                catch (Exception ex) {
+                    ConsoleReporter.report(ex);
+                }
                 running_ = true;
                 isFirstStart = false;
             }
@@ -88,7 +108,12 @@ public class Looper implements ILooper, Reportable {
             synchronized (taskRunningLock_) {
                 running_ = false;
                 timestamp_ = Timer.getFPGATimestamp();
-                loops_.forEach((l)->l.onStop(timestamp_));
+                try {
+                    loops_.forEach((l)->l.onStop(timestamp_));
+                }
+                catch (Exception ex) {
+                    ConsoleReporter.report(ex);
+                }
             }
         }
     }

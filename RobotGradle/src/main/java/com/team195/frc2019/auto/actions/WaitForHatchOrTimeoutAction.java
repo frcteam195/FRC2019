@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.auto.AutoConstants;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 

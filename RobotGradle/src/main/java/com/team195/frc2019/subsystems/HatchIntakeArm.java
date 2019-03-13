@@ -39,6 +39,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		mHatchArmRotationMotor.configForwardSoftLimitEnable(true);
 		mHatchArmRotationMotor.configReverseSoftLimitThreshold(Constants.kHatchArmReverseSoftLimit);
 		mHatchArmRotationMotor.configReverseSoftLimitEnable(true);
+		mHatchArmRotationMotor.configCurrentLimit(10, 15, 250);
 		mHatchArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -51,6 +52,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mHatchArmRollerMotor.setInverted(true);
 		mHatchArmRollerMotor.setMCOpenLoopRampRate(0.2);
+		mHatchArmRollerMotor.configCurrentLimit(10, 25, 250);
 
 
 		hatchArmAnyPositionCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
@@ -165,6 +167,11 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onStop(double timestamp) {
 			stop();
+		}
+
+		@Override
+		public String getName() {
+			return "HatchIntakeArm";
 		}
 	};
 

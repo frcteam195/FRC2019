@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.auto.actions.SetBeakAction;
+import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.paths.TrajectoryGenerator;
@@ -59,6 +60,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mTurretRotationMotor.configForwardSoftLimitEnable(true);
 		mTurretRotationMotor.configReverseSoftLimitThreshold(Constants.kTurretReverseSoftLimit);
 		mTurretRotationMotor.configReverseSoftLimitEnable(true);
+		mTurretRotationMotor.configCurrentLimit(5, 7, 150);
 		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -71,6 +73,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallShooterRollerMotor.setMCOpenLoopRampRate(0.2);
+		mBallShooterRollerMotor.configCurrentLimit(5, 7, 150);
 
 		mHatchBeakSolenoid = new CKSolenoid(Constants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);
@@ -217,13 +220,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				}
 
 				if (beakListenerEnabled) {
-					if (mAutoHatchController == null && mBallShooterRollerMotor.getReverseLimitFallingEdge()) {
-						mAutoHatchController = new TeleopActionRunner(new SetBeakAction(true));
-						mAutoHatchController.runAction(false);
-					}
-
-					if (mAutoHatchController != null && mAutoHatchController.isFinished())
-						mAutoHatchController = null;
+					if (mBallShooterRollerMotor.getReverseLimitFallingEdge())
+						TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 1));
 				}
 			}
 		}
@@ -231,6 +229,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onStop(double timestamp) {
 			stop();
+		}
+
+		@Override
+		public String getName() {
+			return "Turret";
 		}
 	};
 

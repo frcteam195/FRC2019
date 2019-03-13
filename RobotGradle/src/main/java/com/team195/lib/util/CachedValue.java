@@ -1,5 +1,7 @@
 package com.team195.lib.util;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
+
 import java.util.function.Function;
 
 public class CachedValue<T> {
@@ -17,14 +19,19 @@ public class CachedValue<T> {
 	}
 
 	public synchronized T getValue() {
-		if (!initialized) {
-			setCachedValue(mUpdateFunction.apply(null));
-			initialized = true;
-		}
+		try {
+			if (!initialized) {
+				setCachedValue(mUpdateFunction.apply(null));
+				initialized = true;
+			}
 
-		if (mTimeoutTimer.isTimedOut()) {
-			setCachedValue(mUpdateFunction.apply(null));
-			mTimeoutTimer.reset();
+			if (mTimeoutTimer.isTimedOut()) {
+				setCachedValue(mUpdateFunction.apply(null));
+				mTimeoutTimer.reset();
+			}
+		}
+		catch (Exception ex) {
+			ConsoleReporter.report(ex);
 		}
 
 		return mCachedValue;

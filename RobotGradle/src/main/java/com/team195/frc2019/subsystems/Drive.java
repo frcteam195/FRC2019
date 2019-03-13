@@ -11,10 +11,7 @@ import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
-import com.team195.lib.drivers.motorcontrol.CKSparkMax;
-import com.team195.lib.drivers.motorcontrol.MCControlMode;
-import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
-import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.drivers.motorcontrol.*;
 import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
@@ -46,6 +43,7 @@ public class Drive extends Subsystem {
 	private boolean mOverrideTrajectory = false;
 	private boolean mMasterBrake = true;
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
+	private boolean mBrakeSwitchEnabled = true;
 
 	private final Loop mLoop = new Loop() {
 		@Override
@@ -72,21 +70,22 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				switch (mDriveControlState) {
 					case OPEN_LOOP:
-						if((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
-							mLastBrakeSwitch = Timer.getFPGATimestamp();
-							mMasterBrake = !mMasterBrake;
+						if (mBrakeSwitchEnabled) {
+							if ((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
+								mLastBrakeSwitch = Timer.getFPGATimestamp();
+								mMasterBrake = !mMasterBrake;
 
-							if(mMasterBrake) {
-								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-								mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-							}
-							else {
-								mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-								mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-								mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
-								mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								if (mMasterBrake) {
+									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+									mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+								} else {
+									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+									mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
+									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								}
 							}
 						}
 						break;
@@ -104,6 +103,11 @@ public class Drive extends Subsystem {
 		public void onStop(double timestamp) {
 			stop();
 		}
+
+		@Override
+		public String getName() {
+			return "Drive";
+		}
 	};
 
 	private Drive() {
@@ -111,8 +115,9 @@ public class Drive extends Subsystem {
 
 		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.setInverted(false);
-		mLeftMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
-		mLeftMaster.setMotionParameters(10000, 500);
+		mLeftMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
+		mLeftMaster.setDFilter(0.25);
+		mLeftMaster.setMotionParameters(2000, 1000);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
@@ -123,8 +128,9 @@ public class Drive extends Subsystem {
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
-		mRightMaster.setPIDF(0.00016, 0, 0.0004, 0.000156);
-		mRightMaster.setMotionParameters(10000, 500);
+		mRightMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
+		mRightMaster.setDFilter(0.25);
+		mRightMaster.setMotionParameters(2000, 1000);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
@@ -146,7 +152,17 @@ public class Drive extends Subsystem {
 		mIsBrakeMode = true;
 		setBrakeMode(false);
 
+
 		mMotionPlanner = new DriveMotionPlanner();
+	}
+
+	public void configureClimbCurrentLimit() {
+		mBrakeSwitchEnabled = false;
+		setBrakeMode(true);
+		mLeftMaster.setSmartCurrentLimit(50);
+		mLeftSlaveA.setSmartCurrentLimit(50);
+		mRightMaster.setSmartCurrentLimit(25);
+		mRightSlaveA.setSmartCurrentLimit(25);
 	}
 
 	public static Drive getInstance() {
@@ -188,6 +204,30 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_demand = signal.getRight();
 		mPeriodicIO.left_feedforward = 0.0;
 		mPeriodicIO.right_feedforward = 0.0;
+	}
+
+	public synchronized void setClimbLeft(double leftPos) {
+		if (mDriveControlState != DriveControlState.CLIMB) {
+			setBrakeMode(true);
+
+			mDriveControlState = DriveControlState.CLIMB;
+		}
+		mPeriodicIO.left_demand = leftPos;
+		mPeriodicIO.left_feedforward = 0.0;
+	}
+
+	public synchronized void setClimbRight(double rightSignal) {
+		if (mDriveControlState != DriveControlState.CLIMB) {
+			setBrakeMode(true);
+
+			mDriveControlState = DriveControlState.CLIMB;
+		}
+		mPeriodicIO.right_demand = rightSignal;
+		mPeriodicIO.right_feedforward = 0.0;
+	}
+
+	public DriveControlState getDriveControlState() {
+		return mDriveControlState;
 	}
 
 	public synchronized void setVelocity(DriveSignal signal, DriveSignal feedforward) {
@@ -244,6 +284,14 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 //			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
+	}
+
+	public synchronized double getPitch() {
+		return mPeriodicIO.gyro_pitch;
+	}
+
+	public synchronized double getRoll() {
+		return mPeriodicIO.gyro_roll;
 	}
 
 	public synchronized Rotation2d getHeading() {
@@ -359,6 +407,8 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
 		mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
+		mPeriodicIO.gyro_pitch = mGyro.getPitch();
+		mPeriodicIO.gyro_roll = mGyro.getRoll();
 
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
@@ -384,11 +434,14 @@ public class Drive extends Subsystem {
 		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
-		} else {
+		} else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
 			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
 					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
+		} else if (mDriveControlState == DriveControlState.CLIMB) {
+			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
+			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		}
 	}
 
@@ -524,6 +577,8 @@ public class Drive extends Subsystem {
 	public enum DriveControlState {
 		OPEN_LOOP,
 		PATH_FOLLOWING,
+		VELOCITY,
+		CLIMB
 	}
 
 	public enum ShifterState {
@@ -541,6 +596,8 @@ public class Drive extends Subsystem {
 		public double left_velocity_RPM;
 		public double right_velocity_RPM;
 		public Rotation2d gyro_heading = Rotation2d.identity();
+		public double gyro_pitch;
+		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();
 
 		// OUTPUTS

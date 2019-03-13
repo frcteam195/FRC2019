@@ -23,17 +23,18 @@ public class ConnectionMonitor {
     private LatchedBoolean mJustReconnected;
     private LatchedBoolean mJustDisconnected;
     private LEDController mLED;
+    private final Thread t;
 
     private ConnectionMonitor() throws Exception {
         ThreadRateControl threadRateControl = new ThreadRateControl();
         mLastPacketTime = 0.0;
         mJustReconnected = new LatchedBoolean();
         mJustDisconnected = new LatchedBoolean();
-        runThread = false;
+        runThread = true;
         hasConnection = true;
         mLED = LEDController.getInstance();
 
-        Thread t = new Thread (() -> {
+        t = new Thread (() -> {
             mLastPacketTime = Timer.getFPGATimestamp();
             threadRateControl.start();
 

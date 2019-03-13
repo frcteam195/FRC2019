@@ -118,6 +118,11 @@ public class SubsystemManager implements ILooper {
 		public void onStop(double timestamp) {
 			mLoops.forEach((l) -> l.onStop(timestamp));
 		}
+
+		@Override
+		public String getName() {
+			return "SubsystemManager";
+		}
 	}
 
 	private class DisabledLoop implements Loop {
@@ -141,6 +146,11 @@ public class SubsystemManager implements ILooper {
 		@Override
 		public void onStop(double timestamp) {
 
+		}
+
+		@Override
+		public String getName() {
+			return "SubsystemManager";
 		}
 	}
 

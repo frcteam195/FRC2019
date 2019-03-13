@@ -1,5 +1,9 @@
 package com.team254.lib.util;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
+
+import java.io.Console;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,6 +50,15 @@ public class CrashTracker {
     }
 
     private static void logMarker(String mark, Throwable nullableException) {
+
+        try {
+            ConsoleReporter.report(mark, MessageLevel.WARNING);
+            if (nullableException != null)
+                ConsoleReporter.report(nullableException);
+        }
+        catch (Exception ex) {
+            ConsoleReporter.report(ex);
+        }
 
         try (PrintWriter writer = new PrintWriter(new FileWriter("/home/lvuser/crash_tracking.txt", true))) {
             writer.print(RUN_INSTANCE_UUID.toString());

@@ -21,7 +21,7 @@ public class ThreadRateControl {
 	}
 
 	@Override
-	@SuppressWarnings("NoFinalizer")
+	@SuppressWarnings({"NoFinalizer", "deprecation"})
 	protected void finalize() {
 		NotifierJNI.stopNotifier(m_notifier);
 		NotifierJNI.cleanNotifier(m_notifier);
