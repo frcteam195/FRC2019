@@ -69,8 +69,7 @@ public class HIDController {
 							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
 							double turn;
 							if (VisionTracker.getInstance().isVisionEnabled()) {
-//								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.005, 1), -1);
-								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetVertAngleDev() * 0.01, 1), -1);
+								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							}
 							else {
 								if (Math.abs(throttle) > 0.5) {
@@ -98,7 +97,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(7), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1)/3.0, (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
 							}
 							else if (!buttonBox2.getRawButton(7)) {
-//								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
+								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 							}
 
 							if (driveJoystick.getRisingEdgeButton(1)) {
