@@ -92,6 +92,8 @@ public class Drive extends Subsystem {
 					case PATH_FOLLOWING:
 						updatePathFollower();
 						break;
+					case CLIMB:
+						break;
 					default:
 						ConsoleReporter.report("Unexpected drive control state: " + mDriveControlState, MessageLevel.DEFCON1);
 						break;
@@ -202,7 +204,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
 
-			mDriveControlState = DriveControlState.OPEN_LOOP;
+			setDriveControlState(DriveControlState.OPEN_LOOP);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -214,7 +216,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.CLIMB;
+			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.left_demand = leftPos;
 		mPeriodicIO.left_feedforward = 0.0;
@@ -224,7 +226,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.CLIMB;
+			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.right_demand = rightSignal;
 		mPeriodicIO.right_feedforward = 0.0;
@@ -240,7 +242,7 @@ public class Drive extends Subsystem {
 			mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 			mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 
-			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+			setDriveControlState(DriveControlState.PATH_FOLLOWING);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -253,7 +255,7 @@ public class Drive extends Subsystem {
 			mOverrideTrajectory = false;
 			mMotionPlanner.reset();
 			mMotionPlanner.setTrajectory(trajectory);
-			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+			setDriveControlState(DriveControlState.PATH_FOLLOWING);
 		}
 	}
 
@@ -288,6 +290,10 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 //			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
+	}
+
+	public synchronized void setDriveControlState(DriveControlState driveControlState) {
+		mDriveControlState = driveControlState;
 	}
 
 	public synchronized double getPitch() {

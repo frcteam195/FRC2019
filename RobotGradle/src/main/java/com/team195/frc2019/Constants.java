@@ -117,7 +117,10 @@ public class Constants {
     public static final int kBallIntakeArmDownPositionCruiseVel = 160;
     public static final int kBallIntakeArmDownPositionMMAccel = 320;
     //Units in rotations
-    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
+//    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
+
+    public static final double kBallIntakeArmForwardSoftLimit = 0.155;
+
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

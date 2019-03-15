@@ -162,10 +162,13 @@ public class HIDController {
 							    TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> buttonBox2.getRawButton(9)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(10)) {
-								TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(false), 1));
+								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetBeakAction(false), 1));
 							}
 							else if (buttonBox2.getRisingEdgeButton(11)) {
-
+								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetDrivePTOAction(false), 1));
+							}
+							else if (buttonBox2.getRisingEdgeButton(12)) {
+								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(13)) {
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
