@@ -75,6 +75,14 @@ public class CKTalonSRX implements TuneableMotorController {
 		localQuadPosition = new CachedValue<>(100, (t) -> convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1)));
 	}
 
+	public SensorCollection getSensorCollection() {
+		return mTalonSRX.getSensorCollection();
+	}
+
+	public void setLocalQuadPosition(double position) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.getSensorCollection().setQuadraturePosition(convertRotationsToNativeUnits(position), Constants.kCANTimeoutMs));
+	}
+
 	private void doDefaultConfig(Configuration config) {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.clearStickyFaults(Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS));

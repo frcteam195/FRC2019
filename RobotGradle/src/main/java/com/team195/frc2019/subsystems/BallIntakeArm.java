@@ -129,7 +129,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	public void setSensorsForReset() {
-		mBallArmRotationMotor.setEncoderPosition(0);
+		mBallArmRotationMotor.setLocalQuadPosition(0);
 	}
 
 	@Override
