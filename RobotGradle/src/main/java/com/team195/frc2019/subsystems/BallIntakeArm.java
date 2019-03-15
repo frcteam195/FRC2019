@@ -59,7 +59,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
-		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
+		mBallArmRotationMotor.configCurrentLimit(6, 0, 0);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
@@ -130,6 +130,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void setSensorsForReset() {
 		mBallArmRotationMotor.setLocalQuadPosition(0);
+		mBallArmRotationMotor.setEncoderPosition(0);
+		trc.doRateControl(100);
 	}
 
 	@Override
@@ -194,6 +196,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void configureClimbCurrentLimit() {
 //		mBallArmRollerMotor.configCurrentLimit();
+		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 	}

@@ -31,7 +31,7 @@ public class SetIntakeBarForwardClimbAction implements Action {
 
 	@Override
 	public void done() {
-		mDrive.setClimbRight(0.25);
+		mDrive.setClimbRight(0.65);
 	}
 
 	@Override
