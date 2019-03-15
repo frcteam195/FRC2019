@@ -1,5 +1,8 @@
 package com.team195.frc2019.subsystems;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
@@ -56,6 +59,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.configReverseSoftLimitEnable(true);
 		mElevatorMaster.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
+
 //		TuneablePIDOSC x;
 //		try {
 //			x = new TuneablePIDOSC("Elevator", 5804, true, mElevatorMaster);
@@ -70,6 +74,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorSlaveB.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 		mElevatorSlaveC = new CKTalonSRX(Constants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
 		mElevatorSlaveC.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+
+
+		//Limit Switch Homing for Elevator
+		mElevatorSlaveC.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
+		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, 16);
+		mElevatorMaster.configZeroOnLimit();
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
 				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
