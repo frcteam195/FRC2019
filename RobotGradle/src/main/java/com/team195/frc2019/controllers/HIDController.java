@@ -156,7 +156,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
 							}
 							else if (buttonBox2.getRisingEdgeButton(8)) {
-								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(8)));
+
 							}
 							else if (buttonBox2.getRisingEdgeButton(9)) {
 							    TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> buttonBox2.getRawButton(9)));
@@ -166,6 +166,9 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(11)) {
 
+							}
+							else if (buttonBox2.getRisingEdgeButton(13)) {
+								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
 								//Flash LEDs
