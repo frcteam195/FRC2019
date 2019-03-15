@@ -16,6 +16,7 @@ import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class Robot extends TimedRobot {
 	private Looper mEnabledLooper = new Looper("EnabledLooper");
@@ -51,6 +52,9 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		try {
 			CrashTracker.logRobotInit();
+
+			LiveWindow.disableAllTelemetry();
+
 			ConsoleReporter.getInstance().start();
 			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 

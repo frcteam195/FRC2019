@@ -15,7 +15,7 @@ public class SetVisionEnabledHatchSteerAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return (!mButtonGetterMethod.apply(null));
+		return (!mButtonGetterMethod.apply(null)) || mVisionTracker.isTargetAreaReached();
 	}
 
 	@Override
