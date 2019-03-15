@@ -8,6 +8,6 @@ On the LED plug-in board inside the Limelight, there are two 150Ω resistors tha
 
 We replace these two 150Ω resistors with 1kΩ resistors, which lowers the current flowing through our LEDs, thereby decreasing the brightness.
 
-##### Why don't we cover some LEDs with tape instead?
+#### Why don't we cover some LEDs with tape instead?
 
 We do not want to destroy the uniformity of light that is provided by having multiple LEDs across a larger area. We found from testing, that at the stock brightness configuration, going down to one LED on each side was what was required for us to reach our desired target exposure. With only one LED on each side, the target had very mottled color and was not ideal for targeting. Lowering the brightness on the entire LED array and having all LEDs on solved this issue for us.
