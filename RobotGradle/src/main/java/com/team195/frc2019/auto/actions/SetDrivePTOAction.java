@@ -33,8 +33,7 @@ public class SetDrivePTOAction implements Action {
 	public void start() {
 		if (mDriveClimber)
 			mDrive.setDriveControlState(Drive.DriveControlState.CLIMB);
-		else
-			mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
+		
 		mDrive.setPTO(mDriveClimber);
 	}
 }

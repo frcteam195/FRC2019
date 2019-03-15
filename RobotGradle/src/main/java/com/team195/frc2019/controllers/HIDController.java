@@ -166,6 +166,7 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(11)) {
 								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetDrivePTOAction(false), 1));
+								mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 							}
 							else if (buttonBox2.getRisingEdgeButton(12)) {
 								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));

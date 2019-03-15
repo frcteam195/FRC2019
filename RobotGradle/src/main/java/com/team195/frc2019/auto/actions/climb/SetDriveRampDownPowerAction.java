@@ -32,6 +32,7 @@ public class SetDriveRampDownPowerAction implements Action {
 
 	@Override
 	public void start() {
-		mDrive.setOpenLoop(new DriveSignal(mDriveOutput, mDriveOutput));
+		mDrive.setClimbLeft(mDriveOutput);
+		mDrive.setClimbRight(mDriveOutput);
 	}
 }
