@@ -136,6 +136,11 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configForwardLimitSwitchSource(type, normalOpenOrClose, Constants.kCANTimeoutMs));
 	}
 
+	public void configForwardLimitSwitchSource(RemoteLimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int deviceID) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose, deviceID, Constants.kCANTimeoutMs));
+	}
+
+
 	public void configReverseLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose, Constants.kCANTimeoutMs));
 	}

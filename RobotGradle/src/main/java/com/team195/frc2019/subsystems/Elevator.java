@@ -78,7 +78,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 		//Limit Switch Homing for Elevator
 		mElevatorSlaveC.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
-		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, 16);
+		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, Constants.kElevatorSlaveCRightId);
 //		mElevatorMaster.configZeroOnLimit();
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
