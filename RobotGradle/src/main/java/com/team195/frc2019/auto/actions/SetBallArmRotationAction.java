@@ -1,5 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.BallIntakeArm;
 import com.team195.lib.util.ThreadRateControl;
 
@@ -15,6 +16,7 @@ public class SetBallArmRotationAction implements Action {
 
 	@Override
 	public boolean isFinished() {
+		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
 		return mBallArm.isArmAtSetpoint(0.05);
 	}
 

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TeleopActionRunner {
@@ -70,25 +71,30 @@ public class TeleopActionRunner {
 	}
 
 	public static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
-		ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
-		if (mActionLock.tryLock()) {
-			try {
-				if (mActionList.size() > 0) {
-					mActionList.removeIf((xAction) -> {
-						for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
-							if (action.getRequiredSubsystems().contains(xSubsystem))
-								return true;
-						}
-						return false;
-					});
+		try {
+			ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+			if (mActionLock.tryLock(50, TimeUnit.MILLISECONDS)) {
+				try {
+					if (mActionList.size() > 0) {
+						mActionList.removeIf((xAction) -> {
+							for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
+								if (action.getRequiredSubsystems().contains(xSubsystem))
+									return true;
+							}
+							return false;
+						});
+					}
+					mActionList.add(action);
+				} catch (Exception ex) {
+					ConsoleReporter.report(ex);
+				} finally {
+					ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+					mActionLock.unlock();
 				}
-				mActionList.add(action);
-			} catch (Exception ex) {
-				ConsoleReporter.report(ex);
-			} finally {
-				ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
-				mActionLock.unlock();
 			}
+		}
+		catch (Exception ex) {
+			ConsoleReporter.report(ex);
 		}
 
 		if (waitForCompletion) {

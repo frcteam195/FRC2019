@@ -25,7 +25,8 @@ public class SetOpenLoopDriveAction implements Action {
 
 	@Override
 	public void update() {
-		mDrive.setOpenLoop(new DriveSignal(mAxisLeftGetterMethod.apply(null), mAxisRightGetterMethod.apply(null)));
+		mDrive.setClimbLeft(mAxisLeftGetterMethod.apply(null));
+		mDrive.setClimbRight(mAxisRightGetterMethod.apply(null));
 	}
 
 	@Override
@@ -35,6 +36,7 @@ public class SetOpenLoopDriveAction implements Action {
 
 	@Override
 	public void start() {
-		mDrive.setOpenLoop(new DriveSignal(0, 0));
+		mDrive.setClimbLeft(0);
+		mDrive.setClimbRight(0);
 	}
 }

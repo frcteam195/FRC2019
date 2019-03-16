@@ -106,8 +106,8 @@ public class Constants {
     public static final double kBallIntakeArmUpPositionKi = 0.0;
     public static final double kBallIntakeArmUpPositionKd = 100.0;
     public static final double kBallIntakeArmUpPositionKf = 1.6;
-    public static final int kBallIntakeArmUpPositionCruiseVel = 90;
-    public static final int kBallIntakeArmUpPositionMMAccel = 55;
+    public static final int kBallIntakeArmUpPositionCruiseVel = 50;
+    public static final int kBallIntakeArmUpPositionMMAccel = 45;
 
     //100:1
     public static final double kBallIntakeArmDownPositionKp = 3.7;
@@ -117,7 +117,10 @@ public class Constants {
     public static final int kBallIntakeArmDownPositionCruiseVel = 160;
     public static final int kBallIntakeArmDownPositionMMAccel = 320;
     //Units in rotations
-    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
+//    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
+
+    public static final double kBallIntakeArmForwardSoftLimit = 0.155;
+
 
     // Do not change anything after this line unless you rewire the robot and
     // update the spreadsheet!

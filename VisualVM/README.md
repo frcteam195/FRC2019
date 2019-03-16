@@ -13,8 +13,10 @@ frcJavaArtifact('frcJava') {
 	targets << "roborio"
 	// Debug can be overridden by command line (./gradlew deploy -PdebugMode), for use with VSCode
 	debug = frc.getDebugOrDefault(false)
-	project.logger.lifecycle('Checking if debug mode...')
-	if (debug) {
+	
+	project.logger.lifecycle('Checking if profile mode...')
+	//Enter profile mode with ./gradlew deploy -PprofileMode
+	if (frc.project.hasProperty("profileMode")) {
 		project.logger.lifecycle('Debug mode enabled!')
 		project.logger.lifecycle("Connect JMX client to ${TEAMIP}:1099 for RoboRIO profiling with visualvm.")
 		jvmArgs = [ "-Dcom.sun.management.jmxremote=true",
@@ -22,7 +24,7 @@ frcJavaArtifact('frcJava') {
 					"-Dcom.sun.management.jmxremote.local.only=false",
 					"-Dcom.sun.management.jmxremote.ssl=false",
 					"-Dcom.sun.management.jmxremote.authenticate=false",
-					"-Djava.rmi.server.hostname=${TEAMIP}"
+					"-Djava.rmi.server.hostname=10.1.95.2"
 					]
 	}
 }

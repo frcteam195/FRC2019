@@ -75,6 +75,14 @@ public class CKTalonSRX implements TuneableMotorController {
 		localQuadPosition = new CachedValue<>(100, (t) -> convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1)));
 	}
 
+	public SensorCollection getSensorCollection() {
+		return mTalonSRX.getSensorCollection();
+	}
+
+	public void setLocalQuadPosition(double position) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.getSensorCollection().setQuadraturePosition(convertRotationsToNativeUnits(position), Constants.kCANTimeoutMs));
+	}
+
 	private void doDefaultConfig(Configuration config) {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.clearStickyFaults(Constants.kLongCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.setControlFramePeriod(ControlFrame.Control_3_General, config.CONTROL_FRAME_PERIOD_MS));
@@ -124,14 +132,25 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configSelectedFeedbackSensor(feedbackDevice, 0, Constants.kCANTimeoutMs));
 	}
 
-	public ErrorCode configForwardLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
-
-		return mTalonSRX.configForwardLimitSwitchSource(type, normalOpenOrClose);
+	public void configForwardLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configForwardLimitSwitchSource(type, normalOpenOrClose, Constants.kCANTimeoutMs));
 	}
 
-	public ErrorCode configReverseLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
+	public void configForwardLimitSwitchSource(RemoteLimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int deviceID) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose, deviceID, Constants.kCANTimeoutMs));
+	}
 
-		return mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose);
+
+	public void configReverseLimitSwitchSource(LimitSwitchSource type, LimitSwitchNormal normalOpenOrClose) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose, Constants.kCANTimeoutMs));
+	}
+
+	public void configReverseLimitSwitchSource(RemoteLimitSwitchSource type, LimitSwitchNormal normalOpenOrClose, int deviceID) {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configReverseLimitSwitchSource(type, normalOpenOrClose, deviceID, Constants.kCANTimeoutMs));
+	}
+
+	public void configZeroOnLimit() {
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configClearPositionOnLimitR(true, Constants.kCANTimeoutMs));
 	}
 
 	public void setSensorPhase(boolean inverted) {

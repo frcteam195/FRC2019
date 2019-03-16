@@ -1,7 +1,6 @@
 package com.team195.frc2019.subsystems;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.RemoteFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.*;
 import com.team195.frc2019.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
@@ -43,11 +42,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
-		mBallArmRotationMotor.setFeedbackDevice(FeedbackDevice.CTRE_MagEncoder_Relative);
+		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, Constants.kBallIntakeRollerMotorId);
+		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmUpPositionKp, Constants.kBallIntakeArmUpPositionKi, Constants.kBallIntakeArmUpPositionKd, Constants.kBallIntakeArmUpPositionKf);
 		mBallArmRotationMotor.setMotionParameters(Constants.kBallIntakeArmUpPositionCruiseVel, Constants.kBallIntakeArmUpPositionMMAccel);
 		mBallArmRotationMotor.setPIDGainSlot(1);
 		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, Constants.kBallIntakeRollerMotorId);
+		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmDownPositionKp, Constants.kBallIntakeArmDownPositionKi, Constants.kBallIntakeArmDownPositionKd, Constants.kBallIntakeArmDownPositionKf);
 		mBallArmRotationMotor.setMotionParameters(Constants.kBallIntakeArmDownPositionCruiseVel, Constants.kBallIntakeArmDownPositionMMAccel);
 
@@ -59,7 +60,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
-		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
+		mBallArmRotationMotor.configCurrentLimit(6, 0, 0);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
@@ -129,7 +130,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	public void setSensorsForReset() {
+		mBallArmRotationMotor.setLocalQuadPosition(0);
 		mBallArmRotationMotor.setEncoderPosition(0);
+		trc.doRateControl(100);
 	}
 
 	@Override
@@ -165,7 +168,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 							rotationPIDSlot = 1;
 
 						if (ballArmUpCheck.hasPassedConditions())
-							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, rotationPIDSlot, 0);
+							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
 
 						break;
 					case OPEN_LOOP:
@@ -194,6 +197,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void configureClimbCurrentLimit() {
 //		mBallArmRollerMotor.configCurrentLimit();
+		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 	}

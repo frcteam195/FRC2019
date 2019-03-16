@@ -31,6 +31,9 @@ public class SetDrivePTOAction implements Action {
 
 	@Override
 	public void start() {
+		if (mDriveClimber)
+			mDrive.setDriveControlState(Drive.DriveControlState.CLIMB);
+		
 		mDrive.setPTO(mDriveClimber);
 	}
 }

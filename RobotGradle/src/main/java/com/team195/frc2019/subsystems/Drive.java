@@ -92,6 +92,8 @@ public class Drive extends Subsystem {
 					case PATH_FOLLOWING:
 						updatePathFollower();
 						break;
+					case CLIMB:
+						break;
 					default:
 						ConsoleReporter.report("Unexpected drive control state: " + mDriveControlState, MessageLevel.DEFCON1);
 						break;
@@ -118,9 +120,11 @@ public class Drive extends Subsystem {
 		mLeftMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
 		mLeftMaster.setDFilter(0.25);
 		mLeftMaster.setMotionParameters(2000, 1000);
+		mLeftMaster.setSmartCurrentLimit(40);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
+		mLeftSlaveA.setSmartCurrentLimit(40);
 		mLeftSlaveA.writeToFlash();
 
 //		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
@@ -131,9 +135,11 @@ public class Drive extends Subsystem {
 		mRightMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
 		mRightMaster.setDFilter(0.25);
 		mRightMaster.setMotionParameters(2000, 1000);
+		mRightMaster.setSmartCurrentLimit(40);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
+		mRightSlaveA.setSmartCurrentLimit(40);
 		mRightSlaveA.writeToFlash();
 
 //		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
@@ -198,7 +204,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
 
-			mDriveControlState = DriveControlState.OPEN_LOOP;
+			setDriveControlState(DriveControlState.OPEN_LOOP);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -210,7 +216,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.CLIMB;
+			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.left_demand = leftPos;
 		mPeriodicIO.left_feedforward = 0.0;
@@ -220,7 +226,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
 
-			mDriveControlState = DriveControlState.CLIMB;
+			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.right_demand = rightSignal;
 		mPeriodicIO.right_feedforward = 0.0;
@@ -236,7 +242,7 @@ public class Drive extends Subsystem {
 			mLeftMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 			mRightMaster.setPIDGainSlot(kLowGearVelocityControlSlot);
 
-			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+			setDriveControlState(DriveControlState.PATH_FOLLOWING);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -249,7 +255,7 @@ public class Drive extends Subsystem {
 			mOverrideTrajectory = false;
 			mMotionPlanner.reset();
 			mMotionPlanner.setTrajectory(trajectory);
-			mDriveControlState = DriveControlState.PATH_FOLLOWING;
+			setDriveControlState(DriveControlState.PATH_FOLLOWING);
 		}
 	}
 
@@ -284,6 +290,10 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 //			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
+	}
+
+	public synchronized void setDriveControlState(DriveControlState driveControlState) {
+		mDriveControlState = driveControlState;
 	}
 
 	public synchronized double getPitch() {
