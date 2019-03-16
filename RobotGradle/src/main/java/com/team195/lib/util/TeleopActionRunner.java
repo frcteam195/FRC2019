@@ -20,6 +20,7 @@ public class TeleopActionRunner {
 
 	static {
 		Thread mRunnerThread = new Thread(() -> {
+			Thread.currentThread().setName("TeleopActionRunner");
 			ThreadRateControl threadRateControl = new ThreadRateControl();
 			threadRateControl.start();
 

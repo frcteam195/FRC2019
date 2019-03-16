@@ -53,6 +53,7 @@ public class HIDController {
 		if (controlThread == null || !controlThread.isAlive()) {
 			setRunState(true);
 			controlThread = new Thread(() -> {
+				Thread.currentThread().setName("HIDController");
 				ThreadRateControl threadRateControl = new ThreadRateControl();
 				threadRateControl.start();
 				while (runThread) {

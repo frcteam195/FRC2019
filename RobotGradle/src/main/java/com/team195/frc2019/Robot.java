@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
 	public Robot() {
 		CrashTracker.logRobotConstruction();
 		Thread.currentThread().setPriority(Constants.kRobotThreadPriority);
+		Thread.currentThread().setName("RobotMainThread");
 	}
 
 	@Override
