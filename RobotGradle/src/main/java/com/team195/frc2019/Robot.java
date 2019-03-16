@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 		Drive.getInstance(),        //0
 		Elevator.getInstance(),     //20-40ms
 		BallIntakeArm.getInstance(),
-		HatchIntakeArm.getInstance(),
+//		HatchIntakeArm.getInstance(),
 		Turret.getInstance(),
 		Infrastructure.getInstance(),
 		VisionTracker.getInstance()

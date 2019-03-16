@@ -108,7 +108,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
 							}
 							else if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
-								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));
+//								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));
 							} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
 								TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold));
 							}
@@ -147,7 +147,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)));
 							}
 							else if (buttonBox1.getRisingEdgeButton(13)) {
-								BallIntakeArm.getInstance().setSensorsForReset();
+//								BallIntakeArm.getInstance().setSensorsForReset();
 								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
 							}
 							else if (buttonBox1.getRisingEdgeButton(14)) {

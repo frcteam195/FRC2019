@@ -32,11 +32,13 @@ public class SetBallArmRotationAction implements Action {
 
 	@Override
 	public void start() {
-		mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
-		mBallArm.zeroRemoteSensor();
-		trc.start();
-		trc.doRateControl(100);
-		mBallArm.setBallIntakeArmPosition(mRotation);
-		mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
+		if (mBallArm.getSetpoint() != mRotation) {
+			mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
+			mBallArm.zeroRemoteSensor();
+			trc.start();
+			trc.doRateControl(100);
+			mBallArm.setBallIntakeArmPosition(mRotation);
+			mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
+		}
 	}
 }

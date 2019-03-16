@@ -81,11 +81,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, Constants.kElevatorSlaveCRightId);
 //		mElevatorMaster.configZeroOnLimit();
 
-		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
-				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
-						&& HatchIntakeArm.getInstance().getPosition() < HatchArmPositions.CollisionThreshold)),
-				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Inside
-						&& Math.abs(HatchIntakeArm.getInstance().getPosition() - HatchArmPositions.Inside) > HatchArmPositions.PositionDelta))
+		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true
+
+//				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Outside
+//						&& HatchIntakeArm.getInstance().getPosition() < HatchArmPositions.CollisionThreshold)),
+//				(t) -> ((HatchIntakeArm.getInstance().getSetpoint() == HatchArmPositions.Inside
+//						&& Math.abs(HatchIntakeArm.getInstance().getPosition() - HatchArmPositions.Inside) > HatchArmPositions.PositionDelta))
 		);
 
 		requestMoveElevatorDownCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
