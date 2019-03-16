@@ -21,6 +21,7 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.bmuschko.tomcat'
 
 def TEAM = 195
+def TEAMIP = "10.1.95.2"
 def ROBOT_MAIN_CLASS = "com.team195.frc2019.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -38,8 +39,22 @@ deploy {
     artifacts {
         frcJavaArtifact('frcJava') {
             targets << "roborio"
-            // Debug can be overridden by command line, for use with VSCode
-            debug = frc.getDebugOrDefault(false)
+			// Debug can be overridden by command line (./gradlew deploy -PdebugMode), for use with VSCode
+			debug = frc.getDebugOrDefault(false)
+	
+			project.logger.lifecycle('Checking if profile mode...')
+			//Enter profile mode with ./gradlew deploy -PprofileMode
+			if (frc.project.hasProperty("profileMode")) {
+				project.logger.lifecycle('Debug mode enabled!')
+				project.logger.lifecycle("Connect JMX client to ${TEAMIP}:1099 for RoboRIO profiling with visualvm.")
+				jvmArgs = [ "-Dcom.sun.management.jmxremote=true",
+							"-Dcom.sun.management.jmxremote.port=1099",
+							"-Dcom.sun.management.jmxremote.local.only=false",
+							"-Dcom.sun.management.jmxremote.ssl=false",
+							"-Dcom.sun.management.jmxremote.authenticate=false",
+							"-Djava.rmi.server.hostname=10.1.95.2"
+							]
+			}
         }
         // Built in artifact to deploy arbitrary files to the roboRIO.
         fileTreeArtifact('frcStaticFileDeploy') {
