@@ -134,6 +134,7 @@ public class OSCPortIn extends OSCPort implements Runnable {
 			listeningThread = new Thread(this);
 			// The JVM exits when the only threads running are all daemon threads.
 			listeningThread.setDaemon(true);
+			listeningThread.setName("OSCReceiver");
 			listeningThread.start();
 		}
 	}
