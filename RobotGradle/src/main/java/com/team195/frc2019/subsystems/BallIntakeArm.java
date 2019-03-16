@@ -198,7 +198,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void configureClimbCurrentLimit() {
 //		mBallArmRollerMotor.configCurrentLimit();
-		mBallArmRotationMotor.configCurrentLimit(17, 25, 250);
+//		mBallArmRotationMotor.configCurrentLimit(17, 25, 250);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 	}
