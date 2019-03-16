@@ -102,12 +102,19 @@ public class Constants {
 
 
     //200:1
-    public static final double kBallIntakeArmUpPositionKp = 7.3;
+//    public static final double kBallIntakeArmUpPositionKp = 7.3;
+//    public static final double kBallIntakeArmUpPositionKi = 0.0;
+//    public static final double kBallIntakeArmUpPositionKd = 100.0;
+//    public static final double kBallIntakeArmUpPositionKf = 1.6;
+//    public static final int kBallIntakeArmUpPositionCruiseVel = 50;
+//    public static final int kBallIntakeArmUpPositionMMAccel = 45;
+
+    public static final double kBallIntakeArmUpPositionKp = 3.7;
     public static final double kBallIntakeArmUpPositionKi = 0.0;
-    public static final double kBallIntakeArmUpPositionKd = 100.0;
-    public static final double kBallIntakeArmUpPositionKf = 1.6;
-    public static final int kBallIntakeArmUpPositionCruiseVel = 50;
-    public static final int kBallIntakeArmUpPositionMMAccel = 45;
+    public static final double kBallIntakeArmUpPositionKd = 12.0;
+    public static final double kBallIntakeArmUpPositionKf = 0.8000721603;
+    public static final int kBallIntakeArmUpPositionCruiseVel = 160;
+    public static final int kBallIntakeArmUpPositionMMAccel = 320;
 
     //100:1
     public static final double kBallIntakeArmDownPositionKp = 3.7;
@@ -119,7 +126,7 @@ public class Constants {
     //Units in rotations
 //    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
 
-    public static final double kBallIntakeArmForwardSoftLimit = 0.155;
+    public static final double kBallIntakeArmForwardSoftLimit = 4;
 
 
     // Do not change anything after this line unless you rewire the robot and

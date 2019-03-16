@@ -60,7 +60,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
-		mBallArmRotationMotor.configCurrentLimit(6, 0, 0);
+		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 
 //		TuneablePIDOSC x;
@@ -89,8 +89,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public boolean isSystemFaulted() {
-		boolean systemFaulted = !mBallArmRotationMotor.isEncoderPresent();
-		systemFaulted |= mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
+		boolean systemFaulted = !mBallArmRollerMotor.isEncoderPresent();
+		systemFaulted |= mBallArmRollerMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
 			setBallIntakeArmControlMode(BallIntakeArmControlMode.DISABLED);
 		return systemFaulted;
@@ -132,6 +132,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	public void setSensorsForReset() {
 		mBallArmRotationMotor.setLocalQuadPosition(0);
 		mBallArmRotationMotor.setEncoderPosition(0);
+		zeroRemoteSensor();
 		trc.doRateControl(100);
 	}
 
@@ -197,7 +198,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void configureClimbCurrentLimit() {
 //		mBallArmRollerMotor.configCurrentLimit();
-		mBallArmRotationMotor.configCurrentLimit(10, 25, 250);
+		mBallArmRotationMotor.configCurrentLimit(17, 25, 250);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 	}
@@ -208,7 +209,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getPosition() {
-		return mBallArmRotationMotor.getLocalQuadPosition();
+		return mBallArmRotationMotor.getPosition();
 	}
 
 	public double getRemotePosition() {

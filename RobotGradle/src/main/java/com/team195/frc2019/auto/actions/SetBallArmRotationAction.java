@@ -17,7 +17,7 @@ public class SetBallArmRotationAction implements Action {
 	@Override
 	public boolean isFinished() {
 		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
-		return mBallArm.isArmAtSetpoint(0.05);
+		return mBallArm.isArmAtSetpoint(0.5);
 	}
 
 	@Override

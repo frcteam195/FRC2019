@@ -31,9 +31,10 @@ public class Drive extends Subsystem {
 
 	private static final int kLowGearVelocityControlSlot = 0;
 	private static Drive mInstance = new Drive();
-	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA;//, mLeftSlaveB, mRightSlaveB;
+	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
 	private final CKDoubleSolenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
+	private BrakeState mBrakeState = BrakeState.MOTOR_MASTER;
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
 	private boolean mIsBrakeMode;
@@ -57,11 +58,19 @@ public class Drive extends Subsystem {
 		public void onStart(double timestamp) {
 			synchronized (Drive.this) {
 				setOpenLoop(new DriveSignal(0, 0));
-				setBrakeMode(false);
-				mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-				mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-				mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-				mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+				if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+					setBrakeMode(false);
+					mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+					mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
+					mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+					mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
+					mLeftSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
+					mRightSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
+				}
+				else {
+					setBrakeMode(false);
+					setBrakeMode(true);
+				}
 			}
 		}
 
@@ -75,16 +84,22 @@ public class Drive extends Subsystem {
 								mLastBrakeSwitch = Timer.getFPGATimestamp();
 								mMasterBrake = !mMasterBrake;
 
-								if (mMasterBrake) {
-									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-									mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-								} else {
-									mLeftMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-									mRightMaster.setBrakeCoastMode(MCNeutralMode.Coast);
-									mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
-									mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Brake);
+								switch (mBrakeState) {
+									case MOTOR_MASTER:
+										setBrake(mLeftMaster, mRightMaster);
+										setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
+										mBrakeState = BrakeState.MOTOR_SLAVEA;
+										break;
+									case MOTOR_SLAVEA:
+										setBrake(mLeftSlaveA, mRightSlaveA);
+										setCoast(mLeftMaster, mLeftSlaveB, mRightMaster, mRightSlaveB);
+										mBrakeState = BrakeState.MOTOR_SLAVEB;
+										break;
+									case MOTOR_SLAVEB:
+										setBrake(mLeftSlaveB, mRightSlaveB);
+										setCoast(mLeftMaster, mLeftSlaveA, mRightMaster, mRightSlaveA);
+										mBrakeState = BrakeState.MOTOR_MASTER;
+										break;
 								}
 							}
 						}
@@ -112,6 +127,22 @@ public class Drive extends Subsystem {
 		}
 	};
 
+	private void setBrake(CKSparkMax... brakeMCs) {
+		if (brakeMCs != null && brakeMCs.length > 0) {
+			for (CKSparkMax cksm : brakeMCs) {
+				cksm.setBrakeCoastMode(MCNeutralMode.Brake);
+			}
+		}
+	}
+
+	private void setCoast(CKSparkMax... coastMCs) {
+		if (coastMCs != null && coastMCs.length > 0) {
+			for (CKSparkMax cksm : coastMCs) {
+				cksm.setBrakeCoastMode(MCNeutralMode.Coast);
+			}
+		}
+	}
+
 	private Drive() {
 		mPeriodicIO = new PeriodicIO();
 
@@ -120,30 +151,32 @@ public class Drive extends Subsystem {
 		mLeftMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
 		mLeftMaster.setDFilter(0.25);
 		mLeftMaster.setMotionParameters(2000, 1000);
-		mLeftMaster.setSmartCurrentLimit(40);
+		mLeftMaster.setSmartCurrentLimit(50);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveA.setSmartCurrentLimit(40);
+		mLeftSlaveA.setSmartCurrentLimit(50);
 		mLeftSlaveA.writeToFlash();
 
-//		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-//		mLeftSlaveB.writeToFlash();
+		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
+		mLeftSlaveB.setSmartCurrentLimit(50);
+		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.setInverted(true);
 		mRightMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
 		mRightMaster.setDFilter(0.25);
 		mRightMaster.setMotionParameters(2000, 1000);
-		mRightMaster.setSmartCurrentLimit(40);
+		mRightMaster.setSmartCurrentLimit(50);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveA.setSmartCurrentLimit(40);
+		mRightSlaveA.setSmartCurrentLimit(50);
 		mRightSlaveA.writeToFlash();
 
-//		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-//		mRightSlaveB.writeToFlash();
+		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
+		mRightSlaveB.setSmartCurrentLimit(50);
+		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
@@ -167,8 +200,10 @@ public class Drive extends Subsystem {
 		setBrakeMode(true);
 		mLeftMaster.setSmartCurrentLimit(50);
 		mLeftSlaveA.setSmartCurrentLimit(50);
+		mLeftSlaveB.setSmartCurrentLimit(50);
 		mRightMaster.setSmartCurrentLimit(25);
 		mRightSlaveA.setSmartCurrentLimit(25);
+		mRightSlaveB.setSmartCurrentLimit(25);
 	}
 
 	public static Drive getInstance() {
@@ -284,11 +319,11 @@ public class Drive extends Subsystem {
 			MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
 			mRightMaster.setBrakeCoastMode(mode);
 			mRightSlaveA.setBrakeCoastMode(mode);
-//			mRightSlaveB.setBrakeCoastMode(mode);
+			mRightSlaveB.setBrakeCoastMode(mode);
 
 			mLeftMaster.setBrakeCoastMode(mode);
 			mLeftSlaveA.setBrakeCoastMode(mode);
-//			mLeftSlaveB.setBrakeCoastMode(mode);
+			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
 	}
 
@@ -595,6 +630,12 @@ public class Drive extends Subsystem {
 		FORCE_LOW_GEAR,
 		FORCE_HIGH_GEAR,
 		AUTO_SHIFT
+	}
+
+	public enum BrakeState {
+		MOTOR_MASTER,
+		MOTOR_SLAVEA,
+		MOTOR_SLAVEB;
 	}
 
 	public static class PeriodicIO {

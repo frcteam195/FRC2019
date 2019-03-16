@@ -41,8 +41,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private double mElevatorSetpoint = 0;
 
-	private static final int mContinuousCurrentLimit = 8;
-	private static final int mPeakCurrentLimit = 12;
+	private static final int mContinuousCurrentLimit = 8;  //8
+	private static final int mPeakCurrentLimit = 12;    //12
 	private static final int mPeakCurrentDurationMS = 250;
 
 	private Elevator() {
