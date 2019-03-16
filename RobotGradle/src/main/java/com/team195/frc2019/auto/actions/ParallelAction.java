@@ -3,6 +3,9 @@ package com.team195.frc2019.auto.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
+
 /**
  * Composite action, running all sub-actions at the same time. All actions are started then periodically updated until all actions
  * report being done.
@@ -35,6 +38,7 @@ public class ParallelAction implements Action {
     @Override
     public void done() {
         for (Action action : mActions) {
+            ConsoleReporter.report("Finishing: " + action.getClass().getSimpleName(), MessageLevel.INFO);
             action.done();
         }
     }
@@ -42,6 +46,7 @@ public class ParallelAction implements Action {
     @Override
     public void start() {
         for (Action action : mActions) {
+            ConsoleReporter.report("Starting : " + action.getClass().getSimpleName(), MessageLevel.INFO);
             action.start();
         }
     }

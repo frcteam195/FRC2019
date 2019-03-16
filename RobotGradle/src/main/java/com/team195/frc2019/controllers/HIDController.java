@@ -7,6 +7,7 @@ import com.team195.frc2019.auto.actions.climb.SetBallIntakeArmRotationOpenLoopAc
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
@@ -154,6 +155,7 @@ public class HIDController {
 
 
 							if (buttonBox2.getRisingEdgeButton(7)) {
+								ConsoleReporter.report("Commanding Prepare Climb Action", MessageLevel.INFO);
 								BallIntakeArm.getInstance().configureClimbCurrentLimit();
 								Drive.getInstance().configureClimbCurrentLimit();
 								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
@@ -168,13 +170,16 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetBeakAction(false), 1));
 							}
 							else if (buttonBox2.getRisingEdgeButton(11)) {
+								ConsoleReporter.report("Commanding Drive Mode", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetDrivePTOAction(false), 1));
 								mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 							}
 							else if (buttonBox2.getRisingEdgeButton(12)) {
+								ConsoleReporter.report("Commanding Climb Open Action", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(13)) {
+								ConsoleReporter.report("Commanding Automated Climb Action", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
