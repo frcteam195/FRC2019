@@ -97,6 +97,7 @@ public class ConsoleReporter extends Thread {
 
 	@Override
 	public void run() {
+		Thread.currentThread().setName("ConsoleReporter");
 		while (runThread) {
 			try {
 				_reporterMutex.lock();

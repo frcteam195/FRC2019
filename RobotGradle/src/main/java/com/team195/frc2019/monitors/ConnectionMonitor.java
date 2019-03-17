@@ -35,6 +35,7 @@ public class ConnectionMonitor {
         mLED = LEDController.getInstance();
 
         t = new Thread (() -> {
+            Thread.currentThread().setName("ConnectionMonitor");
             mLastPacketTime = Timer.getFPGATimestamp();
             threadRateControl.start();
 

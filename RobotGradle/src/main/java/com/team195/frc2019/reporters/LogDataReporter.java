@@ -26,6 +26,7 @@ public class LogDataReporter {
 	private LogDataReporter() {
 		ThreadRateControl threadRateControl = new ThreadRateControl();
 		Thread t = new Thread (() -> {
+			Thread.currentThread().setName("LogDataReporter");
 			threadRateControl.start();
 			while (runThread) {
 				reportOSCData(subsystemManager.generateReport());

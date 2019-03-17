@@ -17,6 +17,7 @@ public class CriticalSystemsMonitor {
 	private CriticalSystemsMonitor() {
 		ThreadRateControl threadRateControl = new ThreadRateControl();
 		Thread t = new Thread(() -> {
+			Thread.currentThread().setName("CriticalSystemsMonitor");
 			threadRateControl.start();
 			while (runThread) {
 				subsystemManager.checkSubsystemFaulted();

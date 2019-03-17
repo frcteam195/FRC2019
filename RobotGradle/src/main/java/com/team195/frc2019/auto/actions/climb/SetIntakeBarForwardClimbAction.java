@@ -13,7 +13,7 @@ public class SetIntakeBarForwardClimbAction implements Action {
 	private static final Drive mDrive = Drive.getInstance();
 	private static final BallIntakeArm mBallIntakeArm = BallIntakeArm.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(10);
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(6);
 
 	public SetIntakeBarForwardClimbAction() {
 

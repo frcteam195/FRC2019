@@ -34,6 +34,7 @@ public class Looper implements ILooper, Reportable {
         public void runCrashTracked() {
             synchronized (taskRunningLock_) {
                 if (isFirstRun) {
+                    Thread.currentThread().setName("LooperThread");
                     Thread.currentThread().setPriority(Constants.kLooperThreadPriority);
                     isFirstRun = false;
                 }

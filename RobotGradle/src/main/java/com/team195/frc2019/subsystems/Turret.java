@@ -92,7 +92,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				(t) -> (Elevator.getInstance().getPosition() >= ElevatorPositions.CollisionThresholdTurret - ElevatorPositions.PositionDelta),
 				(t) -> (Elevator.getInstance().getSetpoint() >= ElevatorPositions.CollisionThresholdTurret),
 				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Down),
-				(t) -> (Math.abs(BallIntakeArm.getInstance().getPosition()) < BallIntakeArmPositions.CollisionThreshold)
+				(t) -> (BallIntakeArm.getInstance().getPosition() < BallIntakeArmPositions.CollisionThreshold)
 		);
 	}
 

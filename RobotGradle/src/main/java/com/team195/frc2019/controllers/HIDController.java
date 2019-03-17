@@ -53,6 +53,7 @@ public class HIDController {
 		if (controlThread == null || !controlThread.isAlive()) {
 			setRunState(true);
 			controlThread = new Thread(() -> {
+				Thread.currentThread().setName("HIDController");
 				ThreadRateControl threadRateControl = new ThreadRateControl();
 				threadRateControl.start();
 				while (runThread) {
@@ -107,7 +108,7 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
 							}
 							else if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
-								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));
+//								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));
 							} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
 								TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold));
 							}
@@ -146,19 +147,22 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)));
 							}
 							else if (buttonBox1.getRisingEdgeButton(13)) {
-								BallIntakeArm.getInstance().setSensorsForReset();
+//								BallIntakeArm.getInstance().setSensorsForReset();
 								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
 							}
 							else if (buttonBox1.getRisingEdgeButton(14)) {
 								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
 							}
 
-
-							if (buttonBox2.getRisingEdgeButton(7)) {
+							if (buttonBox2.getRisingEdgeButton(6)) {
+								ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
+								TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
+							}
+							else if (buttonBox2.getRisingEdgeButton(7)) {
 								ConsoleReporter.report("Commanding Prepare Climb Action", MessageLevel.INFO);
-								BallIntakeArm.getInstance().configureClimbCurrentLimit();
-								Drive.getInstance().configureClimbCurrentLimit();
-								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
+//								BallIntakeArm.getInstance().configureClimbCurrentLimit();
+//								Drive.getInstance().configureClimbCurrentLimit();
+//								TeleopActionRunner.runAction(AutomatedActions.prepareClimb());
 							}
 							else if (buttonBox2.getRisingEdgeButton(8)) {
 
@@ -180,6 +184,8 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(13)) {
 								ConsoleReporter.report("Commanding Automated Climb Action", MessageLevel.INFO);
+								BallIntakeArm.getInstance().configureClimbCurrentLimit();
+								Drive.getInstance().configureClimbCurrentLimit();
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {

@@ -88,6 +88,7 @@ public class LEDController extends Thread {
 
     @Override
 	public void run() {
+	    Thread.currentThread().setName("LEDController");
 		threadRateControl.start();
     	while (runThread) {
 			synchronized (LEDController.this) {

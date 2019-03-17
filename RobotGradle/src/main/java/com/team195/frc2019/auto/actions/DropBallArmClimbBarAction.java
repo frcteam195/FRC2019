@@ -7,7 +7,7 @@ import com.team195.lib.util.TimeoutTimer;
 public class DropBallArmClimbBarAction implements Action {
 	private static final BallIntakeArm mBallIntakeArm = BallIntakeArm.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait);
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait + AutoConstants.kArmFallWait);
 
 	public DropBallArmClimbBarAction() {
 	}
