@@ -81,7 +81,7 @@ public class VisionTracker extends Subsystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		return false;
 	}
 
@@ -121,11 +121,12 @@ public class VisionTracker extends Subsystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "VisionXDev:" + mPeriodicIO.targetHorizontalDeviation + ";" +
 				"VisionYDev:" + mPeriodicIO.targetVerticalDeviation + ";" +
 				"VisionArea:" + mPeriodicIO.targetArea + ";" +
-				"VisionDistance:" + mPeriodicIO.targetDistance + ";";
+				"VisionDistance:" + mPeriodicIO.targetDistance + ";" +
+				"IsVisionSystemFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

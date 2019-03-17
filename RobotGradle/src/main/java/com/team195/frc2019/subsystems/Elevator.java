@@ -106,7 +106,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mElevatorMaster.isEncoderPresent();
 		systemFaulted |= mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
@@ -176,7 +176,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
 				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
 				"ElevatorOutput:" + mElevatorSetpoint + ";" +

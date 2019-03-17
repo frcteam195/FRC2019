@@ -56,7 +56,6 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent, boolean invert) {
 		this(deviceID, type, breakerCurrent, normalSlaveConfig);
 		addConfigStatement((t) -> follow(masterSpark, invert));
-		runUserConfig();
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 		burnFlash();
 	}
@@ -101,6 +100,9 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	public void addConfigStatement(Consumer<Void> function) {
+		//Run the command
+		function.accept(null);
+		//Add it to the array of userconfig commands
 		try {
 			configArrLock.tryLock(100, TimeUnit.MILLISECONDS);
 			mUserConfigArray.add(function);

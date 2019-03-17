@@ -80,7 +80,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mHatchArmRotationMotor.isEncoderPresent();
 		systemFaulted |= mHatchArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
@@ -94,7 +94,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "HatchArmPos:" + mHatchArmRotationMotor.getVelocity() + ";" +
 				"HatchArmVel:" + mHatchArmRotationMotor.getVelocity() + ";" +
 				"HatchArmOutput:" + mHatchArmSetpoint + ";" +
@@ -108,7 +108,8 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 				"HatchArmIntakeCurrent:" + mHatchArmRollerMotor.getMCOutputCurrent() + ";" +
 				"HatchArmIntakeOutputDutyCycle:" + mHatchArmRollerMotor.getMCOutputPercent() + ";" +
 				"HatchArmIntakeOutputVoltage:" + mHatchArmRollerMotor.getMCOutputPercent() * mHatchArmRollerMotor.getMCInputVoltage() + ";" +
-				"HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";";
+				"HatchArmIntakeSupplyVoltage:" + mHatchArmRollerMotor.getMCInputVoltage() + ";" +
+				"IsHatchArmFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

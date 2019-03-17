@@ -106,7 +106,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mTurretRotationMotor.isEncoderPresent();
 		systemFaulted |= mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
@@ -120,7 +120,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
 				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
 				"TurretOutput:" + mTurretSetpoint + ";" +
@@ -135,7 +135,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
 				"TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent() * mBallShooterRollerMotor.getMCInputVoltage() + ";" +
 				"TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";" +
-				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";";
+				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";" +
+				"IsTurretFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

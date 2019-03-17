@@ -88,7 +88,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mBallArmRollerMotor.isEncoderPresent();
 		systemFaulted |= mBallArmRollerMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
 		if (systemFaulted)
@@ -102,7 +102,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
 				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
 				"BallArmOutput:" + mBallIntakeArmSetpoint + ";" +
@@ -116,7 +116,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
 				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
 				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +
-				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";";
+				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";" +
+				"IsBallIntakeArmFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

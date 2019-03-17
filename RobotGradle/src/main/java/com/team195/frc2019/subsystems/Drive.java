@@ -149,17 +149,14 @@ public class Drive extends Subsystem {
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.writeToFlash());
-		mLeftMaster.runUserConfig();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.writeToFlash());
-		mLeftSlaveA.runUserConfig();
 
 		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.writeToFlash());
-		mLeftSlaveB.runUserConfig();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
@@ -168,18 +165,14 @@ public class Drive extends Subsystem {
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.writeToFlash());
-		mRightMaster.runUserConfig();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.writeToFlash());
-		mRightSlaveA.runUserConfig();
 
 		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.writeToFlash());
-		mRightSlaveB.runUserConfig();
-
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
@@ -202,22 +195,12 @@ public class Drive extends Subsystem {
 		mBrakeSwitchEnabled = false;
 		setBrakeMode(true);
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
-		mLeftMaster.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
-
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
-		mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
-
 		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
-		mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
 
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
-		mRightMaster.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
-
 		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
-		mRightSlaveA.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
-
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
-		mRightSlaveB.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
 	}
 
 	public static Drive getInstance() {
@@ -578,7 +561,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 
 		//		sb.append("AccelX:" + mGyro.getRawAccelX() + ";");
 //		sb.append("AccelY:" + mGyro.getRawAccelY() + ";");
@@ -618,7 +601,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean leftSensorFaulted = !mLeftMaster.isEncoderPresent();
 		boolean rightSensorFaulted = !mRightMaster.isEncoderPresent();
 		boolean navXFaulted = !mGyro.isPresent();
