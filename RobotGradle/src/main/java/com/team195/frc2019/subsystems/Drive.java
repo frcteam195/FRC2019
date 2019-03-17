@@ -147,36 +147,43 @@ public class Drive extends Subsystem {
 		mPeriodicIO = new PeriodicIO();
 
 		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
-		mLeftMaster.setInverted(false);
-		mLeftMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
-		mLeftMaster.setDFilter(0.25);
-		mLeftMaster.setMotionParameters(2000, 1000);
-		mLeftMaster.setSmartCurrentLimit(50);
-		mLeftMaster.writeToFlash();
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setInverted(false));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(Constants.kDriveLowGearPositionDFilter));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.writeToFlash());
+		mLeftMaster.runUserConfig();
 
 		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveA.setSmartCurrentLimit(50);
-		mLeftSlaveA.writeToFlash();
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.writeToFlash());
+		mLeftSlaveA.runUserConfig();
 
 		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveB.setSmartCurrentLimit(50);
-		mLeftSlaveB.writeToFlash();
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.writeToFlash());
+		mLeftSlaveB.runUserConfig();
 
 		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
-		mRightMaster.setInverted(true);
-		mRightMaster.setPIDF(0.000090, 0, 0.001600, 0.000162);
-		mRightMaster.setDFilter(0.25);
-		mRightMaster.setMotionParameters(2000, 1000);
-		mRightMaster.setSmartCurrentLimit(50);
-		mRightMaster.writeToFlash();
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(Constants.kDriveLowGearPositionDFilter));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.writeToFlash());
+		mRightMaster.runUserConfig();
 
 		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveA.setSmartCurrentLimit(50);
-		mRightSlaveA.writeToFlash();
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.writeToFlash());
+		mRightSlaveA.runUserConfig();
 
 		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveB.setSmartCurrentLimit(50);
-		mRightSlaveB.writeToFlash();
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.writeToFlash());
+		mRightSlaveB.runUserConfig();
+
 
 		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
@@ -198,12 +205,23 @@ public class Drive extends Subsystem {
 	public void configureClimbCurrentLimit() {
 		mBrakeSwitchEnabled = false;
 		setBrakeMode(true);
-		mLeftMaster.setSmartCurrentLimit(50);
-		mLeftSlaveA.setSmartCurrentLimit(50);
-		mLeftSlaveB.setSmartCurrentLimit(50);
-		mRightMaster.setSmartCurrentLimit(25);
-		mRightSlaveA.setSmartCurrentLimit(25);
-		mRightSlaveB.setSmartCurrentLimit(25);
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
+		mLeftMaster.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
+
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
+		mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
+
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
+		mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim);
+
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
+		mRightMaster.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
+
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
+		mRightSlaveA.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
+
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
+		mRightSlaveB.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim);
 	}
 
 	public static Drive getInstance() {

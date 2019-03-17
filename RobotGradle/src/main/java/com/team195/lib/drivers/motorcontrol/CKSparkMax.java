@@ -6,7 +6,12 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private int currentSelectedSlot = 0;
@@ -15,38 +20,43 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	private double prevOutput = Double.MIN_VALUE;
 	private double setpoint = 0;
 
+	private ArrayList<Consumer<Void>> mUserConfigArray = new ArrayList<>();
+	private ReentrantLock configArrLock = new ReentrantLock();
+	private final Configuration mCurrentConfig;
+
 //	private Configuration fastMasterConfig = new Configuration(5, 5, 20, 50);
 //	private Configuration normalMasterConfig = new Configuration(10, 10, 20, 50);
 //	private Configuration normalSlaveConfig = new Configuration(10, 100, 100, 100);
 
-	private Configuration fastMasterConfig = new Configuration(5, 5, 10, 10);
-	private Configuration normalMasterConfig = new Configuration(10, 10, 10, 10);
-	private Configuration normalSlaveConfig = new Configuration(10, 100, 100, 100);
+	private static final Configuration fastMasterConfig = new Configuration(5, 5, 10, 10);
+	private static final Configuration normalMasterConfig = new Configuration(10, 10, 10, 10);
+	private static final Configuration normalSlaveConfig = new Configuration(10, 100, 100, 100);
 
 	private final PDPBreaker motorBreaker;
 
 	private MCControlMode currentControlMode = MCControlMode.PercentOut;
 
-	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
+	private CKSparkMax(int deviceID, MotorType type, PDPBreaker breakerCurrent, Configuration deviceConfig) {
 		super(deviceID, type);
 		restoreFactoryDefaults();
 		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
+		doDefaultConfig(deviceConfig);
+		mCurrentConfig = deviceConfig;
+	}
+
+	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
+		this(deviceID, type, breakerCurrent, fastMaster ? fastMasterConfig : normalMasterConfig);
 		canPIDController.setOutputRange(-1, 1);
-		doDefaultConfig(fastMaster ? fastMasterConfig : normalMasterConfig);
 		setBrakeCoastMode(MCNeutralMode.Brake);
 		burnFlash();
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent, boolean invert) {
-		super(deviceID, type);
-		restoreFactoryDefaults();
-		motorBreaker = breakerCurrent;
-		canPIDController = getPIDController();
-		canEncoder = getEncoder();
-		doDefaultConfig(normalSlaveConfig);
-		follow(masterSpark, invert);
+		this(deviceID, type, breakerCurrent, normalSlaveConfig);
+		addConfigStatement((t) -> follow(masterSpark, invert));
+		runUserConfig();
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 		burnFlash();
 	}
@@ -55,27 +65,19 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		//Fix encoder transient 0s which cause issues with all kinds of motion code
 		setCANTimeout(500);
 
-//		setControlFramePeriod(config.CONTROL_FRAME_PERIOD_MS);
-		boolean setSucceeded;
-		int retryCounter = 0;
-		do {
-			setSucceeded = setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS) == CANError.kOK;
-			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS) == CANError.kOK;
-			setSucceeded &= setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS) == CANError.kOK;
-			setSucceeded &= setSmartCurrentLimit(motorBreaker.value * 2) == CANError.kOK;
-			setSucceeded &= enableVoltageCompensation(12) == CANError.kOK;
-			// setSucceeded &= setOpenLoopRampRate(0.2) == CANError.kOK;
-			setSucceeded &= setOpenLoopRampRate(0.075) == CANError.kOK;
-			//Erase previously stored output values
-			set(MCControlMode.PercentOut, 0, 0, 0);
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to config Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		setControlFramePeriodMs(config.CONTROL_FRAME_PERIOD_MS);
+		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus0, config.STATUS_FRAME_0_MS));
+		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS));
+		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS));
+		runSparkMAXFunctionWithRetry((t) -> setSmartCurrentLimit(motorBreaker.value * 2));
+		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(12));
+		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(0.075));
+		set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
 	@Deprecated
 	public void set(double DO_NOT_USE) {
-
+		set(MCControlMode.PercentOut, DO_NOT_USE, 0, 0);
 	}
 
 	@Override
@@ -90,26 +92,48 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			currentControlMode = controlMode;
 			setpoint = demand;
 
-			boolean setSucceeded;
-			int retryCounter = 1;
-
-			do {
-				setSucceeded = canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward) == CANError.kOK;
-			} while (!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-				ConsoleReporter.report("Failed to set output Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+			canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward);
+//			final double finalDemand = demand;
+//			runSparkMAXFunctionWithRetry((t) -> canPIDController.setReference(finalDemand, controlMode.Rev(), slotIdx, arbitraryFeedForward));
 
 			prevOutput = demand + arbitraryFeedForward;
 		}
 	}
 
+	public void addConfigStatement(Consumer<Void> function) {
+		try {
+			configArrLock.tryLock(100, TimeUnit.MILLISECONDS);
+			mUserConfigArray.add(function);
+		}
+		catch (Exception ex) {
+			ConsoleReporter.report(ex);
+		}
+		finally
+		{
+			configArrLock.unlock();
+		}
+	}
+
+	public void runUserConfig() {
+		try {
+			configArrLock.tryLock(500, TimeUnit.MILLISECONDS);
+			mUserConfigArray.forEach((f) -> f.accept(null));
+		}
+		catch (Exception ex) {
+			ConsoleReporter.report(ex);
+		}
+		finally
+		{
+			configArrLock.unlock();
+		}
+	}
+
 	public synchronized void setMinimumSetpointOutput(double minSetpointOutput) {
-		canPIDController.setSmartMotionMinOutputVelocity(minSetpointOutput, currentSelectedSlot);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setSmartMotionMinOutputVelocity(minSetpointOutput, currentSelectedSlot));
 	}
 
 	public synchronized void setAllowedClosedLoopError(double allowedClosedLoopError) {
-		canPIDController.setSmartMotionAllowedClosedLoopError(allowedClosedLoopError, currentSelectedSlot);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setSmartMotionAllowedClosedLoopError(allowedClosedLoopError, currentSelectedSlot));
 	}
 
 	public double getPosition() {
@@ -145,72 +169,40 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public void setPIDF(double kP, double kI, double kD, double kF) {
-		boolean setSucceeded;
-		int retryCounter = 0;
-
-		do {
-			setSucceeded = canPIDController.setP(kP, currentSelectedSlot) == CANError.kOK;
-			setSucceeded &= canPIDController.setI(kI, currentSelectedSlot) == CANError.kOK;
-			setSucceeded &= canPIDController.setD(kD, currentSelectedSlot) == CANError.kOK;
-			setSucceeded &= canPIDController.setFF(kF, currentSelectedSlot) == CANError.kOK;
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set PID Gains Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setP(kP, currentSelectedSlot));
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setI(kI, currentSelectedSlot));
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setD(kD, currentSelectedSlot));
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setFF(kF, currentSelectedSlot));
 	}
 
 	@Override
 	public void setDFilter(double dFilter) {
-		canPIDController.setDFilter(dFilter, currentSelectedSlot);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setDFilter(dFilter, currentSelectedSlot));
 	}
 
 	@Override
 	public void setIZone(double iZone) {
-		boolean setSucceeded;
-		int retryCounter = 0;
-
-		do {
-			setSucceeded = canPIDController.setIZone(iZone, currentSelectedSlot) == CANError.kOK;
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set IZone Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setIZone(iZone, currentSelectedSlot));
 	}
 
 	@Override
 	public void setMCIAccum(double iAccum) {
-		canPIDController.setIAccum(iAccum);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setIAccum(iAccum));
 	}
 
 	@Override
 	public void setMaxIAccum(double maxIAccum) {
-		canPIDController.setIMaxAccum(maxIAccum, currentSelectedSlot);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setIMaxAccum(maxIAccum, currentSelectedSlot));
 	}
 
 	@Override
 	public void setMCOpenLoopRampRate(double rampRate) {
-		boolean setSucceeded;
-		int retryCounter = 0;
-
-		do {
-			setSucceeded = setOpenLoopRampRate(rampRate) == CANError.kOK;
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(rampRate));
 	}
 
 	@Override
 	public void setMCClosedLoopRampRate(double rampRate) {
-		boolean setSucceeded;
-		int retryCounter = 0;
-
-		do {
-			setSucceeded = setClosedLoopRampRate(rampRate) == CANError.kOK;
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set Ramp rate Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		runSparkMAXFunctionWithRetry((t) -> setClosedLoopRampRate(rampRate));
 	}
 
 	@Override
@@ -226,15 +218,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public void setBrakeCoastMode(MCNeutralMode neutralMode) {
-		boolean setSucceeded;
-		int retryCounter = 0;
-
-		do {
-			setSucceeded = setIdleMode(neutralMode.Rev()) == CANError.kOK;
-		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-			ConsoleReporter.report("Failed to set Idle Mode Spark Max " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
+		runSparkMAXFunctionWithRetry((t) -> setIdleMode(neutralMode.Rev()));
 	}
 
 	@Override
@@ -370,19 +354,26 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		if (getFault(FaultID.kHasReset)) {
 			ConsoleReporter.report("Spark Max ID " + getDeviceId() + " has reset!", MessageLevel.DEFCON1);
 
-			boolean setSucceeded;
-			int retryCounter = 0;
-
-			do {
-				setSucceeded = clearFaults() == CANError.kOK;
-			} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
-
-			if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
-				ConsoleReporter.report("Failed to clear Spark Max ID " + getDeviceId() + " Reset !!!!!!", MessageLevel.DEFCON1);
+			//Do full reconfigure on SparkMAX after reset due to it's unreliable return after a breaker trip
+			runSparkMAXFunctionWithRetry((t) -> clearFaults());
+			doDefaultConfig(mCurrentConfig);
+			runUserConfig();
 
 			return new DiagnosticMessage("SparkMax" + getDeviceId() + "ResetHasOccurred");
 		}
 		return DiagnosticMessage.NO_MSG;
+	}
+
+	private synchronized void runSparkMAXFunctionWithRetry(Function<Void, CANError> sparkMAXCall) {
+		boolean setSucceeded;
+		int retryCounter = 0;
+
+		do {
+			setSucceeded = sparkMAXCall.apply(null) == CANError.kOK;
+		} while(!setSucceeded && retryCounter++ < Constants.kTalonRetryCount);
+
+		if (retryCounter >= Constants.kTalonRetryCount || !setSucceeded)
+			ConsoleReporter.report("Failed to set parameter SparkMAX " + getDeviceId() + " !!!!!!", MessageLevel.DEFCON1);
 	}
 
 	@Override

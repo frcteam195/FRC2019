@@ -62,6 +62,22 @@ public class Constants {
     public static final int kDriveLowGearVelocityIZone = 0;
     public static final double kDriveVoltageRampRate = 0.0;
 
+    // PID gains for drive position loop (LOW GEAR)
+    // Units: setpoint, error, and output are in ticks per second.
+    public static final double kDriveLowGearPositionKp = 0.000090;
+    public static final double kDriveLowGearPositionKi = 0.0;
+    public static final double kDriveLowGearPositionKd = 0.001600;
+    public static final double kDriveLowGearPositionDFilter = 0.25;
+    public static final double kDriveLowGearPositionKf = 0.000162;
+    public static final double kDriveLowGearPositionCruiseVel = 2000;
+    public static final double kDriveLowGearPositionAccel = 1000;
+    public static final int kDriveLowGearPositoinIZone = 0;
+
+    public static final int kDriveLowGearCurrentLim = 50;
+    public static final int kDriveLeftClimbCurrentLim = 50;
+    public static final int kDriveRightClimbCurrentLim = 25;
+
+
 
     //17.25:1
     public static final double kElevatorPositionKp = 1.9;
