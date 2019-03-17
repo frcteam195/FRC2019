@@ -349,7 +349,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	}
 
 	@Override
-	public DiagnosticMessage hasMotorControllerReset() {
+	public synchronized DiagnosticMessage hasMotorControllerReset() {
 		//TODO: Verify this works in SparkMax API
 		if (getFault(FaultID.kHasReset)) {
 			ConsoleReporter.report("Spark Max ID " + getDeviceId() + " has reset!", MessageLevel.DEFCON1);

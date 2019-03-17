@@ -60,12 +60,8 @@ public class Drive extends Subsystem {
 				setOpenLoop(new DriveSignal(0, 0));
 				if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 					setBrakeMode(false);
-					mLeftMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-					mRightMaster.setBrakeCoastMode(MCNeutralMode.Brake);
-					mLeftSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-					mRightSlaveA.setBrakeCoastMode(MCNeutralMode.Coast);
-					mLeftSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
-					mRightSlaveB.setBrakeCoastMode(MCNeutralMode.Coast);
+					setBrake(mLeftMaster, mRightMaster);
+					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
 				}
 				else {
 					setBrakeMode(false);
@@ -598,9 +594,10 @@ public class Drive extends Subsystem {
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
 				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
 				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
+				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
 				"LeftDrive1HasReset:" + mLeftMaster.hasMotorControllerReset() + ";" +
 				"LeftDrive2HasReset:" + mLeftSlaveA.hasMotorControllerReset() + ";" +
-//				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
+				"LeftDrive3HasReset:" + mLeftSlaveB.hasMotorControllerReset() + ";" +
 				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
 				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
 				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
@@ -609,9 +606,10 @@ public class Drive extends Subsystem {
 				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
 				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
 				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
+				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
 				"RightDrive1HasReset:" + mRightMaster.hasMotorControllerReset() + ";" +
 				"RightDrive2HasReset:" + mRightSlaveA.hasMotorControllerReset() + ";" +
-//				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
+				"RightDrive3HasReset:" + mRightSlaveB.hasMotorControllerReset() + ";" +
 				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
 				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
 				"RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";" +
@@ -633,6 +631,15 @@ public class Drive extends Subsystem {
 
 		if (navXFaulted)
 			ConsoleReporter.report("NavX Error", MessageLevel.DEFCON1);
+
+		//These functions are called in the LogDataReporter, so don't call them twice to save CPU.
+		//If LogDataReporter not enabled, call them here
+//		mLeftMaster.hasMotorControllerReset();
+//		mLeftSlaveA.hasMotorControllerReset();
+//		mLeftSlaveB.hasMotorControllerReset();
+//		mRightMaster.hasMotorControllerReset();
+//		mRightSlaveA.hasMotorControllerReset();
+//		mRightSlaveB.hasMotorControllerReset();
 
 		return leftSensorFaulted || rightSensorFaulted || navXFaulted;
 	}
