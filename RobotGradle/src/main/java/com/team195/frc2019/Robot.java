@@ -194,8 +194,8 @@ public class Robot extends TimedRobot {
 			}
 
 //			mInfrastructure.setIsDuringAuto(true);
-			Drive.getInstance().zeroSensors();
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+//			Drive.getInstance().zeroSensors();
+//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			mAutoModeExecutor = new AutoModeExecutor();
 
