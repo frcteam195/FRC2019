@@ -191,7 +191,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 				"Elevator2HasReset:" + mElevatorSlaveA.hasMotorControllerReset().getMessage() + ";" +
 				"Elevator3HasReset:" + mElevatorSlaveB.hasMotorControllerReset().getMessage() + ";" +
 				"Elevator4HasReset:" + mElevatorSlaveC.hasMotorControllerReset().getMessage() + ";" +
-				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";";
+				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";" +
+				"IsElevatorFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
