@@ -66,40 +66,20 @@ public class HIDController {
 							//User Control Interface code here
 							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
-//							double throttle = -driveJoystick.getRawAxis(1) * scalingFactor;
-//							double turn = driveJoystick.getRawAxis(4) * scalingFactor;
-
-							double throttle = -driveJoystick.getNormalizedAxis(1, 0.08) * scalingFactor;
+							double throttle = -driveJoystick.getSmoothedAxis(1, 0.08, 2) * scalingFactor;
 							double turn;
 							if (VisionTracker.getInstance().isVisionEnabled()) {
 								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							}
 							else {
-								if (Math.abs(throttle) > 0.5) {
-									// turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
-									turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor;
-								} else {
-									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.35;
-								}
+								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
 							}
-							// double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.65;
-							// turn *= 0.75;
-
-							// boolean quickTurn = driveJoystick.getRawButton(5);
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
 								throttle *= Constants.kLowSensitivityFactor;
 								turn *= Constants.kLowSensitivityFactor;
 							}
 
-//							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, mDrive.isHighGear()));
-
-//							if (buttonBox2.getRisingEdgeButton(7)) {
-//								BallIntakeArm.getInstance().configureClimbCurrentLimit();
-//								Drive.getInstance().configureClimbCurrentLimit();
-//								TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(7), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1)/3.0, (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
-//							}
-//							else
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 							}
@@ -154,6 +134,8 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
 							}
 
+
+
 							if (buttonBox2.getRisingEdgeButton(6)) {
 								ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
@@ -193,20 +175,20 @@ public class HIDController {
 								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
 							}
 
-							if (armControlJoystick.getRisingEdgeButton(2)) {
-								//Manual turret spin and twist Z axis 2
-								//TeleopActionRunner.runAction(AutomatedActions.setTurretOpenLoop((t) -> armControlJoystick.getRawButton(2),
-								//													(t) -> armControlJoystick.getRawAxis(2)));
-							}
+
 
 							if (armControlJoystick.getRisingEdgeButton(1)) {
 								//Flash LEDs to signal Human Player
 								LEDController.getInstance().setLEDColor(Constants.kRequestGamePieceColor);
 								LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
 							}
+							else if (armControlJoystick.getRisingEdgeButton(2)) {
+								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretPositionJoystickAction((t) -> armControlJoystick.getRawButton(2),
+										(t) -> armControlJoystick.getNormalizedAxis(2, 0.1)), 300, Turret.getInstance()));
+							}
 							else if (armControlJoystick.getRisingEdgeButton(3)) {
 								//Ball Outtake turret and arm
-								TeleopActionRunner.runAction(AutomatedActions.shootBall());
+								TeleopActionRunner.runAction(AutomatedActions.shootBall((t) -> armControlJoystick.getRawButton(3)));
 							}
 							else if (armControlJoystick.getRisingEdgeButton(4)) {
 								TeleopActionRunner.runAction(AutomatedActions.placeHatch());

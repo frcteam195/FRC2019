@@ -217,6 +217,19 @@ public class AutomatedActions {
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance());
 	}
 
+	public static AutomatedAction shootBall(Function<Void, Boolean> buttonValueGetter) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedNormal));
+		actionArrayList.add(new SetBallPushAction(true));
+		actionArrayList.add(new WaitAction(AutoConstants.kWaitForBallPush));
+		actionArrayList.add(new SetBallPushAction(false));
+		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 5));
+		actionArrayList.add(new SetBallShooterOpenLoopAction(0));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance());
+	}
+
 	public static AutomatedAction elevatorDown() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
