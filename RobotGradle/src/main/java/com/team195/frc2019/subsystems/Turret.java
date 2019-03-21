@@ -73,7 +73,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallShooterRollerMotor.setMCOpenLoopRampRate(0.2);
-		mBallShooterRollerMotor.configCurrentLimit(5, 7, 150);
+		mBallShooterRollerMotor.configCurrentLimit(15, 25, 450);
 
 		mHatchBeakSolenoid = new CKSolenoid(Constants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);

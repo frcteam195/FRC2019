@@ -81,6 +81,7 @@ public class HIDController {
 							}
 
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
+//								mDrive.setBrakeMode(driveJoystick.getRawButton(5));
 								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 							}
 
