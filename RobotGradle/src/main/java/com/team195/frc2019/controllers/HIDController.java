@@ -67,9 +67,19 @@ public class HIDController {
 							double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
 							double throttle = -driveJoystick.getSmoothedAxis(1, 0.08, 2) * scalingFactor;
-							double turn;
+							double turn = 0;
 							if (VisionTracker.getInstance().isVisionEnabled()) {
-								turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+								if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
+									if (VisionTracker.getInstance().isTargetFound())
+										throttle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+								}
+								else if (Turret.getInstance().getSetpoint() == TurretPositions.Left90) {
+									if (VisionTracker.getInstance().isTargetFound())
+										throttle = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+								}
+								else {
+									turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+								}
 							}
 							else {
 								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
@@ -87,6 +97,9 @@ public class HIDController {
 
 							if (driveJoystick.getRisingEdgeButton(1)) {
 								TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
+							}
+							else if (driveJoystick.getRisingEdgeButton(2)) {
+								TeleopActionRunner.runAction(AutomatedActions.enableHatchSidewaysVision((t) -> driveJoystick.getRawButton(2)));
 							}
 							else if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
 //								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> driveJoystick.getRawAxis(2) > Constants.kJoystickTriggerThreshold));

@@ -283,6 +283,10 @@ public class AutomatedActions {
 		return AutomatedAction.fromAction(new SetVisionEnabledHatchSteerAction(buttonValueGetter), Constants.kActionTimeoutS, Drive.getInstance());
 	}
 
+	public static AutomatedAction enableHatchSidewaysVision(Function<Void, Boolean> buttonValueGetter) {
+		return AutomatedAction.fromAction(new SetVisionEnabledHatchSidewaysAction(buttonValueGetter), Constants.kActionTimeoutS, Drive.getInstance());
+	}
+
 	public static AutomatedAction setTurretOpenLoop(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisGetterMethod) {
 		return AutomatedAction.fromAction(new SetTurretOpenLoopAction(buttonGetterMethod, axisGetterMethod), Constants.kActionTimeoutS * 3, BallIntakeArm.getInstance());
 	}
