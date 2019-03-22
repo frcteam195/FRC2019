@@ -2,6 +2,8 @@ package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.*;
 import com.team195.frc2019.Constants;
+import com.team195.frc2019.auto.autonomy.AutomatedAction;
+import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.DiagnosticMessage;
@@ -13,6 +15,7 @@ import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
+import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
 
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {
@@ -148,6 +151,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
 
+				if (mBallArmRotationMotor.getForwardLimitValue())
+					TeleopActionRunner.runAction(AutomatedActions.unfold());
 //				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}

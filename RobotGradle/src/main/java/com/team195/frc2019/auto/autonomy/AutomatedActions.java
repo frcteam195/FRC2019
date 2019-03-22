@@ -122,9 +122,12 @@ public class AutomatedActions {
 	public static AutomatedAction unfold() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
-		actionArrayList.add(new WaitAction(AutoConstants.kWaitForArmFall));
-		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallArmRotationAction(BallIntakeArmPositions.Down),
+				new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow))));
+
+//		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+//		actionArrayList.add(new WaitAction(AutoConstants.kWaitForArmFall));
+//		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance());
 	}

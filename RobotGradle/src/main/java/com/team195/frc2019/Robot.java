@@ -106,7 +106,8 @@ public class Robot extends TimedRobot {
 			Drive.getInstance().zeroSensors();
 			mInfrastructure.setIsDuringAuto(true);
 
-			mAutoModeExecutor.start();
+			if (mAutoModeExecutor != null)
+				mAutoModeExecutor.start();
 
 			mEnabledLooper.start();
 			mHIDController.start();
