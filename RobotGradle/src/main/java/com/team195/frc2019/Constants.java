@@ -75,7 +75,7 @@ public class Constants {
 
     public static final int kDriveLowGearCurrentLim = 50;
     public static final int kDriveLeftClimbCurrentLim = 50;
-    public static final int kDriveRightClimbCurrentLim = 25;
+    public static final int kDriveRightClimbCurrentLim = 30;
 
 
 
