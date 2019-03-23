@@ -270,6 +270,10 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		requestMoveElevatorUpCheck.setEnabled(enabled);
 	}
 
+	public boolean isAtLowerLimit() {
+		return mElevatorSlaveC.getReverseLimitValue();
+	}
+
 	@Override
 	public double getPosition() {
 		return mElevatorMaster.getPosition();

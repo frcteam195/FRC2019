@@ -27,9 +27,9 @@ public class AutomatedActions {
 	public static AutomatedAction homeElevator() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
-//		actionArrayList.add(new SetElevatorOpenLoopAction(0));
-//		actionArrayList.add(new WaitAction(3.5));
-//		actionArrayList.add(new SetElevatorHomeAction());
+		actionArrayList.add(new SetElevatorOpenLoopAction(-0.25));
+		actionArrayList.add(new WaitForElevatorLimitAction(3));
+		actionArrayList.add(new SetElevatorHomeAction());
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
 	}

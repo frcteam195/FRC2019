@@ -25,8 +25,8 @@ public class SetElevatorHomeAction implements Action {
 
 	@Override
 	public void start() {
+		mElevator.setElevatorPosition(0);
 		mElevator.zeroSensors();
 		mElevator.setElevatorControlMode(ElevatorControlMode.POSITION);
-		mElevator.setElevatorPosition(0);
 	}
 }
