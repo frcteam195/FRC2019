@@ -142,6 +142,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mTurretRotationMotor.setEncoderPosition(0);
+		setTurretPosition(0);
 		if (mTurretControlMode == TurretControlMode.POSITION)
 			mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 	}

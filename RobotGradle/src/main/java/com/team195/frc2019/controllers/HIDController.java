@@ -227,7 +227,7 @@ public class HIDController {
 							else if (armControlJoystick.getRisingEdgeButton(8)) {
 								//Turret Open Loop
 								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretOpenLoopAction((t) -> armControlJoystick.getRawButton(8),
-										(t) -> armControlJoystick.getNormalizedAxis(2, 0.1) / 3.0), 300, Turret.getInstance()));
+										(t) -> -armControlJoystick.getNormalizedAxis(2, 0.1) / 3.0), 300, Turret.getInstance()));
 							}
 							else if (armControlJoystick.getRisingEdgeButton(9)) {
 								//Rehome Arm
