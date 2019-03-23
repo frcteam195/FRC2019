@@ -82,7 +82,8 @@ public class HIDController {
 								}
 							}
 							else {
-								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor * 0.65;
+//								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor * 0.65;
+								turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.5;
 							}
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
@@ -92,6 +93,11 @@ public class HIDController {
 
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 //								mDrive.setBrakeMode(driveJoystick.getRawButton(5));
+								if (driveJoystick.getRawButton(5))
+									mDrive.setBrakeMode(true);
+								else
+									mDrive.setBobbyBrake();
+
 								mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 							}
 

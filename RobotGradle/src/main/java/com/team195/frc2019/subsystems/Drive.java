@@ -35,6 +35,7 @@ public class Drive extends Subsystem {
 	private final CKDoubleSolenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
 	private BrakeState mBrakeState = BrakeState.MOTOR_MASTER;
+	private BrakeState mPrevBrakeState = BrakeState.MOTOR_SLAVEB;
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
 	private boolean mIsBrakeMode;
@@ -42,7 +43,6 @@ public class Drive extends Subsystem {
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
-	private boolean mMasterBrake = true;
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
 	private boolean mBrakeSwitchEnabled = true;
 
@@ -78,22 +78,15 @@ public class Drive extends Subsystem {
 						if (mBrakeSwitchEnabled) {
 							if ((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
 								mLastBrakeSwitch = Timer.getFPGATimestamp();
-								mMasterBrake = !mMasterBrake;
 
 								switch (mBrakeState) {
 									case MOTOR_MASTER:
-										setBrake(mLeftMaster, mRightMaster);
-										setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
 										mBrakeState = BrakeState.MOTOR_SLAVEA;
 										break;
 									case MOTOR_SLAVEA:
-										setBrake(mLeftSlaveA, mRightSlaveA);
-										setCoast(mLeftMaster, mLeftSlaveB, mRightMaster, mRightSlaveB);
 										mBrakeState = BrakeState.MOTOR_SLAVEB;
 										break;
 									case MOTOR_SLAVEB:
-										setBrake(mLeftSlaveB, mRightSlaveB);
-										setCoast(mLeftMaster, mLeftSlaveA, mRightMaster, mRightSlaveA);
 										mBrakeState = BrakeState.MOTOR_MASTER;
 										break;
 								}
@@ -232,6 +225,27 @@ public class Drive extends Subsystem {
 		in.register(mLoop);
 	}
 
+	public synchronized void setBobbyBrake() {
+		if (mBrakeSwitchEnabled && mBrakeState != mPrevBrakeState) {
+			setInternalBrakeMode(false);
+			switch (mBrakeState) {
+				case MOTOR_MASTER:
+					setBrake(mLeftMaster, mRightMaster);
+					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
+					break;
+				case MOTOR_SLAVEA:
+					setBrake(mLeftSlaveA, mRightSlaveA);
+					setCoast(mLeftMaster, mLeftSlaveB, mRightMaster, mRightSlaveB);
+					break;
+				case MOTOR_SLAVEB:
+					setBrake(mLeftSlaveB, mRightSlaveB);
+					setCoast(mLeftMaster, mLeftSlaveA, mRightMaster, mRightSlaveA);
+					break;
+			}
+			mPrevBrakeState = mBrakeState;
+		}
+	}
+
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
@@ -312,7 +326,7 @@ public class Drive extends Subsystem {
 
 	public synchronized void setBrakeMode(boolean on) {
 		if (mIsBrakeMode != on) {
-			mIsBrakeMode = on;
+			setInternalBrakeMode(on);
 			MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
 			mRightMaster.setBrakeCoastMode(mode);
 			mRightSlaveA.setBrakeCoastMode(mode);
@@ -322,6 +336,10 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 			mLeftSlaveB.setBrakeCoastMode(mode);
 		}
+	}
+
+	private synchronized void setInternalBrakeMode(boolean on) {
+		mIsBrakeMode = on;
 	}
 
 	public synchronized void setDriveControlState(DriveControlState driveControlState) {
