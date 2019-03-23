@@ -226,7 +226,7 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setBobbyBrake() {
-		if (mBrakeSwitchEnabled && mBrakeState != mPrevBrakeState) {
+		if (mBrakeSwitchEnabled && (mBrakeState != mPrevBrakeState || mIsBrakeMode)) {
 			setInternalBrakeMode(false);
 			switch (mBrakeState) {
 				case MOTOR_MASTER:
@@ -248,7 +248,7 @@ public class Drive extends Subsystem {
 
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-			setBrakeMode(false);
+//			setBrakeMode(false);
 
 			setDriveControlState(DriveControlState.OPEN_LOOP);
 		}
