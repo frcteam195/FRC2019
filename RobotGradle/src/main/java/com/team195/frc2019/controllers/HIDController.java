@@ -224,14 +224,18 @@ public class HIDController {
 								//Rehome Elevator
 								TeleopActionRunner.runAction(AutomatedActions.homeElevator());
 							}
+							else if (armControlJoystick.getRisingEdgeButton(8)) {
+								//Turret Open Loop
+								TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretOpenLoopAction((t) -> armControlJoystick.getRawButton(8),
+										(t) -> armControlJoystick.getNormalizedAxis(2, 0.1) / 3.0), 300, Turret.getInstance()));
+							}
 							else if (armControlJoystick.getRisingEdgeButton(9)) {
 								//Rehome Arm
 							}
 							else if (armControlJoystick.getRisingEdgeButton(11)) {
 								//Rehome turret
-								// Turret.getInstance().zeroSensors();
-								// Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
-								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPickup());
+								 Turret.getInstance().zeroSensors();
+								 Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
 							}
 							else if (armControlJoystick.getRisingEdgeButton(12)) {
 								TeleopActionRunner.runAction(AutomatedActions.lowerIntakeAndResetTurret());
