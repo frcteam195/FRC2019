@@ -82,7 +82,7 @@ public class HIDController {
 								}
 							}
 							else {
-								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor;
+								turn = driveJoystick.getSmoothedAxis(4, 0.08, 2) * scalingFactor * 0.65;
 							}
 
 							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {

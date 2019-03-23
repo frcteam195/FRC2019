@@ -289,7 +289,7 @@ public class Constants {
     public static final RGBColor kGotGamePieceColor = kDefaultColor;
     public static final RGBColor kElevatorHomeColor = new RGBColor(0, 0, 255);
 
-    public static final double kVisionOffThreshold = 9;
+    public static final double kVisionOffThreshold = 9.7;
 
     //TODO: Tune collision detection
     // Collision Detection
