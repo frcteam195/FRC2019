@@ -1,5 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.DriveSignal;
@@ -25,12 +26,14 @@ public class TurnDriveLooseAngleAction implements Action {
 
 	@Override
 	public boolean isFinished() {
+		ConsoleReporter.report("Gyro Angle: " + mDrive.getHeading().getDegrees());
 		return mTimeoutTimer.isTimedOut() || Math.abs(mAngle - mDrive.getHeading().getDegrees()) < kTurnThreshold;
 	}
 
 	@Override
 	public void update() {
-		double steerVal = Math.max(Math.min(mDrive.getHeading().getDegrees() * kTurnkP, 1), -1);
+		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
+		ConsoleReporter.report("Steer val: " + steerVal);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
 
@@ -44,7 +47,7 @@ public class TurnDriveLooseAngleAction implements Action {
 	@Override
 	public void start() {
 		mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP_AUTOMATED);
-		double steerVal = Math.max(Math.min(mDrive.getHeading().getDegrees() * kTurnkP, 1), -1);
+		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
 		mDrive.setBrakeMode(true);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
