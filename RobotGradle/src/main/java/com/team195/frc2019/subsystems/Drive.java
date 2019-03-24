@@ -87,6 +87,7 @@ public class Drive extends Subsystem {
 										mBrakeState = BrakeState.MOTOR_SLAVEB;
 										break;
 									case MOTOR_SLAVEB:
+									default:
 										mBrakeState = BrakeState.MOTOR_MASTER;
 										break;
 								}
@@ -97,6 +98,8 @@ public class Drive extends Subsystem {
 						updatePathFollower();
 						break;
 					case CLIMB:
+					case OPEN_LOOP_AUTOMATED:
+					case VELOCITY:
 						break;
 					default:
 						ConsoleReporter.report("Unexpected drive control state: " + mDriveControlState, MessageLevel.DEFCON1);
@@ -249,8 +252,21 @@ public class Drive extends Subsystem {
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 //			setBrakeMode(false);
+			setBobbyBrake();
 
 			setDriveControlState(DriveControlState.OPEN_LOOP);
+		}
+		mPeriodicIO.left_demand = signal.getLeft();
+		mPeriodicIO.right_demand = signal.getRight();
+		mPeriodicIO.left_feedforward = 0.0;
+		mPeriodicIO.right_feedforward = 0.0;
+	}
+
+	public synchronized void setOpenLoopAutomated(DriveSignal signal) {
+		if (mDriveControlState != DriveControlState.OPEN_LOOP_AUTOMATED) {
+			setBrakeMode(true);
+
+			setDriveControlState(DriveControlState.OPEN_LOOP_AUTOMATED);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
 		mPeriodicIO.right_demand = signal.getRight();
@@ -649,7 +665,8 @@ public class Drive extends Subsystem {
 		OPEN_LOOP,
 		PATH_FOLLOWING,
 		VELOCITY,
-		CLIMB
+		CLIMB,
+		OPEN_LOOP_AUTOMATED
 	}
 
 	public enum ShifterState {

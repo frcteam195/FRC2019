@@ -91,6 +91,14 @@ public class HIDController {
 								turn *= Constants.kLowSensitivityFactor;
 							}
 
+							if (driveJoystick.getRisingEdgeButton(5)) {
+								mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
+							}
+							else if (driveJoystick.getRisingEdgeButton(6)) {
+								TeleopActionRunner.runAction(AutomatedAction.fromAction(
+										new TurnDriveLooseAngleAction(180, 2), 2, Drive.getInstance()));
+							}
+
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 //								mDrive.setBrakeMode(driveJoystick.getRawButton(5));
 								if (driveJoystick.getRawButton(5))
