@@ -507,7 +507,9 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-		if (mDriveControlState == DriveControlState.OPEN_LOOP) {
+		if (mDriveControlState == DriveControlState.OPEN_LOOP
+				|| mDriveControlState == DriveControlState.CLIMB
+				|| mDriveControlState == DriveControlState.OPEN_LOOP_AUTOMATED) {
 			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		} else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
@@ -515,9 +517,6 @@ public class Drive extends Subsystem {
 					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
-		} else if (mDriveControlState == DriveControlState.CLIMB) {
-			mLeftMaster.set(MCControlMode.PercentOut, mPeriodicIO.left_demand, 0, 0.0);
-			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		}
 	}
 
