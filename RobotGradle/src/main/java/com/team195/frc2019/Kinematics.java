@@ -1,5 +1,6 @@
 package com.team195.frc2019;
 
+import com.team195.frc2019.constants.CalConstants;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Twist2d;
@@ -17,7 +18,7 @@ public class Kinematics {
      * motion)
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
-        double delta_rotation = (right_wheel_delta - left_wheel_delta) / (Constants.kDriveWheelTrackWidthInches * Constants.kTrackScrubFactor);
+        double delta_rotation = (right_wheel_delta - left_wheel_delta) / (CalConstants.kDriveWheelTrackWidthInches * CalConstants.kTrackScrubFactor);
         return forwardKinematics(left_wheel_delta, right_wheel_delta, delta_rotation);
     }
 

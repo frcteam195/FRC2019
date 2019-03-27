@@ -3,7 +3,7 @@ package com.team195.lib.drivers.dashjoy;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team254.lib.util.MovingAverage;
 
 import java.util.List;

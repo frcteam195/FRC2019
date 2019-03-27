@@ -3,7 +3,7 @@ package com.team195.lib.drivers.motorcontrol;
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;

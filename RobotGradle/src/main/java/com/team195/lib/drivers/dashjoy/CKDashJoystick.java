@@ -1,6 +1,6 @@
 package com.team195.lib.drivers.dashjoy;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.Joystick;
 

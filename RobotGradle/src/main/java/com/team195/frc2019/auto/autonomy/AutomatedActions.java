@@ -1,7 +1,7 @@
 package com.team195.frc2019.auto.autonomy;
 
-import com.team195.frc2019.Constants;
-import com.team195.frc2019.auto.AutoConstants;
+import com.team195.frc2019.constants.Constants;
+import com.team195.frc2019.constants.AutoConstants;
 import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.auto.actions.climb.SetClimbRackDownAction;
 import com.team195.frc2019.auto.actions.climb.SetClimbRackUpAction;
@@ -10,7 +10,6 @@ import com.team195.frc2019.auto.actions.climb.SetIntakeBarForwardClimbAction;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
-import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 
 import java.util.ArrayList;
@@ -335,6 +334,24 @@ public class AutomatedActions {
 				new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedOff))));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance(), BallIntakeArm.getInstance());
+	}
+
+	public static AutomatedAction fullyAutomatedTest() {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up, 5));
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down, 5));
+		actionArrayList.add(pickupHatchFeederStation());
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketBallLow));
+		actionArrayList.add(new SetTurretPositionAction(TurretPositions.Left90));
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchMed));
+		actionArrayList.add(new SetTurretPositionAction(TurretPositions.Right90));
+		actionArrayList.add(shootBall());
+		actionArrayList.add(intakeBallOn((t) -> false));
+		actionArrayList.add(intakeBallOff());
+		actionArrayList.add(new OpenLoopDrive(0.2, 0.2, 2));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 100, Turret.getInstance(), BallIntakeArm.getInstance(), Drive.getInstance(), Elevator.getInstance());
 	}
 
 }

@@ -1,10 +1,12 @@
 package com.team195.frc2019.subsystems;
 
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.team195.frc2019.constants.CalConstants;
+import com.team195.frc2019.constants.DeviceIDConstants;
+import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.planners.DriveMotionPlanner;
-import com.team195.frc2019.Constants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
@@ -138,39 +140,39 @@ public class Drive extends Subsystem {
 	private Drive() {
 		mPeriodicIO = new PeriodicIO();
 
-		mLeftMaster = new CKSparkMax(Constants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
+		mLeftMaster = new CKSparkMax(DeviceIDConstants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setInverted(false));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(Constants.kDriveLowGearPositionDFilter));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.writeToFlash());
 
-		mLeftSlaveA = new CKSparkMax(Constants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftSlaveA = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.writeToFlash());
 
-		mLeftSlaveB = new CKSparkMax(Constants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mLeftSlaveB = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.writeToFlash());
 
-		mRightMaster = new CKSparkMax(Constants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
+		mRightMaster = new CKSparkMax(DeviceIDConstants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(Constants.kDriveLowGearPositionKp, Constants.kDriveLowGearPositionKi, Constants.kDriveLowGearPositionKd, Constants.kDriveLowGearPositionKf));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(Constants.kDriveLowGearPositionDFilter));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(Constants.kDriveLowGearPositionCruiseVel, Constants.kDriveLowGearPositionAccel));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.writeToFlash());
 
-		mRightSlaveA = new CKSparkMax(Constants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightSlaveA = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.writeToFlash());
 
-		mRightSlaveB = new CKSparkMax(Constants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveLowGearCurrentLim));
+		mRightSlaveB = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.writeToFlash());
 
-		mPTOShifter = new CKDoubleSolenoid(Constants.kPTOShifterSolenoidId);
+		mPTOShifter = new CKDoubleSolenoid(DeviceIDConstants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
 
 		reloadGains();
@@ -190,13 +192,13 @@ public class Drive extends Subsystem {
 	public void configureClimbCurrentLimit() {
 		mBrakeSwitchEnabled = false;
 		setBrakeMode(true);
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
-		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
-		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(Constants.kDriveLeftClimbCurrentLim));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(CalConstants.kDriveLeftClimbCurrentLim));
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(CalConstants.kDriveLeftClimbCurrentLim));
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(CalConstants.kDriveLeftClimbCurrentLim));
 
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
-		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
-		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(Constants.kDriveRightClimbCurrentLim));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(CalConstants.kDriveRightClimbCurrentLim));
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(CalConstants.kDriveRightClimbCurrentLim));
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(CalConstants.kDriveRightClimbCurrentLim));
 	}
 
 	public static Drive getInstance() {
@@ -204,7 +206,7 @@ public class Drive extends Subsystem {
 	}
 
 	private static double rotationsToInches(double rotations) {
-		return rotations * (Constants.kDriveWheelDiameterInches * Math.PI);
+		return rotations * (CalConstants.kDriveWheelDiameterInches * Math.PI);
 	}
 
 	private static double rpmToInchesPerSecond(double rpm) {
@@ -212,7 +214,7 @@ public class Drive extends Subsystem {
 	}
 
 	private static double inchesToRotations(double inches) {
-		return inches / (Constants.kDriveWheelDiameterInches * Math.PI);
+		return inches / (CalConstants.kDriveWheelDiameterInches * Math.PI);
 	}
 
 	private static double inchesPerSecondToRpm(double inches_per_second) {
@@ -421,7 +423,7 @@ public class Drive extends Subsystem {
 	}
 
 	public double getAngularVelocity() {
-		return (getRightLinearVelocity() - getLeftLinearVelocity()) / Constants.kDriveWheelTrackWidthInches;
+		return (getRightLinearVelocity() - getLeftLinearVelocity()) / CalConstants.kDriveWheelTrackWidthInches;
 	}
 
 	public void overrideTrajectory(boolean value) {
@@ -465,12 +467,12 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void reloadGains() {
-		mLeftMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
-		mLeftMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+		mLeftMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf);
+		mLeftMaster.setIZone(CalConstants.kDriveLowGearVelocityIZone);
 		mLeftMaster.writeToFlash();
 
-		mRightMaster.setPIDF(Constants.kDriveLowGearVelocityKp, Constants.kDriveLowGearVelocityKi, Constants.kDriveLowGearVelocityKd, Constants.kDriveLowGearVelocityKf);
-		mRightMaster.setIZone(Constants.kDriveLowGearVelocityIZone);
+		mRightMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf);
+		mRightMaster.setIZone(CalConstants.kDriveLowGearVelocityIZone);
 		mRightMaster.writeToFlash();
 	}
 
@@ -488,16 +490,16 @@ public class Drive extends Subsystem {
 
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
-			mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
+			mPeriodicIO.left_distance += deltaLeftRotations * CalConstants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.left_distance += deltaLeftRotations * Constants.kDriveWheelDiameterInches;
+			mPeriodicIO.left_distance += deltaLeftRotations * CalConstants.kDriveWheelDiameterInches;
 		}
 
 		double deltaRightRotations = (mPeriodicIO.right_position_rotations - prevRightRotations) * Math.PI;
 		if (deltaRightRotations > 0.0) {
-			mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
+			mPeriodicIO.right_distance += deltaRightRotations * CalConstants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.right_distance += deltaRightRotations * Constants.kDriveWheelDiameterInches;
+			mPeriodicIO.right_distance += deltaRightRotations * CalConstants.kDriveWheelDiameterInches;
 		}
 
 		if (mCSVWriter != null) {
@@ -514,28 +516,28 @@ public class Drive extends Subsystem {
 			mRightMaster.set(MCControlMode.PercentOut, mPeriodicIO.right_demand, 0, 0.0);
 		} else if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
 			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0,
-					mPeriodicIO.left_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
+					mPeriodicIO.left_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
-					mPeriodicIO.right_feedforward + Constants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
+					mPeriodicIO.right_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
 		}
 	}
 
 	@Override
 	public boolean runDiagnostics() {
-		if (Constants.ENABLE_DRIVE_TEST) {
+		if (TestConstants.ENABLE_DRIVE_TEST) {
 			ConsoleReporter.report("Testing DRIVE---------------------------------");
-			final double kLowCurrentThres = Constants.kDriveBaseTestLowCurrentThresh;
-			final double kLowRpmThres = Constants.kDriveBaseTestLowRPMThresh;
+			final double kLowCurrentThres = TestConstants.kDriveBaseTestLowCurrentThresh;
+			final double kLowRpmThres = TestConstants.kDriveBaseTestLowRPMThresh;
 
 			ArrayList<MotorDiagnostics> mAllMotorsDiagArr = new ArrayList<>();
 			ArrayList<MotorDiagnostics> mLeftDiagArr = new ArrayList<>();
 			ArrayList<MotorDiagnostics> mRightDiagArr = new ArrayList<>();
 			mLeftDiagArr.add(new MotorDiagnostics("Drive Left Master", mLeftMaster));
 			mLeftDiagArr.add(new MotorDiagnostics("Drive Left Slave 1", mLeftSlaveA, mLeftMaster));
-//		mLeftDiagArr.add(new MotorDiagnostics("Drive Left Slave 2", mLeftSlaveB, mLeftMaster));
+			mLeftDiagArr.add(new MotorDiagnostics("Drive Left Slave 2", mLeftSlaveB, mLeftMaster));
 			mRightDiagArr.add(new MotorDiagnostics("Drive Right Master", mRightMaster));
 			mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 1", mRightSlaveA, mRightMaster));
-//		mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 2", mRightSlaveB, mRightMaster));
+			mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 2", mRightSlaveB, mRightMaster));
 
 			mAllMotorsDiagArr.addAll(mLeftDiagArr);
 			mAllMotorsDiagArr.addAll(mRightDiagArr);
@@ -567,19 +569,19 @@ public class Drive extends Subsystem {
 
 			if (mLeftDiagArr.size() > 0 && mRightDiagArr.size() > 0 && mAllMotorsDiagArr.size() > 0) {
 				List<Double> leftMotorCurrents = mLeftDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
-				if (!Util.allCloseTo(leftMotorCurrents, leftMotorCurrents.get(0), Constants.kDriveBaseTestCurrentDelta)) {
+				if (!Util.allCloseTo(leftMotorCurrents, leftMotorCurrents.get(0), TestConstants.kDriveBaseTestCurrentDelta)) {
 					failure = true;
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Drive Left2Cube Currents Different !!!!!!!!!!");
 				}
 
 				List<Double> rightMotorCurrents = mRightDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
-				if (!Util.allCloseTo(rightMotorCurrents, rightMotorCurrents.get(0), Constants.kDriveBaseTestCurrentDelta)) {
+				if (!Util.allCloseTo(rightMotorCurrents, rightMotorCurrents.get(0), TestConstants.kDriveBaseTestCurrentDelta)) {
 					failure = true;
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Drive Right2Cube Currents Different !!!!!!!!!!");
 				}
 
 				List<Double> driveMotorRPMs = mAllMotorsDiagArr.stream().map(MotorDiagnostics::getMotorRPM).collect(Collectors.toList());
-				if (!Util.allCloseTo(driveMotorRPMs, driveMotorRPMs.get(0), Constants.kDriveBaseTestRPMDelta)) {
+				if (!Util.allCloseTo(driveMotorRPMs, driveMotorRPMs.get(0), TestConstants.kDriveBaseTestRPMDelta)) {
 					failure = true;
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!!! Drive RPMs different !!!!!!!!!!!!!!!!!!!");
 				}

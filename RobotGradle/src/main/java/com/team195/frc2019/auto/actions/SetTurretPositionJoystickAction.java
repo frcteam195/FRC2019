@@ -1,6 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.subsystems.Turret;
 
 import java.util.function.Function;
@@ -14,8 +14,8 @@ public class SetTurretPositionJoystickAction implements Action {
 	private double mRotationAcc = 0;
 
 	private static final double kJoystickStep = 1.5;
-	private static final double kMaxForwardDeg = Turret.convertRotationsToTurretDegrees(Constants.kTurretForwardSoftLimit);
-	private static final double kMaxReverseDeg = Turret.convertRotationsToTurretDegrees(Constants.kTurretReverseSoftLimit);
+	private static final double kMaxForwardDeg = Turret.convertRotationsToTurretDegrees(CalConstants.kTurretForwardSoftLimit);
+	private static final double kMaxReverseDeg = Turret.convertRotationsToTurretDegrees(CalConstants.kTurretReverseSoftLimit);
 
 	public SetTurretPositionJoystickAction(Function<Void, Boolean> buttonGetterMethod, Function<Void, Double> axisGetterMethod) {
 		mButtonGetterMethod = buttonGetterMethod;

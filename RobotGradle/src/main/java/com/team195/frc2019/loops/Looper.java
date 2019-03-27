@@ -1,6 +1,6 @@
 package com.team195.frc2019.loops;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.Reportable;

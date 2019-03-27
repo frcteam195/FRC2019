@@ -4,7 +4,7 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.lib.util.ThreadRateControl;
 
 import java.io.IOException;

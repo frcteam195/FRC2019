@@ -1,9 +1,11 @@
 package com.team195.lib.util;
 
 public enum StartingPosition {
-	Left(0),
-	Center(1),
-	Right(2),
+	LeftLow(0),
+	LeftHigh(1),
+	Center(2),
+	RightLow(3),
+	RightHigh(4),
 	Invalid(30);
 
 	public final int value;
@@ -15,11 +17,15 @@ public enum StartingPosition {
 	public static StartingPosition valueOf(int value) {
 		switch (value) {
 			case 0:
-				return Left;
+				return LeftLow;
 			case 1:
-				return Center;
+				return LeftHigh;
 			case 2:
-				return Right;
+				return Center;
+			case 3:
+				return RightLow;
+			case 4:
+				return RightHigh;
 			default:
 				return Invalid;
 		}

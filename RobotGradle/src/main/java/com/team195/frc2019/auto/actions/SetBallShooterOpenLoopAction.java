@@ -1,12 +1,12 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.auto.AutoConstants;
+import com.team195.frc2019.constants.AutoConstants;
 import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.util.TimeoutTimer;
 
 public class SetBallShooterOpenLoopAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultRollerSpinUpWait);
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultBallShootWait);
 
 	private double mOutputSpeed;
 

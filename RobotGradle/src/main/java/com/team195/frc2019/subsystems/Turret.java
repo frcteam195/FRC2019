@@ -2,14 +2,17 @@ package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
+import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.paths.TrajectoryGenerator;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
+import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.lib.drivers.CKSolenoid;
@@ -50,15 +53,15 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	private Turret() {
 		//Encoder on 50:1
 		//Turret gear is another 36:252
-		mTurretRotationMotor = new CKTalonSRX(Constants.kTurretMotorId, false, PDPBreaker.B30A);
+		mTurretRotationMotor = new CKTalonSRX(DeviceIDConstants.kTurretMotorId, false, PDPBreaker.B30A);
 		mTurretRotationMotor.setInverted(true);
 		mTurretRotationMotor.setSensorPhase(true);
-		mTurretRotationMotor.setPIDF(Constants.kTurretPositionKp, Constants.kTurretPositionKi, Constants.kTurretPositionKd, Constants.kTurretPositionKf);
-		mTurretRotationMotor.setMotionParameters(Constants.kTurretPositionCruiseVel, Constants.kTurretPositionMMAccel);
+		mTurretRotationMotor.setPIDF(CalConstants.kTurretPositionKp, CalConstants.kTurretPositionKi, CalConstants.kTurretPositionKd, CalConstants.kTurretPositionKf);
+		mTurretRotationMotor.setMotionParameters(CalConstants.kTurretPositionCruiseVel, CalConstants.kTurretPositionMMAccel);
 		zeroSensors();
-		mTurretRotationMotor.configForwardSoftLimitThreshold(Constants.kTurretForwardSoftLimit);
+		mTurretRotationMotor.configForwardSoftLimitThreshold(CalConstants.kTurretForwardSoftLimit);
 		mTurretRotationMotor.configForwardSoftLimitEnable(true);
-		mTurretRotationMotor.configReverseSoftLimitThreshold(Constants.kTurretReverseSoftLimit);
+		mTurretRotationMotor.configReverseSoftLimitThreshold(CalConstants.kTurretReverseSoftLimit);
 		mTurretRotationMotor.configReverseSoftLimitEnable(true);
 		mTurretRotationMotor.configCurrentLimit(5, 7, 150);
 		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
@@ -70,21 +73,21 @@ public class Turret extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		mBallShooterRollerMotor = new CKTalonSRX(Constants.kBallShooterMotorId, false, PDPBreaker.B30A);
+		mBallShooterRollerMotor = new CKTalonSRX(DeviceIDConstants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallShooterRollerMotor.setMCOpenLoopRampRate(0.2);
 		mBallShooterRollerMotor.configCurrentLimit(15, 25, 450);
 
-		mHatchBeakSolenoid = new CKSolenoid(Constants.kHatchBeakSolenoidId);
+		mHatchBeakSolenoid = new CKSolenoid(DeviceIDConstants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);
 
-		mHatchBeakFeedSolenoid = new CKSolenoid(Constants.kHatchBeakFeedSolenoidId);
+		mHatchBeakFeedSolenoid = new CKSolenoid(DeviceIDConstants.kHatchBeakFeedSolenoidId);
 		mHatchBeakFeedSolenoid.set(false);
 
-		mHatchPushSolenoid = new CKSolenoid(Constants.kHatchPushSolenoidId);
+		mHatchPushSolenoid = new CKSolenoid(DeviceIDConstants.kHatchPushSolenoidId);
 		mHatchPushSolenoid.set(false);
 
-		mBallPushSolenoid = new CKSolenoid(Constants.kBallPushSolenoidId);
+		mBallPushSolenoid = new CKSolenoid(DeviceIDConstants.kBallPushSolenoidId);
 		mBallPushSolenoid.setInverted(false);
 		mBallPushSolenoid.set(false);
 
@@ -108,9 +111,18 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mTurretRotationMotor.isEncoderPresent();
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Turret Encoder Missing!", MessageLevel.DEFCON1);
+		}
+
 		systemFaulted |= mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
-		if (systemFaulted)
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Turret Requires Rehoming!", MessageLevel.DEFCON1);
 			setTurretControlMode(TurretControlMode.DISABLED);
+		}
+
 		return systemFaulted;
 	}
 
@@ -301,11 +313,11 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	public static double convertRotationsToTurretDegrees(double rotations) {
-		return rotations / (Constants.kTurretLargeGearTeeth / Constants.kTurretSmallGearTeeth / 360.0);
+		return rotations / (CalConstants.kTurretLargeGearTeeth / CalConstants.kTurretSmallGearTeeth / 360.0);
 	}
 
 	public static double convertTurretDegreesToRotations(double degrees) {
-		return degrees * (Constants.kTurretLargeGearTeeth / Constants.kTurretSmallGearTeeth / 360.0);
+		return degrees * (CalConstants.kTurretLargeGearTeeth / CalConstants.kTurretSmallGearTeeth / 360.0);
 	}
 
 	@Override

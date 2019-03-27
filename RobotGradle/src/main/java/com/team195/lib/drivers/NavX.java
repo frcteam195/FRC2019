@@ -3,7 +3,7 @@ package com.team195.lib.drivers;
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team254.lib.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,8 +42,8 @@ public class NavX implements CKIMU {
     protected double mPrevAccelY = 0;
     protected double mPrevTimeAccel = 0;
 
-    private double mJerkCollisionThreshold = Constants.kCollisionDetectionJerkThreshold;
-    private double mTippingThreshold = Constants.kTippingThresholdDeg;
+    private double mJerkCollisionThreshold = CalConstants.kCollisionDetectionJerkThreshold;
+    private double mTippingThreshold = CalConstants.kTippingThresholdDeg;
 
     public NavX() {
         this(SPI.Port.kMXP);

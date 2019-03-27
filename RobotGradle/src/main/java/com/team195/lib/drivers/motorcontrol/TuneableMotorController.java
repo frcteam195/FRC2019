@@ -1,6 +1,6 @@
 package com.team195.lib.drivers.motorcontrol;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 
 /**
@@ -124,11 +124,11 @@ public interface TuneableMotorController {
 	}
 
 	default int getMSDurationForBreakerLimit(double peakCurrentInput, double breakerRating) {
-		return getMSDurationForBreakerLimit(peakCurrentInput, breakerRating, Constants.kPDPDefaultSafetyFactor);
+		return getMSDurationForBreakerLimit(peakCurrentInput, breakerRating, CalConstants.kPDPDefaultSafetyFactor);
 	}
 
 	default int getMSDurationForBreakerLimit(double peakCurrentInput, double breakerRating, double safetyFactor) {
-		return (int)((Constants.kPDPBreakerModelA*Math.pow(peakCurrentInput/breakerRating, Constants.kPDPBreakerModelB)+Constants.kPDPBreakerModelC) * 1000.0 / safetyFactor);
+		return (int)((CalConstants.kPDPBreakerModelA*Math.pow(peakCurrentInput/breakerRating, CalConstants.kPDPBreakerModelB)+ CalConstants.kPDPBreakerModelC) * 1000.0 / safetyFactor);
 	}
 
 }

@@ -1,7 +1,8 @@
 package com.team195.frc2019.controllers;
 
 import com.ctre.phoenix.CANifier;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
+import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.MorseCodeTranslator;
@@ -49,7 +50,7 @@ public class LEDController extends Thread {
     private LEDController() throws Exception {
     	super();
 		super.setPriority(Constants.kLEDThreadPriority);
-        mLED = new LEDDriverCANifier(new CANifier(Constants.kCANifierLEDId));
+        mLED = new LEDDriverCANifier(new CANifier(DeviceIDConstants.kCANifierLEDId));
         mLED.set(false);
 
         // Force a relay change.

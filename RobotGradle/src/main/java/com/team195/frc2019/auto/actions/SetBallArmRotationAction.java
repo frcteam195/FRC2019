@@ -1,6 +1,5 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.auto.AutoConstants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.BallIntakeArm;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
@@ -9,20 +8,26 @@ import com.team195.lib.util.TimeoutTimer;
 
 public class SetBallArmRotationAction implements Action {
 	private static final BallIntakeArm mBallArm = BallIntakeArm.getInstance();
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(2);
+	private final TimeoutTimer mTimeoutTimer;
 
 	private ThreadRateControl trc = new ThreadRateControl();
 
 	private double mRotation;
 
 	public SetBallArmRotationAction(double armRotation) {
+		this(armRotation, 2);
+	}
+
+	public SetBallArmRotationAction(double armRotation, double timeout) {
 		mRotation = armRotation;
+		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
 
 	@Override
 	public boolean isFinished() {
-		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
-		return mTimeoutTimer.isTimedOut() || mBallArm.isArmAtSetpoint(0.5);
+//		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
+		return mTimeoutTimer.isTimedOut() || mBallArm.isArmAtSetpoint(0.5)
+				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Up && mBallArm.isArmUp());
 	}
 
 	@Override

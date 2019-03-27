@@ -1,6 +1,6 @@
 package com.team195.frc2019.reporters;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.lib.util.ThreadRateControl;
 import edu.wpi.first.wpilibj.DriverStation;
 

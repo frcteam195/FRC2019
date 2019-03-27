@@ -3,9 +3,11 @@ package com.team195.frc2019.auto.modes;
 import java.util.HashMap;
 
 public enum DesiredMode {
-	CrossAutoLine(0),
-	Characterization(1),
-	DoNothing(2),
+	TwoHatchRocket(0),
+	TwoHatchCargoship(1),
+	CrossAutoLine(2),
+	Characterization(3),
+	DoNothing(4),
 	Invalid(30);
 
 	public final int value;

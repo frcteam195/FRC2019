@@ -1,5 +1,6 @@
 package com.team195.frc2019;
 
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.Reportable;
 import com.team254.lib.geometry.Pose2d;
@@ -21,7 +22,7 @@ public class RobotState implements Reportable {
 	private static final int kObservationBufferSize = 100;
 
 	private static final Pose2d kVehicleToLidar = new Pose2d(
-			new Translation2d(Constants.kLidarXOffset, Constants.kLidarYOffset), Rotation2d.fromDegrees(Constants
+			new Translation2d(CalConstants.kLidarXOffset, CalConstants.kLidarYOffset), Rotation2d.fromDegrees(CalConstants
 			.kLidarYawAngleDegrees));
 
 	// FPGATimestamp -> RigidTransform2d or Rotation2d

@@ -1,6 +1,9 @@
 package com.team195.frc2019;
 
 import com.team195.frc2019.auto.AutoModeExecutor;
+import com.team195.frc2019.auto.autonomy.AutomatedActions;
+import com.team195.frc2019.constants.Constants;
+import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.controllers.HIDController;
 import com.team195.frc2019.controllers.LEDController;
 import com.team195.frc2019.loops.Looper;
@@ -17,6 +20,7 @@ import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import org.springframework.core.env.Environment;
 
 public class Robot extends TimedRobot {
 	private Looper mEnabledLooper = new Looper("EnabledLooper");
@@ -101,10 +105,9 @@ public class Robot extends TimedRobot {
 			CrashTracker.logAutoInit();
 			mDisabledLooper.stop();
 
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
-
-			Drive.getInstance().zeroSensors();
 			mInfrastructure.setIsDuringAuto(true);
+			Drive.getInstance().zeroSensors();
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			if (mAutoModeExecutor != null)
 				mAutoModeExecutor.start();
@@ -138,11 +141,11 @@ public class Robot extends TimedRobot {
 
 			mInfrastructure.setIsDuringAuto(false);
 
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
-			// mDrive.setBrakeMode(true);
 			mHIDController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -169,11 +172,19 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.stop();
 			mHIDController.stop();
 
-			if (mSubsystemManager.checkSystemsPassDiagnostics())
-				ConsoleReporter.report("System passed test!", MessageLevel.DEFCON1);
-			else
-				ConsoleReporter.report("System failed test!", MessageLevel.DEFCON1);
+			if (TestConstants.RUN_INDIVIDUAL_TESTS) {
+				if (mSubsystemManager.checkSystemsPassDiagnostics())
+					ConsoleReporter.report("System passed test!", MessageLevel.DEFCON1);
+				else
+					ConsoleReporter.report("System failed test!", MessageLevel.DEFCON1);
+			}
+			else {
+				mEnabledLooper.start();
+				TeleopActionRunner.runAction(AutomatedActions.fullyAutomatedTest(), true);
+			}
 
+			//Crash the JVM and force a reset
+			System.exit(1);
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;

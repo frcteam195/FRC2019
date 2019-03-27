@@ -1,6 +1,6 @@
 package com.team195.frc2019.subsystems;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.TargetingConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -98,7 +98,7 @@ public class VisionTracker extends Subsystem {
 		return mVisionEnabled && mPeriodicIO.targetValid > 0;
 	}
 
-	public boolean isTargetAreaReached() { return mPeriodicIO.targetArea >= Constants.kVisionOffThreshold; }
+	public boolean isTargetAreaReached() { return mPeriodicIO.targetArea >= TargetingConstants.kVisionOffThreshold; }
 
 	public double getTargetDistance() {
 		return mVisionEnabled ? mPeriodicIO.targetDistance : 0;
@@ -146,10 +146,10 @@ public class VisionTracker extends Subsystem {
 				mPeriodicIO.getPipelineValue = mCurrentTargetingLimelightNT.getEntry("getpipe").getDouble(0);
 				mPeriodicIO.cameraTranslationRotation = mCurrentTargetingLimelightNT.getEntry("camtran").getDouble(0);
 				mPeriodicIO.targetDistance = mTargetMode == TargetMode.ROCKET_BALL ?
-						(Constants.kRocketBallTargetHeight - Constants.kLimelightFrontMountedHeightToFloor) /
-								Math.atan(Constants.kLimelightFrontMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation) :
-						(Constants.kHatchTargetHeight - Constants.kLimelightBackMountedHeightToFloor) /
-								Math.atan(Constants.kLimelightBackMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation);
+						(TargetingConstants.kRocketBallTargetHeight - TargetingConstants.kLimelightFrontMountedHeightToFloor) /
+								Math.atan(TargetingConstants.kLimelightFrontMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation) :
+						(TargetingConstants.kHatchTargetHeight - TargetingConstants.kLimelightBackMountedHeightToFloor) /
+								Math.atan(TargetingConstants.kLimelightBackMountedAngleWrtFloor + mPeriodicIO.targetVerticalDeviation);
 			}
 			else {
 				mPeriodicIO.targetValid = 0;

@@ -1,6 +1,7 @@
 package com.team195.frc2019.subsystems;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
+import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.DiagnosticMessage;
@@ -29,15 +30,15 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 	private double mHatchRollerSetpoint = 0;
 
 	private HatchIntakeArm() {
-		mHatchArmRotationMotor = new CKTalonSRX(Constants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
+		mHatchArmRotationMotor = new CKTalonSRX(DeviceIDConstants.kHatchIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mHatchArmRotationMotor.setInverted(true);
 		mHatchArmRotationMotor.setSensorPhase(true);
-		mHatchArmRotationMotor.setPIDF(Constants.kHatchArmPositionKp, Constants.kHatchArmPositionKi, Constants.kHatchArmPositionKd, Constants.kHatchArmPositionKf);
-		mHatchArmRotationMotor.setMotionParameters(Constants.kHatchArmPositionCruiseVel, Constants.kHatchArmPositionMMAccel);
+		mHatchArmRotationMotor.setPIDF(CalConstants.kHatchArmPositionKp, CalConstants.kHatchArmPositionKi, CalConstants.kHatchArmPositionKd, CalConstants.kHatchArmPositionKf);
+		mHatchArmRotationMotor.setMotionParameters(CalConstants.kHatchArmPositionCruiseVel, CalConstants.kHatchArmPositionMMAccel);
 		zeroSensors();
-		mHatchArmRotationMotor.configForwardSoftLimitThreshold(Constants.kHatchArmForwardSoftLimit);
+		mHatchArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kHatchArmForwardSoftLimit);
 		mHatchArmRotationMotor.configForwardSoftLimitEnable(true);
-		mHatchArmRotationMotor.configReverseSoftLimitThreshold(Constants.kHatchArmReverseSoftLimit);
+		mHatchArmRotationMotor.configReverseSoftLimitThreshold(CalConstants.kHatchArmReverseSoftLimit);
 		mHatchArmRotationMotor.configReverseSoftLimitEnable(true);
 		mHatchArmRotationMotor.configCurrentLimit(10, 15, 250);
 		mHatchArmRotationMotor.setControlMode(MCControlMode.MotionMagic);
@@ -49,7 +50,7 @@ public class HatchIntakeArm extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		mHatchArmRollerMotor = new CKTalonSRX(Constants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
+		mHatchArmRollerMotor = new CKTalonSRX(DeviceIDConstants.kHatchIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mHatchArmRollerMotor.setInverted(true);
 		mHatchArmRollerMotor.setMCOpenLoopRampRate(0.2);
 		mHatchArmRollerMotor.configCurrentLimit(10, 25, 250);

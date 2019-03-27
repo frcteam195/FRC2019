@@ -2,7 +2,7 @@ package com.team195.lib.drivers;
 
 import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 

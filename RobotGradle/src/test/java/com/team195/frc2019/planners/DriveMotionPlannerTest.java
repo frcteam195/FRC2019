@@ -1,6 +1,6 @@
 package com.team195.frc2019.planners;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.Kinematics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
@@ -105,14 +105,14 @@ public class DriveMotionPlannerTest {
         Pose2d rev_pose = rev_motion_planner.setpoint().state().getPose().transformBy(start_error_rev);
         while (!fwd_motion_planner.isDone() || !rev_motion_planner.isDone()) {
             DriveMotionPlanner.Output fwd_output = fwd_motion_planner.update(t, fwd_pose);
-            Twist2d fwd_delta = Kinematics.forwardKinematics(fwd_output.left_velocity * dt * Constants
-                    .kDriveWheelDiameterInches / 2.0, fwd_output.right_velocity * dt * Constants
+            Twist2d fwd_delta = Kinematics.forwardKinematics(fwd_output.left_velocity * dt * CalConstants
+                    .kDriveWheelDiameterInches / 2.0, fwd_output.right_velocity * dt * CalConstants
                     .kDriveWheelDiameterInches / 2.0);
             fwd_pose = fwd_pose.transformBy(Pose2d.exp(fwd_delta));
             //System.out.println("FWD Delta: " + fwd_delta + ", Pose: " + fwd_pose);
             DriveMotionPlanner.Output rev_output = rev_motion_planner.update(t, rev_pose);
-            Twist2d rev_delta = Kinematics.forwardKinematics(rev_output.left_velocity * dt * Constants
-                    .kDriveWheelDiameterInches / 2.0, rev_output.right_velocity * dt * Constants
+            Twist2d rev_delta = Kinematics.forwardKinematics(rev_output.left_velocity * dt * CalConstants
+                    .kDriveWheelDiameterInches / 2.0, rev_output.right_velocity * dt * CalConstants
                     .kDriveWheelDiameterInches / 2.0);
             rev_pose = rev_pose.transformBy(Pose2d.exp(rev_delta));
             //System.out.println("REV Delta: " + rev_delta + ", Pose: " + rev_pose);
@@ -137,8 +137,8 @@ public class DriveMotionPlannerTest {
         Pose2d pose = motion_planner.setpoint().state().getPose().transformBy(initial_error);
         while (!motion_planner.isDone()) {
             DriveMotionPlanner.Output output = motion_planner.update(t, pose);
-            Twist2d delta = Kinematics.forwardKinematics(output.left_velocity * dt * Constants
-                    .kDriveWheelDiameterInches / 2.0, output.right_velocity * dt * Constants
+            Twist2d delta = Kinematics.forwardKinematics(output.left_velocity * dt * CalConstants
+                    .kDriveWheelDiameterInches / 2.0, output.right_velocity * dt * CalConstants
                     .kDriveWheelDiameterInches / 2.0);
             // Add some systemic error.
             delta = new Twist2d(delta.dx * 1.0, delta.dy * 1.0, delta.dtheta * 1.05);

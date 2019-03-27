@@ -1,6 +1,6 @@
 package com.team195.frc2019.planners;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
@@ -52,16 +52,16 @@ public class DriveMotionPlanner implements CSVWritable {
 
     public DriveMotionPlanner() {
         final DCMotorTransmission transmission = new DCMotorTransmission(
-                1.0 / Constants.kDriveKv,
-                Units.inches_to_meters(Constants.kDriveWheelRadiusInches) * Units.inches_to_meters(Constants
-                        .kDriveWheelRadiusInches) * Constants.kRobotLinearInertia / (2.0 * Constants.kDriveKa),
-                Constants.kDriveVIntercept);
+                1.0 / CalConstants.kDriveKv,
+                Units.inches_to_meters(CalConstants.kDriveWheelRadiusInches) * Units.inches_to_meters(CalConstants
+                        .kDriveWheelRadiusInches) * CalConstants.kRobotLinearInertia / (2.0 * CalConstants.kDriveKa),
+                CalConstants.kDriveVIntercept);
         mModel = new DifferentialDrive(
-                Constants.kRobotLinearInertia,
-                Constants.kRobotAngularInertia,
-                Constants.kRobotAngularDrag,
-                Units.inches_to_meters(Constants.kDriveWheelDiameterInches / 2.0),
-                Units.inches_to_meters(Constants.kDriveWheelTrackWidthInches / 2.0 * Constants.kTrackScrubFactor),
+                CalConstants.kRobotLinearInertia,
+                CalConstants.kRobotAngularInertia,
+                CalConstants.kRobotAngularDrag,
+                Units.inches_to_meters(CalConstants.kDriveWheelDiameterInches / 2.0),
+                Units.inches_to_meters(CalConstants.kDriveWheelTrackWidthInches / 2.0 * CalConstants.kTrackScrubFactor),
                 transmission, transmission
         );
     }
@@ -219,27 +219,27 @@ public class DriveMotionPlanner implements CSVWritable {
     }
 
     protected Output updatePurePursuit(DifferentialDrive.DriveDynamics dynamics, Pose2d current_state) {
-        double lookahead_time = Constants.kPathLookaheadTime;
+        double lookahead_time = CalConstants.kPathLookaheadTime;
         final double kLookaheadSearchDt = 0.01;
         TimedState<Pose2dWithCurvature> lookahead_state = mCurrentTrajectory.preview(lookahead_time).state();
         double actual_lookahead_distance = mSetpoint.state().distance(lookahead_state.state());
-        while (actual_lookahead_distance < Constants.kPathMinLookaheadDistance &&
+        while (actual_lookahead_distance < CalConstants.kPathMinLookaheadDistance &&
                 mCurrentTrajectory.getRemainingProgress() > lookahead_time) {
             lookahead_time += kLookaheadSearchDt;
             lookahead_state = mCurrentTrajectory.preview(lookahead_time).state();
             actual_lookahead_distance = mSetpoint.state().distance(lookahead_state.state());
         }
-        if (actual_lookahead_distance < Constants.kPathMinLookaheadDistance) {
+        if (actual_lookahead_distance < CalConstants.kPathMinLookaheadDistance) {
             lookahead_state = new TimedState<>(new Pose2dWithCurvature(lookahead_state.state()
                     .getPose().transformBy(Pose2d.fromTranslation(new Translation2d(
-                            (mIsReversed ? -1.0 : 1.0) * (Constants.kPathMinLookaheadDistance -
+                            (mIsReversed ? -1.0 : 1.0) * (CalConstants.kPathMinLookaheadDistance -
                                     actual_lookahead_distance), 0.0))), 0.0), lookahead_state.t()
                     , lookahead_state.velocity(), lookahead_state.acceleration());
         }
 
         DifferentialDrive.ChassisState adjusted_velocity = new DifferentialDrive.ChassisState();
         // Feedback on longitudinal error (distance).
-        adjusted_velocity.linear = dynamics.chassis_velocity.linear + Constants.kPathKX * Units.inches_to_meters
+        adjusted_velocity.linear = dynamics.chassis_velocity.linear + CalConstants.kPathKX * Units.inches_to_meters
                 (mError.getTranslation().x());
 
         // Use pure pursuit to peek ahead along the trajectory and generate a new curvature.

@@ -1,7 +1,5 @@
 package com.team195.frc2019.subsystems.positions;
 
-import com.team195.frc2019.Constants;
-
 public class BallIntakeArmPositions {
 	public static final double Down = -3.5;
 	public static final double Up = 4.5;

@@ -1,7 +1,7 @@
 package com.team195.lib.drivers.motorcontrol;
 
 import com.revrobotics.*;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
@@ -225,7 +225,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public synchronized void setEncoderPosition(double position) {
-		canEncoder.setPosition(position);
+		runSparkMAXFunctionWithRetry((t) -> canEncoder.setPosition(position));
 	}
 
 	@Override

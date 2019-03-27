@@ -1,6 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.auto.AutoConstants;
+import com.team195.frc2019.constants.AutoConstants;
 import com.team195.lib.util.TimeoutTimer;
 
 import java.util.function.Function;

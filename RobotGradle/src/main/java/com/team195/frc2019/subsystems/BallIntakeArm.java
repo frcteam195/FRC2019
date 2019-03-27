@@ -1,22 +1,26 @@
 package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.*;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.auto.actions.SetBallArmRotationAction;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
+import com.team195.frc2019.constants.Constants;
+import com.team195.frc2019.constants.DeviceIDConstants;
+import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
+import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
-import com.team195.lib.util.InterferenceSystem;
-import com.team195.lib.util.MotionInterferenceChecker;
-import com.team195.lib.util.TeleopActionRunner;
-import com.team195.lib.util.ThreadRateControl;
+import com.team195.lib.util.*;
 
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
@@ -36,31 +40,31 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private double mBallIntakeRollerSetpoint = 0;
 
 	private BallIntakeArm() {
-		mBallArmRotationMotor = new CKTalonSRX(Constants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
+		mBallArmRotationMotor = new CKTalonSRX(DeviceIDConstants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mBallArmRotationMotor.setSensorPhase(true);
 
-		mBallArmRollerMotor = new CKTalonSRX(Constants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
+		mBallArmRollerMotor = new CKTalonSRX(DeviceIDConstants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mBallArmRollerMotor.setInverted(true);
 		mBallArmRollerMotor.setSensorPhase(true);
 		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
-		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, Constants.kBallIntakeRollerMotorId);
+		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
 		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmUpPositionKp, Constants.kBallIntakeArmUpPositionKi, Constants.kBallIntakeArmUpPositionKd, Constants.kBallIntakeArmUpPositionKf);
-		mBallArmRotationMotor.setMotionParameters(Constants.kBallIntakeArmUpPositionCruiseVel, Constants.kBallIntakeArmUpPositionMMAccel);
+		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmUpPositionKp, CalConstants.kBallIntakeArmUpPositionKi, CalConstants.kBallIntakeArmUpPositionKd, CalConstants.kBallIntakeArmUpPositionKf);
+		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmUpPositionCruiseVel, CalConstants.kBallIntakeArmUpPositionMMAccel);
 		mBallArmRotationMotor.setPIDGainSlot(1);
-		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, Constants.kBallIntakeRollerMotorId);
+		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
 		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-		mBallArmRotationMotor.setPIDF(Constants.kBallIntakeArmDownPositionKp, Constants.kBallIntakeArmDownPositionKi, Constants.kBallIntakeArmDownPositionKd, Constants.kBallIntakeArmDownPositionKf);
-		mBallArmRotationMotor.setMotionParameters(Constants.kBallIntakeArmDownPositionCruiseVel, Constants.kBallIntakeArmDownPositionMMAccel);
+		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmDownPositionKp, CalConstants.kBallIntakeArmDownPositionKi, CalConstants.kBallIntakeArmDownPositionKd, CalConstants.kBallIntakeArmDownPositionKf);
+		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmDownPositionCruiseVel, CalConstants.kBallIntakeArmDownPositionMMAccel);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		trc.start();
 		trc.doRateControl(100);
 		zeroSensors();
 		trc.doRateControl(100);
-		mBallArmRotationMotor.configForwardSoftLimitThreshold(Constants.kBallIntakeArmForwardSoftLimit);
+		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
@@ -78,7 +82,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 				(t) -> Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta)
 		);
 
-		mBallIntakeBarDropSolenoid = new CKSolenoid(Constants.kBallIntakeBarSolenoidId);
+		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);
 	}
 
 	public static BallIntakeArm getInstance() {
@@ -93,14 +97,71 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mBallArmRollerMotor.isEncoderPresent();
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Ball Intake Arm Encoder Missing!", MessageLevel.DEFCON1);
+		}
+
 		systemFaulted |= mBallArmRollerMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
-		if (systemFaulted)
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Ball Intake Arm Disabled!", MessageLevel.DEFCON1);
 			setBallIntakeArmControlMode(BallIntakeArmControlMode.DISABLED);
+		}
+
 		return systemFaulted;
 	}
 
 	@Override
 	public boolean runDiagnostics() {
+		if (TestConstants.ENABLE_BALL_INTAKE_ARM_TEST) {
+			ConsoleReporter.report("Testing Ball Intake Arm---------------------------------");
+			MotorDiagnostics ballArmRotationDiag;
+
+			boolean failure = false;
+
+			boolean ballArmSensorOk;
+
+			if (isArmUp()) {
+				ballArmRotationDiag = new MotorDiagnostics("Ball Arm Rotation Motor", mBallArmRotationMotor,
+						TestConstants.kBallArmRotationTestSpeed, TestConstants.kBallArmRotationTestDurationDown, true);
+				ballArmSensorOk = true;
+			}
+			else {
+				ballArmRotationDiag = new MotorDiagnostics("Ball Arm Rotation Motor", mBallArmRotationMotor,
+						TestConstants.kBallArmRotationTestSpeed, TestConstants.kBallArmRotationTestDurationUp, false);
+				ballArmSensorOk = false;
+			}
+
+			ballArmRotationDiag.setZero();
+
+			ballArmRotationDiag.runTest();
+
+			ballArmSensorOk |= isArmUp();
+
+			if (ballArmRotationDiag.isCurrentUnderThreshold(TestConstants.kBallArmRotationTestLowCurrentThresh)) {
+				ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + ballArmRotationDiag.getMotorName() + " Current Low !!!!!!!!!!");
+				failure = true;
+			}
+
+			if (ballArmRotationDiag.isRPMUnderThreshold(TestConstants.kBallArmRotationTestLowRPMThresh)) {
+				ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + ballArmRotationDiag.getMotorName() + " RPM Low !!!!!!!!!!");
+				failure = true;
+			}
+
+			if (!ballArmSensorOk) {
+				ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + ballArmRotationDiag.getMotorName() + " Limit Switch Missing !!!!!!!!!!");
+				failure = true;
+			}
+
+			if (!mBallArmRollerMotor.isEncoderPresent()) {
+				ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + ballArmRotationDiag.getMotorName() + " Encoder Missing !!!!!!!!!!");
+				failure = true;
+			}
+
+			return failure;
+		}
+
 		return false;
 	}
 
@@ -125,7 +186,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void zeroSensors() {
-		mBallArmRotationMotor.setEncoderPosition(Constants.kBallIntakeArmForwardSoftLimit);
+		mBallArmRotationMotor.setEncoderPosition(CalConstants.kBallIntakeArmForwardSoftLimit);
 		zeroRemoteSensor();
 	}
 
@@ -151,9 +212,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
 
-				if (mBallArmRotationMotor.getForwardLimitValue())
+				if (isArmUp())
 					TeleopActionRunner.runAction(AutomatedActions.unfold());
-//				(new TeleopActionRunner(AutomatedActions.unfold())).runAction();
 			}
 		}
 
@@ -220,6 +280,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public double getRemotePosition() {
 		return mBallArmRollerMotor.getPosition();
+	}
+
+	public boolean isArmUp() {
+		return mBallArmRotationMotor.getForwardLimitValue();
 	}
 
 	@Override

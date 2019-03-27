@@ -3,7 +3,9 @@ package com.team195.frc2019.subsystems;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.RemoteLimitSwitchSource;
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
+import com.team195.frc2019.constants.DeviceIDConstants;
+import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -11,7 +13,6 @@ import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
-import com.team195.frc2019.subsystems.positions.HatchArmPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
@@ -46,16 +47,16 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	private static final int mPeakCurrentDurationMS = 250;
 
 	private Elevator() {
-		mElevatorMaster = new CKTalonSRX(Constants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
+		mElevatorMaster = new CKTalonSRX(DeviceIDConstants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
 		mElevatorMaster.setSensorPhase(true);
 		mElevatorMaster.setInverted(false);
-		mElevatorMaster.setPIDF(Constants.kElevatorPositionKp, Constants.kElevatorPositionKi, Constants.kElevatorPositionKd, Constants.kElevatorPositionKf);
-		mElevatorMaster.setMotionParameters(Constants.kElevatorPositionCruiseVel, Constants.kElevatorPositionMMAccel);
+		mElevatorMaster.setPIDF(CalConstants.kElevatorPositionKp, CalConstants.kElevatorPositionKi, CalConstants.kElevatorPositionKd, CalConstants.kElevatorPositionKf);
+		mElevatorMaster.setMotionParameters(CalConstants.kElevatorPositionCruiseVel, CalConstants.kElevatorPositionMMAccel);
 		zeroSensors();
 		mElevatorMaster.setControlMode(MCControlMode.Disabled);
-		mElevatorMaster.configForwardSoftLimitThreshold(Constants.kElevatorPositionForwardSoftLimit);
+		mElevatorMaster.configForwardSoftLimitThreshold(CalConstants.kElevatorPositionForwardSoftLimit);
 		mElevatorMaster.configForwardSoftLimitEnable(true);
-		mElevatorMaster.configReverseSoftLimitThreshold(Constants.kElevatorPositionReverseSoftLimit);
+		mElevatorMaster.configReverseSoftLimitThreshold(CalConstants.kElevatorPositionReverseSoftLimit);
 		mElevatorMaster.configReverseSoftLimitEnable(true);
 		mElevatorMaster.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
@@ -67,18 +68,18 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 //
 //		}
 
-		mElevatorSlaveA = new CKTalonSRX(Constants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B40A, false);
+		mElevatorSlaveA = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B40A, false);
 		mElevatorSlaveA.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
-		mElevatorSlaveB = new CKTalonSRX(Constants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
+		mElevatorSlaveB = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
 		mElevatorSlaveB.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
-		mElevatorSlaveC = new CKTalonSRX(Constants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
+		mElevatorSlaveC = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
 		mElevatorSlaveC.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 
 
 		//Limit Switch Homing for Elevator
 		mElevatorSlaveC.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.Disabled);
-		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, Constants.kElevatorSlaveCRightId);
+		mElevatorMaster.configReverseLimitSwitchSource(RemoteLimitSwitchSource.RemoteTalonSRX, LimitSwitchNormal.NormallyOpen, DeviceIDConstants.kElevatorSlaveCRightId);
 //		mElevatorMaster.configZeroOnLimit();
 
 		requestMoveElevatorUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true
@@ -108,24 +109,33 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized boolean isSystemFaulted() {
 		boolean systemFaulted = !mElevatorMaster.isEncoderPresent();
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Elevator Encoder Missing!", MessageLevel.DEFCON1);
+		}
+
 		systemFaulted |= mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
-		if (systemFaulted)
+
+		if (systemFaulted) {
+			ConsoleReporter.report("Elevator Requires Rehoming!", MessageLevel.DEFCON1);
 			setElevatorControlMode(ElevatorControlMode.DISABLED);
+		}
+
 		return systemFaulted;
 	}
 
 	@Override
 	public boolean runDiagnostics() {
-		if (Constants.ENABLE_ELEVATOR_TEST) {
+		if (TestConstants.ENABLE_ELEVATOR_TEST) {
 			ConsoleReporter.report("Testing Elevator---------------------------------");
-			final double kLowCurrentThres = Constants.kElevatorTestLowCurrentThresh;
-			final double kLowRpmThres = Constants.kElevatorTestLowRPMThresh;
+			final double kLowCurrentThres = TestConstants.kElevatorTestLowCurrentThresh;
+			final double kLowRpmThres = TestConstants.kElevatorTestLowRPMThresh;
 
 			ArrayList<MotorDiagnostics> mElevatorDiagArr = new ArrayList<>();
-			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Master", mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
-			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 1", mElevatorSlaveA, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
-			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 2", mElevatorSlaveB, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
-			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 3", mElevatorSlaveC, mElevatorMaster, Constants.kElevatorTestSpeed, Constants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Master", mElevatorMaster, TestConstants.kElevatorTestSpeed, TestConstants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 1", mElevatorSlaveA, mElevatorMaster, TestConstants.kElevatorTestSpeed, TestConstants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 2", mElevatorSlaveB, mElevatorMaster, TestConstants.kElevatorTestSpeed, TestConstants.kElevatorTestDuration, false));
+			mElevatorDiagArr.add(new MotorDiagnostics("Elevator Motor Slave 3", mElevatorSlaveC, mElevatorMaster, TestConstants.kElevatorTestSpeed, TestConstants.kElevatorTestDuration, false));
 
 			boolean failure = false;
 
@@ -155,13 +165,13 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 			if (mElevatorDiagArr.size() > 0) {
 				List<Double> elevatorMotorCurrents = mElevatorDiagArr.stream().map(MotorDiagnostics::getMotorCurrent).collect(Collectors.toList());
-				if (!Util.allCloseTo(elevatorMotorCurrents, elevatorMotorCurrents.get(0), Constants.kElevatorTestCurrentDelta)) {
+				if (!Util.allCloseTo(elevatorMotorCurrents, elevatorMotorCurrents.get(0), TestConstants.kElevatorTestCurrentDelta)) {
 					failure = true;
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! Elevator Motor Currents Different !!!!!!!!!!");
 				}
 
 				List<Double> elevatorMotorRPMs = mElevatorDiagArr.stream().map(MotorDiagnostics::getMotorRPM).collect(Collectors.toList());
-				if (!Util.allCloseTo(elevatorMotorRPMs, elevatorMotorRPMs.get(0), Constants.kElevatorTestRPMDelta)) {
+				if (!Util.allCloseTo(elevatorMotorRPMs, elevatorMotorRPMs.get(0), TestConstants.kElevatorTestRPMDelta)) {
 					failure = true;
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!!! Elevator RPMs different !!!!!!!!!!!!!!!!!!!");
 				}

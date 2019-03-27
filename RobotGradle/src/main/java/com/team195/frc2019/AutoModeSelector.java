@@ -3,10 +3,14 @@ package com.team195.frc2019;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCPortIn;
 import com.team195.frc2019.auto.AutoModeBase;
-import com.team195.frc2019.auto.modes.CharacterizeHighGearStraight;
 import com.team195.frc2019.auto.modes.CrossAutoLineMode;
 import com.team195.frc2019.auto.modes.DesiredMode;
 import com.team195.frc2019.auto.modes.DoNothingMode;
+import com.team195.frc2019.auto.modes.High.HighTwoHatchCargoshipMode;
+import com.team195.frc2019.auto.modes.High.HighTwoHatchRocketMode;
+import com.team195.frc2019.auto.modes.Low.LowTwoHatchCargoshipMode;
+import com.team195.frc2019.auto.modes.Low.LowTwoHatchRocketMode;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.lib.util.StartingPosition;
 
@@ -19,7 +23,7 @@ public class AutoModeSelector {
 
     public AutoModeSelector() {
         try {
-            oscPortIn = new OSCPortIn(Constants.LOG_OSC_REPORTER_PORT);
+            oscPortIn = new OSCPortIn(Constants.AUTO_SELECTOR_PORT);
 
             OSCListener autoSelectionListener = (time, message) -> {
                 try {
@@ -53,25 +57,51 @@ public class AutoModeSelector {
 
     public AutoModeBase getAutoMode() {
         if (mCachedDesiredMode != null && mCachedStartingPosition != null) {
-            switch (mCachedDesiredMode) {
-                case CrossAutoLine:
-                    switch (mCachedStartingPosition) {
-                        case Left:
-                            break;
-                        case Center:
-                            break;
-                        case Right:
-                            break;
-                        case Invalid:
+            switch (mCachedStartingPosition) {
+                case LeftLow:
+                    switch (mCachedDesiredMode) {
+                        case TwoHatchRocket:
+                            return new LowTwoHatchRocketMode(true);
+                        case TwoHatchCargoship:
+                            return new LowTwoHatchCargoshipMode(true);
+                        default:
                             break;
                     }
+                    break;
+                case LeftHigh:
+                    switch (mCachedDesiredMode) {
+                        case TwoHatchRocket:
+                            return new HighTwoHatchRocketMode(true);
+                        case TwoHatchCargoship:
+                            return new HighTwoHatchCargoshipMode(true);
+                        default:
+                            break;
+                    }
+                    break;
+                case Center:
                     return new CrossAutoLineMode();
-                case Characterization:
-                    return new CharacterizeHighGearStraight();
-                case DoNothing:
-                    return new DoNothingMode();
-                default:
-                    return new CrossAutoLineMode();
+                case RightLow:
+                    switch (mCachedDesiredMode) {
+                        case TwoHatchRocket:
+                            return new LowTwoHatchRocketMode(false);
+                        case TwoHatchCargoship:
+                            return new LowTwoHatchCargoshipMode(false);
+                        default:
+                            break;
+                    }
+                    break;
+                case RightHigh:
+                    switch (mCachedDesiredMode) {
+                        case TwoHatchRocket:
+                            return new HighTwoHatchRocketMode(false);
+                        case TwoHatchCargoship:
+                            return new HighTwoHatchCargoshipMode(false);
+                        default:
+                            break;
+                    }
+                    break;
+                case Invalid:
+                    break;
             }
         }
         return new DoNothingMode();

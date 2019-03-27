@@ -1,9 +1,9 @@
 package com.team195.frc2019.controllers;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.CalConstants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.auto.actions.*;
-import com.team195.frc2019.auto.actions.climb.SetBallIntakeArmRotationOpenLoopAction;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -86,9 +86,9 @@ public class HIDController {
 								turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.5;
 							}
 
-							if (Elevator.getInstance().getPosition() > Constants.kElevatorLowSensitivityThreshold) {
-								throttle *= Constants.kLowSensitivityFactor;
-								turn *= Constants.kLowSensitivityFactor;
+							if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
+								throttle *= CalConstants.kLowSensitivityFactor;
+								turn *= CalConstants.kLowSensitivityFactor;
 							}
 
 //							if (driveJoystick.getRisingEdgeButton(5)) {

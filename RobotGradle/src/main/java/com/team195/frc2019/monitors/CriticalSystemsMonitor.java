@@ -1,6 +1,6 @@
 package com.team195.frc2019.monitors;
 
-import com.team195.frc2019.Constants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.SubsystemManager;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
