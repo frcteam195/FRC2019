@@ -350,6 +350,8 @@ public class AutomatedActions {
 		actionArrayList.add(intakeBallOn((t) -> false));
 		actionArrayList.add(intakeBallOff());
 		actionArrayList.add(new OpenLoopDrive(0.2, 0.2, 2));
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up, 5));
+		actionArrayList.add(new WaitAction(2));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 100, Turret.getInstance(), BallIntakeArm.getInstance(), Drive.getInstance(), Elevator.getInstance());
 	}

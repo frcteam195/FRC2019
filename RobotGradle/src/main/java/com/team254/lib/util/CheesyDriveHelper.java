@@ -8,8 +8,8 @@ package com.team254.lib.util;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.1;
-    private static final double kWheelDeadband = 0.1;
+    private static final double kThrottleDeadband = 0.08;
+    private static final double kWheelDeadband = 0.08;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.85;
@@ -36,8 +36,8 @@ public class CheesyDriveHelper {
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
                                    boolean isHighGear, double velScalingFactor) {
 
-        wheel = handleDeadband(wheel, kWheelDeadband);
-        throttle = handleDeadband(throttle, kThrottleDeadband);
+//        wheel = handleDeadband(wheel, kWheelDeadband);
+//        throttle = handleDeadband(throttle, kThrottleDeadband);
 
         double negInertia = wheel - mOldWheel;
         mOldWheel = wheel;

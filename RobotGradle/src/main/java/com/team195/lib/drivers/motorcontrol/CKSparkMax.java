@@ -55,7 +55,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public CKSparkMax(int deviceID, MotorType type, CANSparkMax masterSpark, PDPBreaker breakerCurrent, boolean invert) {
 		this(deviceID, type, breakerCurrent, normalSlaveConfig);
-		addConfigStatement((t) -> follow(masterSpark, invert));
+//		addConfigStatement((t) -> follow(masterSpark, invert));
+		follow(masterSpark, invert);
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 		burnFlash();
 	}
@@ -91,7 +92,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 			currentControlMode = controlMode;
 			setpoint = demand;
 
-			canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward);
+			canPIDController.setReference(demand, controlMode.Rev(), slotIdx, arbitraryFeedForward, CANPIDController.ArbFFUnits.kPercentOut);
 //			final double finalDemand = demand;
 //			runSparkMAXFunctionWithRetry((t) -> canPIDController.setReference(finalDemand, controlMode.Rev(), slotIdx, arbitraryFeedForward));
 
