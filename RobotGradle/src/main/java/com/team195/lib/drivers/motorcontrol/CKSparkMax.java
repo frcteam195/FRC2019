@@ -71,7 +71,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS));
 		runSparkMAXFunctionWithRetry((t) -> setSmartCurrentLimit(motorBreaker.value * 2));
 		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(12));
-		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(0.075));
+		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(0.1));
 		set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
