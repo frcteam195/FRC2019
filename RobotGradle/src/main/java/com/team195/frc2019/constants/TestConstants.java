@@ -3,9 +3,9 @@ package com.team195.frc2019.constants;
 public class TestConstants {
 	//////////////////////////////////////
 	//TEST CONSTRAINTS
-	public static final boolean RUN_INDIVIDUAL_TESTS = true;
+	public static final boolean RUN_INDIVIDUAL_TESTS = false;
 
-	public static final boolean ENABLE_DRIVE_TEST = true;
+	public static final boolean ENABLE_DRIVE_TEST = false;
 	public static final double kDriveBaseTestLowCurrentThresh = 2;
 	public static final double kDriveBaseTestLowRPMThresh = 100;
 	public static final double kDriveBaseTestCurrentDelta = 5.0;

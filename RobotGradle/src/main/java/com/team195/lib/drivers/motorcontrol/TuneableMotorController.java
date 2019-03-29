@@ -33,6 +33,8 @@ public interface TuneableMotorController {
 
 	void setEncoderPosition(double position);
 
+	void setCurrentLimit(int currentLimit);
+
 	void writeToFlash();
 
 	void disableSoftLimits();

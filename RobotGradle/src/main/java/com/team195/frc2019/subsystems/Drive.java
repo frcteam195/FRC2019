@@ -146,32 +146,32 @@ public class Drive extends Subsystem {
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.writeToFlash());
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.writeToFlash());
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftSlaveA.writeToFlash();
 
 		mLeftSlaveB = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
-		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.writeToFlash());
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(DeviceIDConstants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.writeToFlash());
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.writeToFlash());
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightSlaveA.writeToFlash();
 
 		mRightSlaveB = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
-		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.writeToFlash());
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(DeviceIDConstants.kPTOShifterSolenoidId);
 		mPTOShifter.set(false);
@@ -557,7 +557,7 @@ public class Drive extends Subsystem {
 			}
 
 			for (MotorDiagnostics mD : mAllMotorsDiagArr) {
-				ConsoleReporter.report("Teesting motor: " + mD.getMotorName());
+				ConsoleReporter.report("Testing motor: " + mD.getMotorName());
 				mD.runTest();
 
 				if (mD.isCurrentUnderThreshold(kLowCurrentThres)) {

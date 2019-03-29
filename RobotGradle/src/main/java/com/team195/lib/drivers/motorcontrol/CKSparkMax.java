@@ -210,8 +210,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	@Override
 	public synchronized void setMotionParameters(double cruiseVel, double cruiseAccel) {
-		canPIDController.setSmartMotionMaxVelocity(cruiseVel, currentSelectedSlot);
-		canPIDController.setSmartMotionMaxAccel(cruiseAccel, currentSelectedSlot);
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setSmartMotionMaxVelocity(cruiseVel, currentSelectedSlot));
+		runSparkMAXFunctionWithRetry((t) -> canPIDController.setSmartMotionMaxAccel(cruiseAccel, currentSelectedSlot));
 	}
 
 	@Override
@@ -227,6 +227,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	@Override
 	public synchronized void setEncoderPosition(double position) {
 		runSparkMAXFunctionWithRetry((t) -> canEncoder.setPosition(position));
+	}
+
+	@Override
+	public void setCurrentLimit(int currentLimit) {
+		runSparkMAXFunctionWithRetry((t) -> setSmartCurrentLimit(currentLimit));
 	}
 
 	@Override

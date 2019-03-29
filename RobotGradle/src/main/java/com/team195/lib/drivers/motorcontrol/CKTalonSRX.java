@@ -404,6 +404,11 @@ public class CKTalonSRX implements TuneableMotorController {
 		runTalonFunctionWithRetry((t) -> mTalonSRX.setSelectedSensorPosition(convertRotationsToNativeUnits(position), 0, Constants.kCANTimeoutMs));
 	}
 
+	@Override
+	public void setCurrentLimit(int currentLimit) {
+		configCurrentLimit(currentLimit, 0, 0);
+	}
+
 	private synchronized void runTalonFunctionWithRetry(Function<Void, ErrorCode> talonCall) {
 		boolean setSucceeded;
 		int retryCounter = 0;
