@@ -1,5 +1,6 @@
 package com.team195.frc2019.subsystems;
 
+import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.constants.DeviceIDConstants;
@@ -480,10 +481,10 @@ public class Drive extends Subsystem {
 	public synchronized void readPeriodicInputs() {
 		double prevLeftRotations = mPeriodicIO.left_position_rotations;
 		double prevRightRotations = mPeriodicIO.right_position_rotations;
-		mPeriodicIO.left_position_rotations = mLeftMaster.getPosition();
-		mPeriodicIO.right_position_rotations = mRightMaster.getPosition();
-		mPeriodicIO.left_velocity_RPM = mLeftMaster.getVelocity();
-		mPeriodicIO.right_velocity_RPM = mRightMaster.getVelocity();
+		mPeriodicIO.left_position_rotations = Elevator.getInstance().getLeftDrivePosition();
+		mPeriodicIO.right_position_rotations = Elevator.getInstance().getRightDrivePosition();
+		mPeriodicIO.left_velocity_RPM = Elevator.getInstance().getLeftDriveVelocity();
+		mPeriodicIO.right_velocity_RPM = Elevator.getInstance().getRightDriveVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
 		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
@@ -539,6 +540,13 @@ public class Drive extends Subsystem {
 			mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 1", mRightSlaveA, mRightMaster));
 			mRightDiagArr.add(new MotorDiagnostics("Drive Right Slave 2", mRightSlaveB, mRightMaster));
 
+			mLeftSlaveA.follow(CANSparkMax.ExternalFollower.kFollowerDisabled, 0);
+			mLeftSlaveB.follow(CANSparkMax.ExternalFollower.kFollowerDisabled, 0);
+			mRightSlaveA.follow(CANSparkMax.ExternalFollower.kFollowerDisabled, 0);
+			mRightSlaveA.setInverted(true);
+			mRightSlaveB.follow(CANSparkMax.ExternalFollower.kFollowerDisabled, 0);
+			mRightSlaveB.setInverted(true);
+
 			mAllMotorsDiagArr.addAll(mLeftDiagArr);
 			mAllMotorsDiagArr.addAll(mRightDiagArr);
 
@@ -549,6 +557,7 @@ public class Drive extends Subsystem {
 			}
 
 			for (MotorDiagnostics mD : mAllMotorsDiagArr) {
+				ConsoleReporter.report("Teesting motor: " + mD.getMotorName());
 				mD.runTest();
 
 				if (mD.isCurrentUnderThreshold(kLowCurrentThres)) {
@@ -564,6 +573,12 @@ public class Drive extends Subsystem {
 				if (!mD.isSensorInPhase()) {
 					ConsoleReporter.report("!!!!!!!!!!!!!!!!!! " + mD.getMotorName() + " Sensor Out of Phase !!!!!!!!!!");
 					failure = true;
+				}
+
+				try {
+					Thread.sleep(2000);
+				} catch (Exception ex) {
+
 				}
 			}
 
@@ -606,7 +621,9 @@ public class Drive extends Subsystem {
 //		sb.append("GyroRate:" + mGyro.getYawRateDegreesPerSec() + ";");
 
 		//		sb.append("RobotPosition:" + PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue().toString() + ";");
-
+//		ConsoleReporter.report("Spark6ControlType: " + mLeftSlaveB.getControlType() +
+//				", Spark6FollowerID: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerID) +
+//				", Spark6FollowerConfig: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerConfig), MessageLevel.INFO);
 		return  "LeftDrivePos:" + mLeftMaster.getVelocity() + ";" +
 				"LeftDriveVel:" + mLeftMaster.getVelocity() + ";" +
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +

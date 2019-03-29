@@ -280,6 +280,22 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		requestMoveElevatorUpCheck.setEnabled(enabled);
 	}
 
+	public double getLeftDrivePosition() {
+		return mElevatorSlaveA.getPosition();
+	}
+
+	public double getRightDrivePosition() {
+		return mElevatorSlaveB.getPosition();
+	}
+
+	public double getLeftDriveVelocity() {
+		return mElevatorSlaveA.getVelocity();
+	}
+
+	public double getRightDriveVelocity() {
+		return mElevatorSlaveB.getVelocity();
+	}
+
 	public boolean isAtLowerLimit() {
 		return mElevatorSlaveC.getReverseLimitValue();
 	}

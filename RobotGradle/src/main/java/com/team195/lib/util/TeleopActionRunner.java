@@ -22,7 +22,7 @@ public class TeleopActionRunner {
 
 			while (true) {
 				try {
-					ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+//					ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
 					if (mActionLock.tryLock()) {
 						try {
 							if (mActionList.size() > 0) {
@@ -44,7 +44,7 @@ public class TeleopActionRunner {
 						} catch (Exception ex) {
 							ConsoleReporter.report(ex);
 						} finally {
-							ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+//							ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
 							mActionLock.unlock();
 						}
 						threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
@@ -69,7 +69,7 @@ public class TeleopActionRunner {
 
 	public static boolean runAction(AutomatedAction action, boolean waitForCompletion) {
 		try {
-			ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+//			ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
 			if (mActionLock.tryLock(50, TimeUnit.MILLISECONDS)) {
 				try {
 					if (mActionList.size() > 0) {
@@ -85,7 +85,7 @@ public class TeleopActionRunner {
 				} catch (Exception ex) {
 					ConsoleReporter.report(ex);
 				} finally {
-					ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+//					ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
 					mActionLock.unlock();
 				}
 			}
@@ -101,14 +101,14 @@ public class TeleopActionRunner {
 
 			TimeoutTimer timeoutTimer = new TimeoutTimer(action.getTimeout());
 			while (!timeoutTimer.isTimedOut() && !completed) {
-				ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+//				ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
 				if (mActionLock.tryLock()) {
 					try {
 						completed = !mActionList.contains(action);
 					} catch (Exception ex) {
 						ConsoleReporter.report(ex);
 					} finally {
-						ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+//						ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
 						mActionLock.unlock();
 					}
 				}

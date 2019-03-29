@@ -97,6 +97,7 @@ public class Robot extends TimedRobot {
 //		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
 //		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance());
 //		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
+//		ConsoleReporter.report(mAutoModeSelector.getAutoMode().getClass().getSimpleName().toString());
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.team195.frc2019.auto.actions.CollectVelocityData;
 import com.team195.frc2019.auto.actions.WaitAction;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team254.lib.physics.DriveCharacterization;
+import com.team254.lib.util.CrashTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +30,7 @@ public class CharacterizeHighGearStraight extends AutoModeBase {
         ConsoleReporter.report("ks: " + constants.ks);
         ConsoleReporter.report("kv: " + constants.kv);
         ConsoleReporter.report("ka: " + constants.ka);
+
+        CrashTracker.logThrowableCrash(new Exception("ks:"+constants.ks + ",kv:"+constants.kv+",ka:"+constants.ka));
     }
 }
