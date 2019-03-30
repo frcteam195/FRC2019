@@ -41,7 +41,8 @@ public class TurnDriveLooseAngleAction implements Action {
 	public void done() {
 		mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
 		mDrive.setOpenLoop(new DriveSignal(0, 0));
-		mDrive.setBobbyBrake();
+//		mDrive.setBobbyBrake();
+		mDrive.setBrakeMode(false);
 	}
 
 	@Override

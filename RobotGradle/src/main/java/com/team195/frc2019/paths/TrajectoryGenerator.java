@@ -212,6 +212,7 @@ public class TrajectoryGenerator {
         public final MirroredTrajectory centerPyramidCubeToScaleRight;
         public final MirroredTrajectory scaleToFenceRight;
         public final MirroredTrajectory fenceToScaleRight;
+        public final MirroredTrajectory testPath;
 
         private TrajectorySet() {
             sideStartToNearScale = new MirroredTrajectory(getSideStartToNearScale());
@@ -251,6 +252,7 @@ public class TrajectoryGenerator {
             scaleToFenceRight = new MirroredTrajectory(getScaleToFenceRight());
             fenceToScaleRight = new MirroredTrajectory(getFenceToScaleRight());
 
+            testPath = new MirroredTrajectory(getTestPath());
         }
 
         private Trajectory<TimedState<Pose2dWithCurvature>> getSideStartToNearScale() {
@@ -296,6 +298,16 @@ public class TrajectoryGenerator {
 
             return generateTrajectory(true, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kMaxVelocity, kMaxAccel, kMaxVoltage);
+        }
+
+        private Trajectory<TimedState<Pose2dWithCurvature>> getTestPath() {
+            List<Pose2d> waypoints = new ArrayList<>();
+            waypoints.add(kSideStartPose);
+            waypoints.add(kSideStartPose.transformBy(new Pose2d(new Translation2d(60.0, 60.0), Rotation2d
+                    .fromDegrees(0.0))));
+
+            return generateTrajectory(false, waypoints, Arrays.asList(new CentripetalAccelerationConstraint(kMaxCentripetalAccelElevatorDown)
+            ), kMaxVelocity, kMaxAccel, kMaxVoltage);
         }
 
         private Trajectory<TimedState<Pose2dWithCurvature>> getSideStartToFarScale() {

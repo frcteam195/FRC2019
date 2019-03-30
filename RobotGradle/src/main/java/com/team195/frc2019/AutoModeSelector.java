@@ -3,10 +3,7 @@ package com.team195.frc2019;
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCPortIn;
 import com.team195.frc2019.auto.AutoModeBase;
-import com.team195.frc2019.auto.modes.CharacterizeHighGearStraight;
-import com.team195.frc2019.auto.modes.CrossAutoLineMode;
-import com.team195.frc2019.auto.modes.DesiredMode;
-import com.team195.frc2019.auto.modes.DoNothingMode;
+import com.team195.frc2019.auto.modes.*;
 import com.team195.frc2019.auto.modes.High.HighTwoHatchCargoshipMode;
 import com.team195.frc2019.auto.modes.High.HighTwoHatchRocketMode;
 import com.team195.frc2019.auto.modes.Low.LowTwoHatchCargoshipMode;
@@ -80,7 +77,7 @@ public class AutoModeSelector {
                     }
                     break;
                 case Center:
-                    return new CharacterizeHighGearStraight();
+                    return new TestMode();
                 case RightLow:
                     switch (mCachedDesiredMode) {
                         case TwoHatchRocket:

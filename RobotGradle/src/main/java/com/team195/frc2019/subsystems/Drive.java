@@ -143,8 +143,8 @@ public class Drive extends Subsystem {
 
 		mLeftMaster = new CKSparkMax(DeviceIDConstants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setInverted(false));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
-		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf));
+//		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearVelocityDFilter));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mLeftMaster.writeToFlash();
@@ -159,8 +159,8 @@ public class Drive extends Subsystem {
 
 		mRightMaster = new CKSparkMax(DeviceIDConstants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(CalConstants.kDriveLowGearPositionKp, CalConstants.kDriveLowGearPositionKi, CalConstants.kDriveLowGearPositionKd, CalConstants.kDriveLowGearPositionKf));
-		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf));
+//		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
 		mRightMaster.writeToFlash();
@@ -254,8 +254,8 @@ public class Drive extends Subsystem {
 
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
-//			setBrakeMode(false);
-			setBobbyBrake();
+			setBrakeMode(false);
+//			setBobbyBrake();
 
 			setDriveControlState(DriveControlState.OPEN_LOOP);
 		}

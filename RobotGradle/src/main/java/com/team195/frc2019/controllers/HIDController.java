@@ -105,7 +105,8 @@ public class HIDController {
 									if (driveJoystick.getRawButton(5))
 										mDrive.setBrakeMode(true);
 									else
-										mDrive.setBobbyBrake();
+										mDrive.setBrakeMode(false);
+//										mDrive.setBobbyBrake();
 
 									mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 								}
@@ -133,10 +134,11 @@ public class HIDController {
 								}
 
 								if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
-									if (driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6))
+									if (driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled())
 										mDrive.setBrakeMode(true);
 									else
-										mDrive.setBobbyBrake();
+										mDrive.setBrakeMode(false);
+//										mDrive.setBobbyBrake();
 
 									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, driveJoystick.getRawButton(6) || VisionTracker.getInstance().isTargetFound(), true));
 								}
