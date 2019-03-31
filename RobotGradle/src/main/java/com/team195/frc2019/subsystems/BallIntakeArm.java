@@ -79,7 +79,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 		ballArmUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
 				(t) -> Elevator.getInstance().getPosition() < ElevatorPositions.CollisionThresholdBallArm,
-				(t) -> Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta)
+				(t) -> ((Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta))
+						|| (Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Back180 - TurretPositions.PositionDelta)))
 		);
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);
@@ -230,16 +231,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				switch (mBallIntakeArmControlMode) {
 					case POSITION:
-						int rotationPIDSlot = 0;
-						if (mBallIntakeArmSetpoint <= 0)
-							rotationPIDSlot = 1;
-
-						if (ballArmUpCheck.hasPassedConditions())
-							mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
-
+						mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
-						mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeArmSetpoint, -1), 1), 0, 0);
+						if (ballArmUpCheck.hasPassedConditions())
+							mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeArmSetpoint, -1), 1), 0, 0);
 						break;
 					case DISABLED:
 					default:

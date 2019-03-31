@@ -140,7 +140,11 @@ public class HIDController {
 										mDrive.setBrakeMode(false);
 //										mDrive.setBobbyBrake();
 
-									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, driveJoystick.getRawButton(6) || VisionTracker.getInstance().isTargetFound(), true));
+									boolean quickTurn = driveJoystick.getRawButton(6);
+									if (quickTurn)
+										turn *= 0.5;
+
+									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn || VisionTracker.getInstance().isTargetFound(), true));
 								}
 							}
 
