@@ -112,7 +112,8 @@ public class HIDController {
 								}
 							} else {
 								double throttle = -driveJoystick.getNormalizedAxis(1, 0.08);
-								double turn = 0;
+								double turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.75;
+
 								if (VisionTracker.getInstance().isVisionEnabled()) {
 									if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 										if (VisionTracker.getInstance().isTargetFound())
@@ -124,8 +125,6 @@ public class HIDController {
 										if (VisionTracker.getInstance().isTargetFound())
 											turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.007, 0.1), -0.1);
 									}
-								} else {
-									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.75;
 								}
 
 								if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
@@ -140,11 +139,11 @@ public class HIDController {
 										mDrive.setBrakeMode(false);
 //										mDrive.setBobbyBrake();
 
-									boolean quickTurn = driveJoystick.getRawButton(6);
+									boolean quickTurn = driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled();
 									if (quickTurn)
 										turn *= 0.5;
 
-									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn || VisionTracker.getInstance().isTargetFound(), true));
+									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, true));
 								}
 							}
 
