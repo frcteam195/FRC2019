@@ -245,7 +245,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 						if (eUp) {
 							outputPos = Math.max(outputPos, ElevatorPositions.CollisionThresholdHatchArm + ElevatorPositions.PositionDelta);
 						}
-						if (eDown) {
+						if (eDown && getPosition() <= ElevatorPositions.CargoBall) {
 							outputPos = Math.min(outputPos, ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta);
 						}
 

@@ -15,7 +15,7 @@ public class SetBallArmRotationAction implements Action {
 	private double mRotation;
 
 	public SetBallArmRotationAction(double armRotation) {
-		this(armRotation, 2);
+		this(armRotation, 3);
 	}
 
 	public SetBallArmRotationAction(double armRotation, double timeout) {
@@ -27,7 +27,7 @@ public class SetBallArmRotationAction implements Action {
 	public boolean isFinished() {
 //		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
 		return mTimeoutTimer.isTimedOut()
-				|| ((mBallArm.getSetpoint() == BallIntakeArmPositions.Down || mBallArm.getSetpoint() == BallIntakeArmPositions.SmallDown) && mBallArm.isArmAtSetpoint(0.2))
+				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Down  && mBallArm.isArmAtSetpoint(0.2))
 				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Up && mBallArm.isArmUp());
 	}
 
@@ -45,7 +45,7 @@ public class SetBallArmRotationAction implements Action {
 	public void start() {
 		if (mBallArm.getSetpoint() != mRotation) {
 			//If the arm is up, zero sensor
-			if (mBallArm.isArmUp() || mBallArm.getSetpoint() >= 0) {
+			if (mRotation < 0) {
 				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
 				mBallArm.zeroRemoteSensor();
 				trc.start();

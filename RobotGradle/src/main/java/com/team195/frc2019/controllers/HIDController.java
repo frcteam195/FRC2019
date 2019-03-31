@@ -193,16 +193,30 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)));
 							}
 							else if (buttonBox1.getRisingEdgeButton(13)) {
-//								BallIntakeArm.getInstance().setSensorsForReset();
-								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPickup());
 							}
 							else if (buttonBox1.getRisingEdgeButton(14)) {
-								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceLow());
+							}
+							else if (buttonBox1.getRisingEdgeButton(15)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceLow());
+							}
+							else if (buttonBox1.getRisingEdgeButton(16)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceMid());
 							}
 
 
 
-							if (buttonBox2.getRisingEdgeButton(6)) {
+							if (buttonBox2.getRisingEdgeButton(1)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceHigh());
+							}
+							else if (buttonBox2.getRisingEdgeButton(3)) {
+								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
+							}
+							else if (buttonBox2.getRisingEdgeButton(4)) {
+								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+							}
+							else if (buttonBox2.getRisingEdgeButton(6)) {
 								ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
 							}

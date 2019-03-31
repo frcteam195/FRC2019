@@ -78,9 +78,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 //		}
 
 		ballArmUpCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.AND, true,
-				(t) -> Elevator.getInstance().getPosition() < ElevatorPositions.CollisionThresholdBallArm,
-				(t) -> ((Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Home - TurretPositions.PositionDelta))
-						|| (Math.abs(Turret.getInstance().getPosition()) < Math.abs(TurretPositions.Back180 - TurretPositions.PositionDelta)))
+				(t) -> (Elevator.getInstance().getPosition() < ElevatorPositions.CollisionThresholdBallArm) || (Elevator.getInstance().getPosition() > ElevatorPositions.CargoBall),
+				(t) -> ((Math.abs(Turret.getInstance().getPosition() - TurretPositions.Home) < TurretPositions.PositionDelta)
+						|| (Math.abs(Turret.getInstance().getPosition() - TurretPositions.Back180) < TurretPositions.PositionDelta))
 		);
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);

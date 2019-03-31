@@ -15,6 +15,7 @@ import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
+import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
@@ -208,7 +209,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 					case POSITION:
 						if (turretAnyPositionCheck.hasPassedConditions())
 							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
-						else
+						else if (mTurretSetpoint != TurretPositions.Back180 && mTurretSetpoint != TurretPositions.Home)
 							mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 						break;
 					case OPEN_LOOP:
