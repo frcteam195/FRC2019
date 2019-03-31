@@ -207,10 +207,12 @@ public class Turret extends Subsystem implements InterferenceSystem {
 							mTurretSetpoint = convertTurretDegreesToRotations(mVisionTracker.getTargetHorizAngleDev());
 						//Fall through on purpose to set position -> no break;
 					case POSITION:
-						if (turretAnyPositionCheck.hasPassedConditions() || Elevator.getInstance().getPosition() > ElevatorPositions.CargoBall)
+						if (turretAnyPositionCheck.hasPassedConditions() || Elevator.getInstance().getPosition() > ElevatorPositions.CargoBall
+							|| Math.abs(mTurretSetpoint - TurretPositions.Back180) < Turret.convertTurretDegreesToRotations(10)
+							|| Math.abs(mTurretSetpoint - TurretPositions.Home) < Turret.convertTurretDegreesToRotations(10))
 							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
-						else if (mTurretSetpoint != TurretPositions.Back180 && mTurretSetpoint != TurretPositions.Home)
-							mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
+//						else if (mTurretSetpoint != TurretPositions.Back180 && mTurretSetpoint != TurretPositions.Home)
+//							mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 						break;
 					case OPEN_LOOP:
 						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mTurretSetpoint, -1), 1), 0, 0);

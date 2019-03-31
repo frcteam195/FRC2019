@@ -99,6 +99,8 @@ public class AutomatedActions {
 	public static AutomatedAction reverseHatchPickup() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetHatchPushAction(false));
+
 		if (Turret.getInstance().getSetpoint() != TurretPositions.Back180 || Elevator.getInstance().getSetpoint() != ElevatorPositions.HatchPickupStation) {
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 			actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation),
@@ -192,6 +194,8 @@ public class AutomatedActions {
 
 	public static AutomatedAction pickupHatchFeederStation() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
 
 		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
