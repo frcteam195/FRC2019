@@ -3,7 +3,6 @@ package com.team195.frc2019.subsystems.positions;
 public class BallIntakeArmPositions {
 	public static final double Down = -3.5;
 	public static final double Up = 4.5;
-//	public static final double Up = Constants.kBallIntakeArmForwardSoftLimit;
 	public static final double CollisionThreshold = -2;
 	public static final double PositionDelta = 0.005;
 

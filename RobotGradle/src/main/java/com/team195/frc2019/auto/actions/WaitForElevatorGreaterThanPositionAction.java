@@ -1,7 +1,6 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.subsystems.Elevator;
-import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.lib.util.TimeoutTimer;
 
 public class WaitForElevatorGreaterThanPositionAction implements Action {

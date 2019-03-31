@@ -47,6 +47,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor.setInverted(true);
 		mBallArmRollerMotor.setSensorPhase(true);
 		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
+		mBallArmRollerMotor.configCurrentLimit(20, 25, 100);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
@@ -64,8 +65,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		trc.doRateControl(100);
 		zeroSensors();
 		trc.doRateControl(100);
-		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
-		mBallArmRotationMotor.configForwardSoftLimitEnable(true);
+//		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
+		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
@@ -212,6 +213,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		public void onFirstStart(double timestamp) {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
+
+				if (!isArmUp())
+					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
 
 				if (isArmUp())
 					TeleopActionRunner.runAction(AutomatedActions.unfold());

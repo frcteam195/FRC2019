@@ -48,15 +48,15 @@ public class Constants {
     public static final int DASHJOY_RECEIVER_PORT = 5806;
 
 
-    public static final boolean TUNING_PIDS = true;
+    public static final boolean TUNING_PIDS = false;
     public static final boolean DEBUG = false;
     public static final boolean REPORTING_ENABLED = true;
     public static final boolean REPORT_TO_DRIVERSTATION_INSTEAD_OF_CONSOLE = false;
+
     public static final RGBColor kDefaultColor = new RGBColor(210, 0, 120);  //Default purple color
     public static final RGBColor kCommLossColor = new RGBColor(255, 0, 0);
     public static final RGBColor kRequestGamePieceColor = new RGBColor(0, 255, 0);
-    public static final RGBColor kGotGamePieceColor = kDefaultColor;
-    public static final RGBColor kElevatorHomeColor = new RGBColor(0, 0, 255);
+    public static final RGBColor kGotGamePieceColor = new RGBColor(0, 0, 255);
 
     public static final int kActionTimeoutS = 30;
 

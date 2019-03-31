@@ -17,28 +17,13 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 public class AutomatedActions {
-	private static boolean unfolded = false;
-
-	public static boolean isUnfolded() {
-		return unfolded;
-	}
-
 	public static AutomatedAction homeElevator() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
 		actionArrayList.add(new SetElevatorOpenLoopAction(-0.25));
 		actionArrayList.add(new WaitForElevatorLimitAction(3));
 		actionArrayList.add(new SetElevatorHomeAction());
-
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
-	}
-
-	public static AutomatedAction intakeClimb(Function<Void, Boolean> buttonValueGetter) {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake));
-		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter));
-		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
+		actionArrayList.add(new SetLEDAction(Constants.kGotGamePieceColor));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
 	}
@@ -61,15 +46,13 @@ public class AutomatedActions {
 		actionArrayList.add(new DropBallArmClimbBarAction());
 		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 		actionArrayList.add(new SetDrivePTOAction(true));
-		actionArrayList.add(new SetIntakeBarForwardClimbAction());
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake),
-				new SetClimbRackDownAction(buttonGetterMethod))));
+				new SetIntakeBarForwardClimbAction())));
+		actionArrayList.add(new SetClimbRackDownAction(buttonGetterMethod));
 		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetClimbRackUpAction());
 		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 		actionArrayList.add(new SetDrivePTOAction(false));
-//		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
-//		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 		actionArrayList.add(new SetDriveRampDownPowerAction(0.4));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance(), BallIntakeArm.getInstance());
@@ -87,8 +70,6 @@ public class AutomatedActions {
 		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake));
 		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetDrivePTOAction(false));
-//		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Up));
-//		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 		actionArrayList.add(new OpenLoopDrive(0.5, 0.5, 2));
 		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 
@@ -123,6 +104,8 @@ public class AutomatedActions {
 	public static AutomatedAction reverseHatchPlaceLow() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetHatchPushAction(false));
+
 		if (Turret.getInstance().getSetpoint() != TurretPositions.Back180 || Elevator.getInstance().getSetpoint() != ElevatorPositions.RocketHatchLow) {
 
 			if (Elevator.getInstance().getPosition() > ElevatorPositions.CargoBall)
@@ -139,6 +122,9 @@ public class AutomatedActions {
 
 	public static AutomatedAction reverseHatchPlaceMid() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
+
 		if (Turret.getInstance().getSetpoint() != TurretPositions.Back180 || Elevator.getInstance().getSetpoint() != ElevatorPositions.RocketHatchMed) {
 
 			if (Elevator.getInstance().getPosition() <= ElevatorPositions.CollisionThresholdBallArm)
@@ -155,6 +141,8 @@ public class AutomatedActions {
 
 	public static AutomatedAction reverseHatchPlaceHigh() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
 
 		if (Turret.getInstance().getSetpoint() != TurretPositions.Back180 || Elevator.getInstance().getSetpoint() != ElevatorPositions.RocketHatchHigh) {
 
@@ -173,6 +161,8 @@ public class AutomatedActions {
 	public static AutomatedAction lowerIntakeAndResetTurret() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetHatchPushAction(false));
+
 		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 		actionArrayList.add(new SetTurretPositionAction(TurretPositions.Home));
 
@@ -182,12 +172,10 @@ public class AutomatedActions {
 	public static AutomatedAction unfold() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetHatchPushAction(false));
+
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallArmRotationAction(BallIntakeArmPositions.Down),
 				new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow))));
-
-//		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
-//		actionArrayList.add(new WaitAction(AutoConstants.kWaitForArmFall));
-//		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance());
 	}
@@ -215,39 +203,6 @@ public class AutomatedActions {
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}
 
-	public static AutomatedAction hatchHandoff() {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-//		actionArrayList.add(new SetHandoffCollisionAvoidanceAction(false));
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchHandoff), new SetBeakAction(false))));
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(0.3), new SetHatchArmRotationAction(HatchArmPositions.Handoff, 0.15))));
-//		actionArrayList.add(new SetHatchPushAction(true));
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchHandoff + ElevatorPositions.HatchLiftOffset),
-//				                                             new SetHatchArmRollerAction(-0.2))));
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(0),
-//															 new SetHatchArmRotationAction(HatchArmPositions.Inside, 0.15),
-//															 new SetHatchPushAction(false))));
-//		actionArrayList.add(new SetHandoffCollisionAvoidanceAction(true));
-//		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance(), HatchIntakeArm.getInstance());
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS);
-
-	}
-
-	public static AutomatedAction placeHatch(double elevatorPosition, Function<Void, Boolean> buttonValueGetter) {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-		actionArrayList.add(new SetElevatorHeightAction(elevatorPosition));
-		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 100));
-		actionArrayList.add(new SetHatchPushAction(true));
-		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
-		actionArrayList.add(new SetBeakAction(false));
-		actionArrayList.add(new SetHatchPushAction(false));
-		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush * 2));
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Resting),
-				new SetTurretPositionAction(TurretPositions.Home))));
-
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
-	}
-
 	public static AutomatedAction placeHatch() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
@@ -257,22 +212,6 @@ public class AutomatedActions {
 		actionArrayList.add(new SetHatchPushAction(false));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance());
-	}
-
-	public static AutomatedAction shootBall(double elevatorPosition, Function<Void, Boolean> buttonValueGetter) {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-		actionArrayList.add(new SetElevatorHeightAction(elevatorPosition));
-		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 100));
-		actionArrayList.add(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedNormal));
-		actionArrayList.add(new SetBallPushAction(true));
-		actionArrayList.add(new WaitAction(AutoConstants.kWaitForBallPush));
-		actionArrayList.add(new SetBallPushAction(false));
-		actionArrayList.add(new SetBallShooterOpenLoopAction(0));
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Resting),
-				new SetTurretPositionAction(TurretPositions.Home))));
-
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}
 
 	public static AutomatedAction shootBall() {
@@ -300,17 +239,10 @@ public class AutomatedActions {
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance());
 	}
 
-	public static AutomatedAction elevatorDown() {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Resting),
-				new SetTurretPositionAction(TurretPositions.Home))));
-
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
-	}
-
 	public static AutomatedAction elevatorSet(double elevatorHeight) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
 
 		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
@@ -324,11 +256,18 @@ public class AutomatedActions {
 	}
 
 	public static AutomatedAction ballArmSet(double armPosition) {
-		return AutomatedAction.fromAction(new SetBallArmRotationAction(armPosition), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
+		actionArrayList.add(new SetBallArmRotationAction(armPosition, 5));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
 	}
 
 	public static AutomatedAction intakeBallOn(Function<Void, Boolean> buttonValueGetter) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
 
 		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
@@ -358,16 +297,6 @@ public class AutomatedActions {
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
 	}
 
-	public static AutomatedAction prepareClimb() {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
-				new SetTurretPositionAction(TurretPositions.Home))));
-		actionArrayList.add(new DropBallArmClimbBarAction());
-
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, BallIntakeArm.getInstance(), Elevator.getInstance(), Turret.getInstance());
-	}
-
 	public static AutomatedAction enableHatchVision(Function<Void, Boolean> buttonValueGetter) {
 		return AutomatedAction.fromAction(new SetVisionEnabledHatchSteerAction(buttonValueGetter), Constants.kActionTimeoutS, Drive.getInstance());
 	}
@@ -382,33 +311,6 @@ public class AutomatedActions {
 
 	public static AutomatedAction setTurretPosition(double turretPosition) {
 		return AutomatedAction.fromAction(new SetTurretPositionAction(turretPosition), Constants.kActionTimeoutS, BallIntakeArm.getInstance());
-	}
-
-	public static AutomatedAction rollerHatchFloorIntake(Function<Void, Boolean> buttonValueGetter) {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(HatchArmPositions.RollerIntake),
-//				new SetHatchArmRotationAction(HatchArmPositions.Outside),
-//				new SetHatchPushAction(false))));
-//		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 10));
-//		actionArrayList.add(hatchHandoff());
-//
-//		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance(), HatchIntakeArm.getInstance());
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS);
-	}
-
-	public static AutomatedAction hatchArmOutIntake(Function<Void, Boolean> buttonValueGetter) {
-		ArrayList<Action> actionArrayList = new ArrayList<>();
-
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(HatchArmPositions.RollerOuttake),
-//				new SetHatchArmRotationAction(HatchArmPositions.Outside))));
-//		actionArrayList.add(new WaitForFallingEdgeButtonAction(buttonValueGetter, 10));
-//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetHatchArmRollerAction(HatchArmPositions.RollerOff),
-//				new SetHatchArmRotationAction(HatchArmPositions.Inside))));
-//
-
-//		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, HatchIntakeArm.getInstance());
-		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS);
 	}
 
 	public static AutomatedAction ballOuttake(Function<Void, Boolean> buttonValueGetter) {
