@@ -193,6 +193,9 @@ public class AutomatedActions {
 	public static AutomatedAction pickupHatchFeederStation() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
+			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation),
 							new SetBeakAction(false),
 				new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
