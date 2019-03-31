@@ -41,6 +41,9 @@ public class AutomatedActions {
 	public static AutomatedAction climbAutomated(Function<Void, Boolean> buttonGetterMethod) {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		BallIntakeArm.getInstance().configureClimbCurrentLimit();
+		Drive.getInstance().configureClimbCurrentLimit();
+
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
 				new SetTurretPositionAction(TurretPositions.Home))));
 		actionArrayList.add(new DropBallArmClimbBarAction());

@@ -234,8 +234,6 @@ public class HIDController {
 							}
 							else if (buttonBox2.getRisingEdgeButton(13)) {
 								ConsoleReporter.report("Commanding Automated Climb Action", MessageLevel.INFO);
-								BallIntakeArm.getInstance().configureClimbCurrentLimit();
-								Drive.getInstance().configureClimbCurrentLimit();
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
 							}
 							else if (buttonBox2.getRisingEdgeButton(14)) {
