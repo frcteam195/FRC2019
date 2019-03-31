@@ -112,7 +112,8 @@ public class HIDController {
 								}
 							} else {
 								double throttle = -driveJoystick.getNormalizedAxis(1, 0.08);
-								double turn = 0;
+								double turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.75;
+
 								if (VisionTracker.getInstance().isVisionEnabled()) {
 									if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 										if (VisionTracker.getInstance().isTargetFound())
@@ -124,8 +125,6 @@ public class HIDController {
 										if (VisionTracker.getInstance().isTargetFound())
 											turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.007, 0.1), -0.1);
 									}
-								} else {
-									turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.75;
 								}
 
 								if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
@@ -140,7 +139,11 @@ public class HIDController {
 										mDrive.setBrakeMode(false);
 //										mDrive.setBobbyBrake();
 
-									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, driveJoystick.getRawButton(6) || VisionTracker.getInstance().isTargetFound(), true));
+									boolean quickTurn = driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled();
+									if (quickTurn)
+										turn *= 0.5;
+
+									mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, true));
 								}
 							}
 
@@ -190,16 +193,30 @@ public class HIDController {
 								TeleopActionRunner.runAction(AutomatedActions.rollerHatchFloorIntake((t) -> buttonBox1.getRawButton(12)));
 							}
 							else if (buttonBox1.getRisingEdgeButton(13)) {
-//								BallIntakeArm.getInstance().setSensorsForReset();
-								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPickup());
 							}
 							else if (buttonBox1.getRisingEdgeButton(14)) {
-								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceLow());
+							}
+							else if (buttonBox1.getRisingEdgeButton(15)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceLow());
+							}
+							else if (buttonBox1.getRisingEdgeButton(16)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceMid());
 							}
 
 
 
-							if (buttonBox2.getRisingEdgeButton(6)) {
+							if (buttonBox2.getRisingEdgeButton(1)) {
+								TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceHigh());
+							}
+							else if (buttonBox2.getRisingEdgeButton(3)) {
+								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
+							}
+							else if (buttonBox2.getRisingEdgeButton(4)) {
+								TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+							}
+							else if (buttonBox2.getRisingEdgeButton(6)) {
 								ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
 								TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
 							}

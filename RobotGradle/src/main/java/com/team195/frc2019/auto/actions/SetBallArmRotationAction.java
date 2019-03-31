@@ -15,7 +15,7 @@ public class SetBallArmRotationAction implements Action {
 	private double mRotation;
 
 	public SetBallArmRotationAction(double armRotation) {
-		this(armRotation, 2);
+		this(armRotation, 3);
 	}
 
 	public SetBallArmRotationAction(double armRotation, double timeout) {
@@ -26,7 +26,8 @@ public class SetBallArmRotationAction implements Action {
 	@Override
 	public boolean isFinished() {
 //		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
-		return mTimeoutTimer.isTimedOut() || mBallArm.isArmAtSetpoint(0.5)
+		return mTimeoutTimer.isTimedOut()
+				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Down  && mBallArm.isArmAtSetpoint(0.2))
 				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Up && mBallArm.isArmUp());
 	}
 
@@ -43,14 +44,23 @@ public class SetBallArmRotationAction implements Action {
 	@Override
 	public void start() {
 		if (mBallArm.getSetpoint() != mRotation) {
-			if (mRotation > 0)
-				mBallArm.setBallIntakeRollerSpeed(BallIntakeArmPositions.RollerOff);
-			mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
-			mBallArm.zeroRemoteSensor();
-			trc.start();
-			trc.doRateControl(100);
+			//If the arm is up, zero sensor
+			if (mRotation < 0) {
+				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
+				mBallArm.zeroRemoteSensor();
+				trc.start();
+				trc.doRateControl(100);
+			}
+
 			mBallArm.setBallIntakeArmPosition(mRotation);
-			mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
+
+			if (mRotation > 0) {
+				mBallArm.setBallIntakeRollerSpeed(BallIntakeArmPositions.RollerOff);
+				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.OPEN_LOOP);
+			}
+			else {
+				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.POSITION);
+			}
 		}
 	}
 }

@@ -4,7 +4,7 @@ import com.team195.frc2019.subsystems.Turret;
 
 public class TurretPositions {
 	public static final double Home = 0;
-	public static final double PositionDelta = 0.1;
+	public static final double PositionDelta = 0.15;
 
 	public static final double Left90 = Turret.convertTurretDegreesToRotations(-90);
 	public static final double Right90 = Turret.convertTurretDegreesToRotations(90);

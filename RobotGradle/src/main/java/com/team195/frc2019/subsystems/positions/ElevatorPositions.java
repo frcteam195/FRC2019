@@ -22,7 +22,6 @@ public static final double CargoHatch = 0.40;
 	//Keep elevator here unless intaking a ball
 	public static final double CollisionThresholdTurret = 0.25 * CalConstants.kNewPulleyFactor;
 	public static final double CollisionThresholdHatchArm = 0.715 * CalConstants.kNewPulleyFactor;
-	public static final double CollisionThresholdBallArm = 1.0 * CalConstants.kNewPulleyFactor;
+	public static final double CollisionThresholdBallArm = 0.75 * CalConstants.kNewPulleyFactor;
 	public static final double PositionDelta = 0.1 * CalConstants.kNewPulleyFactor;
-	public static final double HatchLiftOffset = 0.5 * CalConstants.kNewPulleyFactor;
 }

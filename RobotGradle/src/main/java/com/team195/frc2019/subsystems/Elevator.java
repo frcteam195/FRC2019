@@ -92,7 +92,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 		requestMoveElevatorDownCheck = new MotionInterferenceChecker(MotionInterferenceChecker.LogicOperation.OR, true,
 				(t) -> (BallIntakeArm.getInstance().getPosition() > BallIntakeArmPositions.CollisionThreshold - BallIntakeArmPositions.PositionDelta),
-				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Up)
+				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Up),
+				(t) -> (BallIntakeArm.getInstance().isArmUp())
 		);
 
 	}
@@ -244,7 +245,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 						if (eUp) {
 							outputPos = Math.max(outputPos, ElevatorPositions.CollisionThresholdHatchArm + ElevatorPositions.PositionDelta);
 						}
-						if (eDown) {
+						if (eDown && getPosition() <= ElevatorPositions.CargoBall) {
 							outputPos = Math.min(outputPos, ElevatorPositions.CollisionThresholdBallArm - ElevatorPositions.PositionDelta);
 						}
 
