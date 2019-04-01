@@ -367,10 +367,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		if (getFault(FaultID.kHasReset)) {
 			ConsoleReporter.report("Spark Max ID " + getDeviceId() + " has reset!", MessageLevel.DEFCON1);
 
-			//Do full reconfigure on SparkMAX after reset due to it's unreliable return after a breaker trip
 			runSparkMAXFunctionWithRetry((t) -> clearFaults());
-			doDefaultConfig(mCurrentConfig);
-			runUserConfig();
+			//Do full reconfigure on SparkMAX after reset due to it's unreliable return after a breaker trip
+			//Don't do this now that follow mode is fixed
+//			doDefaultConfig(mCurrentConfig);
+//			runUserConfig();
 
 			return new DiagnosticMessage("SparkMax" + getDeviceId() + "ResetHasOccurred");
 		}
