@@ -6,6 +6,7 @@ import com.team195.frc2019.auto.actions.DriveTrajectory;
 import com.team195.frc2019.auto.actions.ParallelAction;
 import com.team195.frc2019.auto.actions.SeriesAction;
 import com.team195.frc2019.auto.actions.WaitUntilInsideRegion;
+import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.subsystems.Drive;
@@ -52,6 +53,6 @@ public class LowTwoHatchRocketMode extends AutoModeBase {
 		runAction(closeRocketFeederStationToTurn2);
 		runAction(closeRocketTurn2ToCloseHatch);
 		runAction(AutomatedActions.placeHatch());
-		runAction(closeRocketCloseHatchToBall);
+		runAction(new ParallelAction(closeRocketCloseHatchToBall, AutomatedActions.intakeBallOn((t) -> false)));
 	}
 }

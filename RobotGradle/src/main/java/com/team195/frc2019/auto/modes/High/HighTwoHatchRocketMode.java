@@ -52,6 +52,6 @@ public class HighTwoHatchRocketMode extends AutoModeBase {
 		runAction(closeRocketFeederStationToTurn2);
 		runAction(closeRocketTurn2ToCloseHatch);
 		runAction(AutomatedActions.placeHatch());
-		runAction(closeRocketCloseHatchToBall);
+		runAction(new ParallelAction(closeRocketCloseHatchToBall, AutomatedActions.intakeBallOn((t) -> false)));
 	}
 }

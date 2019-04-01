@@ -48,6 +48,6 @@ public class HighTwoHatchCargoshipMode extends AutoModeBase {
 		runAction(feederStationToFrontCargoTurn1);
 		runAction(frontCargoTurn1ToFrontCargoHatch);
 		runAction(AutomatedActions.placeHatch());
-		runAction(frontCargoHatchToBall);
+		runAction(new ParallelAction(frontCargoHatchToBall, AutomatedActions.intakeBallOn((t) -> false)));
 	}
 }
