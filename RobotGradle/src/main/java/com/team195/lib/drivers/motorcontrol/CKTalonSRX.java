@@ -119,6 +119,13 @@ public class CKTalonSRX implements TuneableMotorController {
 		});
 	}
 
+	public void disableCurrentLimit() {
+		runTalonFunctionWithRetry((t) -> {
+			mTalonSRX.enableCurrentLimit(false);
+			return mTalonSRX.getLastError();
+		});
+	}
+
 	public void setFeedbackDevice(FeedbackDevice feedbackDevice) {
 		mFeedbackConfig.get(currentSelectedSlot).setFeedbackDevice(feedbackDevice);
 		mFeedbackConfig.get(currentSelectedSlot).setRemoteDeviceId(-1);

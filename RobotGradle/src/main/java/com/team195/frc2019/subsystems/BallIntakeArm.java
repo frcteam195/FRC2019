@@ -213,9 +213,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		public void onFirstStart(double timestamp) {
 			synchronized (BallIntakeArm.this) {
 				zeroSensors();
-
-				if (!isArmUp())
-					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
+//
+//				if (!isArmUp())
+//					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
 
 				if (isArmUp())
 					TeleopActionRunner.runAction(AutomatedActions.unfold());
