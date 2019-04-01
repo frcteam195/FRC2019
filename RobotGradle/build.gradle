@@ -4,7 +4,6 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
         classpath 'gov.nist.math:jama:1.0.3'
         classpath 'com.bmuschko:gradle-tomcat-plugin:2.0'
     }
@@ -17,7 +16,7 @@ plugins {
     id 'war'
 }
 
-apply plugin: 'org.junit.platform.gradle.plugin'
+//apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'com.bmuschko.tomcat'
 
 def TEAM = 195
@@ -52,7 +51,7 @@ deploy {
 							"-Dcom.sun.management.jmxremote.local.only=false",
 							"-Dcom.sun.management.jmxremote.ssl=false",
 							"-Dcom.sun.management.jmxremote.authenticate=false",
-							"-Djava.rmi.server.hostname=10.1.95.2"
+							"-Djava.rmi.server.hostname=${TEAMIP}"
 							]
 			}
         }
@@ -68,17 +67,17 @@ deploy {
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
-// Also defines JUnit 4.
+// Also defines JUnit 5.
 dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
     compile("gov.nist.math:jama:1.0.3")
-    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.3")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.3")
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.5.0-M1")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.5.0-M1")
     
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-    testCompile 'junit:junit:4.12'
+    //testCompile 'junit:junit:4.12'
     
     
     def tomcatVersion = '7.0.57'
@@ -105,6 +104,10 @@ tomcatRunWar.contextPath = '/'
 jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
+
+test {
+    useJUnitPlatform()
 }
 
 wrapper {

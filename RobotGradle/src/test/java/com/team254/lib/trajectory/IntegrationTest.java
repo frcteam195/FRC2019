@@ -41,7 +41,7 @@ public class IntegrationTest {
                 Pose2dWithCurvature.identity(), /* step_size= */ 1.0, /* dcurvature_limit= */1.0);
 
         assertFalse(smooth_path.isEmpty());
-        System.out.println(smooth_path.toCSV());
+//        System.out.println(smooth_path.toCSV());
 
         // Time parameterize the path subject to our dynamic constraints.
         // TODO
@@ -116,7 +116,7 @@ public class IntegrationTest {
                     new DifferentialDrive.ChassisState(Units.inches_to_meters(state.acceleration()), state
                             .acceleration() * state.state().getCurvature()));
 
-            System.out.println(state.toCSV() + ", " + dynamics.toCSV());
+//            System.out.println(state.toCSV() + ", " + dynamics.toCSV());
         }
     }
 

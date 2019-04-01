@@ -33,7 +33,7 @@ public class DriveMotionPlannerTest {
             pose = motion_planner.mSetpoint.state().getPose();//.transformBy(new Pose2d(new Translation2d(0.0, 1.0),
             // Rotation2d.fromDegrees(2.0)));
 
-            System.out.println(t + "," + motion_planner.toCSV());
+//            System.out.println(t + "," + motion_planner.toCSV());
             t += 0.01;// + (2.0 * Math.random() - 1.0) * 0.002;
         }
     }
@@ -54,7 +54,7 @@ public class DriveMotionPlannerTest {
             motion_planner.update(t, pose);
             pose = motion_planner.mSetpoint.state().getPose();//.transformBy(new Pose2d(new Translation2d(0.0, -1.0),
             // Rotation2d.fromDegrees(-2.0)));
-            System.out.println(t + "," + motion_planner.toCSV());
+//            System.out.println(t + "," + motion_planner.toCSV());
             t += 0.01;
         }
     }
@@ -73,7 +73,7 @@ public class DriveMotionPlannerTest {
         while (!motion_planner.isDone()) {
             motion_planner.update(t, pose);
             pose = motion_planner.mSetpoint.state().getPose();
-            System.out.println(t + "," + motion_planner.toCSV());
+//            System.out.println(t + "," + motion_planner.toCSV());
             t += 0.01;
         }
     }
@@ -116,7 +116,7 @@ public class DriveMotionPlannerTest {
                     .kDriveWheelDiameterInches / 2.0);
             rev_pose = rev_pose.transformBy(Pose2d.exp(rev_delta));
             //System.out.println("REV Delta: " + rev_delta + ", Pose: " + rev_pose);
-            System.out.println(fwd_motion_planner.toCSV() + "," + rev_motion_planner.toCSV());
+//            System.out.println(fwd_motion_planner.toCSV() + "," + rev_motion_planner.toCSV());
             t += dt;
         }
     }
@@ -144,9 +144,9 @@ public class DriveMotionPlannerTest {
             delta = new Twist2d(delta.dx * 1.0, delta.dy * 1.0, delta.dtheta * 1.05);
             pose = pose.transformBy(Pose2d.exp(delta));
             t += dt;
-            System.out.println(motion_planner.setpoint().toCSV() + "," + pose.toCSV());
+//            System.out.println(motion_planner.setpoint().toCSV() + "," + pose.toCSV());
         }
-        System.out.println(pose);
+//        System.out.println(pose);
     }
 
     @Test
@@ -163,7 +163,7 @@ public class DriveMotionPlannerTest {
         while (!motion_planner.isDone()) {
             motion_planner.update(t, pose);
             pose = motion_planner.mSetpoint.state().getPose();
-            System.out.println(t + "," + motion_planner.toCSV());
+//            System.out.println(t + "," + motion_planner.toCSV());
             t += 0.01;
         }
     }

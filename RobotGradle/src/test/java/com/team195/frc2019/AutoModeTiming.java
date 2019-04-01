@@ -11,32 +11,32 @@ public class AutoModeTiming {
     void checkTiming() {
         mTrajectoryGenerator.generateTrajectories();
 
-        double nearScaleDuration = mTrajectoryGenerator.getTrajectorySet().sideStartToNearScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearScaleToNearFence.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearFenceToNearScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearScaleToNearFence2.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearFence2ToNearScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearScaleToNearFence3.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().nearFence3ToNearScale.get(mStartedLeft).getLastState().t();
+        double rocketHatchDuration = mTrajectoryGenerator.getTrajectorySet().lowStartToCloseRocketFarHatch.get(mStartedLeft).getLastState().t() +
+//                mTrajectoryGenerator.getTrajectorySet().highStartToCloseRocketFarHatch.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().closeRocketFarHatchToTurn1.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().closeRocketFarHatchTurn1ToFeederStation.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().closeRocketFeederStationToTurn2.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().closeRocketTurn2ToCloseHatch.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().closeRocketCloseHatchToBall.get(mStartedLeft).getLastState().t();
 //        double nearScaleBestCaseWait = 3 * AutoConstants.kWaitForCubeTime;
 //        double nearScaleWorstCaseWait = nearScaleBestCaseWait + 0.5 * 4;
 
 
-        double farScaleDuration = mTrajectoryGenerator.getTrajectorySet().sideStartToFarScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().farScaleToFarFence.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().farFenceToFarScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().farScaleToFarFence2.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().farFence2ToFarScale.get(mStartedLeft).getLastState().t() +
-                mTrajectoryGenerator.getTrajectorySet().farScaleToFarFence3.get(mStartedLeft).getLastState().t();
+        double cargoHatchDuration = mTrajectoryGenerator.getTrajectorySet().lowStartToSideCargoForwardFacing.get(mStartedLeft).getLastState().t() +
+//                mTrajectoryGenerator.getTrajectorySet().highStartToSideCargoForwardFacing.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().sideCargoForwardFacingToFeederStation.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().feederStationToFrontCargoTurn1.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().frontCargoTurn1ToFrontCargoHatch.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().frontCargoHatchToBall.get(mStartedLeft).getLastState().t();
 //        double farScaleBestCaseWait = 2 * AutoConstants.kWaitForCubeTime;
 //        double farScaleWorstCaseWait = farScaleBestCaseWait + 0.5 * 3;
 
-        System.out.println("Near Scale Only:");
-        System.out.println("\tTrajectory Duration: " + nearScaleDuration);
+        System.out.println("Rocket Hatch Only:");
+        System.out.println("\tTrajectory Duration: " + rocketHatchDuration);
 //        System.out.println("\tBest Case Wait Duration: " + nearScaleBestCaseWait);
 //        System.out.println("\tWorst Case Wait Duration: " + nearScaleWorstCaseWait);
-        System.out.println("Far Scale Only:");
-        System.out.println("\tTrajectory Duration: " + farScaleDuration);
+        System.out.println("Cargo Hatch Only:");
+        System.out.println("\tTrajectory Duration: " + cargoHatchDuration);
 //        System.out.println("\tBest Case Wait Duration: " + farScaleBestCaseWait);
 //        System.out.println("\tWorst Case Wait Duration: " + farScaleWorstCaseWait);
     }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TrajectoryGeneratorTest {
     public static final double kTestEpsilon = 1e-5;
 
-    public void verifyMirroredTrajectories(final TrajectoryGenerator.TrajectorySet.MirroredTrajectory mirrored,
+    public void verifyMirroredTrajectories(final MirroredTrajectory mirrored,
                                            boolean shouldBeReversed) {
         assertEquals(mirrored.left.length(), mirrored.right.length());
         TrajectoryIterator<TimedState<Pose2dWithCurvature>> left_iterator = new TrajectoryIterator<>(new TimedView<>
@@ -91,21 +91,19 @@ public class TrajectoryGeneratorTest {
     public void test() {
         TrajectoryGenerator.getInstance().generateTrajectories();
 
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToFarScale, true);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToFarSwitch, true);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToNearScale, true);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideStartToNearSwitch, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().lowStartToCloseRocketFarHatch, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().highStartToCloseRocketFarHatch, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketFarHatchToTurn1, false);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketFarHatchTurn1ToFeederStation, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketFeederStationToTurn2, false);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketTurn2ToCloseHatch, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketCloseHatchToBall, false);
 
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().nearScaleToNearFence, false);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().nearScaleToNearFence2, false);
-
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().farScaleToFarFence, false);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().farScaleToFarFence2, false);
-
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().nearFenceToNearScale, true);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().nearFence2ToNearScale, true);
-
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().farFenceToFarScale, true);
-        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().farFence2ToFarScale, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().lowStartToSideCargoForwardFacing, false);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().highStartToSideCargoForwardFacing, false);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideCargoForwardFacingToFeederStation, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().feederStationToFrontCargoTurn1, false);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().frontCargoTurn1ToFrontCargoHatch, true);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().frontCargoHatchToBall, false);
     }
 }

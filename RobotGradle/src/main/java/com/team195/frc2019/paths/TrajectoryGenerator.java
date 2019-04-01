@@ -108,6 +108,7 @@ public class TrajectoryGenerator {
     public static final Pose2d kCloseSideFeederStation = new Pose2d(20, -135, Rotation2d.fromDegrees(0.0));
     public static final Pose2d kCloseSideBallReservoir = new Pose2d(65, -100, Rotation2d.fromDegrees(145.0));
 
+    public static final Pose2d kHighStartCloseRocketPoint1 = new Pose2d(210, -65, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(10.0)));
     public static final Pose2d kCloseRocketFarHatchTurn1Point1Pose = kCloseRocketFarHatchPose.transformBy(new Pose2d(20, 60, Rotation2d.fromDegrees(30)));
     public static final Pose2d kCloseRocketFarHatchTurn1Point2Pose = kCloseRocketFarHatchTurn1Point1Pose.transformBy(new Pose2d(-85, -10, Rotation2d.fromDegrees(-75)));
 
@@ -117,6 +118,8 @@ public class TrajectoryGenerator {
     public static final Pose2d kCloseCargoFrontHatchPose = new Pose2d(200, -10, backwardsStartRotation);
 
     public static final Pose2d kCloseCargoFrontHatchTurn1Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 155, Rotation2d.fromDegrees(90)));
+
+
 
     public class TrajectorySet {
 
@@ -146,6 +149,7 @@ public class TrajectoryGenerator {
 
             highStartToCloseRocketFarHatch = generateMirroredTrajectory(true, Arrays.asList(
                     kHighStartBackwardsPose,
+                    kHighStartCloseRocketPoint1,
                     kCloseRocketFarHatchPose),
                     Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kFirstPathMaxVel,
