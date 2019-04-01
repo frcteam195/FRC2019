@@ -41,7 +41,7 @@
     <tr>
         <td class='drag-handler'></td>
         <td class='x'><input type='number' value='20'></td>
-        <td class='y'><input type='number' value='-95'></td>
+        <td class='y'><input type='number' value='-45'></td>
         <td class='heading'><input type='number' value='0'></td>
         <td class='comments'><input type='search' placeholder='Comments'></td>
         <td class='enabled'><input type='checkbox' checked></td>

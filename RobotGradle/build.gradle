@@ -88,7 +88,7 @@ dependencies {
         exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
     }
 
-    compile("org.springframework:spring-webmvc:4.3.0.RELEASE")
+    compile("org.springframework:spring-webmvc:4.3.22.RELEASE")
     compile("javax.servlet:javax.servlet-api:3.0.1")
     compile("javax.servlet:jstl:1.2") 
     
