@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -17,6 +18,10 @@ public class SeriesAction implements Action {
     public SeriesAction(List<Action> actions) {
         mRemainingActions = new ArrayList<>(actions);
         mCurAction = null;
+    }
+
+    public SeriesAction(Action... actions) {
+        this(Arrays.asList(actions));
     }
 
     @Override
