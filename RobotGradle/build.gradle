@@ -99,6 +99,10 @@ tomcat {
     ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
 }
 
+war {
+	//entryCompression = ZipEntryCompression.STORED
+}
+
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib
 // knows where to look for our Robot Class.
@@ -112,5 +116,5 @@ test {
 }
 
 wrapper {
-    gradleVersion = '5.0'
+    gradleVersion = '5.3.1'
 }
