@@ -34,6 +34,7 @@ public class CalConstants {
 	public static final double kPathLookaheadTime = 0.4;  // seconds to look ahead along the path for steering
 	public static final double kPathMinLookaheadDistance = 24.0;  // inches
 
+	public static final double kDriveGearRatioMotorConversionFactor = 1.0 / 8.5;
 
 	/* CONTROL LOOP GAINS */
 

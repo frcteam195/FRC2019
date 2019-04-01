@@ -149,6 +149,7 @@ public class Drive extends Subsystem {
 //		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearVelocityDFilter));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftMaster.setEncoderFactor(CalConstants.kDriveGearRatioMotorConversionFactor);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
@@ -165,6 +166,7 @@ public class Drive extends Subsystem {
 //		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightMaster.setEncoderFactor(CalConstants.kDriveGearRatioMotorConversionFactor);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);

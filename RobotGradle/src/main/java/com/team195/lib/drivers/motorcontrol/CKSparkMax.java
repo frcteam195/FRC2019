@@ -75,6 +75,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 
+	public void setEncoderFactor(double conversionFactor) {
+		runSparkMAXFunctionWithRetry((t) -> canEncoder.setPositionConversionFactor(conversionFactor));
+		runSparkMAXFunctionWithRetry((t) -> canEncoder.setVelocityConversionFactor(conversionFactor));
+	}
+
 	@Deprecated
 	public void set(double DO_NOT_USE) {
 		set(MCControlMode.PercentOut, DO_NOT_USE, 0, 0);
