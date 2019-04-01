@@ -49,6 +49,8 @@ public class Drive extends Subsystem {
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
 	private boolean mBrakeSwitchEnabled = true;
 
+	private static final Elevator mElevator = Elevator.getInstance();
+
 	private final Loop mLoop = new Loop() {
 		@Override
 		public void onFirstStart(double timestamp) {
@@ -394,6 +396,7 @@ public class Drive extends Subsystem {
 	public synchronized void resetEncoders() {
         mLeftMaster.setEncoderPosition(0);
         mRightMaster.setEncoderPosition(0);
+		mElevator.zeroDriveEncoders();
 		mPeriodicIO = new PeriodicIO();
 	}
 
@@ -481,10 +484,10 @@ public class Drive extends Subsystem {
 	public synchronized void readPeriodicInputs() {
 		double prevLeftRotations = mPeriodicIO.left_position_rotations;
 		double prevRightRotations = mPeriodicIO.right_position_rotations;
-		mPeriodicIO.left_position_rotations = Elevator.getInstance().getLeftDrivePosition();
-		mPeriodicIO.right_position_rotations = Elevator.getInstance().getRightDrivePosition();
-		mPeriodicIO.left_velocity_RPM = Elevator.getInstance().getLeftDriveVelocity();
-		mPeriodicIO.right_velocity_RPM = Elevator.getInstance().getRightDriveVelocity();
+		mPeriodicIO.left_position_rotations = mElevator.getLeftDrivePosition();
+		mPeriodicIO.right_position_rotations = mElevator.getRightDrivePosition();
+		mPeriodicIO.left_velocity_RPM = mElevator.getLeftDriveVelocity();
+		mPeriodicIO.right_velocity_RPM = mElevator.getRightDriveVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
 		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
@@ -654,8 +657,8 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean leftSensorFaulted = !mLeftMaster.isEncoderPresent();
-		boolean rightSensorFaulted = !mRightMaster.isEncoderPresent();
+		boolean leftSensorFaulted = !mElevator.isLeftDriveEncoderPresent();
+		boolean rightSensorFaulted = !mElevator.isRightDriveEncoderPresent();
 		boolean navXFaulted = !mGyro.isPresent();
 
 		if (leftSensorFaulted)

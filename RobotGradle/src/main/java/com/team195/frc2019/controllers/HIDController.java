@@ -70,8 +70,8 @@ public class HIDController {
 							if (!USE_CHEESY_DRIVE) {
 								double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
 
-								double throttle = -driveJoystick.getSmoothedAxis(1, 0.08, 2) * scalingFactor;
-								double turn = driveJoystick.getNormalizedAxis(4, 0.08) * scalingFactor * 0.5;
+								double throttle = -driveJoystick.getSmoothedAxis(1, Constants.kJoystickDeadband, 2) * scalingFactor;
+								double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * scalingFactor * 0.5;
 								if (VisionTracker.getInstance().isVisionEnabled()) {
 									if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 										if (VisionTracker.getInstance().isTargetFound())
@@ -103,8 +103,8 @@ public class HIDController {
 									mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
 								}
 							} else {
-								double throttle = -driveJoystick.getNormalizedAxis(1, 0.08);
-								double turn = driveJoystick.getNormalizedAxis(4, 0.08) * 0.75;
+								double throttle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
+								double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.75;
 
 								if (VisionTracker.getInstance().isVisionEnabled()) {
 									if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {

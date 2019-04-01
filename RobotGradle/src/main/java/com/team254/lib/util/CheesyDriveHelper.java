@@ -1,5 +1,7 @@
 package com.team254.lib.util;
 
+import com.team195.frc2019.constants.Constants;
+
 /**
  * Helper class to implement "Cheesy Drive". "Cheesy Drive" simply means that the "turning" stick controls the curvature
  * of the robot's path rather than its rate of heading change. This helps make the robot more controllable at high
@@ -8,8 +10,8 @@ package com.team254.lib.util;
  */
 public class CheesyDriveHelper {
 
-    private static final double kThrottleDeadband = 0.08;
-    private static final double kWheelDeadband = 0.08;
+    private static final double kThrottleDeadband = Constants.kJoystickDeadband;
+    private static final double kWheelDeadband = Constants.kJoystickDeadband;
 
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.85;

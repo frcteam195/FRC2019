@@ -35,7 +35,6 @@ public class Robot extends TimedRobot {
 		Drive.getInstance(),        //0
 		Elevator.getInstance(),     //20-40ms
 		BallIntakeArm.getInstance(),
-//		HatchIntakeArm.getInstance(),
 		Turret.getInstance(),
 		Infrastructure.getInstance(),
 		VisionTracker.getInstance()
@@ -137,13 +136,11 @@ public class Robot extends TimedRobot {
 		try {
 			CrashTracker.logTeleopInit();
 			mDisabledLooper.stop();
-			if (mAutoModeExecutor != null) {
+
+			if (mAutoModeExecutor != null)
 				mAutoModeExecutor.stop();
-			}
 
 			mInfrastructure.setIsDuringAuto(false);
-
-//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
@@ -203,13 +200,8 @@ public class Robot extends TimedRobot {
 			CrashTracker.logDisabledInit();
 			mHIDController.stop();
 			mEnabledLooper.stop();
-			if (mAutoModeExecutor != null) {
+			if (mAutoModeExecutor != null)
 				mAutoModeExecutor.stop();
-			}
-
-//			mInfrastructure.setIsDuringAuto(true);
-//			Drive.getInstance().zeroSensors();
-//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			mAutoModeExecutor = new AutoModeExecutor();
 

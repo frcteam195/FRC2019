@@ -211,6 +211,11 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.setEncoderPosition(0);
 	}
 
+	public void zeroDriveEncoders() {
+		mElevatorSlaveA.setEncoderPosition(0);
+		mElevatorSlaveB.setEncoderPosition(0);
+	}
+
 	@Override
 	public void registerEnabledLoops(ILooper in) {
 		in.register(mLoop);
@@ -279,6 +284,14 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	public void setCollisionAvoidanceEnabled(boolean enabled) {
 		requestMoveElevatorDownCheck.setEnabled(enabled);
 		requestMoveElevatorUpCheck.setEnabled(enabled);
+	}
+
+	public boolean isLeftDriveEncoderPresent() {
+		return mElevatorSlaveA.isEncoderPresent();
+	}
+
+	public boolean isRightDriveEncoderPresent() {
+		return mElevatorSlaveB.isEncoderPresent();
 	}
 
 	public double getLeftDrivePosition() {
