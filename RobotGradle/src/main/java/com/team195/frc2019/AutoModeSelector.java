@@ -77,7 +77,7 @@ public class AutoModeSelector {
                     }
                     break;
                 case Center:
-                    return new DoNothingMode();
+                    return new TestMode();
                 case RightLow:
                     switch (mCachedDesiredMode) {
                         case TwoHatchRocket:

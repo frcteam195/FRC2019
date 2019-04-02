@@ -13,7 +13,7 @@ import java.util.Enumeration;
  * determined through calibrations.
  */
 public class Constants {
-    public static final double kLooperDt = 0.01;
+    public static final double kLooperDt = 0.02;
 
     public static final int kCANTimeoutMs = 10; //use for on the fly updates
     public static final int kLongCANTimeoutMs = 100; //use for constructors
@@ -49,7 +49,7 @@ public class Constants {
     public static final int DASHJOY_RECEIVER_PORT = 5806;
 
 
-    public static final boolean TUNING_PIDS = false;
+    public static final boolean TUNING_PIDS = true;
     public static final boolean DEBUG = false;
     public static final boolean REPORTING_ENABLED = true;
     public static final boolean REPORT_TO_DRIVERSTATION_INSTEAD_OF_CONSOLE = false;

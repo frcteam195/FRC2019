@@ -12,8 +12,9 @@ public class TestMode extends AutoModeBase {
         ConsoleReporter.report("Test mode");
 //        Drive.getInstance().startLogging();
 
-        runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().lowStartToCloseRocketFarHatch.get(true), true));
+        runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().getTrajectorySet().testPath.get(true), true));
 
+        ConsoleReporter.report("Test mode done!");
 //        Drive.getInstance().stopLogging();
 
         /*runAction(new DriveTrajectory(TrajectoryGenerator.getInstance().generateTrajectory(

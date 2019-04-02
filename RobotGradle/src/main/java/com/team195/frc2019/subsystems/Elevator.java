@@ -70,9 +70,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 		mElevatorSlaveA = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B40A, false);
 		mElevatorSlaveA.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+		mElevatorSlaveA.setSensorPhase(true);
 
 		mElevatorSlaveB = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
 		mElevatorSlaveB.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+		mElevatorSlaveB.setSensorPhase(true);
+
 		mElevatorSlaveC = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
 		mElevatorSlaveC.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
 

@@ -43,7 +43,7 @@ public class Looper implements ILooper, Reportable {
                     double now = Timer.getFPGATimestamp();
                     try {
                         loops_.forEach((l) -> {
-                            ConsoleReporter.report(l.getName() + " Loop Running", MessageLevel.INFO);
+//                            ConsoleReporter.report(l.getName() + " Loop Running", MessageLevel.INFO);
                             l.onLoop(now);
                         });
                     }

@@ -1,5 +1,6 @@
 package com.team195.frc2019.controllers;
 
+import com.team195.frc2019.Robot;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.auto.AutoModeExecutor;
@@ -23,9 +24,9 @@ import java.util.function.Function;
 
 public class HIDController {
 	private static HIDController mInstance = null;
-	public static HIDController getInstance(Function<Void, AutoModeExecutor> getAutoModeExecutor) {
+	public static HIDController getInstance() {
 		if (mInstance == null)
-			mInstance = new HIDController(getAutoModeExecutor);
+			mInstance = new HIDController();
 
 		return mInstance;
 	}
@@ -42,13 +43,12 @@ public class HIDController {
 
 	private Thread controlThread = null;
 	private boolean runThread = true;
-
-	private final Function<Void, AutoModeExecutor> mGetAutoModeExecutor;
+	private boolean stoppedAuto = false;
 
 	private static final int HID_RATE_CONTROL = 10;
 
-	private HIDController(Function<Void, AutoModeExecutor> getAutoModeExecutor) {
-		mGetAutoModeExecutor = getAutoModeExecutor;
+	private HIDController() {
+
 	}
 
 	public void start() {
@@ -60,10 +60,14 @@ public class HIDController {
 				threadRateControl.start();
 				while (runThread) {
 					try {
-						AutoModeExecutor autoModeExecutor = mGetAutoModeExecutor.apply(null);
-						if (autoModeExecutor != null && autoModeExecutor.isRunning()) {
-							if (driveJoystick.isAxisInputActive())
-								autoModeExecutor.stop();
+						if (Infrastructure.getInstance().isDuringAuto()) {
+							AutoModeExecutor autoModeExecutor = Robot.mAutoModeExecutor;
+							if (driveJoystick.isAxisInputActive()) {
+								ConsoleReporter.report("Stopping auto");
+								if (autoModeExecutor != null)
+									autoModeExecutor.stop();
+								stoppedAuto = true;
+							}
 						} else {
 							//User Control Interface code here
 

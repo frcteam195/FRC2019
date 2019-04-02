@@ -11,14 +11,14 @@ public class AutoModeExecutor {
 
     public synchronized void setAutoMode(AutoModeBase new_auto_mode) {
         m_auto_mode = new_auto_mode;
-        m_thread = new Thread(new CrashTrackingRunnable() {
+        setThread(new Thread(new CrashTrackingRunnable() {
             @Override
             public void runCrashTracked() {
                 if (m_auto_mode != null) {
                     m_auto_mode.run();
                 }
             }
-        });
+        }));
     }
 
     public void start() {
@@ -27,12 +27,12 @@ public class AutoModeExecutor {
         }
     }
 
-    public synchronized void stop() {
+    public void stop() {
         if (m_auto_mode != null) {
             m_auto_mode.stop();
         }
 
-        m_thread = null;
+        setThread(null);
     }
 
     public boolean isRunning() {
@@ -40,6 +40,10 @@ public class AutoModeExecutor {
            return  m_thread.isAlive();
         }
         return false;
+    }
+
+    private void setThread(Thread thread) {
+        m_thread = thread;
     }
 
     public AutoModeBase getAutoMode() {

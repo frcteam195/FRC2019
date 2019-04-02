@@ -146,35 +146,44 @@ public class Drive extends Subsystem {
 		mLeftMaster = new CKSparkMax(DeviceIDConstants.kLeftDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setInverted(false));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf));
-//		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearVelocityDFilter));
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setDFilter(CalConstants.kDriveLowGearVelocityDFilter));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mLeftMaster.setEncoderFactor(CalConstants.kDriveGearRatioMotorConversionFactor);
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
+		mLeftMaster.setEncoderFactor(1);
+		mLeftMaster.setAllowedClosedLoopError(0);
 		mLeftMaster.writeToFlash();
 
 		mLeftSlaveA = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
 		mLeftSlaveA.writeToFlash();
 
 		mLeftSlaveB = new CKSparkMax(DeviceIDConstants.kLeftDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mLeftMaster, PDPBreaker.B40A, false);
 		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
+
 		mLeftSlaveB.writeToFlash();
 
 		mRightMaster = new CKSparkMax(DeviceIDConstants.kRightDriveMasterId, CANSparkMaxLowLevel.MotorType.kBrushless, true, PDPBreaker.B40A);
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setInverted(true));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf));
-//		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearPositionDFilter));
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setDFilter(CalConstants.kDriveLowGearVelocityDFilter));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setMotionParameters(CalConstants.kDriveLowGearPositionCruiseVel, CalConstants.kDriveLowGearPositionAccel));
 		mRightMaster.addConfigStatement((t) -> mRightMaster.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
-		mRightMaster.setEncoderFactor(CalConstants.kDriveGearRatioMotorConversionFactor);
+		mRightMaster.addConfigStatement((t) -> mRightMaster.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
+		mRightMaster.setEncoderFactor(1);
+		mLeftMaster.setAllowedClosedLoopError(0);
 		mRightMaster.writeToFlash();
 
 		mRightSlaveA = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveAId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightSlaveA.addConfigStatement((t) -> mRightSlaveA.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
 		mRightSlaveA.writeToFlash();
 
 		mRightSlaveB = new CKSparkMax(DeviceIDConstants.kRightDriveSlaveBId, CANSparkMaxLowLevel.MotorType.kBrushless, mRightMaster, PDPBreaker.B40A, false);
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setCurrentLimit(CalConstants.kDriveLowGearCurrentLim));
+		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setClosedLoopRampRate(CalConstants.kDriveVoltageRampRate));
 		mRightSlaveB.writeToFlash();
 
 		mPTOShifter = new CKDoubleSolenoid(DeviceIDConstants.kPTOShifterSolenoidId);
@@ -190,6 +199,16 @@ public class Drive extends Subsystem {
 		mIsBrakeMode = true;
 		setBrakeMode(false);
 
+
+
+//		TuneablePIDOSC x;
+//		try {
+//			mLeftMaster.setControlMode(MCControlMode.Velocity);
+//			mRightMaster.setControlMode(MCControlMode.Velocity);
+//			x = new TuneablePIDOSC("Drive", 5804, true, mLeftMaster, mRightMaster);
+//		} catch (Exception ignored) {
+//
+//		}
 
 		mMotionPlanner = new DriveMotionPlanner();
 	}
@@ -408,6 +427,14 @@ public class Drive extends Subsystem {
 		resetEncoders();
 	}
 
+	public double getRawLeftEncoder() {
+		return mPeriodicIO.left_position_rotations;
+	}
+
+	public double getRawLeftSparkEncoder() {
+		return mLeftMaster.getPosition();
+	}
+
 	public double getLeftEncoderDistance() {
 		return rotationsToInches(mPeriodicIO.left_position_rotations);
 	}
@@ -454,7 +481,8 @@ public class Drive extends Subsystem {
 			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
 
 			if (!mOverrideTrajectory) {
-				setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity), radiansPerSecondToRPM(output.right_velocity)),
+				setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor,
+										   radiansPerSecondToRPM(output.right_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor),
 						new DriveSignal(output.left_feedforward_voltage / 12.0, output.right_feedforward_voltage / 12.0));
 
 				mPeriodicIO.left_accel = radiansPerSecondToRPM(output.left_accel) / 1000.0;
@@ -525,6 +553,9 @@ public class Drive extends Subsystem {
 					mPeriodicIO.left_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
+
+//			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0, 0);
+//			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0, 0);
 		}
 	}
 
@@ -629,7 +660,7 @@ public class Drive extends Subsystem {
 //		ConsoleReporter.report("Spark6ControlType: " + mLeftSlaveB.getControlType() +
 //				", Spark6FollowerID: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerID) +
 //				", Spark6FollowerConfig: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerConfig), MessageLevel.INFO);
-		return  "LeftDrivePos:" + mLeftMaster.getVelocity() + ";" +
+		return  "LeftDrivePos:" + mLeftMaster.getPosition() + ";" +
 				"LeftDriveVel:" + mLeftMaster.getVelocity() + ";" +
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
 				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
@@ -641,7 +672,8 @@ public class Drive extends Subsystem {
 				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
 				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
 				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
-				"RightDrivePos:" + mRightMaster.getVelocity() + ";" +
+				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mLeftMaster.getVelocity()) + ";" +
+				"RightDrivePos:" + mRightMaster.getPosition() + ";" +
 				"RightDriveVel:" + mRightMaster.getVelocity() + ";" +
 				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
 				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
@@ -653,7 +685,12 @@ public class Drive extends Subsystem {
 				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
 				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
 				"RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";" +
+				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mRightMaster.getVelocity()) + ";" +
 				"DriveMode:" + mDriveControlState.toString() + ";" +
+				"DriveErrorX:" + mPeriodicIO.error.getTranslation().x() + ";" +
+				"DriveErrorY:" + mPeriodicIO.error.getTranslation().y() + ";" +
+				"DriveErrorRotation:" + mPeriodicIO.error.getRotation().getDegrees() + ";" +
+				"Timestamp:" + Timer.getFPGATimestamp() + ";" +
 				"IsDriveFaulted:" + isSystemFaulted() + ";";
 	}
 

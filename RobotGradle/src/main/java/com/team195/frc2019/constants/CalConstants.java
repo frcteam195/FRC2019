@@ -34,16 +34,17 @@ public class CalConstants {
 	public static final double kPathLookaheadTime = 0.4;  // seconds to look ahead along the path for steering
 	public static final double kPathMinLookaheadDistance = 24.0;  // inches
 
-	public static final double kDriveGearRatioMotorConversionFactor = 1.0 / 8.5;
+	public static final double kDriveGearRatioMotorConversionFactor = 8.0;
 
 	/* CONTROL LOOP GAINS */
 
 	// PID gains for drive velocity loop (LOW GEAR)
 	// Units: setpoint, error, and output are in ticks per second.
-	public static final double kDriveLowGearVelocityKp = 0.0;
+	public static final double kDriveLowGearVelocityKp = 0.0001;
 	public static final double kDriveLowGearVelocityKi = 0.0;
-	public static final double kDriveLowGearVelocityKd = 0.0;
-	public static final double kDriveLowGearVelocityKf = 0.0;
+	public static final double kDriveLowGearVelocityKd = 0;//0.07;
+	public static final double kDriveLowGearVelocityKf = 0;//0.000176;
+	public static final double kDriveLowGearVelocityDFilter = 0.25;
 	public static final int kDriveLowGearVelocityIZone = 0;
 	public static final double kDriveVoltageRampRate = 0.0;
 

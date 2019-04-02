@@ -10,6 +10,7 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -74,11 +75,15 @@ public class ConsoleReporter extends Thread {
 
 	public static void report(String message, MessageLevel msgLvl) {
 		if (msgLvl == MessageLevel.DEFCON1 || (Constants.REPORTING_ENABLED && (msgLvl.ordinal() <= reportingLevel.ordinal()))) {
-			_reporterMutex.lock();
 			try {
-				sendMessageSet.add(new CKMessage(message, msgLvl));
-			} finally {
-				_reporterMutex.unlock();
+				_reporterMutex.tryLock(100, TimeUnit.MILLISECONDS);
+				try {
+					sendMessageSet.add(new CKMessage(message, msgLvl));
+				} finally {
+					_reporterMutex.unlock();
+				}
+			} catch (Exception ignored) {
+
 			}
 		}
 	}
@@ -100,7 +105,7 @@ public class ConsoleReporter extends Thread {
 		Thread.currentThread().setName("ConsoleReporter");
 		while (runThread) {
 			try {
-				_reporterMutex.lock();
+				_reporterMutex.tryLock(100, TimeUnit.MILLISECONDS);
 				try {
 					for (Iterator<CKMessage> i = sendMessageSet.iterator(); i.hasNext();) {
 						CKMessage ckm = i.next();

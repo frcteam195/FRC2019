@@ -15,14 +15,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class TrajectoryGenerator {
-    private static final double kMaxVelocity = 130.0;
-    private static final double kMaxAccel = 130.0;
+    private static final double kMaxVelocity = 120.0;
+    private static final double kMaxAccel = 100.0;
     private static final double kMaxCentripetalAccelElevatorDown = 110.0;
     private static final double kMaxCentripetalAccel = 100.0;
     private static final double kMaxVoltage = 9.0;
     private static final double kFirstPathMaxVoltage = 9.0;
-    private static final double kFirstPathMaxAccel = 130.0;
-    private static final double kFirstPathMaxVel = 130.0;
+    private static final double kFirstPathMaxAccel = 100.0;
+    private static final double kFirstPathMaxVel = 120.0;
 
     private static final double kSimpleSwitchMaxAccel = 100.0;
     private static final double kSimpleSwitchMaxCentripetalAccel = 80.0;
@@ -139,6 +139,8 @@ public class TrajectoryGenerator {
         public final MirroredTrajectory frontCargoTurn1ToFrontCargoHatch;
         public final MirroredTrajectory frontCargoHatchToBall;
 
+        public final MirroredTrajectory testPath;
+
         private TrajectorySet() {
             lowStartToCloseRocketFarHatch = generateMirroredTrajectory(true, Arrays.asList(
                     kLowStartBackwardsPose,
@@ -241,6 +243,14 @@ public class TrajectoryGenerator {
             frontCargoHatchToBall = generateMirroredTrajectory(false, Arrays.asList(
                     kCloseCargoFrontHatchPose,
                     kCloseSideBallReservoir),
+                    Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
+                    kMaxVelocity,
+                    kMaxAccel,
+                    kMaxVoltage);
+
+            testPath = generateMirroredTrajectory(false, Arrays.asList(
+                    new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                    new Pose2d(100, 0, Rotation2d.fromDegrees(0))),
                     Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kMaxVelocity,
                     kMaxAccel,

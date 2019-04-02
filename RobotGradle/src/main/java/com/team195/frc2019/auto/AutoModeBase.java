@@ -33,7 +33,7 @@ public abstract class AutoModeBase {
         ConsoleReporter.report("Auto mode done");
     }
 
-    public synchronized void stop() {
+    public void stop() {
         mActive = false;
     }
 

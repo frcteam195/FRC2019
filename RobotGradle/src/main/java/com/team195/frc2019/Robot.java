@@ -43,9 +43,9 @@ public class Robot extends TimedRobot {
 	private Drive mDrive = Drive.getInstance();
 	private LEDController mLED = LEDController.getInstance();
 	private Infrastructure mInfrastructure = Infrastructure.getInstance();
-	private AutoModeExecutor mAutoModeExecutor;
+	public static AutoModeExecutor mAutoModeExecutor;
 
-	private HIDController mHIDController = HIDController.getInstance((t) -> mAutoModeExecutor);
+	private HIDController mHIDController = HIDController.getInstance();
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
 //		ConsoleReporter.report(mEnabledLooper.generateReport());
 //		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance() + ", RigthDrivePos:" + Drive.getInstance().getRightEncoderDistance());
 //		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
-//		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance());
+//		ConsoleReporter.report("Spark:" + Drive.getInstance().getRawLeftSparkEncoder() + ", Wheel:" + Drive.getInstance().getRawLeftEncoder());
 //		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
 //		ConsoleReporter.report(mAutoModeSelector.getAutoMode().getClass().getSimpleName().toString());
 	}
@@ -110,12 +110,17 @@ public class Robot extends TimedRobot {
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
+			Thread.sleep(500);
+
 			if (mAutoModeExecutor != null)
 				mAutoModeExecutor.start();
 
 			mEnabledLooper.start();
 			mHIDController.start();
-		} catch (Throwable t) {
+		} catch (Exception ignored) {
+
+		}
+		catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
 		}
@@ -198,12 +203,19 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		try {
 			CrashTracker.logDisabledInit();
+			ConsoleReporter.report("Stopping HID");
 			mHIDController.stop();
+			ConsoleReporter.report("Stopping Enabled Looper");
 			mEnabledLooper.stop();
+			ConsoleReporter.report("Stopping Auto Mode");
+
+
+			mDrive.setBrakeMode(false);
+
 			if (mAutoModeExecutor != null)
 				mAutoModeExecutor.stop();
 
-			mAutoModeExecutor = new AutoModeExecutor();
+			ConsoleReporter.report("Starting Disabled Looper");
 
 			mDisabledLooper.start();
 		} catch (Throwable t) {
@@ -215,6 +227,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
+			mAutoModeExecutor = new AutoModeExecutor();
 			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
