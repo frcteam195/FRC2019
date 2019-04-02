@@ -16,7 +16,7 @@ public abstract class AutoModeBase {
 
     protected abstract void routine() throws AutoModeEndedException;
 
-    public synchronized void run() {
+    public void run() {
         mActive = true;
 
         try {

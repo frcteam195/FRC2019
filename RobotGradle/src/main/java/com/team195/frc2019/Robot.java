@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
 			TeleopActionRunner.init();
 
 			Drive.getInstance().zeroSensors();
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			LogDataReporter.getInstance();
 		} catch (Throwable t) {
@@ -104,21 +105,34 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		try {
 			CrashTracker.logAutoInit();
+
+			ConsoleReporter.report("Stopping Disabled Loops");
 			mDisabledLooper.stop();
 
+			ConsoleReporter.report("Set Infrastructure Auto");
 			mInfrastructure.setIsDuringAuto(true);
+
+			ConsoleReporter.report("Zero Drive Sensors");
 			Drive.getInstance().zeroSensors();
+
+			ConsoleReporter.report("Zero Pose");
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-			Thread.sleep(500);
+//			Thread.sleep(500);
 
-			if (mAutoModeExecutor != null)
+			ConsoleReporter.report("Check Auto Mode Not Null");
+			if (mAutoModeExecutor != null) {
+				ConsoleReporter.report("Start Auto Mode");
 				mAutoModeExecutor.start();
+			}
 
+			ConsoleReporter.report("Start Enabled Looper");
 			mEnabledLooper.start();
-			mHIDController.start();
-		} catch (Exception ignored) {
 
+			ConsoleReporter.report("Start HIDController");
+			mHIDController.start();
+		} catch (Exception ex) {
+			CrashTracker.logThrowableCrash(ex);
 		}
 		catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -207,16 +221,17 @@ public class Robot extends TimedRobot {
 			mHIDController.stop();
 			ConsoleReporter.report("Stopping Enabled Looper");
 			mEnabledLooper.stop();
-			ConsoleReporter.report("Stopping Auto Mode");
 
-
+			ConsoleReporter.report("Setting Brake Mode");
 			mDrive.setBrakeMode(false);
 
-			if (mAutoModeExecutor != null)
+			ConsoleReporter.report("Check Auto Mode Not Null");
+			if (mAutoModeExecutor != null) {
+				ConsoleReporter.report("Stop Auto Mode");
 				mAutoModeExecutor.stop();
+			}
 
 			ConsoleReporter.report("Starting Disabled Looper");
-
 			mDisabledLooper.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);

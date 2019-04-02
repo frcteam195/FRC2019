@@ -60,7 +60,7 @@ public class HIDController {
 				threadRateControl.start();
 				while (runThread) {
 					try {
-						if (Infrastructure.getInstance().isDuringAuto()) {
+						if (Infrastructure.getInstance().isDuringAuto() && !stoppedAuto) {
 							AutoModeExecutor autoModeExecutor = Robot.mAutoModeExecutor;
 							if (driveJoystick.isAxisInputActive()) {
 								ConsoleReporter.report("Stopping auto");

@@ -9,7 +9,7 @@ public class AutoModeExecutor {
     private AutoModeBase m_auto_mode;
     private Thread m_thread = null;
 
-    public synchronized void setAutoMode(AutoModeBase new_auto_mode) {
+    public void setAutoMode(AutoModeBase new_auto_mode) {
         m_auto_mode = new_auto_mode;
         setThread(new Thread(new CrashTrackingRunnable() {
             @Override
