@@ -105,8 +105,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().getPosition() < BallIntakeArmPositions.CollisionThreshold)
 		);
 
-		mTurretEncoderPresent = new CachedValue<>(100, (t) -> mTurretRotationMotor.isEncoderPresent());
-		mTurretMasterHasReset = new CachedValue<>(100, (t) -> mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+		mTurretEncoderPresent = new CachedValue<>(200, (t) -> mTurretRotationMotor.isEncoderPresent());
+		mTurretMasterHasReset = new CachedValue<>(200, (t) -> mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
 	}
 
 	public static Turret getInstance() {

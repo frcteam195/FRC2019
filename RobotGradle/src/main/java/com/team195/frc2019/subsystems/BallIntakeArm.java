@@ -93,8 +93,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);
 
-		mBallIntakeArmEncoderPresent = new CachedValue<>(100, (t) -> mBallArmRollerMotor.isEncoderPresent());
-		mBallIntakeArmMasterHasReset = new CachedValue<>(100, (t) -> mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+		mBallIntakeArmEncoderPresent = new CachedValue<>(500, (t) -> mBallArmRollerMotor.isEncoderPresent());
+		mBallIntakeArmMasterHasReset = new CachedValue<>(500, (t) -> mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
 
 	}
 

@@ -107,8 +107,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().isArmUp())
 		);
 
-		mElevatorEncoderPresent = new CachedValue<>(100, (t) -> mElevatorSlaveC.isEncoderPresent());
-		mElevatorMasterHasReset = new CachedValue<>(100, (t) -> mElevatorSlaveC.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+		mElevatorEncoderPresent = new CachedValue<>(500, (t) -> mElevatorMaster.isEncoderPresent());
+		mElevatorMasterHasReset = new CachedValue<>(500, (t) -> mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
 
 	}
 

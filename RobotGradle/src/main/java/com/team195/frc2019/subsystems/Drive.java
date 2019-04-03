@@ -218,9 +218,9 @@ public class Drive extends Subsystem {
 
 		mMotionPlanner = new DriveMotionPlanner();
 
-		mLeftDriveEncoderPresent = new CachedValue<>(100, (t) -> mElevator.isLeftDriveEncoderPresent());
-		mRightDriveEncoderPresent = new CachedValue<>(100, (t) -> mElevator.isRightDriveEncoderPresent());
-		mGyroPresent = new CachedValue<>(100, (t) -> mGyro.isPresent());
+		mLeftDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isLeftDriveEncoderPresent());
+		mRightDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isRightDriveEncoderPresent());
+		mGyroPresent = new CachedValue<>(500, (t) -> mGyro.isPresent());
 	}
 
 	public void configureClimbCurrentLimit() {

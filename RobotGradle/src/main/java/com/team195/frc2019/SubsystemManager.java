@@ -29,7 +29,6 @@ public class SubsystemManager implements ILooper {
 	private TimeoutTimer mCriticalCheckTimeout = new TimeoutTimer(0.250);
 	private TimeoutTimer mLogDataTimeout = new TimeoutTimer(0.250);
 
-
 	private SubsystemManager() {
 
 	}
