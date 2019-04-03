@@ -10,11 +10,13 @@ import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.*;
+import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
@@ -48,6 +50,10 @@ public class Drive extends Subsystem {
 	private boolean mOverrideTrajectory = false;
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
 	private boolean mBrakeSwitchEnabled = false;
+
+	private final CachedValue<Boolean> mLeftDriveEncoderPresent;
+	private final CachedValue<Boolean> mRightDriveEncoderPresent;
+	private final CachedValue<Boolean> mGyroPresent;
 
 	private static final Elevator mElevator = Elevator.getInstance();
 
@@ -211,6 +217,10 @@ public class Drive extends Subsystem {
 //		}
 
 		mMotionPlanner = new DriveMotionPlanner();
+
+		mLeftDriveEncoderPresent = new CachedValue<>(100, (t) -> mElevator.isLeftDriveEncoderPresent());
+		mRightDriveEncoderPresent = new CachedValue<>(100, (t) -> mElevator.isRightDriveEncoderPresent());
+		mGyroPresent = new CachedValue<>(100, (t) -> mGyro.isPresent());
 	}
 
 	public void configureClimbCurrentLimit() {
@@ -427,13 +437,13 @@ public class Drive extends Subsystem {
 		resetEncoders();
 	}
 
-	public double getRawLeftEncoder() {
-		return mPeriodicIO.left_position_rotations;
-	}
-
-	public double getRawLeftSparkEncoder() {
-		return mLeftMaster.getPosition();
-	}
+//	public double getRawLeftEncoder() {
+//		return mPeriodicIO.left_position_rotations;
+//	}
+//
+//	public double getRawLeftSparkEncoder() {
+//		return mLeftMaster.getPosition();
+//	}
 
 	public double getLeftEncoderDistance() {
 		return rotationsToInches(mPeriodicIO.left_position_rotations);
@@ -521,6 +531,13 @@ public class Drive extends Subsystem {
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
 		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
+
+		mPeriodicIO.left_spark_velocity = mLeftMaster.getVelocity();
+		mPeriodicIO.right_spark_velocity = mRightMaster.getVelocity();
+
+		mPeriodicIO.left_drive_encoder_present = mLeftDriveEncoderPresent.getValue();
+		mPeriodicIO.right_drive_encoder_present = mRightDriveEncoderPresent.getValue();
+		mPeriodicIO.gyro_present = mGyroPresent.getValue();
 
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
@@ -660,8 +677,8 @@ public class Drive extends Subsystem {
 //		ConsoleReporter.report("Spark6ControlType: " + mLeftSlaveB.getControlType() +
 //				", Spark6FollowerID: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerID) +
 //				", Spark6FollowerConfig: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerConfig), MessageLevel.INFO);
-		return  "LeftDrivePos:" + mLeftMaster.getPosition() + ";" +
-				"LeftDriveVel:" + mLeftMaster.getVelocity() + ";" +
+		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
+				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
 				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
 				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
@@ -672,9 +689,9 @@ public class Drive extends Subsystem {
 				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
 				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
 				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
-				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mLeftMaster.getVelocity()) + ";" +
-				"RightDrivePos:" + mRightMaster.getPosition() + ";" +
-				"RightDriveVel:" + mRightMaster.getVelocity() + ";" +
+				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mPeriodicIO.left_spark_velocity) + ";" +
+				"RightDrivePos:" + mPeriodicIO.right_position_rotations + ";" +
+				"RightDriveVel:" + mPeriodicIO.right_spark_velocity + ";" +
 				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
 				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
 				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
@@ -684,8 +701,8 @@ public class Drive extends Subsystem {
 				"RightDrive3HasReset:" + mRightSlaveB.hasMotorControllerReset() + ";" +
 				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
 				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
-				"RightDriveSupplyVoltage:" + mRightMaster.getBusVoltage() + ";" +
-				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mRightMaster.getVelocity()) + ";" +
+				"RightDriveSupplyVoltage:" + mRightMaster.getMCInputVoltage() + ";" +
+				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mPeriodicIO.right_spark_velocity) + ";" +
 				"DriveMode:" + mDriveControlState.toString() + ";" +
 				"DriveErrorX:" + mPeriodicIO.error.getTranslation().x() + ";" +
 				"DriveErrorY:" + mPeriodicIO.error.getTranslation().y() + ";" +
@@ -696,9 +713,9 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean leftSensorFaulted = !mElevator.isLeftDriveEncoderPresent();
-		boolean rightSensorFaulted = !mElevator.isRightDriveEncoderPresent();
-		boolean navXFaulted = !mGyro.isPresent();
+		boolean leftSensorFaulted = !mPeriodicIO.left_drive_encoder_present;
+		boolean rightSensorFaulted = !mPeriodicIO.right_drive_encoder_present;
+		boolean navXFaulted = !mPeriodicIO.gyro_present;
 
 		if (leftSensorFaulted)
 			ConsoleReporter.report("Left Drive Encoder Error", MessageLevel.DEFCON1);
@@ -753,6 +770,13 @@ public class Drive extends Subsystem {
 		public double gyro_pitch;
 		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();
+
+		public double left_spark_velocity;
+		public double right_spark_velocity;
+
+		public boolean left_drive_encoder_present;
+		public boolean right_drive_encoder_present;
+		public boolean gyro_present;
 
 		// OUTPUTS
 		public double left_demand;

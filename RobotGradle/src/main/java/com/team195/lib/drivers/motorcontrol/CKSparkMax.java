@@ -5,6 +5,7 @@ import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.lib.util.CachedValue;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -34,6 +35,11 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	private final PDPBreaker motorBreaker;
 
+	private CachedValue<Double> mOutputCurrentCached;
+	private CachedValue<Double> mOutputPercentCached;
+	private CachedValue<Double> mInputVoltageCached;
+	private CachedValue<Short> mFaultsCached;
+
 	private MCControlMode currentControlMode = MCControlMode.PercentOut;
 
 	private CKSparkMax(int deviceID, MotorType type, PDPBreaker breakerCurrent, Configuration deviceConfig) {
@@ -44,6 +50,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		canEncoder = getEncoder();
 		doDefaultConfig(deviceConfig);
 		mCurrentConfig = deviceConfig;
+		initCachedValues();
 	}
 
 	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
@@ -59,6 +66,13 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		follow(masterSpark, invert);
 		setBrakeCoastMode(MCNeutralMode.valueOf(masterSpark.getIdleMode()));
 		burnFlash();
+	}
+
+	private void initCachedValues() {
+		mOutputCurrentCached = new CachedValue<>(20, (t) -> super.getOutputCurrent());
+		mOutputPercentCached = new CachedValue<>(20, (t) -> super.getAppliedOutput());
+		mInputVoltageCached = new CachedValue<>(100, (t) -> super.getBusVoltage());
+		mFaultsCached = new CachedValue<>(50, (t) -> super.getFaults());
 	}
 
 	private void doDefaultConfig(Configuration config) {
@@ -378,6 +392,32 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		return DiagnosticMessage.NO_MSG;
 	}
 
+	@Override
+	public boolean getFault(FaultID faultID) {
+		short val = (short) (getFaults() & (1 << faultID.value));
+		return val != 0;
+	}
+
+	@Override
+	public short getFaults() {
+		return mFaultsCached.getValue();
+	}
+
+	@Override
+	public double getBusVoltage() {
+		return mInputVoltageCached.getValue();
+	}
+
+	@Override
+	public double getAppliedOutput() {
+		return mOutputPercentCached.getValue();
+	}
+
+	@Override
+	public double getOutputCurrent() {
+		return mOutputCurrentCached.getValue();
+	}
+
 	private synchronized void runSparkMAXFunctionWithRetry(Function<Void, CANError> sparkMAXCall) {
 		boolean setSucceeded;
 		int retryCounter = 0;
@@ -397,7 +437,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	public ControlType getControlType() {
 		Optional<Integer> o = getParameterInt(ConfigParameter.kCtrlType);
-		if (!o.isPresent())
+		if (o.isEmpty())
 			return ControlType.kDutyCycle;
 		return controlTypeFromInt(o.get());
 	}

@@ -15,18 +15,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class TrajectoryGenerator {
-    private static final double kMaxVelocity = 100.0;
-    private static final double kMaxAccel = 60.0;
-    private static final double kMaxCentripetalAccelElevatorDown = 110.0;
-    private static final double kMaxCentripetalAccel = 80.0;
     private static final double kMaxVoltage = 9.0;
+    private static final double kMaxAccel = 80.0;
+    private static final double kMaxVelocity = 100.0;
+
     private static final double kFirstPathMaxVoltage = 9.0;
-    private static final double kFirstPathMaxAccel = 60.0;
+    private static final double kFirstPathMaxAccel = 80.0;
     private static final double kFirstPathMaxVel = 100.0;
 
-    private static final double kSimpleSwitchMaxAccel = 100.0;
-    private static final double kSimpleSwitchMaxCentripetalAccel = 80.0;
-    private static final double kSimpleSwitchMaxVelocity = 120.0;
+    private static final double kMaxCentripetalAccel = 100.0;
+
 
     private static TrajectoryGenerator mInstance = new TrajectoryGenerator();
     private final DriveMotionPlanner mMotionPlanner;

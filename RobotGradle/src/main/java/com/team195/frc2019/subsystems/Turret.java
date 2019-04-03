@@ -20,6 +20,7 @@ import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
@@ -49,9 +50,14 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	private double mTurretSetpoint = 0;
 	private double mBallShooterSetpoint = 0;
 
-	private TeleopActionRunner mAutoHatchController = null;
+	private PeriodicIO mPeriodicIO;
+
+	private final CachedValue<Boolean> mTurretEncoderPresent;
+	private final CachedValue<Boolean> mTurretMasterHasReset;
 
 	private Turret() {
+		mPeriodicIO = new PeriodicIO();
+
 		//Encoder on 50:1
 		//Turret gear is another 36:252
 		mTurretRotationMotor = new CKTalonSRX(DeviceIDConstants.kTurretMotorId, false, PDPBreaker.B30A);
@@ -98,6 +104,9 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().getSetpoint() == BallIntakeArmPositions.Down),
 				(t) -> (BallIntakeArm.getInstance().getPosition() < BallIntakeArmPositions.CollisionThreshold)
 		);
+
+		mTurretEncoderPresent = new CachedValue<>(100, (t) -> mTurretRotationMotor.isEncoderPresent());
+		mTurretMasterHasReset = new CachedValue<>(100, (t) -> mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
 	}
 
 	public static Turret getInstance() {
@@ -111,13 +120,13 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean systemFaulted = !mTurretRotationMotor.isEncoderPresent();
+		boolean systemFaulted = !mPeriodicIO.turret_encoder_present;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Turret Encoder Missing!", MessageLevel.DEFCON1);
 		}
 
-		systemFaulted |= mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
+		systemFaulted |= mPeriodicIO.turret_reset;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Turret Requires Rehoming!", MessageLevel.DEFCON1);
@@ -158,6 +167,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		setTurretPosition(0);
 		if (mTurretControlMode == TurretControlMode.POSITION)
 			mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
+
+		mPeriodicIO = new PeriodicIO();
 	}
 
 	@Override
@@ -255,7 +266,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	};
 
 	public synchronized boolean getLimitSwitchValue() {
-		return mBallShooterRollerMotor.getReverseLimitValue();
+		return mPeriodicIO.hatch_limit_switch;
 	}
 
 	public synchronized void setBeakListened(boolean enabled) {
@@ -308,11 +319,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isTurretAtSetpoint(double posDelta) {
-		return Math.abs(mTurretSetpoint - mTurretRotationMotor.getPosition()) < Math.abs(posDelta);
-	}
-
-	public boolean isShooterAtSetpoint(double rpmDelta) {
-		return Math.abs(mBallShooterSetpoint - mBallShooterRollerMotor.getVelocity()) < Math.abs(rpmDelta);
+		return Math.abs(mTurretSetpoint - mPeriodicIO.turret_position) < Math.abs(posDelta);
 	}
 
 	public static double convertRotationsToTurretDegrees(double rotations) {
@@ -325,7 +332,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getPosition() {
-		return mTurretRotationMotor.getPosition();
+		return mPeriodicIO.turret_position;
 	}
 
 	@Override
@@ -345,5 +352,26 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		VELOCITY,
 		CURRENT,
 		OPEN_LOOP;
+	}
+
+	@Override
+	public synchronized void readPeriodicInputs() {
+		mPeriodicIO.turret_position = mTurretRotationMotor.getPosition();
+		mPeriodicIO.turret_encoder_present = mTurretEncoderPresent.getValue();
+		mPeriodicIO.turret_reset = mTurretMasterHasReset.getValue();
+		mPeriodicIO.hatch_limit_switch = mBallShooterRollerMotor.getReverseLimitValue();
+	}
+
+	@Override
+	public synchronized void writePeriodicOutputs() {
+
+	}
+
+	public static class PeriodicIO {
+		// INPUTS
+		public double turret_position;
+		public boolean turret_encoder_present;
+		public boolean turret_reset;
+		public boolean hatch_limit_switch;
 	}
 }

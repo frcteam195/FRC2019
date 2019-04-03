@@ -31,6 +31,9 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	private CachedValue<Double> localQuadPosition;
 
+	private CachedValue<Boolean> forwardLimitCachedValue;
+	private CachedValue<Boolean> reverseLimitCachedValue;
+
 	private boolean sensorInverted = false;
 
 	private static final Configuration fastMasterConfig = new Configuration(5, 5, 20);
@@ -73,6 +76,8 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	private void initCachedValues() {
 		localQuadPosition = new CachedValue<>(100, (t) -> convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1)));
+		forwardLimitCachedValue = new CachedValue<>(100, (t) -> mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed());
+		reverseLimitCachedValue = new CachedValue<>(100, (t) -> mTalonSRX.getSensorCollection().isRevLimitSwitchClosed());
 	}
 
 	public SensorCollection getSensorCollection() {
@@ -441,17 +446,17 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public boolean getForwardLimitValue() {
-		return mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
+		return forwardLimitCachedValue.getValue();
 	}
 
 	@Override
 	public boolean getReverseLimitValue() {
-		return mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
+		return reverseLimitCachedValue.getValue();
 	}
 
 	@Override
 	public boolean getForwardLimitRisingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
+		boolean currentInput = getForwardLimitValue();
 		boolean retVal = (currentInput != prevForwardLimitVal) && currentInput;
 		prevForwardLimitVal = currentInput;
 		return retVal;
@@ -459,7 +464,7 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public boolean getReverseLimitRisingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
+		boolean currentInput = getReverseLimitValue();
 		boolean retVal = (currentInput != prevReverseLimitVal) && currentInput;
 		prevReverseLimitVal = currentInput;
 		return retVal;
@@ -467,7 +472,7 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public boolean getForwardLimitFallingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
+		boolean currentInput = getForwardLimitValue();
 		boolean retVal = (currentInput != prevForwardLimitVal) && !currentInput;
 		prevForwardLimitVal = currentInput;
 		return retVal;
@@ -475,7 +480,7 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public boolean getReverseLimitFallingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
+		boolean currentInput = getReverseLimitValue();
 		boolean retVal = (currentInput != prevReverseLimitVal) && !currentInput;
 		prevReverseLimitVal = currentInput;
 		return retVal;

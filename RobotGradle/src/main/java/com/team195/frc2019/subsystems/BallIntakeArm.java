@@ -39,7 +39,14 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private double mBallIntakeArmSetpoint = 0;
 	private double mBallIntakeRollerSetpoint = 0;
 
+	private PeriodicIO mPeriodicIO;
+
+	private final CachedValue<Boolean> mBallIntakeArmEncoderPresent;
+	private final CachedValue<Boolean> mBallIntakeArmMasterHasReset;
+
 	private BallIntakeArm() {
+		mPeriodicIO = new PeriodicIO();
+
 		mBallArmRotationMotor = new CKTalonSRX(DeviceIDConstants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mBallArmRotationMotor.setSensorPhase(true);
 
@@ -85,6 +92,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		);
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);
+
+		mBallIntakeArmEncoderPresent = new CachedValue<>(100, (t) -> mBallArmRollerMotor.isEncoderPresent());
+		mBallIntakeArmMasterHasReset = new CachedValue<>(100, (t) -> mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+
 	}
 
 	public static BallIntakeArm getInstance() {
@@ -98,13 +109,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean systemFaulted = !mBallArmRollerMotor.isEncoderPresent();
+		boolean systemFaulted = !mPeriodicIO.ball_intake_arm_encoder_present;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Ball Intake Arm Encoder Missing!", MessageLevel.DEFCON1);
 		}
 
-		systemFaulted |= mBallArmRollerMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
+		systemFaulted |= mPeriodicIO.ball_intake_arm_reset;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Ball Intake Arm Disabled!", MessageLevel.DEFCON1);
@@ -190,17 +201,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	public void zeroSensors() {
 		mBallArmRotationMotor.setEncoderPosition(CalConstants.kBallIntakeArmForwardSoftLimit);
 		zeroRemoteSensor();
+		mPeriodicIO = new PeriodicIO();
 	}
 
 	public void zeroRemoteSensor() {
 		mBallArmRollerMotor.setEncoderPosition(0);
-	}
-
-	public void setSensorsForReset() {
-		mBallArmRotationMotor.setLocalQuadPosition(0);
-		mBallArmRotationMotor.setEncoderPosition(0);
-		zeroRemoteSensor();
-		trc.doRateControl(100);
 	}
 
 	@Override
@@ -275,15 +280,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getPosition() {
-		return mBallArmRotationMotor.getPosition();
-	}
-
-	public double getRemotePosition() {
-		return mBallArmRollerMotor.getPosition();
+		return mPeriodicIO.ball_intake_arm_position;
 	}
 
 	public boolean isArmUp() {
-		return mBallArmRotationMotor.getForwardLimitValue();
+		return mPeriodicIO.ball_intake_arm_at_limit;
 	}
 
 	@Override
@@ -300,7 +301,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isArmAtSetpoint(double posDelta) {
-		return Math.abs(mBallIntakeArmSetpoint - mBallArmRotationMotor.getPosition()) < Math.abs(posDelta);
+		return Math.abs(mBallIntakeArmSetpoint - mPeriodicIO.ball_intake_arm_position) < Math.abs(posDelta);
 	}
 
 	public synchronized void setBallIntakeArmControlMode(BallIntakeArmControlMode ballIntakeArmControlMode) {
@@ -311,5 +312,26 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		POSITION,
 		OPEN_LOOP,
 		DISABLED;
+	}
+
+	@Override
+	public synchronized void readPeriodicInputs() {
+		mPeriodicIO.ball_intake_arm_position = mBallArmRotationMotor.getPosition();
+		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getReverseLimitValue();
+		mPeriodicIO.ball_intake_arm_encoder_present = mBallIntakeArmEncoderPresent.getValue();
+		mPeriodicIO.ball_intake_arm_reset = mBallIntakeArmMasterHasReset.getValue();
+	}
+
+	@Override
+	public synchronized void writePeriodicOutputs() {
+
+	}
+
+	public static class PeriodicIO {
+		// INPUTS
+		public double ball_intake_arm_position;
+		public boolean ball_intake_arm_at_limit;
+		public boolean ball_intake_arm_reset;
+		public boolean ball_intake_arm_encoder_present;
 	}
 }

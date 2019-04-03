@@ -5,19 +5,21 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.lib.util.ThreadRateControl;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * An abstract class that is the basis of the robot's autonomous routines. This is implemented in auto modes (which are
  * routines that do actions).
  */
 public abstract class AutoModeBase {
     protected double mUpdateRate = 1.0 / 50.0;
-    protected boolean mActive = false;
+    protected AtomicBoolean mActive = new AtomicBoolean(false);
     private ThreadRateControl threadRateControl = new ThreadRateControl();
 
     protected abstract void routine() throws AutoModeEndedException;
 
     public void run() {
-        mActive = true;
+        mActive.set(true);
 
         try {
             routine();
@@ -34,11 +36,11 @@ public abstract class AutoModeBase {
     }
 
     public void stop() {
-        mActive = false;
+        mActive.set(false);
     }
 
     public boolean isActive() {
-        return mActive;
+        return mActive.get();
     }
 
     public boolean isActiveWithThrow() throws AutoModeEndedException {
@@ -51,7 +53,7 @@ public abstract class AutoModeBase {
 
     public void runAction(Action action) throws AutoModeEndedException {
         isActiveWithThrow();
-        threadRateControl.start();
+        threadRateControl.start(true);
         action.start();
 
         while (isActiveWithThrow() && !action.isFinished()) {
