@@ -4,6 +4,7 @@ import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.util.Reportable;
+import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.CrashTrackingRunnable;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
@@ -29,40 +30,37 @@ public class Looper implements ILooper, Reportable {
     private boolean isFirstStart = true;
     private boolean isFirstRun = true;
 
-    private final CrashTrackingRunnable runnable_ = new CrashTrackingRunnable() {
-        @Override
-        public void runCrashTracked() {
-            synchronized (taskRunningLock_) {
-                if (isFirstRun) {
-                    Thread.currentThread().setName("LooperThread");
-                    Thread.currentThread().setPriority(Constants.kLooperThreadPriority);
-                    isFirstRun = false;
-                }
-
-                if (running_) {
-                    double now = Timer.getFPGATimestamp();
-                    try {
-                        loops_.forEach((l) -> {
-//                            ConsoleReporter.report(l.getName() + " Loop Running", MessageLevel.INFO);
-                            l.onLoop(now);
-                        });
-                    }
-                    catch (Exception ex) {
-                        ConsoleReporter.report(ex);
-                    }
-                    dt_ = now - timestamp_;
-                    timestamp_ = now;
-                }
-            }
-        }
-    };
+    private final CrashTrackingRunnable runnable_;
 
     public Looper(String name) {
-        this();
         this.name = name;
-    }
+        runnable_ = new CrashTrackingRunnable() {
+            @Override
+            public void runCrashTracked() {
+                synchronized (taskRunningLock_) {
+                    if (isFirstRun) {
+                        Thread.currentThread().setName(name + "Thread");
+                        Thread.currentThread().setPriority(Constants.kLooperThreadPriority);
+                        isFirstRun = false;
+                    }
 
-    private Looper() {
+                    if (running_) {
+                        double now = Timer.getFPGATimestamp();
+                        try {
+                            loops_.forEach((l) -> {
+                                l.onLoop(now);
+                            });
+                        }
+                        catch (Exception ex) {
+                            ConsoleReporter.report(ex);
+                        }
+                        dt_ = now - timestamp_;
+                        timestamp_ = now;
+                    }
+                }
+            }
+        };
+
         notifier_ = new Notifier(runnable_);
         running_ = false;
         loops_ = new ArrayList<>();
@@ -77,7 +75,7 @@ public class Looper implements ILooper, Reportable {
 
     public synchronized void start() {
         if (!running_) {
-            ConsoleReporter.report("Starting loops");
+//            ConsoleReporter.report("Starting loops");
             synchronized (taskRunningLock_) {
                 if (isFirstStart) {
                     timestamp_ = Timer.getFPGATimestamp();
@@ -104,7 +102,7 @@ public class Looper implements ILooper, Reportable {
 
     public synchronized void stop() {
         if (running_) {
-            ConsoleReporter.report("Stopping loops");
+//            ConsoleReporter.report("Stopping loops");
             notifier_.stop();
             synchronized (taskRunningLock_) {
                 running_ = false;

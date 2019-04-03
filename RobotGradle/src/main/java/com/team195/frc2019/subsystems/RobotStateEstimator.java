@@ -4,6 +4,7 @@ import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.Kinematics;
 import com.team195.frc2019.RobotState;
+import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Twist2d;
 
@@ -15,7 +16,8 @@ public class RobotStateEstimator extends Subsystem {
     private double right_encoder_prev_distance_ = 0.0;
     private double back_encoder_prev_distance_ = 0.0;
 
-    RobotStateEstimator() {
+    private RobotStateEstimator() {
+
     }
 
     public static RobotStateEstimator getInstance() {
@@ -44,7 +46,11 @@ public class RobotStateEstimator extends Subsystem {
 
     @Override
     public String generateReport() {
-        return "";
+        Pose2d odometry = robot_state_.getLatestFieldToVehicle().getValue();
+        return  "RobotPoseX:" + odometry.getTranslation().x() + ";" +
+                "RobotPoseY:" + odometry.getTranslation().y() + ";" +
+                "RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";" +
+                "RobotLinearVelocity:" + robot_state_.getMeasuredVelocity().dx + ";";
     }
 
     private class EnabledLoop implements Loop {

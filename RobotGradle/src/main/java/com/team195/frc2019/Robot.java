@@ -8,20 +8,16 @@ import com.team195.frc2019.controllers.HIDController;
 import com.team195.frc2019.controllers.LEDController;
 import com.team195.frc2019.loops.Looper;
 import com.team195.frc2019.monitors.ConnectionMonitor;
-import com.team195.frc2019.monitors.CriticalSystemsMonitor;
 import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.ConsoleReporter;
-import com.team195.frc2019.reporters.LogDataReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
 import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import org.springframework.core.env.Environment;
 
 public class Robot extends TimedRobot {
 	private Looper mEnabledLooper = new Looper("EnabledLooper");
@@ -29,23 +25,14 @@ public class Robot extends TimedRobot {
 
 	private AutoModeSelector mAutoModeSelector = new AutoModeSelector();
 
-	//All consume 20% CPU
-	private final SubsystemManager mSubsystemManager = SubsystemManager.getInstance(
-		RobotStateEstimator.getInstance(), //10ms average
-		Drive.getInstance(),        //0
-		Elevator.getInstance(),     //20-40ms
-		BallIntakeArm.getInstance(),
-		Turret.getInstance(),
-		Infrastructure.getInstance(),
-		VisionTracker.getInstance()
-	);
+	private SubsystemManager mSubsystemManager;
 
-	private Drive mDrive = Drive.getInstance();
-	private LEDController mLED = LEDController.getInstance();
-	private Infrastructure mInfrastructure = Infrastructure.getInstance();
+	private Drive mDrive;
+	private LEDController mLED;
+	private Infrastructure mInfrastructure;
 	public static AutoModeExecutor mAutoModeExecutor;
 
-	private HIDController mHIDController = HIDController.getInstance();
+	private HIDController mHIDController;
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
@@ -58,16 +45,26 @@ public class Robot extends TimedRobot {
 		try {
 			CrashTracker.logRobotInit();
 
+			mDrive = Drive.getInstance();
+			mLED = LEDController.getInstance();
+			mInfrastructure = Infrastructure.getInstance();
+			mHIDController = HIDController.getInstance();
+
+			mSubsystemManager = SubsystemManager.getInstance(
+				RobotStateEstimator.getInstance(),
+				Drive.getInstance(),
+				Elevator.getInstance(),
+				BallIntakeArm.getInstance(),
+				Turret.getInstance(),
+				Infrastructure.getInstance(),
+				VisionTracker.getInstance()
+			);
+
 			LiveWindow.disableAllTelemetry();
 
 			ConsoleReporter.getInstance().start();
 			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 
-			//Some weirdness with button detection, so disable for now
-			//TODO: Fix dashboard DirectInput detection for button box
-//			DashJoyReceiver.getInstance();
-
-			mSubsystemManager.addAdditionalReportable(RobotState.getInstance());
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
@@ -76,14 +73,13 @@ public class Robot extends TimedRobot {
 			mLED.start();
 			mLED.setRequestedState(LEDController.LEDState.BLINK);
 
-			CriticalSystemsMonitor.getInstance();
 			ConnectionMonitor.getInstance();
-			TeleopActionRunner.init();
 
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-			LogDataReporter.getInstance();
+			//Instantiate TeleopActionRunner objects before auto to speed up init
+			TeleopActionRunner.init();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -131,6 +127,9 @@ public class Robot extends TimedRobot {
 
 			ConsoleReporter.report("Start HIDController");
 			mHIDController.start();
+
+			ConsoleReporter.report("Starting TeleopActionRunner");
+			TeleopActionRunner.start();
 		} catch (Exception ex) {
 			CrashTracker.logThrowableCrash(ex);
 		}
@@ -165,6 +164,7 @@ public class Robot extends TimedRobot {
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
 			mHIDController.start();
+			TeleopActionRunner.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -217,8 +217,13 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		try {
 			CrashTracker.logDisabledInit();
+
+			ConsoleReporter.report("Stopping Teleop Action Runner");
+			TeleopActionRunner.stop();
+
 			ConsoleReporter.report("Stopping HID");
 			mHIDController.stop();
+
 			ConsoleReporter.report("Stopping Enabled Looper");
 			mEnabledLooper.stop();
 

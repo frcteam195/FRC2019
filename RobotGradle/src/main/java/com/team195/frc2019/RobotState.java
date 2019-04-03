@@ -12,7 +12,7 @@ import com.team254.lib.util.InterpolatingTreeMap;
 
 import java.util.Map;
 
-public class RobotState implements Reportable {
+public class RobotState {
 	private static RobotState instance_ = new RobotState();
 
 	public static RobotState getInstance() {
@@ -104,14 +104,5 @@ public class RobotState implements Reportable {
 
 	public Twist2d getMeasuredVelocity() {
 		return vehicle_velocity_measured_;
-	}
-
-	@Override
-	public String generateReport() {
-		Pose2d odometry = getLatestFieldToVehicle().getValue();
-		return  "RobotPoseX:" + odometry.getTranslation().x() + ";" +
-				"RobotPoseY:" + odometry.getTranslation().y() + ";" +
-				"RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";" +
-				"RobotLinearVelocity:" + vehicle_velocity_measured_.dx + ";";
 	}
 }

@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ConsoleReporter extends Thread {
 
-	private static final int MIN_CONSOLE_SEND_RATE_MS = 250;
+	private static final int MIN_CONSOLE_SEND_RATE_MS = 500;
 	private static MessageLevel reportingLevel = MessageLevel.ERROR;
 	private static LinkedHashSet<CKMessage> sendMessageSet = new LinkedHashSet<>();
 	private static ReentrantLock _reporterMutex = new ReentrantLock();

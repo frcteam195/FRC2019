@@ -4,6 +4,8 @@ import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.Subsystem;
+import com.team254.lib.util.CrashTrackingRunnable;
+import edu.wpi.first.wpilibj.Notifier;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -13,54 +15,63 @@ public class TeleopActionRunner {
 	private static double m_update_rate = 1.0 / 50.0;    //20ms update rate
 	private static HashSet<AutomatedAction> mActionList = new HashSet<>();
 	private static ReentrantLock mActionLock = new ReentrantLock();
+	private static boolean isFirstRun = true;
 
-	static {
-		Thread mRunnerThread = new Thread(() -> {
-			Thread.currentThread().setName("TeleopActionRunner");
-			ThreadRateControl threadRateControl = new ThreadRateControl();
-			threadRateControl.start();
-
-			while (true) {
-				try {
-//					ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
-					if (mActionLock.tryLock()) {
-						try {
-							if (mActionList.size() > 0) {
-								mActionList.forEach((action) -> {
-									if (!action.isStarted())
-										action.start();
-									action.update();
-								});
-								mActionList.removeIf((action) -> {
-									boolean finished = false;
-									ConsoleReporter.report(action.getClass().getSimpleName() + " Action Running!", MessageLevel.INFO);
-									if (action.isFinished()) {
-										finished = true;
-										action.done();
-									}
-									return finished;
-								});
-							}
-						} catch (Exception ex) {
-							ConsoleReporter.report(ex);
-						} finally {
-//							ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
-							mActionLock.unlock();
-						}
-						threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
-					}
-				}
-				catch (Exception ex) {
-					ConsoleReporter.report(ex);
-				}
+	private static final CrashTrackingRunnable mTeleActionRunnable = new CrashTrackingRunnable() {
+		@Override
+		public void runCrashTracked() {
+			if (isFirstRun) {
+				Thread.currentThread().setName("TeleopActionRunner");
+				isFirstRun = false;
 			}
 
-		});
-		mRunnerThread.start();
+			try {
+//				ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
+				if (mActionLock.tryLock()) {
+					try {
+						if (mActionList.size() > 0) {
+							mActionList.forEach((action) -> {
+								if (!action.isStarted())
+									action.start();
+								action.update();
+							});
+							mActionList.removeIf((action) -> {
+								boolean finished = false;
+								ConsoleReporter.report(action.getClass().getSimpleName() + " Action Running!", MessageLevel.INFO);
+								if (action.isFinished()) {
+									finished = true;
+									action.done();
+								}
+								return finished;
+							});
+						}
+					} catch (Exception ex) {
+						ConsoleReporter.report(ex);
+					} finally {
+//						ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
+						mActionLock.unlock();
+					}
+				}
+			}
+			catch (Exception ex) {
+				ConsoleReporter.report(ex);
+			}
+		}
+	};
+
+	private static final Notifier mRunnerNotifier = new Notifier(mTeleActionRunnable);
+
+	public static void init() {
+		start();
+		stop();
 	}
 
-	public synchronized static void init() {
-		;
+	public static void start() {
+		mRunnerNotifier.startPeriodic(m_update_rate);
+	}
+
+	public static void stop() {
+		mRunnerNotifier.stop();
 	}
 
 	public static boolean runAction(AutomatedAction action) {
@@ -102,15 +113,19 @@ public class TeleopActionRunner {
 			TimeoutTimer timeoutTimer = new TimeoutTimer(action.getTimeout());
 			while (!timeoutTimer.isTimedOut() && !completed) {
 //				ConsoleReporter.report("Acquiring Lock", MessageLevel.INFO);
-				if (mActionLock.tryLock()) {
-					try {
-						completed = !mActionList.contains(action);
-					} catch (Exception ex) {
-						ConsoleReporter.report(ex);
-					} finally {
+				try {
+					if (mActionLock.tryLock(100, TimeUnit.MILLISECONDS)) {
+						try {
+							completed = !mActionList.contains(action);
+						} catch (Exception ex) {
+							ConsoleReporter.report(ex);
+						} finally {
 //						ConsoleReporter.report("Releasing Lock", MessageLevel.INFO);
-						mActionLock.unlock();
+							mActionLock.unlock();
+						}
 					}
+				} catch (Exception ex) {
+					ConsoleReporter.report(ex);
 				}
 				threadRateControl.doRateControl((int) (m_update_rate * 1000.0));
 			}
