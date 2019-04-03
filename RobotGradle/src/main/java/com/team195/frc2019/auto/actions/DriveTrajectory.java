@@ -50,6 +50,7 @@ public class DriveTrajectory implements Action {
         if (mResetPose) {
             mRobotState.reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
         }
+        mDrive.setDriveControlState(Drive.DriveControlState.PATH_FOLLOWING);
         mDrive.setTrajectory(mTrajectory);
     }
 }

@@ -38,7 +38,7 @@ public class RobotState implements Reportable {
 	/**
 	 * Resets the field to robot transform (robot's position on the field)
 	 */
-	public synchronized void reset(double start_time, Pose2d initial_field_to_vehicle) {
+	public void reset(double start_time, Pose2d initial_field_to_vehicle) {
 		field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
 		field_to_vehicle_.put(new InterpolatingDouble(start_time), initial_field_to_vehicle);
 		Drive.getInstance().setHeading(initial_field_to_vehicle.getRotation());
@@ -47,7 +47,7 @@ public class RobotState implements Reportable {
 		distance_driven_ = 0.0;
 	}
 
-	public synchronized void resetDistanceDriven() {
+	public void resetDistanceDriven() {
 		distance_driven_ = 0.0;
 	}
 
@@ -55,28 +55,28 @@ public class RobotState implements Reportable {
 	 * Returns the robot's position on the field at a certain time. Linearly interpolates between stored robot positions
 	 * to fill in the gaps.
 	 */
-	public synchronized Pose2d getFieldToVehicle(double timestamp) {
+	public Pose2d getFieldToVehicle(double timestamp) {
 		return field_to_vehicle_.getInterpolated(new InterpolatingDouble(timestamp));
 	}
 
-	public synchronized Map.Entry<InterpolatingDouble, Pose2d> getLatestFieldToVehicle() {
+	public Map.Entry<InterpolatingDouble, Pose2d> getLatestFieldToVehicle() {
 		return field_to_vehicle_.lastEntry();
 	}
 
-	public synchronized Pose2d getPredictedFieldToVehicle(double lookahead_time) {
+	public Pose2d getPredictedFieldToVehicle(double lookahead_time) {
 		return getLatestFieldToVehicle().getValue()
 				.transformBy(Pose2d.exp(vehicle_velocity_predicted_.scaled(lookahead_time)));
 	}
 
-	public synchronized Pose2d getFieldToLidar(double timestamp) {
+	public Pose2d getFieldToLidar(double timestamp) {
 		return getFieldToVehicle(timestamp).transformBy(kVehicleToLidar);
 	}
 
-	public synchronized void addFieldToVehicleObservation(double timestamp, Pose2d observation) {
+	public void addFieldToVehicleObservation(double timestamp, Pose2d observation) {
 		field_to_vehicle_.put(new InterpolatingDouble(timestamp), observation);
 	}
 
-	public synchronized void addObservations(double timestamp, Twist2d measured_velocity,
+	public void addObservations(double timestamp, Twist2d measured_velocity,
 	                                         Twist2d predicted_velocity) {
 		addFieldToVehicleObservation(timestamp,
 				Kinematics.integrateForwardKinematics(getLatestFieldToVehicle().getValue(), measured_velocity));
@@ -84,7 +84,7 @@ public class RobotState implements Reportable {
 		vehicle_velocity_predicted_ = predicted_velocity;
 	}
 
-	public synchronized Twist2d generateOdometryFromSensors(double left_encoder_delta_distance, double
+	public Twist2d generateOdometryFromSensors(double left_encoder_delta_distance, double
 			right_encoder_delta_distance, Rotation2d current_gyro_angle) {
 		final Pose2d last_measurement = getLatestFieldToVehicle().getValue();
 		final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
@@ -94,20 +94,20 @@ public class RobotState implements Reportable {
 		return delta;
 	}
 
-	public synchronized double getDistanceDriven() {
+	public double getDistanceDriven() {
 		return distance_driven_;
 	}
 
-	public synchronized Twist2d getPredictedVelocity() {
+	public Twist2d getPredictedVelocity() {
 		return vehicle_velocity_predicted_;
 	}
 
-	public synchronized Twist2d getMeasuredVelocity() {
+	public Twist2d getMeasuredVelocity() {
 		return vehicle_velocity_measured_;
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public String generateReport() {
 		Pose2d odometry = getLatestFieldToVehicle().getValue();
 		return  "RobotPoseX:" + odometry.getTranslation().x() + ";" +
 				"RobotPoseY:" + odometry.getTranslation().y() + ";" +

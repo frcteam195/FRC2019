@@ -38,7 +38,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 
 	private CKSparkMax(int deviceID, MotorType type, PDPBreaker breakerCurrent, Configuration deviceConfig) {
 		super(deviceID, type);
-		restoreFactoryDefaults();
+//		restoreFactoryDefaults();
 		motorBreaker = breakerCurrent;
 		canPIDController = getPIDController();
 		canEncoder = getEncoder();
@@ -49,7 +49,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 	public CKSparkMax(int deviceID, MotorType type, boolean fastMaster, PDPBreaker breakerCurrent) {
 		this(deviceID, type, breakerCurrent, fastMaster ? fastMasterConfig : normalMasterConfig);
 		canPIDController.setOutputRange(-1, 1);
-		setBrakeCoastMode(MCNeutralMode.Brake);
+		setBrakeCoastMode(MCNeutralMode.Coast);
 		burnFlash();
 	}
 
@@ -70,7 +70,7 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS));
 		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS));
 		runSparkMAXFunctionWithRetry((t) -> setSmartCurrentLimit(motorBreaker.value * 2));
-		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(12));
+		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(11));
 		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(0.1));
 		set(MCControlMode.PercentOut, 0, 0, 0);
 	}

@@ -47,7 +47,7 @@ public class Drive extends Subsystem {
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
 	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
-	private boolean mBrakeSwitchEnabled = true;
+	private boolean mBrakeSwitchEnabled = false;
 
 	private static final Elevator mElevator = Elevator.getInstance();
 
@@ -65,8 +65,8 @@ public class Drive extends Subsystem {
 				setOpenLoop(new DriveSignal(0, 0));
 				if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 					setBrakeMode(false);
-					setBrake(mLeftMaster, mRightMaster);
-					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
+//					setBrake(mLeftMaster, mRightMaster);
+//					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
 				}
 				else {
 					setBrakeMode(false);
