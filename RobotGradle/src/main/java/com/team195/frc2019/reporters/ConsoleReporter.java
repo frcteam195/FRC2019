@@ -76,7 +76,7 @@ public class ConsoleReporter extends Thread {
 	public static void report(String message, MessageLevel msgLvl) {
 		if (msgLvl == MessageLevel.DEFCON1 || (Constants.REPORTING_ENABLED && (msgLvl.ordinal() <= reportingLevel.ordinal()))) {
 			try {
-				_reporterMutex.tryLock(100, TimeUnit.MILLISECONDS);
+				_reporterMutex.tryLock(10, TimeUnit.MILLISECONDS);
 				try {
 					sendMessageSet.add(new CKMessage(message, msgLvl));
 				} finally {
@@ -105,7 +105,7 @@ public class ConsoleReporter extends Thread {
 		Thread.currentThread().setName("ConsoleReporter");
 		while (runThread) {
 			try {
-				_reporterMutex.tryLock(100, TimeUnit.MILLISECONDS);
+				_reporterMutex.tryLock(20, TimeUnit.MILLISECONDS);
 				try {
 					for (Iterator<CKMessage> i = sendMessageSet.iterator(); i.hasNext();) {
 						CKMessage ckm = i.next();

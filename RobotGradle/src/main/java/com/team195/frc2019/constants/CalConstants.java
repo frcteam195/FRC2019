@@ -12,7 +12,7 @@ public class CalConstants {
 	public static final double kTrackScrubFactor = 1.0;  // Tune me!
 
 	// Tuned dynamics
-	public static final double kRobotLinearInertia = 60.0;  // kg TODO tune
+	public static final double kRobotLinearInertia = 68.946;  // kg TODO tune
 	public static final double kRobotAngularInertia = 10.0;  // kg m^2 TODO tune
 	public static final double kRobotAngularDrag = 12.0;  // N*m / (rad/sec) TODO tune
 	public static final double kDriveVIntercept = 0.21620481957;  // V
