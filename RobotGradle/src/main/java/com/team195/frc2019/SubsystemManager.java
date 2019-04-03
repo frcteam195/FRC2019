@@ -127,7 +127,7 @@ public class SubsystemManager implements ILooper {
 		@Override
 		public void onLoop(double timestamp) {
 			if (mCriticalCheckTimeout.isTimedOut()) {
-//				mAllSubsystems.forEach(Subsystem::isSystemFaulted);
+				mAllSubsystems.forEach(Subsystem::isSystemFaulted);
 				mCriticalCheckTimeout.reset();
 			}
 
@@ -135,7 +135,7 @@ public class SubsystemManager implements ILooper {
 			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
 			if (mLogDataTimeout.isTimedOut()) {
-//				LogDataReporter.reportOSCData(generateReport());
+				LogDataReporter.reportOSCData(generateReport());
 				mLogDataTimeout.reset();
 			}
 		}
