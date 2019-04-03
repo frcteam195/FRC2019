@@ -1,5 +1,6 @@
 package com.team195.frc2019;
 
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.loops.Looper;
@@ -95,7 +96,7 @@ public class SubsystemManager implements ILooper {
 			mLoops.forEach((l) -> l.onLoop(timestamp));
 			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
-			if (mLogDataTimeout.isTimedOut()) {
+			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());
 				mLogDataTimeout.reset();
 			}
@@ -134,7 +135,7 @@ public class SubsystemManager implements ILooper {
 			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
 			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
-			if (mLogDataTimeout.isTimedOut()) {
+			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());
 				mLogDataTimeout.reset();
 			}
