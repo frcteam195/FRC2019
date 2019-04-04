@@ -1,6 +1,7 @@
 package com.team195.lib.drivers.motorcontrol;
 
 import com.revrobotics.*;
+import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
@@ -84,8 +85,8 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus1, config.STATUS_FRAME_1_MS));
 		runSparkMAXFunctionWithRetry((t) -> setPeriodicFramePeriod(PeriodicFrame.kStatus2, config.STATUS_FRAME_2_MS));
 		runSparkMAXFunctionWithRetry((t) -> setSmartCurrentLimit(motorBreaker.value * 2));
-		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(11));
-		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(0.1));
+		runSparkMAXFunctionWithRetry((t) -> enableVoltageCompensation(CalConstants.kDriveDefaultVoltageCompensationSetpoint));
+		runSparkMAXFunctionWithRetry((t) -> setOpenLoopRampRate(CalConstants.kDriveDefaultOpenLoopRampRate));
 		set(MCControlMode.PercentOut, 0, 0, 0);
 	}
 

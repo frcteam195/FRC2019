@@ -38,6 +38,9 @@ public class CalConstants {
 
 	/* CONTROL LOOP GAINS */
 
+	public static final double kDriveDefaultVoltageCompensationSetpoint = 11.0;
+	public static final double kDriveDefaultOpenLoopRampRate = 0.1;
+
 	// PID gains for drive velocity loop (LOW GEAR)
 	// Units: setpoint, error, and output are in ticks per second.
 	public static final double kDriveLowGearVelocityKp = 0.0003;

@@ -10,7 +10,6 @@ import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
-import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
@@ -75,7 +74,6 @@ public class Drive extends Subsystem {
 //					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
 				}
 				else {
-					setBrakeMode(false);
 					setBrakeMode(true);
 				}
 			}
@@ -205,7 +203,11 @@ public class Drive extends Subsystem {
 		mIsBrakeMode = true;
 		setBrakeMode(false);
 
+		mMotionPlanner = new DriveMotionPlanner();
 
+		mLeftDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isLeftDriveEncoderPresent());
+		mRightDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isRightDriveEncoderPresent());
+		mGyroPresent = new CachedValue<>(500, (t) -> mGyro.isPresent());
 
 //		TuneablePIDOSC x;
 //		try {
@@ -215,12 +217,6 @@ public class Drive extends Subsystem {
 //		} catch (Exception ignored) {
 //
 //		}
-
-		mMotionPlanner = new DriveMotionPlanner();
-
-		mLeftDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isLeftDriveEncoderPresent());
-		mRightDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isRightDriveEncoderPresent());
-		mGyroPresent = new CachedValue<>(500, (t) -> mGyro.isPresent());
 	}
 
 	public void configureClimbCurrentLimit() {
@@ -310,13 +306,13 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_feedforward = 0.0;
 	}
 
-	public synchronized void setClimbLeft(double leftPos) {
+	public synchronized void setClimbLeft(double leftSignal) {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
 
 			setDriveControlState(DriveControlState.CLIMB);
 		}
-		mPeriodicIO.left_demand = leftPos;
+		mPeriodicIO.left_demand = leftSignal;
 		mPeriodicIO.left_feedforward = 0.0;
 	}
 
@@ -469,6 +465,10 @@ public class Drive extends Subsystem {
 		return (getRightLinearVelocity() - getLeftLinearVelocity()) / CalConstants.kDriveWheelTrackWidthInches;
 	}
 
+	public double getAverageInputVoltage() {
+		return (mPeriodicIO.left_bus_voltage + mPeriodicIO.right_bus_voltage) / 2.0;
+	}
+
 	public void overrideTrajectory(boolean value) {
 		mOverrideTrajectory = value;
 	}
@@ -539,6 +539,9 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_drive_encoder_present = mRightDriveEncoderPresent.getValue();
 		mPeriodicIO.gyro_present = mGyroPresent.getValue();
 
+		mPeriodicIO.left_bus_voltage = mLeftMaster.getMCInputVoltage();
+		mPeriodicIO.right_bus_voltage = mRightMaster.getMCInputVoltage();
+
 		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
 		if (deltaLeftRotations > 0.0) {
 			mPeriodicIO.left_distance += deltaLeftRotations * CalConstants.kDriveWheelDiameterInches;
@@ -574,9 +577,6 @@ public class Drive extends Subsystem {
 					mPeriodicIO.left_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.left_accel / mLeftMaster.getNativeUnitsOutputRange());
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
-
-//			mLeftMaster.set(MCControlMode.Velocity, mPeriodicIO.left_demand, 0, 0);
-//			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0, 0);
 		}
 	}
 
@@ -669,18 +669,6 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized String generateReport() {
-
-		//		sb.append("AccelX:" + mGyro.getRawAccelX() + ";");
-//		sb.append("AccelY:" + mGyro.getRawAccelY() + ";");
-//		sb.append("AccelZ:" + mGyro.getRawAccelZ() + ";");
-//
-//		sb.append("Gyro:" + mGyro.getRawYawDegrees() + ";");
-//		sb.append("GyroRate:" + mGyro.getYawRateDegreesPerSec() + ";");
-
-		//		sb.append("RobotPosition:" + PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue().toString() + ";");
-//		ConsoleReporter.report("Spark6ControlType: " + mLeftSlaveB.getControlType() +
-//				", Spark6FollowerID: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerID) +
-//				", Spark6FollowerConfig: " + mLeftSlaveB.getParameterInt(CANSparkMaxLowLevel.ConfigParameter.kFollowerConfig), MessageLevel.INFO);
 		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
 				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
@@ -777,6 +765,8 @@ public class Drive extends Subsystem {
 
 		public double left_spark_velocity;
 		public double right_spark_velocity;
+		public double left_bus_voltage;
+		public double right_bus_voltage;
 
 		public boolean left_drive_encoder_present;
 		public boolean right_drive_encoder_present;
