@@ -89,8 +89,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotPeriodic() {
 //		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
-		ConsoleReporter.report(mEnabledLooper.generateReport());
-		ConsoleReporter.report(mDisabledLooper.generateReport());
+//		ConsoleReporter.report(mEnabledLooper.generateReport());
+//		ConsoleReporter.report(mDisabledLooper.generateReport());
 //		ConsoleReporter.report("LeftDrivePos:" + Drive.getInstance().getLeftEncoderDistance() + ", RigthDrivePos:" + Drive.getInstance().getRightEncoderDistance());
 //		ConsoleReporter.report("GyroRoll:" + Drive.getInstance().getRoll());
 //		ConsoleReporter.report("Spark:" + Drive.getInstance().getRawLeftSparkEncoder() + ", Wheel:" + Drive.getInstance().getRawLeftEncoder());

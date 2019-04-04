@@ -136,7 +136,10 @@ public class HIDController {
 								if (quickTurn)
 									turn *= 0.5;
 
-								mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, true));
+								DriveSignal d = mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, true);
+
+//								ConsoleReporter.report("Left: " + d.getLeft() + ", Right:" + d.getRight());
+								mDrive.setOpenLoop(d);
 							}
 						}
 

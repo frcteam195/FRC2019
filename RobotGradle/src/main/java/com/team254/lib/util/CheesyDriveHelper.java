@@ -13,6 +13,8 @@ public class CheesyDriveHelper {
     private static final double kThrottleDeadband = Constants.kJoystickDeadband;
     private static final double kWheelDeadband = Constants.kJoystickDeadband;
 
+    private static final double kMinOutput = 0.02;
+
     // These factor determine how fast the wheel traverses the "non linear" sine curve.
     private static final double kHighWheelNonLinearity = 0.85;
     private static final double kLowWheelNonLinearity = 0.76;
@@ -136,6 +138,10 @@ public class CheesyDriveHelper {
             leftPwm += overPower * (-1.0 - rightPwm);
             rightPwm = -1.0;
         }
+
+        leftPwm = Math.abs(leftPwm) < kMinOutput ? 0 : leftPwm;
+        rightPwm = Math.abs(rightPwm) < kMinOutput ? 0 : rightPwm;
+
         return new DriveSignal(leftPwm * velScalingFactor, rightPwm * velScalingFactor);
     }
 

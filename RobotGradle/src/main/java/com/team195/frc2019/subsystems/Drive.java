@@ -556,6 +556,10 @@ public class Drive extends Subsystem {
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mPeriodicIO);
 		}
+
+//		ConsoleReporter.report(mPeriodicIO.left_demand);
+//		ConsoleReporter.report(mPeriodicIO.right_demand);
+//		ConsoleReporter.report(mDriveControlState.toString());
 	}
 
 	@Override
