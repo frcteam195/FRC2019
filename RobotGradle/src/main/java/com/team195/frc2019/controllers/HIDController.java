@@ -134,7 +134,7 @@ public class HIDController {
 //							}
 //							else if (driveJoystick.getRisingEdgeButton(4)) {
 //								TeleopActionRunner.runAction(AutomatedAction.fromAction(
-//										new TurnDriveLooseAngleAction(180, 2), 6, Drive.getInstance()));
+//										new TurnDrive180Action(2), 6, Drive.getInstance()));
 //							}
 
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {

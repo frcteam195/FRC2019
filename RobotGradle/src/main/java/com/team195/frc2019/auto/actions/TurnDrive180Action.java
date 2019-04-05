@@ -5,22 +5,24 @@ import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.DriveSignal;
 
-public class TurnDriveLooseAngleAction implements Action {
+public class TurnDrive180Action implements Action {
 	private static final Drive mDrive = Drive.getInstance();
 
 	private final TimeoutTimer mTimeoutTimer;
 
-	private double mAngle;
+	private final double mAngle;
 	private static final double kTurnThreshold = 20;
 	private static final double kTurnkP = 0.014;
 
 	/**
 	 * Turn drive loosely to angle
-	 * @param angle Positive angle counterclockwise
 	 * @param timeout Timeout value in seconds
 	 */
-	public TurnDriveLooseAngleAction(double angle, double timeout) {
-		mAngle = mDrive.getRawYaw() + angle;
+	public TurnDrive180Action(double timeout) {
+		if (mDrive.getHeading().getDegrees() > 0)
+			mAngle = mDrive.getHeading().getDegrees() - 179.9;
+		else
+			mAngle = mDrive.getHeading().getDegrees() + 179.9;
 		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
 
@@ -32,7 +34,7 @@ public class TurnDriveLooseAngleAction implements Action {
 
 	@Override
 	public void update() {
-		double steerVal = Math.max(Math.min((Math.abs(mAngle) - Math.abs(mDrive.getRawYaw())) * kTurnkP, 1), -1);
+		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
 		ConsoleReporter.report("Steer val: " + steerVal);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
@@ -47,9 +49,6 @@ public class TurnDriveLooseAngleAction implements Action {
 
 	@Override
 	public void start() {
-		mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP_AUTOMATED);
-		double steerVal = Math.max(Math.min(mAngle - mDrive.getRawYaw() * kTurnkP, 1), -1);
 		mDrive.setBrakeMode(true);
-		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
 }
