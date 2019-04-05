@@ -4,6 +4,8 @@ public interface CKIMU {
 
 	double getFusedHeading();
 
+	double getRawYawDegrees();
+
 	double getPitch();
 
 	double getRoll();

@@ -76,8 +76,8 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	private void initCachedValues() {
 		localQuadPosition = new CachedValue<>(100, (t) -> convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1)));
-		forwardLimitCachedValue = new CachedValue<>(250, (t) -> mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed());
-		reverseLimitCachedValue = new CachedValue<>(250, (t) -> mTalonSRX.getSensorCollection().isRevLimitSwitchClosed());
+		forwardLimitCachedValue = new CachedValue<>(150, (t) -> mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed());
+		reverseLimitCachedValue = new CachedValue<>(150, (t) -> mTalonSRX.getSensorCollection().isRevLimitSwitchClosed());
 	}
 
 	public SensorCollection getSensorCollection() {

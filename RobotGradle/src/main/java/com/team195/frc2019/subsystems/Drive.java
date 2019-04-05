@@ -402,6 +402,10 @@ public class Drive extends Subsystem {
 		return mPeriodicIO.gyro_roll;
 	}
 
+	public synchronized double getRawYaw() {
+		return mPeriodicIO.gyro_raw_yaw;
+	}
+
 	public synchronized Rotation2d getHeading() {
 		return mPeriodicIO.gyro_heading;
 	}
@@ -529,6 +533,7 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_velocity_RPM = mElevator.getLeftDriveVelocity();
 		mPeriodicIO.right_velocity_RPM = mElevator.getRightDriveVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
+		mPeriodicIO.gyro_raw_yaw = mGyro.getRawYawDegrees();
 		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
 
@@ -759,6 +764,7 @@ public class Drive extends Subsystem {
 		public double left_velocity_RPM;
 		public double right_velocity_RPM;
 		public Rotation2d gyro_heading = Rotation2d.identity();
+		public double gyro_raw_yaw;
 		public double gyro_pitch;
 		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();

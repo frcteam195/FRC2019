@@ -222,8 +222,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 //				if (!isArmUp())
 //					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
 
-//				if (isArmUp())
-//					TeleopActionRunner.runAction(AutomatedActions.unfold());
+				if (isArmUp())
+					TeleopActionRunner.runAction(AutomatedActions.unfold());
 			}
 		}
 

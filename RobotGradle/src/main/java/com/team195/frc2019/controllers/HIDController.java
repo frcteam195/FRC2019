@@ -95,13 +95,13 @@ public class HIDController {
 								turn *= CalConstants.kLowSensitivityFactor;
 							}
 
-//							    if (driveJoystick.getRisingEdgeButton(5)) {
-//							    	mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
-//							    }
-//							    else if (driveJoystick.getRisingEdgeButton(6)) {
-//							    	TeleopActionRunner.runAction(AutomatedAction.fromAction(
-//							    			new TurnDriveLooseAngleAction(180, 2), 6, Drive.getInstance()));
-//							    }
+//						    if (driveJoystick.getRisingEdgeButton(3)) {
+//						        mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
+//						    }
+//						    else if (driveJoystick.getRisingEdgeButton(4)) {
+//						        TeleopActionRunner.runAction(AutomatedAction.fromAction(
+//						                new TurnDriveLooseAngleAction(180, 2), 6, Drive.getInstance()));
+//						    }
 
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 								mDrive.setBrakeMode(driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled());
@@ -129,6 +129,14 @@ public class HIDController {
 								turn *= CalConstants.kLowSensitivityFactor;
 							}
 
+//							if (driveJoystick.getRisingEdgeButton(3)) {
+//								mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP);
+//							}
+//							else if (driveJoystick.getRisingEdgeButton(4)) {
+//								TeleopActionRunner.runAction(AutomatedAction.fromAction(
+//										new TurnDriveLooseAngleAction(180, 2), 6, Drive.getInstance()));
+//							}
+
 							if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 								mDrive.setBrakeMode(driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled());
 
@@ -143,11 +151,26 @@ public class HIDController {
 							}
 						}
 
-						if (driveJoystick.getRisingEdgeButton(1)) {
-							TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
-						} else if (driveJoystick.getRisingEdgeButton(2)) {
-							TeleopActionRunner.runAction(AutomatedActions.enableHatchSidewaysVision((t) -> driveJoystick.getRawButton(2)));
-						} else if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
+						if (driveJoystick.getRawButton(1)) {
+							VisionTracker.getInstance().setTargetMode(VisionTracker.TargetMode.HATCH);
+							if (!VisionTracker.getInstance().isTargetAreaReached())
+								VisionTracker.getInstance().setVisionEnabled(true);
+							else
+								VisionTracker.getInstance().setVisionEnabled(false);
+						} else if (driveJoystick.getRawButton(2)) {
+							VisionTracker.getInstance().setTargetMode(VisionTracker.TargetMode.HATCH);
+							VisionTracker.getInstance().setVisionEnabled(true);
+						} else {
+							VisionTracker.getInstance().setVisionEnabled(false);
+						}
+
+//						if (driveJoystick.getRisingEdgeButton(1)) {
+//							TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> driveJoystick.getRawButton(1)));
+//						} else if (driveJoystick.getRisingEdgeButton(2)) {
+//							TeleopActionRunner.runAction(AutomatedActions.enableHatchSidewaysVision((t) -> driveJoystick.getRawButton(2)));
+//						}
+
+						if (driveJoystick.getRisingEdgeTrigger(2, Constants.kJoystickTriggerThreshold)) {
 
 						} else if (driveJoystick.getRisingEdgeTrigger(3, Constants.kJoystickTriggerThreshold)) {
 							TeleopActionRunner.runAction(AutomatedActions.intakeBallOn((t) -> driveJoystick.getRawAxis(3) > Constants.kJoystickTriggerThreshold));
@@ -164,7 +187,7 @@ public class HIDController {
 						} else if (buttonBox1.getRisingEdgeButton(5)) {
 							TeleopActionRunner.runAction(AutomatedActions.elevatorSet(ElevatorPositions.RocketBallHigh));
 						} else if (buttonBox1.getRisingEdgeButton(7)) {
-							TeleopActionRunner.runAction(AutomatedActions.pickupHatchFeederStation());
+							TeleopActionRunner.runAction(AutomatedActions.pickupHatchFeederStationDriveAway((t) -> armControlJoystick.getRawAxis(3) < 0.3));
 						} else if (buttonBox1.getRisingEdgeButton(8)) {
 							TeleopActionRunner.runAction(AutomatedActions.elevatorSet(ElevatorPositions.CargoHatch));
 						} else if (buttonBox1.getRisingEdgeButton(9)) {
@@ -237,7 +260,7 @@ public class HIDController {
 						} else if (armControlJoystick.getRisingEdgeButton(5)) {
 //								TeleopActionRunner.runAction(new AutomatedAction(new SetHatchPushAction(false), 1));
 						} else if (armControlJoystick.getRisingEdgeButton(6)) {
-							TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> armControlJoystick.getRawButton(6)));
+//							TeleopActionRunner.runAction(AutomatedActions.enableHatchVision((t) -> armControlJoystick.getRawButton(6)));
 						} else if (armControlJoystick.getRisingEdgeButton(7)) {
 							//Rehome Elevator
 							TeleopActionRunner.runAction(AutomatedActions.homeElevator());

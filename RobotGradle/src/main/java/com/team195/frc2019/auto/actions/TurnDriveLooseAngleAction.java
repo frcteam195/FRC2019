@@ -10,8 +10,8 @@ public class TurnDriveLooseAngleAction implements Action {
 
 	private final TimeoutTimer mTimeoutTimer;
 
-	private final double mAngle;
-	private static final double kTurnThreshold = 25;
+	private double mAngle;
+	private static final double kTurnThreshold = 20;
 	private static final double kTurnkP = 0.014;
 
 	/**
@@ -20,19 +20,19 @@ public class TurnDriveLooseAngleAction implements Action {
 	 * @param timeout Timeout value in seconds
 	 */
 	public TurnDriveLooseAngleAction(double angle, double timeout) {
-		mAngle = mDrive.getHeading().getDegrees() + angle;
+		mAngle = mDrive.getRawYaw() + angle;
 		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
 
 	@Override
 	public boolean isFinished() {
 		ConsoleReporter.report("Gyro Angle: " + mDrive.getHeading().getDegrees());
-		return mTimeoutTimer.isTimedOut() || Math.abs(mAngle - mDrive.getHeading().getDegrees()) < kTurnThreshold;
+		return mTimeoutTimer.isTimedOut() || Math.abs(mAngle - mDrive.getRawYaw()) < kTurnThreshold;
 	}
 
 	@Override
 	public void update() {
-		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
+		double steerVal = Math.max(Math.min((Math.abs(mAngle) - Math.abs(mDrive.getRawYaw())) * kTurnkP, 1), -1);
 		ConsoleReporter.report("Steer val: " + steerVal);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
@@ -48,7 +48,7 @@ public class TurnDriveLooseAngleAction implements Action {
 	@Override
 	public void start() {
 		mDrive.setDriveControlState(Drive.DriveControlState.OPEN_LOOP_AUTOMATED);
-		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
+		double steerVal = Math.max(Math.min(mAngle - mDrive.getRawYaw() * kTurnkP, 1), -1);
 		mDrive.setBrakeMode(true);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}

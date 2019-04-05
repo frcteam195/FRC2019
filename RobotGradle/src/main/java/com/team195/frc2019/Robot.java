@@ -96,6 +96,7 @@ public class Robot extends TimedRobot {
 //		ConsoleReporter.report("Spark:" + Drive.getInstance().getRawLeftSparkEncoder() + ", Wheel:" + Drive.getInstance().getRawLeftEncoder());
 //		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
 //		ConsoleReporter.report(mAutoModeSelector.getAutoMode().getClass().getSimpleName().toString());
+//		ConsoleReporter.report("GyroDeg:" + Drive.getInstance().getRawYaw());
 	}
 
 	@Override
@@ -115,13 +116,11 @@ public class Robot extends TimedRobot {
 			ConsoleReporter.report("Zero Pose");
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-//			Thread.sleep(500);
-
-			ConsoleReporter.report("Check Auto Mode Not Null");
-			if (mAutoModeExecutor != null) {
-				ConsoleReporter.report("Start Auto Mode");
-				mAutoModeExecutor.start();
-			}
+//			ConsoleReporter.report("Check Auto Mode Not Null");
+//			if (mAutoModeExecutor != null) {
+//				ConsoleReporter.report("Start Auto Mode");
+//				mAutoModeExecutor.start();
+//			}
 
 			ConsoleReporter.report("Start Enabled Looper");
 			mEnabledLooper.start();

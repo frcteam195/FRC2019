@@ -82,6 +82,7 @@ public class NavX implements CKIMU {
         mAngleAdjustment = adjustment;
     }
 
+    @Override
     public synchronized double getRawYawDegrees() {
         return mYawDegrees;
     }
