@@ -33,7 +33,6 @@ public class ConsoleReporter {
 	private ConsoleReporter() {
 		mConsoleNotifier = new Notifier(mConsoleRunnable);
 		mConsoleNotifier.startPeriodic(MIN_CONSOLE_SEND_RATE_MS);
-
 	}
 
 	public static ConsoleReporter getInstance() {
@@ -44,7 +43,6 @@ public class ConsoleReporter {
 				ex.printStackTrace();
 			}
 		}
-
 		return instance;
 	}
 
