@@ -86,14 +86,14 @@ public class SubsystemManager implements ILooper {
 
 		@Override
 		public void onLoop(double timestamp) {
+			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+			mLoops.forEach((l) -> l.onLoop(timestamp));
+			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
+
 			if (mCriticalCheckTimeout.isTimedOut()) {
 				mAllSubsystems.forEach(Subsystem::isSystemFaulted);
 				mCriticalCheckTimeout.reset();
 			}
-
-			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
-			mLoops.forEach((l) -> l.onLoop(timestamp));
-			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
 			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());
@@ -126,13 +126,13 @@ public class SubsystemManager implements ILooper {
 
 		@Override
 		public void onLoop(double timestamp) {
+			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
+			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
+
 			if (mCriticalCheckTimeout.isTimedOut()) {
 				mAllSubsystems.forEach(Subsystem::isSystemFaulted);
 				mCriticalCheckTimeout.reset();
 			}
-
-			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
-			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
 			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());

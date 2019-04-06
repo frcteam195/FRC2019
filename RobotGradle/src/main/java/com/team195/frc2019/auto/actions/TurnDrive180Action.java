@@ -11,7 +11,7 @@ public class TurnDrive180Action implements Action {
 	private final TimeoutTimer mTimeoutTimer;
 
 	private final double mAngle;
-	private static final double kTurnThreshold = 20;
+	private static final double kTurnThreshold = 35;
 	private static final double kTurnkP = 0.014;
 
 	/**
@@ -19,23 +19,23 @@ public class TurnDrive180Action implements Action {
 	 * @param timeout Timeout value in seconds
 	 */
 	public TurnDrive180Action(double timeout) {
-		if (mDrive.getHeading().getDegrees() > 0)
-			mAngle = mDrive.getHeading().getDegrees() - 179.9;
-		else
-			mAngle = mDrive.getHeading().getDegrees() + 179.9;
+		double startingAngle = convertTo2PIRange(mDrive.getHeading().getDegrees());
+		mAngle = convertTo2PIRange(startingAngle + 180);
+		ConsoleReporter.report("Starting turn - startingAngle" + startingAngle + " mAngle: " + mAngle);
 		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
 
 	@Override
 	public boolean isFinished() {
 		ConsoleReporter.report("Gyro Angle: " + mDrive.getHeading().getDegrees());
-		return mTimeoutTimer.isTimedOut() || Math.abs(mAngle - mDrive.getRawYaw()) < kTurnThreshold;
+		double err = convertTo2PIRange(mAngle - convertTo2PIRange(mDrive.getHeading().getDegrees()));
+		return mTimeoutTimer.isTimedOut() || err < kTurnThreshold || err > 360 - kTurnThreshold;
 	}
 
 	@Override
 	public void update() {
-		double steerVal = Math.max(Math.min((mAngle - mDrive.getHeading().getDegrees()) * kTurnkP, 1), -1);
-		ConsoleReporter.report("Steer val: " + steerVal);
+		double steerVal = Math.max(Math.min((convertTo2PIRange(mAngle - convertTo2PIRange(mDrive.getHeading().getDegrees()))) * kTurnkP, 1), -1);
+		ConsoleReporter.report("Actual: " + convertTo2PIRange(mDrive.getHeading().getDegrees()) + "Steer val: " + steerVal);
 		mDrive.setOpenLoopAutomated(new DriveSignal(-steerVal, steerVal));
 	}
 
@@ -50,5 +50,13 @@ public class TurnDrive180Action implements Action {
 	@Override
 	public void start() {
 		mDrive.setBrakeMode(true);
+	}
+
+	private static double convertTo2PIRange(double angle) {
+		while (angle < 0)
+			angle += 360;
+		while (angle > 360)
+			angle -= 360;
+		return angle;
 	}
 }

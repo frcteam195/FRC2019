@@ -19,6 +19,7 @@ import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
+import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.*;
 
@@ -61,22 +62,23 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmUpPositionKp, CalConstants.kBallIntakeArmUpPositionKi, CalConstants.kBallIntakeArmUpPositionKd, CalConstants.kBallIntakeArmUpPositionKf);
 		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmUpPositionCruiseVel, CalConstants.kBallIntakeArmUpPositionMMAccel);
-		mBallArmRotationMotor.setPIDGainSlot(1);
-		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
-		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmDownPositionKp, CalConstants.kBallIntakeArmDownPositionKi, CalConstants.kBallIntakeArmDownPositionKd, CalConstants.kBallIntakeArmDownPositionKf);
-		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmDownPositionCruiseVel, CalConstants.kBallIntakeArmDownPositionMMAccel);
+//		mBallArmRotationMotor.setPIDGainSlot(1);
+//		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
+//		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+//		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmDownPositionKp, CalConstants.kBallIntakeArmDownPositionKi, CalConstants.kBallIntakeArmDownPositionKd, CalConstants.kBallIntakeArmDownPositionKf);
+//		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmDownPositionCruiseVel, CalConstants.kBallIntakeArmDownPositionMMAccel);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
-		trc.start();
-		trc.doRateControl(100);
+//		trc.start();
+//		trc.doRateControl(100);
 		zeroSensors();
-		trc.doRateControl(100);
+//		trc.doRateControl(100);
 //		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
+		mBallArmRotationMotor.setBrakeCoastMode(MCNeutralMode.Brake);
 
 //		TuneablePIDOSC x;
 //		try {
