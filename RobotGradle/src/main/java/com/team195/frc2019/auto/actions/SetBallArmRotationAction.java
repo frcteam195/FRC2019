@@ -71,7 +71,7 @@ public class SetBallArmRotationAction implements Action {
 			//If the arm is up, zero sensor
 			if (mRotation < 0) {
 				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);
-				mBallArm.zeroRemoteSensor();
+				mBallArm.zeroSensors();
 				mArmActionState = ArmActionState.WAITING;
 			}
 			else {

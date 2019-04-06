@@ -39,17 +39,17 @@ public class TeleopActionRunner {
 
 	public static boolean runAction(AutomatedAction action) {
 		try {
-			if (mActionList.size() > 0) {
-				mActionList.removeIf((xAction) -> {
-					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
-						if (action.getRequiredSubsystems().contains(xSubsystem)) {
-							action.purgeActions();
-							return true;
-						}
-					}
-					return false;
-				});
-			}
+//			if (mActionList.size() > 0) {
+//				mActionList.removeIf((xAction) -> {
+//					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
+//						if (action.getRequiredSubsystems().contains(xSubsystem)) {
+//							action.purgeActions();
+//							return true;
+//						}
+//					}
+//					return false;
+//				});
+//			}
 			mActionList.add(action);
 		} catch (Exception ex) {
 			ConsoleReporter.report(ex);

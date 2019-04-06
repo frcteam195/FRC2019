@@ -26,7 +26,7 @@ import java.util.function.Function;
 
 public class HIDController {
 	private static HIDController mInstance = null;
-	public static HIDController getInstance() {
+	public synchronized static HIDController getInstance() {
 		if (mInstance == null)
 			mInstance = new HIDController();
 
@@ -306,6 +306,11 @@ public class HIDController {
 				ConsoleReporter.report(t);
 				CrashTracker.logThrowableCrash(t);
 			}
+		}
+
+		if (Turret.getInstance().isBeakListenerEnabled()) {
+			if (Turret.getInstance().getLimitSwitchFallingEdge())
+				TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 1));
 		}
 
 		TeleopActionRunner.processActions();

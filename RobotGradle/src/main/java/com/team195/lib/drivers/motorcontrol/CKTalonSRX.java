@@ -13,6 +13,7 @@ import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class CKTalonSRX implements TuneableMotorController {
@@ -24,8 +25,8 @@ public class CKTalonSRX implements TuneableMotorController {
 	private ArrayList<FeedbackConfiguration> mFeedbackConfig = new ArrayList<>();
 	private double prevOutput = Double.MIN_VALUE;
 	private final PDPBreaker motorBreaker;
-	private boolean prevForwardLimitVal = false;
-	private boolean prevReverseLimitVal = false;
+	private AtomicBoolean prevForwardLimitVal = new AtomicBoolean(false);
+	private AtomicBoolean prevReverseLimitVal = new AtomicBoolean(false);
 
 
 
@@ -457,32 +458,32 @@ public class CKTalonSRX implements TuneableMotorController {
 	@Override
 	public boolean getForwardLimitRisingEdge() {
 		boolean currentInput = getForwardLimitValue();
-		boolean retVal = (currentInput != prevForwardLimitVal) && currentInput;
-		prevForwardLimitVal = currentInput;
+		boolean retVal = (currentInput != prevForwardLimitVal.get()) && currentInput;
+		prevForwardLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getReverseLimitRisingEdge() {
 		boolean currentInput = getReverseLimitValue();
-		boolean retVal = (currentInput != prevReverseLimitVal) && currentInput;
-		prevReverseLimitVal = currentInput;
+		boolean retVal = (currentInput != prevReverseLimitVal.get()) && currentInput;
+		prevReverseLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getForwardLimitFallingEdge() {
 		boolean currentInput = getForwardLimitValue();
-		boolean retVal = (currentInput != prevForwardLimitVal) && !currentInput;
-		prevForwardLimitVal = currentInput;
+		boolean retVal = (currentInput != prevForwardLimitVal.get()) && !currentInput;
+		prevForwardLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getReverseLimitFallingEdge() {
 		boolean currentInput = getReverseLimitValue();
-		boolean retVal = (currentInput != prevReverseLimitVal) && !currentInput;
-		prevReverseLimitVal = currentInput;
+		boolean retVal = (currentInput != prevReverseLimitVal.get()) && !currentInput;
+		prevReverseLimitVal.set(currentInput);
 		return retVal;
 	}
 

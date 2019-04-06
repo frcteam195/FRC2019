@@ -223,7 +223,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mElevatorMaster.setEncoderPosition(0);
-		mPeriodicIO = new PeriodicIO();
+//		mPeriodicIO = new PeriodicIO();
 	}
 
 	public void zeroDriveEncoders() {

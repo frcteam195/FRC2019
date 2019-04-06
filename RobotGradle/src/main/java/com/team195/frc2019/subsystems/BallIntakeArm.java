@@ -191,9 +191,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void zeroSensors() {
-		mBallArmRotationMotor.setEncoderPosition(CalConstants.kBallIntakeArmForwardSoftLimit);
+		mBallArmRotationMotor.setEncoderPosition(0);
 		zeroRemoteSensor();
-		mPeriodicIO = new PeriodicIO();
 	}
 
 	public void zeroRemoteSensor() {

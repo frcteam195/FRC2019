@@ -27,6 +27,8 @@ import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Turret extends Subsystem implements InterferenceSystem {
 
 	private static Turret mInstance = new Turret();
@@ -43,7 +45,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	private TurretControlMode mTurretControlMode = TurretControlMode.POSITION;
 	private BallShooterControlMode mBallShooterControlMode = BallShooterControlMode.OPEN_LOOP;
 
-	private boolean beakListenerEnabled = true;
+	private AtomicBoolean beakListenerEnabled = new AtomicBoolean(true);
 
 	private final MotionInterferenceChecker turretAnyPositionCheck;
 
@@ -168,7 +170,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		if (mTurretControlMode == TurretControlMode.POSITION)
 			mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 
-		mPeriodicIO = new PeriodicIO();
+//		mPeriodicIO = new PeriodicIO();
 	}
 
 	@Override
@@ -246,11 +248,6 @@ public class Turret extends Subsystem implements InterferenceSystem {
 					default:
 						break;
 				}
-
-				if (beakListenerEnabled) {
-					if (mBallShooterRollerMotor.getReverseLimitFallingEdge())
-						TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 1));
-				}
 			}
 		}
 
@@ -269,8 +266,12 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		return mPeriodicIO.hatch_limit_switch;
 	}
 
-	public synchronized void setBeakListened(boolean enabled) {
-		beakListenerEnabled = enabled;
+	public synchronized boolean getLimitSwitchFallingEdge() { return mBallShooterRollerMotor.getReverseLimitFallingEdge(); }
+
+	public boolean isBeakListenerEnabled() { return beakListenerEnabled.get(); }
+
+	public void setBeakListened(boolean enabled) {
+		beakListenerEnabled.set(enabled);
 	}
 
 	public synchronized void setBallPush(boolean ballPush) {
