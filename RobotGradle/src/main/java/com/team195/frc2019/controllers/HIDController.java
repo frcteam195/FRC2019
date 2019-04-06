@@ -58,6 +58,7 @@ public class HIDController {
 		synchronized (taskRunningLock_) {
 			if (firstRun) {
 				Thread.currentThread().setName("HIDController");
+				Thread.currentThread().setPriority(Constants.kRobotThreadPriority);
 				firstRun = false;
 			}
 			try {

@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class Drive extends Subsystem {
@@ -38,17 +39,15 @@ public class Drive extends Subsystem {
 	private final CKSparkMax mLeftMaster, mRightMaster, mLeftSlaveA, mRightSlaveA, mLeftSlaveB, mRightSlaveB;
 	private final CKDoubleSolenoid mPTOShifter;
 	private DriveControlState mDriveControlState;
-	private BrakeState mBrakeState = BrakeState.MOTOR_MASTER;
-	private BrakeState mPrevBrakeState = BrakeState.MOTOR_SLAVEB;
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
-	private boolean mIsBrakeMode;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
-	private double mLastBrakeSwitch = Timer.getFPGATimestamp();
-	private boolean mBrakeSwitchEnabled = false;
+
+	private AtomicBoolean mIsBrakeMode = new AtomicBoolean(false);
+	private boolean mPrevBrakeMode;
 
 	private final CachedValue<Boolean> mLeftDriveEncoderPresent;
 	private final CachedValue<Boolean> mRightDriveEncoderPresent;
@@ -70,8 +69,6 @@ public class Drive extends Subsystem {
 				setOpenLoop(new DriveSignal(0, 0));
 				if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 					setBrakeMode(false);
-//					setBrake(mLeftMaster, mRightMaster);
-//					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
 				}
 				else {
 					setBrakeMode(true);
@@ -84,24 +81,6 @@ public class Drive extends Subsystem {
 			synchronized (Drive.this) {
 				switch (mDriveControlState) {
 					case OPEN_LOOP:
-						if (mBrakeSwitchEnabled) {
-							if ((Timer.getFPGATimestamp() - mLastBrakeSwitch) > 30) {
-								mLastBrakeSwitch = Timer.getFPGATimestamp();
-
-								switch (mBrakeState) {
-									case MOTOR_MASTER:
-										mBrakeState = BrakeState.MOTOR_SLAVEA;
-										break;
-									case MOTOR_SLAVEA:
-										mBrakeState = BrakeState.MOTOR_SLAVEB;
-										break;
-									case MOTOR_SLAVEB:
-									default:
-										mBrakeState = BrakeState.MOTOR_MASTER;
-										break;
-								}
-							}
-						}
 						break;
 					case PATH_FOLLOWING:
 						updatePathFollower();
@@ -127,22 +106,6 @@ public class Drive extends Subsystem {
 			return "Drive";
 		}
 	};
-
-	private void setBrake(CKSparkMax... brakeMCs) {
-		if (brakeMCs != null && brakeMCs.length > 0) {
-			for (CKSparkMax cksm : brakeMCs) {
-				cksm.setBrakeCoastMode(MCNeutralMode.Brake);
-			}
-		}
-	}
-
-	private void setCoast(CKSparkMax... coastMCs) {
-		if (coastMCs != null && coastMCs.length > 0) {
-			for (CKSparkMax cksm : coastMCs) {
-				cksm.setBrakeCoastMode(MCNeutralMode.Coast);
-			}
-		}
-	}
 
 	private Drive() {
 		mPeriodicIO = new PeriodicIO();
@@ -200,8 +163,8 @@ public class Drive extends Subsystem {
 		setOpenLoop(DriveSignal.NEUTRAL);
 
 		// Force a CAN message across.
-		mIsBrakeMode = true;
-		setBrakeMode(false);
+		mPrevBrakeMode = false;
+		setBrakeMode(true);
 
 		mMotionPlanner = new DriveMotionPlanner();
 
@@ -220,7 +183,6 @@ public class Drive extends Subsystem {
 	}
 
 	public void configureClimbCurrentLimit() {
-		mBrakeSwitchEnabled = false;
 		setBrakeMode(true);
 		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(CalConstants.kDriveLeftClimbCurrentLim));
 		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(CalConstants.kDriveLeftClimbCurrentLim));
@@ -260,32 +222,9 @@ public class Drive extends Subsystem {
 		in.register(mLoop);
 	}
 
-	public synchronized void setBobbyBrake() {
-		if (mBrakeSwitchEnabled && (mBrakeState != mPrevBrakeState || mIsBrakeMode)) {
-			setInternalBrakeMode(false);
-			switch (mBrakeState) {
-				case MOTOR_MASTER:
-					setBrake(mLeftMaster, mRightMaster);
-					setCoast(mLeftSlaveA, mLeftSlaveB, mRightSlaveA, mRightSlaveB);
-					break;
-				case MOTOR_SLAVEA:
-					setBrake(mLeftSlaveA, mRightSlaveA);
-					setCoast(mLeftMaster, mLeftSlaveB, mRightMaster, mRightSlaveB);
-					break;
-				case MOTOR_SLAVEB:
-					setBrake(mLeftSlaveB, mRightSlaveB);
-					setCoast(mLeftMaster, mLeftSlaveA, mRightMaster, mRightSlaveA);
-					break;
-			}
-			mPrevBrakeState = mBrakeState;
-		}
-	}
-
 	public synchronized void setOpenLoop(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP) {
 			setBrakeMode(false);
-//			setBobbyBrake();
-
 			setDriveControlState(DriveControlState.OPEN_LOOP);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
@@ -297,7 +236,6 @@ public class Drive extends Subsystem {
 	public synchronized void setOpenLoopAutomated(DriveSignal signal) {
 		if (mDriveControlState != DriveControlState.OPEN_LOOP_AUTOMATED) {
 			setBrakeMode(true);
-
 			setDriveControlState(DriveControlState.OPEN_LOOP_AUTOMATED);
 		}
 		mPeriodicIO.left_demand = signal.getLeft();
@@ -309,7 +247,6 @@ public class Drive extends Subsystem {
 	public synchronized void setClimbLeft(double leftSignal) {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
-
 			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.left_demand = leftSignal;
@@ -319,7 +256,6 @@ public class Drive extends Subsystem {
 	public synchronized void setClimbRight(double rightSignal) {
 		if (mDriveControlState != DriveControlState.CLIMB) {
 			setBrakeMode(true);
-
 			setDriveControlState(DriveControlState.CLIMB);
 		}
 		mPeriodicIO.right_demand = rightSignal;
@@ -369,25 +305,11 @@ public class Drive extends Subsystem {
 	}
 
 	public boolean isBrakeMode() {
-		return mIsBrakeMode;
+		return mIsBrakeMode.get();
 	}
 
-	public synchronized void setBrakeMode(boolean on) {
-		if (mIsBrakeMode != on) {
-			setInternalBrakeMode(on);
-			MCNeutralMode mode = on ? MCNeutralMode.Brake : MCNeutralMode.Coast;
-			mRightMaster.setBrakeCoastMode(mode);
-			mRightSlaveA.setBrakeCoastMode(mode);
-			mRightSlaveB.setBrakeCoastMode(mode);
-
-			mLeftMaster.setBrakeCoastMode(mode);
-			mLeftSlaveA.setBrakeCoastMode(mode);
-			mLeftSlaveB.setBrakeCoastMode(mode);
-		}
-	}
-
-	private synchronized void setInternalBrakeMode(boolean on) {
-		mIsBrakeMode = on;
+	public void setBrakeMode(boolean on) {
+		mIsBrakeMode.set(on);
 	}
 
 	public synchronized void setDriveControlState(DriveControlState driveControlState) {
@@ -584,6 +506,20 @@ public class Drive extends Subsystem {
 			mRightMaster.set(MCControlMode.Velocity, mPeriodicIO.right_demand, 0,
 					mPeriodicIO.right_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
 		}
+
+		if (mIsBrakeMode.get() != mPrevBrakeMode) {
+			boolean newBrakeMode = mIsBrakeMode.get();
+			MCNeutralMode mode = newBrakeMode ? MCNeutralMode.Brake : MCNeutralMode.Coast;
+			mRightMaster.setBrakeCoastMode(mode);
+			mRightSlaveA.setBrakeCoastMode(mode);
+			mRightSlaveB.setBrakeCoastMode(mode);
+
+			mLeftMaster.setBrakeCoastMode(mode);
+			mLeftSlaveA.setBrakeCoastMode(mode);
+			mLeftSlaveB.setBrakeCoastMode(mode);
+
+			mPrevBrakeMode = newBrakeMode;
+		}
 	}
 
 	@Override
@@ -750,44 +686,38 @@ public class Drive extends Subsystem {
 		AUTO_SHIFT
 	}
 
-	public enum BrakeState {
-		MOTOR_MASTER,
-		MOTOR_SLAVEA,
-		MOTOR_SLAVEB;
-	}
-
 	public static class PeriodicIO {
 		// INPUTS
-		public double left_position_rotations;
-		public double right_position_rotations;
-		public double left_distance;
-		public double right_distance;
-		public double left_velocity_RPM;
-		public double right_velocity_RPM;
-		public Rotation2d gyro_heading = Rotation2d.identity();
-		public double gyro_raw_yaw;
-		public double gyro_pitch;
-		public double gyro_roll;
-		public Pose2d error = Pose2d.identity();
+		double left_position_rotations;
+		double right_position_rotations;
+		double left_distance;
+		double right_distance;
+		double left_velocity_RPM;
+		double right_velocity_RPM;
+		Rotation2d gyro_heading = Rotation2d.identity();
+		double gyro_raw_yaw;
+		double gyro_pitch;
+		double gyro_roll;
+		Pose2d error = Pose2d.identity();
 
-		public double left_spark_position;
-		public double left_spark_velocity;
-		public double right_spark_velocity;
-		public double left_bus_voltage;
-		public double right_bus_voltage;
+		double left_spark_position;
+		double left_spark_velocity;
+		double right_spark_velocity;
+		double left_bus_voltage;
+		double right_bus_voltage;
 
-		public boolean left_drive_encoder_present;
-		public boolean right_drive_encoder_present;
-		public boolean gyro_present;
+		boolean left_drive_encoder_present;
+		boolean right_drive_encoder_present;
+		boolean gyro_present;
 
 		// OUTPUTS
-		public double left_demand;
-		public double right_demand;
-		public double left_accel;
-		public double right_accel;
-		public double left_feedforward;
-		public double right_feedforward;
-		public TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
+		double left_demand;
+		double right_demand;
+		double left_accel;
+		double right_accel;
+		double left_feedforward;
+		double right_feedforward;
+		TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
 	}
 }
 
