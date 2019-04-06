@@ -78,8 +78,6 @@ public class Robot extends TimedRobot {
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
-			//Instantiate TeleopActionRunner objects before auto to speed up init
-			TeleopActionRunner.init();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -128,9 +126,6 @@ public class Robot extends TimedRobot {
 //
 //			ConsoleReporter.report("Start HIDController");
 //			mHIDController.start();
-//
-//			ConsoleReporter.report("Starting TeleopActionRunner");
-//			TeleopActionRunner.start();
 //		} catch (Exception ex) {
 //			CrashTracker.logThrowableCrash(ex);
 //		}
@@ -165,7 +160,6 @@ public class Robot extends TimedRobot {
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
 			mHIDController.start();
-			TeleopActionRunner.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -199,11 +193,11 @@ public class Robot extends TimedRobot {
 			}
 			else {
 				mEnabledLooper.start();
-				TeleopActionRunner.runAction(AutomatedActions.fullyAutomatedTest(), true);
+				TeleopActionRunner.runAction(AutomatedActions.fullyAutomatedTest());
 			}
 
 			//Crash the JVM and force a reset
-			System.exit(1);
+//			System.exit(1);
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -218,9 +212,6 @@ public class Robot extends TimedRobot {
 	public void disabledInit() {
 		try {
 			CrashTracker.logDisabledInit();
-
-			ConsoleReporter.report("Stopping Teleop Action Runner");
-			TeleopActionRunner.stop();
 
 			ConsoleReporter.report("Stopping HID");
 			mHIDController.stop();
