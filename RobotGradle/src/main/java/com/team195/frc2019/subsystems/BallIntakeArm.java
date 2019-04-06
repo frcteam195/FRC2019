@@ -302,7 +302,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized void readPeriodicInputs() {
 		mPeriodicIO.ball_intake_arm_position = mBallArmRotationMotor.getPosition();
-		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getReverseLimitValue();
+		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getForwardLimitValue();
+//		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getReverseLimitValue();    //WRONG VAL FOR TESTING
 		mPeriodicIO.ball_intake_arm_encoder_present = mBallIntakeArmEncoderPresent.getValue();
 		mPeriodicIO.ball_intake_arm_reset = mBallIntakeArmMasterHasReset.getValue();
 	}

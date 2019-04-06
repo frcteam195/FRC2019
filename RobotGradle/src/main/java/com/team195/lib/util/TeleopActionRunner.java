@@ -16,6 +16,7 @@ public class TeleopActionRunner {
 
 	public static void processActions() {
 		try {
+//			ConsoleReporter.report("Action List Size: " + mActionList.size());
 			if (mActionList.size() > 0) {
 				mActionList.forEach((action) -> {
 					if (!action.isStarted())
@@ -40,13 +41,17 @@ public class TeleopActionRunner {
 	public static boolean runAction(AutomatedAction action) {
 		try {
 //			if (mActionList.size() > 0) {
+//				ConsoleReporter.report(action.getClass().getSimpleName() + " Being Added");
 //				mActionList.removeIf((xAction) -> {
 //					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
 //						if (action.getRequiredSubsystems().contains(xSubsystem)) {
 //							action.purgeActions();
+//							ConsoleReporter.report(action.getClass().getSimpleName() + " Action Should be Removed");
+//							//TODO: Fix
 //							return true;
 //						}
 //					}
+//					ConsoleReporter.report(action.getClass().getSimpleName() + " Action Should be Kept");
 //					return false;
 //				});
 //			}
