@@ -41,21 +41,21 @@ public class TeleopActionRunner {
 
 	public static boolean runAction(AutomatedAction action) {
 		try {
-//			if (mActionList.size() > 0) {
-//				ConsoleReporter.report(action.getClass().getSimpleName() + " Being Added");
-//				mActionList.removeIf((xAction) -> {
-//					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
-//						if (action.getRequiredSubsystems().contains(xSubsystem)) {
-//							xAction.purgeActions();
-//							ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Removed");
-//							//TODO: Fix
-//							return true;
-//						}
-//					}
-//					ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Kept");
-//					return false;
-//				});
-//			}
+			if (mActionList.size() > 0) {
+				ConsoleReporter.report(action.getClass().getSimpleName() + " Being Added");
+				mActionList.removeIf((xAction) -> {
+					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
+						if (action.getRequiredSubsystems().contains(xSubsystem)) {
+							xAction.purgeActions();
+							ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Removed");
+							//TODO: Fix
+							return true;
+						}
+					}
+					ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Kept");
+					return false;
+				});
+			}
 //			ConsoleReporter.report("Prev Size: " + mActionList.size());
 			mActionList.add(action);
 //			ConsoleReporter.report("Post Size: " + mActionList.size());
