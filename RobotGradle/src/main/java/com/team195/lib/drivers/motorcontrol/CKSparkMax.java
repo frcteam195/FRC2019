@@ -125,29 +125,33 @@ public class CKSparkMax extends CANSparkMax implements TuneableMotorController {
 		function.accept(null);
 		//Add it to the array of userconfig commands
 		try {
-			configArrLock.tryLock(100, TimeUnit.MILLISECONDS);
-			mUserConfigArray.add(function);
-		}
-		catch (Exception ex) {
+			if (configArrLock.tryLock(100, TimeUnit.MILLISECONDS)) {
+				try {
+					mUserConfigArray.add(function);
+				} catch (Exception ex) {
+					ConsoleReporter.report(ex);
+				} finally {
+					configArrLock.unlock();
+				}
+			}
+		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
-		}
-		finally
-		{
-			configArrLock.unlock();
 		}
 	}
 
 	public void runUserConfig() {
 		try {
-			configArrLock.tryLock(500, TimeUnit.MILLISECONDS);
-			mUserConfigArray.forEach((f) -> f.accept(null));
-		}
-		catch (Exception ex) {
+			if (configArrLock.tryLock(500, TimeUnit.MILLISECONDS)) {
+				try {
+					mUserConfigArray.forEach((f) -> f.accept(null));
+				} catch (Exception ex) {
+					ConsoleReporter.report(ex);
+				} finally {
+					configArrLock.unlock();
+				}
+			}
+		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
-		}
-		finally
-		{
-			configArrLock.unlock();
 		}
 	}
 

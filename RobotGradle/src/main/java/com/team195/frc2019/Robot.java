@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
 
 			LiveWindow.disableAllTelemetry();
 
-			ConsoleReporter.getInstance().start();
+			ConsoleReporter.getInstance();
 			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
