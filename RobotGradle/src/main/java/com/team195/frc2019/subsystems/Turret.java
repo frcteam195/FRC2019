@@ -182,7 +182,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onFirstStart(double timestamp) {
 			synchronized (Turret.this) {
-				zeroSensors();
+//				zeroSensors();
 			}
 		}
 

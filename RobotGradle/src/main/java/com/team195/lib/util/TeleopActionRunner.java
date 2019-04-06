@@ -17,6 +17,7 @@ public class TeleopActionRunner {
 	public static void processActions() {
 		try {
 //			ConsoleReporter.report("Action List Size: " + mActionList.size());
+//			ConsoleReporter.report("Action List Mem Addr: " + mActionList.toString());
 			if (mActionList.size() > 0) {
 				mActionList.forEach((action) -> {
 					if (!action.isStarted())
@@ -45,17 +46,20 @@ public class TeleopActionRunner {
 //				mActionList.removeIf((xAction) -> {
 //					for (Subsystem xSubsystem : xAction.getRequiredSubsystems()) {
 //						if (action.getRequiredSubsystems().contains(xSubsystem)) {
-//							action.purgeActions();
-//							ConsoleReporter.report(action.getClass().getSimpleName() + " Action Should be Removed");
+//							xAction.purgeActions();
+//							ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Removed");
 //							//TODO: Fix
 //							return true;
 //						}
 //					}
-//					ConsoleReporter.report(action.getClass().getSimpleName() + " Action Should be Kept");
+//					ConsoleReporter.report(xAction.getClass().getSimpleName() + " Action Should be Kept");
 //					return false;
 //				});
 //			}
+//			ConsoleReporter.report("Prev Size: " + mActionList.size());
 			mActionList.add(action);
+//			ConsoleReporter.report("Post Size: " + mActionList.size());
+//			ConsoleReporter.report("Run Mem Addr: " + mActionList.toString());
 		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
 			return false;
