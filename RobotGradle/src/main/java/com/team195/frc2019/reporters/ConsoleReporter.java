@@ -29,7 +29,6 @@ public class ConsoleReporter {
 
 	private boolean firstRun = true;
 	private final Notifier mConsoleNotifier;
-	private final Object taskRunningLock_ = new Object();
 
 	private ConsoleReporter() {
 		mConsoleNotifier = new Notifier(mConsoleRunnable);
