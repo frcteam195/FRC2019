@@ -31,11 +31,6 @@ public class DeviceIDConstants {
 	public static final int kBallIntakeRollerMotorId = 11;
 
 
-	//Hatch Intake Arm
-	public static final int kHatchIntakeRotationMotorId = 12;
-	public static final int kHatchIntakeRollerMotorId = 13;
-
-
 	//Turret
 	public static final int kTurretMotorId = 14;
 	public static final int kBallShooterMotorId = 15;

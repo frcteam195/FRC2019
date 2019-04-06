@@ -12,8 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TeleopActionRunner {
-	private static double m_update_rate = 1.0 / 50.0;    //20ms update rate
-	private static HashSet<AutomatedAction> mActionList = new HashSet<>();
+	private static LinkedHashSet<AutomatedAction> mActionList = new LinkedHashSet<>();
 
 	public static void processActions() {
 		try {

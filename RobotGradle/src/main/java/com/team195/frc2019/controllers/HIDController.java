@@ -52,6 +52,8 @@ public class HIDController {
 
 	private final Notifier mHIDNotifier;
 
+	private final ThreadRateControl trc = new ThreadRateControl();
+
 	private final CrashTrackingRunnable mHIDRunnable = new CrashTrackingRunnable() {
 		@Override
 		public void runCrashTracked() {
@@ -59,6 +61,10 @@ public class HIDController {
 			if (firstRun) {
 				Thread.currentThread().setName("HIDController");
 				Thread.currentThread().setPriority(Constants.kRobotThreadPriority);
+
+				if (BallIntakeArm.getInstance().isArmUp())
+					TeleopActionRunner.runAction(AutomatedActions.unfold());
+
 				firstRun = false;
 			}
 			try {
@@ -303,6 +309,8 @@ public class HIDController {
 		}
 
 		TeleopActionRunner.processActions();
+
+//		ConsoleReporter.report("HID dt: " + trc.getDt());
 		}
 	};
 

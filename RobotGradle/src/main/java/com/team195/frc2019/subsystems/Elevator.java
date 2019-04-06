@@ -372,9 +372,9 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	public static class PeriodicIO {
 		// INPUTS
-		public double elevator_position;
-		public boolean elevator_at_lower_limit;
-		public boolean elevator_master_reset;
-		public boolean elevator_encoder_present;
+		double elevator_position;
+		boolean elevator_at_lower_limit;
+		boolean elevator_master_reset;
+		boolean elevator_encoder_present;
 	}
 }

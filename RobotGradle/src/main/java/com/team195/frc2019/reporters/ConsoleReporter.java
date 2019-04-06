@@ -27,10 +27,6 @@ public class ConsoleReporter extends Thread {
 	private boolean runThread;
 	private ThreadRateControl threadRateControl = new ThreadRateControl();
 
-	private PrintWriter logWriter;
-
-	private Thread logThread;
-
 	private ConsoleReporter() throws Exception {
 		super();
 		super.setPriority(Constants.kConsoleReporterThreadPriority);
@@ -92,12 +88,7 @@ public class ConsoleReporter extends Thread {
 	public void start() {
 		runThread = true;
 		threadRateControl.start();
-//		createLog();
 		super.start();
-	}
-
-	public void terminate() {
-		runThread = false;
 	}
 
 	@Override
@@ -130,12 +121,9 @@ public class ConsoleReporter extends Thread {
 								if (ckm.messageLevel == MessageLevel.DEFCON1)
 									DriverStation.reportError(s, false);
 							}
-//							writeData(s);
 							i.remove();
 						}
 					}
-
-//					flushData();
 				} finally {
 					_reporterMutex.unlock();
 				}
@@ -144,48 +132,6 @@ public class ConsoleReporter extends Thread {
 			}
 
 			threadRateControl.doRateControl(MIN_CONSOLE_SEND_RATE_MS);
-		}
-	}
-
-	private void createLog() {
-		try {
-			logWriter = new PrintWriter(new FileWriter("/home/lvuser/ConsoleLog.txt", true));
-			logWriter.print(new Date().toString());
-			logWriter.println();
-		} catch (Exception e) {
-
-		}
-	}
-
-	private void writeData(String data) {
-		if (logWriter != null) {
-			try {
-				logWriter.println(data);
-			} catch (Exception ex) {
-
-			}
-		}
-	}
-
-	private void flushData() {
-		if (logWriter != null) {
-			try {
-				logWriter.flush();
-			} catch (Exception ex) {
-
-			}
-		}
-	}
-
-	private void closeLog() {
-		if (logWriter != null) {
-			try {
-				logWriter.flush();
-				logWriter.close();
-				logWriter = null;
-			} catch (Exception ex) {
-
-			}
 		}
 	}
 

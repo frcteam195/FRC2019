@@ -62,18 +62,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmUpPositionKp, CalConstants.kBallIntakeArmUpPositionKi, CalConstants.kBallIntakeArmUpPositionKd, CalConstants.kBallIntakeArmUpPositionKf);
 		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmUpPositionCruiseVel, CalConstants.kBallIntakeArmUpPositionMMAccel);
-//		mBallArmRotationMotor.setPIDGainSlot(1);
-//		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
-//		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-//		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmDownPositionKp, CalConstants.kBallIntakeArmDownPositionKi, CalConstants.kBallIntakeArmDownPositionKd, CalConstants.kBallIntakeArmDownPositionKf);
-//		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmDownPositionCruiseVel, CalConstants.kBallIntakeArmDownPositionMMAccel);
-
 		mBallArmRotationMotor.setPIDGainSlot(0);
-//		trc.start();
-//		trc.doRateControl(100);
 		zeroSensors();
-//		trc.doRateControl(100);
-//		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
@@ -219,13 +209,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onFirstStart(double timestamp) {
 			synchronized (BallIntakeArm.this) {
-				zeroSensors();
-//
-//				if (!isArmUp())
-//					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
-
-				if (isArmUp())
-					TeleopActionRunner.runAction(AutomatedActions.unfold());
+//				zeroSensors();
 			}
 		}
 
@@ -331,9 +315,9 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public static class PeriodicIO {
 		// INPUTS
-		public double ball_intake_arm_position;
-		public boolean ball_intake_arm_at_limit;
-		public boolean ball_intake_arm_reset;
-		public boolean ball_intake_arm_encoder_present;
+		double ball_intake_arm_position;
+		boolean ball_intake_arm_at_limit;
+		boolean ball_intake_arm_reset;
+		boolean ball_intake_arm_encoder_present;
 	}
 }
