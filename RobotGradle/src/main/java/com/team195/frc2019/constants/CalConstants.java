@@ -109,9 +109,9 @@ public class CalConstants {
 	public static final double kBallIntakeArmUpPositionKp = 3.7;
 	public static final double kBallIntakeArmUpPositionKi = 0.0;
 	public static final double kBallIntakeArmUpPositionKd = 12.0;
-	public static final double kBallIntakeArmUpPositionKf = 0.8000721603;
-	public static final int kBallIntakeArmUpPositionCruiseVel = 160;
-	public static final int kBallIntakeArmUpPositionMMAccel = 320;
+	public static final double kBallIntakeArmUpPositionKf = 0.5600505122;
+	public static final int kBallIntakeArmUpPositionCruiseVel = 220;
+	public static final int kBallIntakeArmUpPositionMMAccel = 420;
 
 	//200:1
 //    public static final double kBallIntakeArmUpPositionKp = 7.3;

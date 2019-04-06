@@ -208,10 +208,6 @@ public class AutomatedActions {
 		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
-		//Got Hatch
-		if (!Turret.getInstance().getLimitSwitchValue())
-			actionArrayList.add(new SetOpenLoopAutomatedDrive(1, 1, 0.5));
-
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}
 
