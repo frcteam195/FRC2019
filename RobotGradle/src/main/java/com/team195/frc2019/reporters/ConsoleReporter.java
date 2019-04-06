@@ -57,7 +57,7 @@ public class ConsoleReporter {
 	public static void report(Throwable t, MessageLevel messageLevel) {
 		StringWriter s = new StringWriter();
 		t.printStackTrace(new PrintWriter(s));
-		report(s.toString(), messageLevel);
+		report(s.toString(), messageLevel, 50);
 	}
 
 	public static void report(Object message) {
@@ -73,9 +73,13 @@ public class ConsoleReporter {
 	}
 
 	public static void report(String message, MessageLevel msgLvl) {
+		report(message, msgLvl, 10);
+	}
+
+	public static void report(String message, MessageLevel msgLvl, int timeoutMs) {
 		if (msgLvl == MessageLevel.DEFCON1 || (Constants.REPORTING_ENABLED && (msgLvl.ordinal() <= reportingLevel.ordinal()))) {
 			try {
-				if (_reporterMutex.tryLock(10, TimeUnit.MILLISECONDS)) {
+				if (_reporterMutex.tryLock(timeoutMs, TimeUnit.MILLISECONDS)) {
 					try {
 						sendMessageSet.add(new CKMessage(message, msgLvl));
 					} finally {
