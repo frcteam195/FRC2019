@@ -200,6 +200,7 @@ public class AutomatedActions {
 							new SetBeakAction(false),
 				new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
 						new SetTurretPositionAction(TurretPositions.Home))))));
+		actionArrayList.add(new SetBeakSenseAction(true));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitForHatchOrTimeoutAction());
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
@@ -223,6 +224,7 @@ public class AutomatedActions {
 				new SetBeakAction(false),
 				new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
 						new SetTurretPositionAction(TurretPositions.Home))))));
+		actionArrayList.add(new SetBeakSenseAction(true));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitForHatchOrTimeoutAction());
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
@@ -241,10 +243,15 @@ public class AutomatedActions {
 	public static AutomatedAction placeHatch() {
 		ArrayList<Action> actionArrayList = new ArrayList<>();
 
+		actionArrayList.add(new SetBeakSenseAction(false));
 		actionArrayList.add(new SetHatchPushAction(true));
 		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
-		actionArrayList.add(new SetBeakAction(false));
+		actionArrayList.add(new SetBeakForcedClosedAction());
+		actionArrayList.add(new WaitAction(AutoConstants.kWaitForHatchPush));
 		actionArrayList.add(new SetHatchPushAction(false));
+		actionArrayList.add(new WaitAction(2));
+		actionArrayList.add(new SetBeakAction(false));
+		actionArrayList.add(new SetBeakSenseAction(true));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Turret.getInstance());
 	}

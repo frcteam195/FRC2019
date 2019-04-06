@@ -310,7 +310,7 @@ public class HIDController {
 
 		if (Turret.getInstance().isBeakListenerEnabled()) {
 			if (Turret.getInstance().getLimitSwitchFallingEdge())
-				TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 1));
+				TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 4));
 		}
 
 		TeleopActionRunner.processActions();

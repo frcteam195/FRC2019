@@ -47,6 +47,7 @@ public class Drive extends Subsystem {
 	private boolean mOverrideTrajectory = false;
 
 	private AtomicBoolean mIsBrakeMode = new AtomicBoolean(false);
+	private AtomicBoolean mForceBrakeUpdate = new AtomicBoolean(false);
 	private boolean mPrevBrakeMode;
 
 	private final CachedValue<Boolean> mLeftDriveEncoderPresent;
@@ -507,7 +508,7 @@ public class Drive extends Subsystem {
 					mPeriodicIO.right_feedforward + CalConstants.kDriveLowGearVelocityKd * mPeriodicIO.right_accel / mRightMaster.getNativeUnitsOutputRange());
 		}
 
-		if (mIsBrakeMode.get() != mPrevBrakeMode) {
+		if (mIsBrakeMode.get() != mPrevBrakeMode || mForceBrakeUpdate.get()) {
 			boolean newBrakeMode = mIsBrakeMode.get();
 			MCNeutralMode mode = newBrakeMode ? MCNeutralMode.Brake : MCNeutralMode.Coast;
 			mRightMaster.setBrakeCoastMode(mode);
@@ -519,6 +520,9 @@ public class Drive extends Subsystem {
 			mLeftSlaveB.setBrakeCoastMode(mode);
 
 			mPrevBrakeMode = newBrakeMode;
+
+			if (mForceBrakeUpdate.get())
+				mForceBrakeUpdate.set(false);
 		}
 	}
 
@@ -607,6 +611,10 @@ public class Drive extends Subsystem {
 		}
 		else
 			return true;
+	}
+
+	public void forceBrakeModeUpdate() {
+		mForceBrakeUpdate.set(true);
 	}
 
 	@Override

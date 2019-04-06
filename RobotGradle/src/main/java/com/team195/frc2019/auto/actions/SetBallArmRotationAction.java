@@ -30,7 +30,7 @@ public class SetBallArmRotationAction implements Action {
 	public boolean isFinished() {
 //		ConsoleReporter.report("Arm Encoder Pos: " + mBallArm.getPosition());
 		return mTimeoutTimer.isTimedOut()
-				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Down  && mBallArm.isArmAtSetpoint(0.2))
+				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Down  && mBallArm.isArmAtSetpoint(0.35))
 				|| (mBallArm.getSetpoint() == BallIntakeArmPositions.Up && mBallArm.isArmUp());
 	}
 

@@ -159,6 +159,8 @@ public class Robot extends TimedRobot {
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
 			mDrive.setOpenLoop(new DriveSignal(0, 0));
+			mDrive.setBrakeMode(false);
+			mDrive.forceBrakeModeUpdate();
 			mHIDController.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -221,6 +223,7 @@ public class Robot extends TimedRobot {
 
 			ConsoleReporter.report("Setting Brake Mode");
 			mDrive.setBrakeMode(false);
+			mDrive.forceBrakeModeUpdate();
 
 			ConsoleReporter.report("Check Auto Mode Not Null");
 			if (mAutoModeExecutor != null) {
