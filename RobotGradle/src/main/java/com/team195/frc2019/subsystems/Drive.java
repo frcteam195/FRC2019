@@ -406,7 +406,7 @@ public class Drive extends Subsystem {
 		return mPeriodicIO.gyro_raw_yaw;
 	}
 
-	public Rotation2d getHeading() {
+	public synchronized Rotation2d getHeading() {
 		return mPeriodicIO.gyro_heading;
 	}
 
@@ -424,7 +424,7 @@ public class Drive extends Subsystem {
 		setOpenLoop(DriveSignal.NEUTRAL);
 	}
 
-	public void resetEncoders() {
+	public synchronized void resetEncoders() {
         mLeftMaster.setEncoderPosition(0);
         mRightMaster.setEncoderPosition(0);
 		mElevator.zeroDriveEncoders();
@@ -442,7 +442,7 @@ public class Drive extends Subsystem {
 //	}
 
 	public double getRawLeftSparkEncoder() {
-		return mLeftMaster.getPosition();
+		return mPeriodicIO.left_spark_position;
 	}
 
 	public double getLeftEncoderDistance() {
@@ -537,6 +537,7 @@ public class Drive extends Subsystem {
 		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
 
+		mPeriodicIO.left_spark_position = mLeftMaster.getPosition();
 		mPeriodicIO.left_spark_velocity = mLeftMaster.getVelocity();
 		mPeriodicIO.right_spark_velocity = mRightMaster.getVelocity();
 
@@ -673,7 +674,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public String generateReport() {
+	public synchronized String generateReport() {
 		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
 				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
 				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
@@ -709,7 +710,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public boolean isSystemFaulted() {
+	public synchronized boolean isSystemFaulted() {
 		boolean leftSensorFaulted = !mPeriodicIO.left_drive_encoder_present;
 		boolean rightSensorFaulted = !mPeriodicIO.right_drive_encoder_present;
 		boolean navXFaulted = !mPeriodicIO.gyro_present;
@@ -769,6 +770,7 @@ public class Drive extends Subsystem {
 		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();
 
+		public double left_spark_position;
 		public double left_spark_velocity;
 		public double right_spark_velocity;
 		public double left_bus_voltage;
