@@ -289,9 +289,11 @@ public class AutomatedActions {
 		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 
-		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(elevatorHeight),
-							new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
-														   new SetTurretPositionAction(TurretPositions.Home))))));
+		actionArrayList.add(new SetElevatorHeightAction(elevatorHeight));
+
+//		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(elevatorHeight),
+//							new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
+//														   new SetTurretPositionAction(TurretPositions.Home))))));
 
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance());
