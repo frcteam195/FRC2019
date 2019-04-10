@@ -14,42 +14,11 @@ import java.util.ArrayList;
 
 public class LogDataReporter {
 	private static final int portNumber = Constants.LOG_OSC_REPORTER_PORT;
-	private static final int MIN_LOG_REPORTER_LOOP_MS = 100;
-
-	private static LogDataReporter instance = null;
 
 	private static InetAddress IPAddress;
 	private static OSCPortOut oscPortOut;
-	private SubsystemManager subsystemManager = SubsystemManager.getInstance();
-	private boolean runThread = true;
 
-	private LogDataReporter() {
-		ThreadRateControl threadRateControl = new ThreadRateControl();
-		Thread t = new Thread (() -> {
-			Thread.currentThread().setName("LogDataReporter");
-			threadRateControl.start();
-			while (runThread) {
-				reportOSCData(subsystemManager.generateReport());
-				threadRateControl.doRateControl(MIN_LOG_REPORTER_LOOP_MS);
-			}
-		});
-		t.setPriority(Constants.kLogDataReporterThreadPriority);
-		t.start();
-	}
-
-	public static LogDataReporter getInstance() {
-		if(instance == null) {
-			try {
-				instance = new LogDataReporter();
-			} catch (Exception ex) {
-				ConsoleReporter.report(ex, MessageLevel.DEFCON1);
-			}
-		}
-
-		return instance;
-	}
-
-	private static synchronized void reportOSCData(String logData) {
+	public static synchronized void reportOSCData(String logData) {
 		if (IPAddress != null) {
 			if (oscPortOut == null) {
 				try {

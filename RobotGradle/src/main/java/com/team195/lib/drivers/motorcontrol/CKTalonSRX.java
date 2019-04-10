@@ -13,6 +13,7 @@ import com.team254.lib.util.InterpolatingDouble;
 import com.team254.lib.util.InterpolatingTreeMap;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class CKTalonSRX implements TuneableMotorController {
@@ -24,12 +25,15 @@ public class CKTalonSRX implements TuneableMotorController {
 	private ArrayList<FeedbackConfiguration> mFeedbackConfig = new ArrayList<>();
 	private double prevOutput = Double.MIN_VALUE;
 	private final PDPBreaker motorBreaker;
-	private boolean prevForwardLimitVal = false;
-	private boolean prevReverseLimitVal = false;
+	private AtomicBoolean prevForwardLimitVal = new AtomicBoolean(false);
+	private AtomicBoolean prevReverseLimitVal = new AtomicBoolean(false);
 
 
 
 	private CachedValue<Double> localQuadPosition;
+
+	private CachedValue<Boolean> forwardLimitCachedValue;
+	private CachedValue<Boolean> reverseLimitCachedValue;
 
 	private boolean sensorInverted = false;
 
@@ -73,6 +77,8 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	private void initCachedValues() {
 		localQuadPosition = new CachedValue<>(100, (t) -> convertNativeUnitsToRotations(mTalonSRX.getSensorCollection().getQuadraturePosition() * (sensorInverted ? -1 : 1)));
+		forwardLimitCachedValue = new CachedValue<>(150, (t) -> mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed());
+		reverseLimitCachedValue = new CachedValue<>(150, (t) -> mTalonSRX.getSensorCollection().isRevLimitSwitchClosed());
 	}
 
 	public SensorCollection getSensorCollection() {
@@ -441,43 +447,43 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public boolean getForwardLimitValue() {
-		return mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
+		return forwardLimitCachedValue.getValue();
 	}
 
 	@Override
 	public boolean getReverseLimitValue() {
-		return mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
+		return reverseLimitCachedValue.getValue();
 	}
 
 	@Override
 	public boolean getForwardLimitRisingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
-		boolean retVal = (currentInput != prevForwardLimitVal) && currentInput;
-		prevForwardLimitVal = currentInput;
+		boolean currentInput = getForwardLimitValue();
+		boolean retVal = (currentInput != prevForwardLimitVal.get()) && currentInput;
+		prevForwardLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getReverseLimitRisingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
-		boolean retVal = (currentInput != prevReverseLimitVal) && currentInput;
-		prevReverseLimitVal = currentInput;
+		boolean currentInput = getReverseLimitValue();
+		boolean retVal = (currentInput != prevReverseLimitVal.get()) && currentInput;
+		prevReverseLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getForwardLimitFallingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isFwdLimitSwitchClosed();
-		boolean retVal = (currentInput != prevForwardLimitVal) && !currentInput;
-		prevForwardLimitVal = currentInput;
+		boolean currentInput = getForwardLimitValue();
+		boolean retVal = (currentInput != prevForwardLimitVal.get()) && !currentInput;
+		prevForwardLimitVal.set(currentInput);
 		return retVal;
 	}
 
 	@Override
 	public boolean getReverseLimitFallingEdge() {
-		boolean currentInput = mTalonSRX.getSensorCollection().isRevLimitSwitchClosed();
-		boolean retVal = (currentInput != prevReverseLimitVal) && !currentInput;
-		prevReverseLimitVal = currentInput;
+		boolean currentInput = getReverseLimitValue();
+		boolean retVal = (currentInput != prevReverseLimitVal.get()) && !currentInput;
+		prevReverseLimitVal.set(currentInput);
 		return retVal;
 	}
 

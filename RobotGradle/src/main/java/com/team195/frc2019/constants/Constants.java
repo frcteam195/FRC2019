@@ -13,7 +13,7 @@ import java.util.Enumeration;
  * determined through calibrations.
  */
 public class Constants {
-    public static final double kLooperDt = 0.02;
+    public static final double kLooperDt = 0.010;
 
     public static final int kCANTimeoutMs = 10; //use for on the fly updates
     public static final int kLongCANTimeoutMs = 100; //use for constructors
@@ -36,12 +36,9 @@ public class Constants {
     //Thread prioritization - 5 is default
     public static final int kRobotThreadPriority = 9;
     public static final int kLooperThreadPriority = Thread.MAX_PRIORITY;
-    public static final int kCriticalSystemsMonitorThreadPriority = 8;
     public static final int kConnectionMonitorThreadPriority = 7;
     public static final int kLEDThreadPriority = Thread.MIN_PRIORITY;
     public static final int kConsoleReporterThreadPriority = Thread.NORM_PRIORITY;
-    public static final int kLogDataReporterThreadPriority = 4;
-
 
     public static final String DASHBOARD_IP = "10.1.95.14";
     public static final int LOG_OSC_REPORTER_PORT = 5805;
@@ -51,6 +48,7 @@ public class Constants {
 
     public static final boolean TUNING_PIDS = true;
     public static final boolean DEBUG = false;
+    public static final boolean LOGGING_ENABLED = false;
     public static final boolean REPORTING_ENABLED = true;
     public static final boolean REPORT_TO_DRIVERSTATION_INSTEAD_OF_CONSOLE = false;
 

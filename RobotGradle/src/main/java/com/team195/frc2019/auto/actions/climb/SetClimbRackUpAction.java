@@ -18,7 +18,7 @@ public class SetClimbRackUpAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut() || Math.abs(mDrive.getLeftEncoderDistance()) < 10;
+		return mTimeoutTimer.isTimedOut() || Math.abs(mDrive.getRawLeftSparkEncoder()) < 3;
 	}
 
 	@Override

@@ -54,6 +54,28 @@ public class SeriesAction implements Action {
         }
     }
 
+    public void purgeActions() {
+        if (mCurAction == null) {
+            if (mRemainingActions.isEmpty()) {
+                return;
+            }
+        }
+        if (mCurAction != null) {
+            mCurAction.done();
+        }
+        for (Action a:
+             mRemainingActions) {
+            if (a != null) {
+                a.start();
+                a.update();
+                a.isFinished();
+                a.done();
+            }
+        }
+        mCurAction = null;
+        mRemainingActions.clear();
+    }
+
     @Override
     public void done() {
     }

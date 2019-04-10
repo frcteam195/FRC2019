@@ -34,6 +34,13 @@ public class PigeonDriver implements CKIMU {
 	}
 
 	@Override
+	public double getRawYawDegrees() {
+		double[] ypr = new double[3];
+		pigeonIMU.getYawPitchRoll(ypr);
+		return ypr[0];
+	}
+
+	@Override
 	public double getPitch() {
 		return 0;
 	}

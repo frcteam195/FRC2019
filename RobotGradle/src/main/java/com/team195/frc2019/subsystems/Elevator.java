@@ -16,6 +16,7 @@ import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
+import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.MotorDiagnostics;
@@ -28,6 +29,8 @@ import java.util.stream.Collectors;
 public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private static Elevator mInstance = new Elevator();
+
+	private PeriodicIO mPeriodicIO;
 
 	private final CKTalonSRX mElevatorMaster;
 	private final CKTalonSRX mElevatorSlaveA;
@@ -46,7 +49,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	private static final int mPeakCurrentLimit = 20;    //12
 	private static final int mPeakCurrentDurationMS = 250;
 
+	private final CachedValue<Boolean> mElevatorEncoderPresent;
+	private final CachedValue<Boolean> mElevatorMasterHasReset;
+
 	private Elevator() {
+		mPeriodicIO = new PeriodicIO();
+
 		mElevatorMaster = new CKTalonSRX(DeviceIDConstants.kElevatorMasterLeftId, false, PDPBreaker.B40A);
 		mElevatorMaster.setSensorPhase(true);
 		mElevatorMaster.setInverted(false);
@@ -99,6 +107,9 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().isArmUp())
 		);
 
+		mElevatorEncoderPresent = new CachedValue<>(500, (t) -> mElevatorMaster.isEncoderPresent());
+		mElevatorMasterHasReset = new CachedValue<>(500, (t) -> mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+
 	}
 
 	public static Elevator getInstance() {
@@ -112,13 +123,13 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean systemFaulted = !mElevatorMaster.isEncoderPresent();
+		boolean systemFaulted = !mPeriodicIO.elevator_encoder_present;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Elevator Encoder Missing!", MessageLevel.DEFCON1);
 		}
 
-		systemFaulted |= mElevatorMaster.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
+		systemFaulted |= mPeriodicIO.elevator_master_reset;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Elevator Requires Rehoming!", MessageLevel.DEFCON1);
@@ -212,6 +223,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public void zeroSensors() {
 		mElevatorMaster.setEncoderPosition(0);
+//		mPeriodicIO = new PeriodicIO();
 	}
 
 	public void zeroDriveEncoders() {
@@ -314,12 +326,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isAtLowerLimit() {
-		return mElevatorSlaveC.getReverseLimitValue();
+		return mPeriodicIO.elevator_at_lower_limit;
 	}
 
 	@Override
 	public double getPosition() {
-		return mElevatorMaster.getPosition();
+		return mPeriodicIO.elevator_position;
 	}
 
 	@Override
@@ -332,7 +344,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isElevatorAtSetpoint(double posDelta) {
-		return Math.abs(mElevatorSetpoint - mElevatorMaster.getPosition()) < Math.abs(posDelta);
+		return Math.abs(mElevatorSetpoint - mPeriodicIO.elevator_position) < Math.abs(posDelta);
 	}
 
 	public synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {
@@ -343,5 +355,26 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		POSITION,
 		OPEN_LOOP,
 		DISABLED;
+	}
+
+	@Override
+	public synchronized void readPeriodicInputs() {
+		mPeriodicIO.elevator_position = mElevatorMaster.getPosition();
+		mPeriodicIO.elevator_at_lower_limit = mElevatorSlaveC.getReverseLimitValue();
+		mPeriodicIO.elevator_master_reset = mElevatorMasterHasReset.getValue();
+		mPeriodicIO.elevator_encoder_present = mElevatorEncoderPresent.getValue();
+	}
+
+	@Override
+	public synchronized void writePeriodicOutputs() {
+
+	}
+
+	public static class PeriodicIO {
+		// INPUTS
+		double elevator_position;
+		boolean elevator_at_lower_limit;
+		boolean elevator_master_reset;
+		boolean elevator_encoder_present;
 	}
 }

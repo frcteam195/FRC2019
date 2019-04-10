@@ -4,6 +4,8 @@ import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import edu.wpi.first.wpilibj.Compressor;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Infrastructure extends Subsystem {
 
     private static Infrastructure mInstance = new Infrastructure();
@@ -12,13 +14,11 @@ public class Infrastructure extends Subsystem {
     private Compressor mCompressor;
 
     private boolean mIsDuringAuto = false;
+    private AtomicBoolean isRunning = new AtomicBoolean(false);
 
     private Infrastructure() {
         mCompressor = new Compressor(0);
-        mCompressor.start();
-
-//        mSuperstructure = Superstructure.getInstance();
-//        mIntake = Intake.getInstance();
+        startCompressor();
     }
 
     public static Infrastructure getInstance() {
@@ -36,11 +36,17 @@ public class Infrastructure extends Subsystem {
     }
 
     private void startCompressor() {
-        mCompressor.start();
+        if (!isRunning.get()) {
+            mCompressor.start();
+            isRunning.set(true);
+        }
     }
 
     private void stopCompressor() {
-        mCompressor.stop();
+        if (isRunning.get()) {
+            mCompressor.stop();
+            isRunning.set(false);
+        }
     }
 
     public synchronized void setIsDuringAuto(boolean isDuringAuto) {
@@ -68,10 +74,6 @@ public class Infrastructure extends Subsystem {
             @Override
             public void onLoop(double timestamp) {
                 synchronized (Infrastructure.this) {
-//                    boolean elevatorMoving = mSuperstructure.getSuperStructureState() ==
-//                            SuperstructureStateMachine.SystemState.MOVING_TO_POSITION;
-//                    boolean isIntaking = mIntake.getWantedAction() == IntakeStateMachine.WantedAction.WANT_CUBE
-//                            && !mIntake.hasCube();
                     if (mIsDuringAuto) {
                         //stopCompressor();
                     } else {

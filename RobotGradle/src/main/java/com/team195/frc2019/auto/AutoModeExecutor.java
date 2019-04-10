@@ -2,51 +2,49 @@ package com.team195.frc2019.auto;
 
 import com.team254.lib.util.CrashTrackingRunnable;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * This class selects, runs, and stops (if necessary) a specified autonomous mode.
  */
 public class AutoModeExecutor {
-    private AutoModeBase m_auto_mode;
-    private Thread m_thread = null;
+    private AtomicReference<AutoModeBase> mAutoMode = new AtomicReference<>(null);
+    private AtomicReference<Thread> mThread = new AtomicReference<>(null);
 
     public void setAutoMode(AutoModeBase new_auto_mode) {
-        m_auto_mode = new_auto_mode;
-        setThread(new Thread(new CrashTrackingRunnable() {
+        mAutoMode.set(new_auto_mode);
+        mThread.set(new Thread(new CrashTrackingRunnable() {
             @Override
             public void runCrashTracked() {
-                if (m_auto_mode != null) {
-                    m_auto_mode.run();
+                if (mAutoMode.get() != null) {
+                    mAutoMode.get().run();
                 }
             }
         }));
     }
 
     public void start() {
-        if (m_thread != null) {
-            m_thread.start();
+        if (mThread.get() != null) {
+            mThread.get().start();
         }
     }
 
     public void stop() {
-        if (m_auto_mode != null) {
-            m_auto_mode.stop();
+        if (mAutoMode.get() != null) {
+            mAutoMode.get().stop();
         }
 
-        setThread(null);
+        mThread.set(null);
     }
 
     public boolean isRunning() {
-        if (m_thread != null) {
-           return  m_thread.isAlive();
+        if (mThread.get() != null) {
+           return  mThread.get().isAlive();
         }
         return false;
     }
 
-    private void setThread(Thread thread) {
-        m_thread = thread;
-    }
-
     public AutoModeBase getAutoMode() {
-        return m_auto_mode;
+        return mAutoMode.get();
     }
 }

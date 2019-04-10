@@ -19,6 +19,7 @@ import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.CKSolenoid;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
+import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.*;
 
@@ -39,7 +40,14 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private double mBallIntakeArmSetpoint = 0;
 	private double mBallIntakeRollerSetpoint = 0;
 
+	private PeriodicIO mPeriodicIO;
+
+	private final CachedValue<Boolean> mBallIntakeArmEncoderPresent;
+	private final CachedValue<Boolean> mBallIntakeArmMasterHasReset;
+
 	private BallIntakeArm() {
+		mPeriodicIO = new PeriodicIO();
+
 		mBallArmRotationMotor = new CKTalonSRX(DeviceIDConstants.kBallIntakeRotationMotorId, false, PDPBreaker.B30A);
 		mBallArmRotationMotor.setSensorPhase(true);
 
@@ -54,22 +62,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmUpPositionKp, CalConstants.kBallIntakeArmUpPositionKi, CalConstants.kBallIntakeArmUpPositionKd, CalConstants.kBallIntakeArmUpPositionKf);
 		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmUpPositionCruiseVel, CalConstants.kBallIntakeArmUpPositionMMAccel);
-		mBallArmRotationMotor.setPIDGainSlot(1);
-		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
-		mBallArmRotationMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-		mBallArmRotationMotor.setPIDF(CalConstants.kBallIntakeArmDownPositionKp, CalConstants.kBallIntakeArmDownPositionKi, CalConstants.kBallIntakeArmDownPositionKd, CalConstants.kBallIntakeArmDownPositionKf);
-		mBallArmRotationMotor.setMotionParameters(CalConstants.kBallIntakeArmDownPositionCruiseVel, CalConstants.kBallIntakeArmDownPositionMMAccel);
-
 		mBallArmRotationMotor.setPIDGainSlot(0);
-		trc.start();
-		trc.doRateControl(100);
 		zeroSensors();
-		trc.doRateControl(100);
-//		mBallArmRotationMotor.configForwardSoftLimitThreshold(CalConstants.kBallIntakeArmForwardSoftLimit);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
+		mBallArmRotationMotor.setBrakeCoastMode(MCNeutralMode.Brake);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -85,6 +84,10 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		);
 
 		mBallIntakeBarDropSolenoid = new CKSolenoid(DeviceIDConstants.kBallIntakeBarSolenoidId);
+
+		mBallIntakeArmEncoderPresent = new CachedValue<>(500, (t) -> mBallArmRollerMotor.isEncoderPresent());
+		mBallIntakeArmMasterHasReset = new CachedValue<>(500, (t) -> mBallArmRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+
 	}
 
 	public static BallIntakeArm getInstance() {
@@ -98,13 +101,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized boolean isSystemFaulted() {
-		boolean systemFaulted = !mBallArmRollerMotor.isEncoderPresent();
+		boolean systemFaulted = !mPeriodicIO.ball_intake_arm_encoder_present;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Ball Intake Arm Encoder Missing!", MessageLevel.DEFCON1);
 		}
 
-		systemFaulted |= mBallArmRollerMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG;
+		systemFaulted |= mPeriodicIO.ball_intake_arm_reset;
 
 		if (systemFaulted) {
 			ConsoleReporter.report("Ball Intake Arm Disabled!", MessageLevel.DEFCON1);
@@ -188,19 +191,12 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public void zeroSensors() {
-		mBallArmRotationMotor.setEncoderPosition(CalConstants.kBallIntakeArmForwardSoftLimit);
+		mBallArmRotationMotor.setEncoderPosition(0);
 		zeroRemoteSensor();
 	}
 
 	public void zeroRemoteSensor() {
 		mBallArmRollerMotor.setEncoderPosition(0);
-	}
-
-	public void setSensorsForReset() {
-		mBallArmRotationMotor.setLocalQuadPosition(0);
-		mBallArmRotationMotor.setEncoderPosition(0);
-		zeroRemoteSensor();
-		trc.doRateControl(100);
 	}
 
 	@Override
@@ -212,13 +208,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		@Override
 		public void onFirstStart(double timestamp) {
 			synchronized (BallIntakeArm.this) {
-				zeroSensors();
-//
-//				if (!isArmUp())
-//					TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up), true);
-
-//				if (isArmUp())
-//					TeleopActionRunner.runAction(AutomatedActions.unfold());
+//				zeroSensors();
 			}
 		}
 
@@ -275,15 +265,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getPosition() {
-		return mBallArmRotationMotor.getPosition();
-	}
-
-	public double getRemotePosition() {
-		return mBallArmRollerMotor.getPosition();
+		return mPeriodicIO.ball_intake_arm_position;
 	}
 
 	public boolean isArmUp() {
-		return mBallArmRotationMotor.getForwardLimitValue();
+		return mPeriodicIO.ball_intake_arm_at_limit;
 	}
 
 	@Override
@@ -300,7 +286,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isArmAtSetpoint(double posDelta) {
-		return Math.abs(mBallIntakeArmSetpoint - mBallArmRotationMotor.getPosition()) < Math.abs(posDelta);
+		return Math.abs(mBallIntakeArmSetpoint - mPeriodicIO.ball_intake_arm_position) < Math.abs(posDelta);
 	}
 
 	public synchronized void setBallIntakeArmControlMode(BallIntakeArmControlMode ballIntakeArmControlMode) {
@@ -311,5 +297,27 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		POSITION,
 		OPEN_LOOP,
 		DISABLED;
+	}
+
+	@Override
+	public synchronized void readPeriodicInputs() {
+		mPeriodicIO.ball_intake_arm_position = mBallArmRotationMotor.getPosition();
+		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getForwardLimitValue();
+//		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getReverseLimitValue();    //WRONG VAL FOR TESTING
+		mPeriodicIO.ball_intake_arm_encoder_present = mBallIntakeArmEncoderPresent.getValue();
+		mPeriodicIO.ball_intake_arm_reset = mBallIntakeArmMasterHasReset.getValue();
+	}
+
+	@Override
+	public synchronized void writePeriodicOutputs() {
+
+	}
+
+	public static class PeriodicIO {
+		// INPUTS
+		double ball_intake_arm_position;
+		boolean ball_intake_arm_at_limit;
+		boolean ball_intake_arm_reset;
+		boolean ball_intake_arm_encoder_present;
 	}
 }

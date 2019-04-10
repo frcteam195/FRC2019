@@ -7,5 +7,7 @@ public class TargetingConstants {
 	public static final double kLimelightFrontMountedAngleWrtFloor = 0.0;
 	public static final double kLimelightBackMountedHeightToFloor = 0.0;
 	public static final double kLimelightBackMountedAngleWrtFloor = 0.0;
-	public static final double kVisionOffThreshold = 9.7;
+	public static final double kVisionOffThreshold = 35;
+//	public static final double kVisionOffThreshold = 25.2;
+//	public static final double kVisionOffThreshold = 9.7;
 }

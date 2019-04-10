@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.autonomy;
 
 import com.team195.frc2019.auto.actions.Action;
+import com.team195.frc2019.auto.actions.SeriesAction;
 import com.team195.frc2019.subsystems.Subsystem;
 import com.team195.lib.util.TimeoutTimer;
 
@@ -12,7 +13,7 @@ public class AutomatedAction implements Action {
 	private HashSet<Subsystem> requiredSubsystems = new HashSet<>();
 	private final TimeoutTimer mTimeoutTimer;
 	private double mTimeout;
-	private Action mAction;
+	private SeriesAction mAction;
 	private boolean mStarted = false;
 
 	public static AutomatedAction fromAction(Action action, double timeout, Subsystem... requirements) {
@@ -21,7 +22,17 @@ public class AutomatedAction implements Action {
 		return a;
 	}
 
+	public static AutomatedAction fromAction(SeriesAction action, double timeout, Subsystem... requirements) {
+		AutomatedAction a = new AutomatedAction(action, timeout);
+		a.addRequirements(requirements);
+		return a;
+	}
+
 	public AutomatedAction(Action action, double timeout) {
+		this(new SeriesAction(action), timeout);
+	}
+
+	public AutomatedAction(SeriesAction action, double timeout) {
 		mAction = action;
 		mTimeoutTimer = new TimeoutTimer(timeout);
 		mTimeout = timeout;
@@ -40,6 +51,10 @@ public class AutomatedAction implements Action {
 	}
 
 	public double getTimeout() { return mTimeout; }
+
+	public void purgeActions() {
+		mAction.purgeActions();
+	}
 
 	@Override
 	public boolean isFinished() {
