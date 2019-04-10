@@ -24,11 +24,16 @@ public class MovingAverage {
     public double getAverage() {
         double total = 0;
 
-        for (double number : numbers) {
-            total += number;
-        }
+        if (numbers.size() > 0) {
+            for (double number : numbers) {
+                total += number;
+            }
 
-        return total / numbers.size();
+            return total / numbers.size();
+        }
+        else {
+            return 0;
+        }
     }
 
     public double getLastSample() {

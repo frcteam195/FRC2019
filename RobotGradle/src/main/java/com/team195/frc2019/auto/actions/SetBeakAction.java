@@ -9,7 +9,7 @@ public class SetBeakAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait * 2.0);
 
-	private final TimeoutTimer mFeedOffTimeout = new TimeoutTimer(0.5);
+	private final TimeoutTimer mFeedOffTimeout = new TimeoutTimer(0.2);
 	private BeakActionState mBeakActionState = BeakActionState.FEED_ON;
 
 	private boolean mOpen;

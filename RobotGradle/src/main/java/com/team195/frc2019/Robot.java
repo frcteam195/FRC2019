@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
 //		ConsoleReporter.report("BallIntakePos:"+BallIntakeArm.getInstance().getPosition());
 //		ConsoleReporter.report(mAutoModeSelector.getAutoMode().getClass().getSimpleName().toString());
 //		ConsoleReporter.report("GyroDeg:" + Drive.getInstance().getRawYaw());
+//		ConsoleReporter.report("Skew: " + VisionTracker.getInstance().getTargetSkew());
 	}
 
 	@Override
