@@ -195,7 +195,7 @@ public class HIDController {
 					} else if (buttonBox1.getRisingEdgeButton(5)) {
 						TeleopActionRunner.runAction(AutomatedActions.elevatorSet(ElevatorPositions.RocketBallHigh));
 					} else if (buttonBox1.getRisingEdgeButton(7)) {
-						TeleopActionRunner.runAction(AutomatedActions.pickupHatchFeederStation());
+						TeleopActionRunner.runAction(AutomatedActions.pickupHatchFeederStation((t) -> driveJoystick));
 //							TeleopActionRunner.runAction(AutomatedActions.pickupHatchFeederStationDriveAway((t) -> armControlJoystick.getRawAxis(3) < 0.3));
 					} else if (buttonBox1.getRisingEdgeButton(8)) {
 						TeleopActionRunner.runAction(AutomatedActions.elevatorSet(ElevatorPositions.CargoHatch));

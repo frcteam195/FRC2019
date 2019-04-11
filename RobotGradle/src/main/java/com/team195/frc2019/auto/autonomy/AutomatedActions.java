@@ -11,6 +11,9 @@ import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
+import com.team195.lib.drivers.dashjoy.CKDashJoystick;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -197,6 +200,30 @@ public class AutomatedActions {
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation),
+				new SetBeakAction(false),
+				new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
+						new SetTurretPositionAction(TurretPositions.Home))))));
+		actionArrayList.add(new SetBeakSenseAction(true));
+		actionArrayList.add(new SetHatchPushAction(true));
+		actionArrayList.add(new WaitForHatchOrTimeoutAction());
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStationLift));
+		actionArrayList.add(new WaitAction(0.2));
+		actionArrayList.add(new SetHatchPushAction(false));
+		actionArrayList.add(new WaitAction(0.2));
+		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
+	}
+
+	public static AutomatedAction pickupHatchFeederStation(Function<Void, CKDashJoystick> driverJoystickGetter) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		actionArrayList.add(new SetHatchPushAction(false));
+
+		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
+			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.HatchPickupStation),
 							new SetBeakAction(false),
 				new SeriesAction(Arrays.asList(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
 						new SetTurretPositionAction(TurretPositions.Home))))));
@@ -208,6 +235,7 @@ public class AutomatedActions {
 		actionArrayList.add(new SetHatchPushAction(false));
 		actionArrayList.add(new WaitAction(0.2));
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
+		actionArrayList.add(new SetRumbleIfHatchAction(driverJoystickGetter, 1));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}
@@ -234,8 +262,8 @@ public class AutomatedActions {
 		actionArrayList.add(new SetElevatorHeightAction(ElevatorPositions.RocketHatchLow));
 
 		//Got Hatch
-		if (enableDriveAway.apply(null) && !Turret.getInstance().getLimitSwitchValue())
-			actionArrayList.add(new SetOpenLoopAutomatedDrive(1, 1, 0.5));
+		if (enableDriveAway.apply(null))
+			actionArrayList.add(new HatchDriveAwayAction(0.5));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), Constants.kActionTimeoutS, Elevator.getInstance(), Turret.getInstance());
 	}

@@ -2,6 +2,7 @@ package com.team195.lib.drivers.dashjoy;
 
 import com.team195.frc2019.constants.Constants;
 import edu.wpi.first.hal.HALUtil;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class CKDashJoystick {
@@ -143,6 +144,11 @@ public class CKDashJoystick {
 		} catch(Exception ex) {
 			return false;
 		}
+	}
+
+	public void setRumble(double val) {
+//		backupJoystick.setRumble(GenericHID.RumbleType.kLeftRumble, val);
+		backupJoystick.setRumble(GenericHID.RumbleType.kRightRumble, val);
 	}
 
 	public boolean isPOVInputActive() {
