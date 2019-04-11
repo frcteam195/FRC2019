@@ -34,6 +34,6 @@ public class SetClimbRackUpAction implements Action {
 
 	@Override
 	public void start() {
-		mDrive.setClimbLeft(-0.4);
+		mDrive.setClimbLeft(-0.5);
 	}
 }

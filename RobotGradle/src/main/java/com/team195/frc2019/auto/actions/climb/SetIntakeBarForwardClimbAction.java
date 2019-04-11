@@ -21,7 +21,9 @@ public class SetIntakeBarForwardClimbAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut() || (mDrive.getRoll() > 18);
+		return mTimeoutTimer.isTimedOut()
+				|| (mDrive.getRoll() > 12);
+//				|| (mDrive.getRoll() > 18);
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class SetIntakeBarForwardClimbAction implements Action {
 
 	@Override
 	public void done() {
-		mDrive.setClimbRight(1);
+//		mDrive.setClimbRight(1);
 	}
 
 	@Override
