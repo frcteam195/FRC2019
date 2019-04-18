@@ -11,6 +11,7 @@ import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
@@ -31,6 +32,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	private static Elevator mInstance = new Elevator();
 
 	private PeriodicIO mPeriodicIO;
+	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
 
 	private final CKTalonSRX mElevatorMaster;
 	private final CKTalonSRX mElevatorSlaveA;
@@ -202,22 +204,24 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized String generateReport() {
-		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
-				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
-				"ElevatorOutput:" + mElevatorSetpoint + ";" +
-				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
-				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
-				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
-				"Elevator4Current:" + mElevatorSlaveC.getMCOutputCurrent() + ";" +
-				"ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";" +
-				"ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent() * mElevatorMaster.getMCInputVoltage() + ";" +
-				"ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";" +
-				"Elevator1HasReset:" + mElevatorMaster.hasMotorControllerReset().getMessage() + ";" +
-				"Elevator2HasReset:" + mElevatorSlaveA.hasMotorControllerReset().getMessage() + ";" +
-				"Elevator3HasReset:" + mElevatorSlaveB.hasMotorControllerReset().getMessage() + ";" +
-				"Elevator4HasReset:" + mElevatorSlaveC.hasMotorControllerReset().getMessage() + ";" +
-				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";" +
-				"IsElevatorFaulted:" + isSystemFaulted() + ";";
+		return mLogDataGenerator.generateData(mPeriodicIO);
+
+//		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
+//				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
+//				"ElevatorOutput:" + mElevatorSetpoint + ";" +
+//				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
+//				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
+//				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
+//				"Elevator4Current:" + mElevatorSlaveC.getMCOutputCurrent() + ";" +
+//				"ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";" +
+//				"ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent() * mElevatorMaster.getMCInputVoltage() + ";" +
+//				"ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";" +
+//				"Elevator1HasReset:" + mElevatorMaster.hasMotorControllerReset().getMessage() + ";" +
+//				"Elevator2HasReset:" + mElevatorSlaveA.hasMotorControllerReset().getMessage() + ";" +
+//				"Elevator3HasReset:" + mElevatorSlaveB.hasMotorControllerReset().getMessage() + ";" +
+//				"Elevator4HasReset:" + mElevatorSlaveC.hasMotorControllerReset().getMessage() + ";" +
+//				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";" +
+//				"IsElevatorFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

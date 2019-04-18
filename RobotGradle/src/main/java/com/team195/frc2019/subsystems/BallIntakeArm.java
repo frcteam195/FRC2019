@@ -13,6 +13,7 @@ import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
@@ -41,6 +42,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private double mBallIntakeRollerSetpoint = 0;
 
 	private PeriodicIO mPeriodicIO;
+	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
 
 	private final CachedValue<Boolean> mBallIntakeArmEncoderPresent;
 	private final CachedValue<Boolean> mBallIntakeArmMasterHasReset;
@@ -172,21 +174,23 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized String generateReport() {
-		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
-				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
-				"BallArmOutput:" + mBallIntakeArmSetpoint + ";" +
-				"BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";" +
-				"BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";" +
-				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
-				"BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";" +
-				"BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";" +
-				"BallArmRotationMotorHasReset:" + mBallArmRotationMotor.hasMotorControllerReset().getMessage() + ";" +
-				"BallArmRollerMotorHasReset:" + mBallArmRollerMotor.hasMotorControllerReset().getMessage() + ";" +
-				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
-				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
-				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +
-				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";" +
-				"IsBallIntakeArmFaulted:" + isSystemFaulted() + ";";
+		return mLogDataGenerator.generateData(mPeriodicIO);
+
+//		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
+//				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
+//				"BallArmOutput:" + mBallIntakeArmSetpoint + ";" +
+//				"BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";" +
+//				"BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";" +
+//				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
+//				"BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";" +
+//				"BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";" +
+//				"BallArmRotationMotorHasReset:" + mBallArmRotationMotor.hasMotorControllerReset().getMessage() + ";" +
+//				"BallArmRollerMotorHasReset:" + mBallArmRollerMotor.hasMotorControllerReset().getMessage() + ";" +
+//				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
+//				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
+//				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +
+//				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";" +
+//				"IsBallIntakeArmFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

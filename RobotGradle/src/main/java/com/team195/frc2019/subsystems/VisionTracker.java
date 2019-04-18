@@ -4,6 +4,7 @@ import com.team195.frc2019.constants.TargetingConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
 import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.ElapsedTimer;
 import com.team254.lib.geometry.Translation2d;
@@ -16,13 +17,14 @@ import java.util.ArrayList;
 public class VisionTracker extends Subsystem {
 	private static VisionTracker mInstance = new VisionTracker();
 	private PeriodicIO mPeriodicIO = new PeriodicIO();
+	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
+
 	private TargetMode mTargetMode = TargetMode.HATCH;
 	private boolean mVisionEnabled = false;
 
 	private NetworkTable mCurrentTargetingLimelightNT;
 	private CachedValue<NetworkTable> limelightFrontNT = new CachedValue<>(100, (t) -> NetworkTableInstance.getDefault().getTable("limelight-turret"));
 	private CachedValue<NetworkTable> limelightBackNT = new CachedValue<>(100, (t) -> NetworkTableInstance.getDefault().getTable("limelight-back"));
-
 
 	public static VisionTracker getInstance() {
 		return mInstance;
@@ -135,10 +137,13 @@ public class VisionTracker extends Subsystem {
 
 	@Override
 	public synchronized String generateReport() {
+//		return mLogDataGenerator.generateData(mPeriodicIO);
+
 		return  "VisionXDev:" + mPeriodicIO.targetHorizontalDeviation + ";" +
 				"VisionYDev:" + mPeriodicIO.targetVerticalDeviation + ";" +
 				"VisionArea:" + mPeriodicIO.targetArea + ";" +
 				"VisionDistance:" + mPeriodicIO.targetDistance + ";" +
+				"VisionSkew:" + mPeriodicIO.calculatedSkewFactor + ";" +
 				"IsVisionSystemFaulted:" + isSystemFaulted() + ";";
 	}
 

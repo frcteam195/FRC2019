@@ -13,6 +13,7 @@ import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DiagnosticMessage;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
@@ -53,6 +54,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	private double mBallShooterSetpoint = 0;
 
 	private PeriodicIO mPeriodicIO;
+	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
+
 
 	private final CachedValue<Boolean> mTurretEncoderPresent;
 	private final CachedValue<Boolean> mTurretMasterHasReset;
@@ -145,22 +148,24 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized String generateReport() {
-		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
-				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
-				"TurretOutput:" + mTurretSetpoint + ";" +
-				"TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";" +
-				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
-				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
-				"TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";" +
-				"TurretRotationMotorHasReset:" + mTurretRotationMotor.hasMotorControllerReset().getMessage() + ";" +
-				"TurretRollerMotorHasReset:" + mBallShooterRollerMotor.hasMotorControllerReset().getMessage() + ";" +
-				"TurretControlMode:" + mTurretControlMode.toString() + ";" +
-				"TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";" +
-				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
-				"TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent() * mBallShooterRollerMotor.getMCInputVoltage() + ";" +
-				"TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";" +
-				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";" +
-				"IsTurretFaulted:" + isSystemFaulted() + ";";
+		return mLogDataGenerator.generateData(mPeriodicIO);
+
+//		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
+//				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
+//				"TurretOutput:" + mTurretSetpoint + ";" +
+//				"TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";" +
+//				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
+//				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
+//				"TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";" +
+//				"TurretRotationMotorHasReset:" + mTurretRotationMotor.hasMotorControllerReset().getMessage() + ";" +
+//				"TurretRollerMotorHasReset:" + mBallShooterRollerMotor.hasMotorControllerReset().getMessage() + ";" +
+//				"TurretControlMode:" + mTurretControlMode.toString() + ";" +
+//				"TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";" +
+//				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
+//				"TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent() * mBallShooterRollerMotor.getMCInputVoltage() + ";" +
+//				"TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";" +
+//				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";" +
+//				"IsTurretFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

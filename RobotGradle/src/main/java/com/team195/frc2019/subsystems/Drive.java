@@ -11,6 +11,7 @@ import com.team195.frc2019.planners.DriveMotionPlanner;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
+import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
 import com.team195.lib.drivers.CKDoubleSolenoid;
 import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
@@ -42,6 +43,7 @@ public class Drive extends Subsystem {
 	private CKIMU mGyro;
 	private PeriodicIO mPeriodicIO;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
+	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
 	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
@@ -619,38 +621,40 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized String generateReport() {
-		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
-				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
-				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
-				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
-				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
-				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
-				"LeftDrive1HasReset:" + mLeftMaster.hasMotorControllerReset() + ";" +
-				"LeftDrive2HasReset:" + mLeftSlaveA.hasMotorControllerReset() + ";" +
-				"LeftDrive3HasReset:" + mLeftSlaveB.hasMotorControllerReset() + ";" +
-				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
-				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
-				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
-				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mPeriodicIO.left_spark_velocity) + ";" +
-				"RightDrivePos:" + mPeriodicIO.right_position_rotations + ";" +
-				"RightDriveVel:" + mPeriodicIO.right_spark_velocity + ";" +
-				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
-				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
-				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
-				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
-				"RightDrive1HasReset:" + mRightMaster.hasMotorControllerReset() + ";" +
-				"RightDrive2HasReset:" + mRightSlaveA.hasMotorControllerReset() + ";" +
-				"RightDrive3HasReset:" + mRightSlaveB.hasMotorControllerReset() + ";" +
-				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
-				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
-				"RightDriveSupplyVoltage:" + mRightMaster.getMCInputVoltage() + ";" +
-				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mPeriodicIO.right_spark_velocity) + ";" +
-				"DriveMode:" + mDriveControlState.toString() + ";" +
-				"DriveErrorX:" + mPeriodicIO.error.getTranslation().x() + ";" +
-				"DriveErrorY:" + mPeriodicIO.error.getTranslation().y() + ";" +
-				"DriveErrorRotation:" + mPeriodicIO.error.getRotation().getDegrees() + ";" +
-				"Timestamp:" + Timer.getFPGATimestamp() + ";" +
-				"IsDriveFaulted:" + isSystemFaulted() + ";";
+		return mLogDataGenerator.generateData(mPeriodicIO);
+
+//		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
+//				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
+//				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
+//				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
+//				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
+//				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
+//				"LeftDrive1HasReset:" + mLeftMaster.hasMotorControllerReset() + ";" +
+//				"LeftDrive2HasReset:" + mLeftSlaveA.hasMotorControllerReset() + ";" +
+//				"LeftDrive3HasReset:" + mLeftSlaveB.hasMotorControllerReset() + ";" +
+//				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
+//				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
+//				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
+//				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mPeriodicIO.left_spark_velocity) + ";" +
+//				"RightDrivePos:" + mPeriodicIO.right_position_rotations + ";" +
+//				"RightDriveVel:" + mPeriodicIO.right_spark_velocity + ";" +
+//				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
+//				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
+//				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
+//				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
+//				"RightDrive1HasReset:" + mRightMaster.hasMotorControllerReset() + ";" +
+//				"RightDrive2HasReset:" + mRightSlaveA.hasMotorControllerReset() + ";" +
+//				"RightDrive3HasReset:" + mRightSlaveB.hasMotorControllerReset() + ";" +
+//				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
+//				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
+//				"RightDriveSupplyVoltage:" + mRightMaster.getMCInputVoltage() + ";" +
+//				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mPeriodicIO.right_spark_velocity) + ";" +
+//				"DriveMode:" + mDriveControlState.toString() + ";" +
+//				"DriveErrorX:" + mPeriodicIO.error.getTranslation().x() + ";" +
+//				"DriveErrorY:" + mPeriodicIO.error.getTranslation().y() + ";" +
+//				"DriveErrorRotation:" + mPeriodicIO.error.getRotation().getDegrees() + ";" +
+//				"Timestamp:" + Timer.getFPGATimestamp() + ";" +
+//				"IsDriveFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
