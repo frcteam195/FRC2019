@@ -14,3 +14,6 @@ See [CyberDash](https://github.com/frcteam195/CyberDash) for our dashboard code.
 
 ### PID Tuner
 See [CSPIDTuner](https://github.com/frcteam195/CSPIDTuner) for our PID Tuner interface.
+
+### Data Viewer
+See [CKDataViewer](https://github.com/frcteam195/CKDataViewer) for our realtime data viewer.
