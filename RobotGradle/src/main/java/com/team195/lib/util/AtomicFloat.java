@@ -6,7 +6,6 @@ import static java.lang.Float.floatToIntBits;
 import static java.lang.Float.intBitsToFloat;
 
 public class AtomicFloat extends Number {
-
 	private static final long serialVersionUID = -7741346627852362165L;
 	private AtomicInteger bits;
 
@@ -58,5 +57,10 @@ public class AtomicFloat extends Number {
 	@Override
 	public long longValue() {
 		return (long) get();
+	}
+
+	@Override
+	public String toString() {
+		return Float.toString(get());
 	}
 }

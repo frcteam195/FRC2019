@@ -137,14 +137,14 @@ public class VisionTracker extends Subsystem {
 
 	@Override
 	public synchronized String generateReport() {
-//		return mLogDataGenerator.generateData(mPeriodicIO);
+		return mLogDataGenerator.generateData(mPeriodicIO);
 
-		return  "VisionXDev:" + mPeriodicIO.targetHorizontalDeviation + ";" +
-				"VisionYDev:" + mPeriodicIO.targetVerticalDeviation + ";" +
-				"VisionArea:" + mPeriodicIO.targetArea + ";" +
-				"VisionDistance:" + mPeriodicIO.targetDistance + ";" +
-				"VisionSkew:" + mPeriodicIO.calculatedSkewFactor + ";" +
-				"IsVisionSystemFaulted:" + isSystemFaulted() + ";";
+//		return  "VisionXDev:" + mPeriodicIO.targetHorizontalDeviation + ";" +
+//				"VisionYDev:" + mPeriodicIO.targetVerticalDeviation + ";" +
+//				"VisionArea:" + mPeriodicIO.targetArea + ";" +
+//				"VisionDistance:" + mPeriodicIO.targetDistance + ";" +
+//				"VisionSkew:" + mPeriodicIO.calculatedSkewFactor + ";" +
+//				"IsVisionSystemFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override

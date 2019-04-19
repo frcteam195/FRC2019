@@ -6,7 +6,7 @@ import static java.lang.Double.doubleToLongBits;
 import static java.lang.Double.longBitsToDouble;
 
 public class AtomicDouble extends Number {
-
+	private static final long serialVersionUID = -8742359924652065765L;
 	private AtomicLong bits;
 
 	public AtomicDouble() {
@@ -58,5 +58,8 @@ public class AtomicDouble extends Number {
 		return (long) get();
 	}
 
-	private static final long serialVersionUID = -8742359924652065765L;
+	@Override
+	public String toString() {
+		return Double.toString(get());
+	}
 }

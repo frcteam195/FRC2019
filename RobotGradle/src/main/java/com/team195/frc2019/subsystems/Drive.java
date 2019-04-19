@@ -730,7 +730,7 @@ public class Drive extends Subsystem {
 		public double right_accel;
 		public double left_feedforward;
 		public double right_feedforward;
-		TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
+		TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<>(Pose2dWithCurvature.identity());
 	}
 }
 
