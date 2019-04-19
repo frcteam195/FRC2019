@@ -371,12 +371,13 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	public static class PeriodicIO {
+		//Making members public here will automatically add them to logs
 		// INPUTS
-		double turret_position;
-		double turret_setpoint;
-		double ball_shooter_setpoint;
-		boolean turret_encoder_present;
-		boolean turret_reset;
-		boolean hatch_limit_switch;
+		public double turret_position;
+		public double turret_setpoint;
+		public double ball_shooter_setpoint;
+		public boolean turret_encoder_present;
+		public boolean turret_reset;
+		public boolean hatch_limit_switch;
 	}
 }

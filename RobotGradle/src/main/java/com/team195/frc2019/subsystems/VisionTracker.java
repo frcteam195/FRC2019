@@ -234,11 +234,12 @@ public class VisionTracker extends Subsystem {
 	}
 
 	private static class PeriodicIO {
+		//Making members public here will automatically add them to logs
 		//Read values
-		double targetValid;
-		double targetHorizontalDeviation;
+		public double targetValid;
+		public double targetHorizontalDeviation;
 		double targetVerticalDeviation;
-		double targetArea;
+		public double targetArea;
 		double targetSkew;
 		double targetLatency;
 		double targetShortSide;
@@ -247,8 +248,8 @@ public class VisionTracker extends Subsystem {
 		double targetVerticalSide;
 		double targetDistance;
 		double getPipelineValue;
-		double cameraTranslationRotation;
-		MovingAverage calculatedSkewFactor = new MovingAverage(10);
+		public double cameraTranslationRotation;
+		public MovingAverage calculatedSkewFactor = new MovingAverage(10);
 
 		ArrayList<Translation2d> pointArray = new ArrayList<>();
 

@@ -699,36 +699,37 @@ public class Drive extends Subsystem {
 	}
 
 	public static class PeriodicIO {
+		//Making members public here will automatically add them to logs
 		// INPUTS
-		double left_position_rotations;
-		double right_position_rotations;
-		double left_distance;
-		double right_distance;
-		double left_velocity_RPM;
-		double right_velocity_RPM;
-		Rotation2d gyro_heading = Rotation2d.identity();
+		public double left_position_rotations;
+		public double right_position_rotations;
+		public double left_distance;
+		public double right_distance;
+		public double left_velocity_RPM;
+		public double right_velocity_RPM;
+		public Rotation2d gyro_heading = Rotation2d.identity();
 		double gyro_raw_yaw;
 		double gyro_pitch;
-		double gyro_roll;
-		Pose2d error = Pose2d.identity();
+		public double gyro_roll;
+		public Pose2d error = Pose2d.identity();
 
-		double left_spark_position;
-		double left_spark_velocity;
-		double right_spark_velocity;
-		double left_bus_voltage;
-		double right_bus_voltage;
+		public double left_spark_position;
+		public double left_spark_velocity;
+		public double right_spark_velocity;
+		public double left_bus_voltage;
+		public double right_bus_voltage;
 
 		boolean left_drive_encoder_present;
 		boolean right_drive_encoder_present;
 		boolean gyro_present;
 
 		// OUTPUTS
-		double left_demand;
-		double right_demand;
-		double left_accel;
-		double right_accel;
-		double left_feedforward;
-		double right_feedforward;
+		public double left_demand;
+		public double right_demand;
+		public double left_accel;
+		public double right_accel;
+		public double left_feedforward;
+		public double right_feedforward;
 		TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<Pose2dWithCurvature>(Pose2dWithCurvature.identity());
 	}
 }

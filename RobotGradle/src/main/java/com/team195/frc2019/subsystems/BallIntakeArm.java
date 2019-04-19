@@ -315,12 +315,13 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	public static class PeriodicIO {
+		//Making members public here will automatically add them to logs
 		// INPUTS
-		double ball_intake_arm_position;
-		double ball_intake_arm_setpoint;
-		double ball_intake_roller_setpoint;
-		boolean ball_intake_arm_at_limit;
-		boolean ball_intake_arm_reset;
-		boolean ball_intake_arm_encoder_present;
+		public double ball_intake_arm_position;
+		public double ball_intake_arm_setpoint;
+		public double ball_intake_roller_setpoint;
+		public boolean ball_intake_arm_at_limit;
+		public boolean ball_intake_arm_reset;
+		public boolean ball_intake_arm_encoder_present;
 	}
 }

@@ -373,11 +373,12 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	public static class PeriodicIO {
+		//Making members public here will automatically add them to logs
 		// INPUTS
-		double elevator_position;
-		double elevator_setpoint;
-		boolean elevator_at_lower_limit;
-		boolean elevator_master_reset;
-		boolean elevator_encoder_present;
+		public double elevator_position;
+		public double elevator_setpoint;
+		public boolean elevator_at_lower_limit;
+		public boolean elevator_master_reset;
+		public boolean elevator_encoder_present;
 	}
 }

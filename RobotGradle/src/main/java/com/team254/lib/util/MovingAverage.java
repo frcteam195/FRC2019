@@ -52,4 +52,8 @@ public class MovingAverage {
         numbers.clear();
     }
 
+    @Override
+    public String toString() {
+        return Double.toString(getAverage());
+    }
 }
