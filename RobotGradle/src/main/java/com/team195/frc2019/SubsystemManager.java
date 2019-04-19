@@ -28,6 +28,8 @@ public class SubsystemManager implements ILooper {
 	private static ArrayList<Subsystem> mAllSubsystems = new ArrayList<>();
 	private List<Loop> mLoops = new ArrayList<>();
 
+	private ArrayList<Reportable> mLooperReports = new ArrayList<>();
+
 	private TimeoutTimer mCriticalCheckTimeout = new TimeoutTimer(0.250);
 	private TimeoutTimer mLogDataTimeout = new TimeoutTimer(0.250);
 
@@ -64,6 +66,7 @@ public class SubsystemManager implements ILooper {
 		StringBuilder sb = new StringBuilder();
 		try {
 			mAllSubsystems.forEach((s) -> sb.append(s.generateReport()));
+			mLooperReports.forEach((s) -> sb.append(s.generateReport()));
 		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
 		}
@@ -156,10 +159,12 @@ public class SubsystemManager implements ILooper {
 	public void registerEnabledLoops(Looper enabledLooper) {
 		mAllSubsystems.forEach((s) -> s.registerEnabledLoops(this));
 		enabledLooper.register(new EnabledLoop());
+		mLooperReports.add(enabledLooper);
 	}
 
 	public void registerDisabledLoops(Looper disabledLooper) {
 		disabledLooper.register(new DisabledLoop());
+		mLooperReports.add(disabledLooper);
 	}
 
 	@Override
