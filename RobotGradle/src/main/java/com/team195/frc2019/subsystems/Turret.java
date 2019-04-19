@@ -50,9 +50,6 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	private final MotionInterferenceChecker turretAnyPositionCheck;
 
-	private double mTurretSetpoint = 0;
-	private double mBallShooterSetpoint = 0;
-
 	private PeriodicIO mPeriodicIO;
 	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
 
@@ -152,7 +149,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 //		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
 //				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
-//				"TurretOutput:" + mTurretSetpoint + ";" +
+//				"TurretOutput:" + mPeriodicIO.turret_setpoint + ";" +
 //				"TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";" +
 //				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
 //				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
@@ -217,23 +214,23 @@ public class Turret extends Subsystem implements InterferenceSystem {
 						double desiredTurretAngleDeg = Math.toDegrees(Math.atan2((currentRocketTarget.y() - robotCurrentPos.getTranslation().y()),
 								(currentRocketTarget.x() - robotCurrentPos.getTranslation().x()))) - robotCurrentPos.getRotation().getDegrees();
 
-						mTurretSetpoint = convertTurretDegreesToRotations(desiredTurretAngleDeg);
+						mPeriodicIO.turret_setpoint = convertTurretDegreesToRotations(desiredTurretAngleDeg);
 						//Fall through on purpose to set position -> no break;
 					case VISION_TRACK:
 						//Preempts Auto Track
 						if (mVisionTracker.isTargetFound())
-							mTurretSetpoint = convertTurretDegreesToRotations(mVisionTracker.getTargetHorizAngleDev());
+							mPeriodicIO.turret_setpoint = convertTurretDegreesToRotations(mVisionTracker.getTargetHorizAngleDev());
 						//Fall through on purpose to set position -> no break;
 					case POSITION:
 						if (turretAnyPositionCheck.hasPassedConditions() || Elevator.getInstance().getPosition() > ElevatorPositions.CargoBall
-							|| Math.abs(mTurretSetpoint - TurretPositions.Back180) < Turret.convertTurretDegreesToRotations(10)
-							|| Math.abs(mTurretSetpoint - TurretPositions.Home) < Turret.convertTurretDegreesToRotations(10))
-							mTurretRotationMotor.set(MCControlMode.MotionMagic, mTurretSetpoint, 0, 0);
-//						else if (mTurretSetpoint != TurretPositions.Back180 && mTurretSetpoint != TurretPositions.Home)
+							|| Math.abs(mPeriodicIO.turret_setpoint - TurretPositions.Back180) < Turret.convertTurretDegreesToRotations(10)
+							|| Math.abs(mPeriodicIO.turret_setpoint - TurretPositions.Home) < Turret.convertTurretDegreesToRotations(10))
+							mTurretRotationMotor.set(MCControlMode.MotionMagic, mPeriodicIO.turret_setpoint, 0, 0);
+//						else if (mPeriodicIO.turret_setpoint != TurretPositions.Back180 && mPeriodicIO.turret_setpoint != TurretPositions.Home)
 //							mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
 						break;
 					case OPEN_LOOP:
-						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mTurretSetpoint, -1), 1), 0, 0);
+						mTurretRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mPeriodicIO.turret_setpoint, -1), 1), 0, 0);
 						break;
 					default:
 						mTurretRotationMotor.set(MCControlMode.Disabled, 0, 0, 0);
@@ -242,13 +239,13 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 				switch (mBallShooterControlMode) {
 					case VELOCITY:
-						mBallShooterRollerMotor.set(MCControlMode.SmartVelocity, mBallShooterSetpoint, 0, 0);
+						mBallShooterRollerMotor.set(MCControlMode.SmartVelocity, mPeriodicIO.ball_shooter_setpoint, 0, 0);
 						break;
 					case CURRENT:
-						mBallShooterRollerMotor.set(MCControlMode.Current, mBallShooterSetpoint, 0, 0);
+						mBallShooterRollerMotor.set(MCControlMode.Current, mPeriodicIO.ball_shooter_setpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
-						mBallShooterRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallShooterSetpoint, -1), 1), 0, 0);
+						mBallShooterRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mPeriodicIO.ball_shooter_setpoint, -1), 1), 0, 0);
 						break;
 					default:
 						break;
@@ -296,22 +293,22 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	public synchronized void setTurretPosition(double turretPosition) {
-		mTurretSetpoint = turretPosition;
+		mPeriodicIO.turret_setpoint = turretPosition;
 	}
 
 	public synchronized void setBallShooterCurrent(double ballShooterCurrent) {
 		setBallShooterControlMode(BallShooterControlMode.CURRENT);
-		mBallShooterSetpoint = ballShooterCurrent;
+		mPeriodicIO.ball_shooter_setpoint = ballShooterCurrent;
 	}
 
 	public synchronized void setBallShooterVelocity(double ballShooterVelocity) {
 		setBallShooterControlMode(BallShooterControlMode.VELOCITY);
-		mBallShooterSetpoint = ballShooterVelocity;
+		mPeriodicIO.ball_shooter_setpoint = ballShooterVelocity;
 	}
 
 	public synchronized void setBallShooterOpenLoop(double ballShooterOutput) {
 		setBallShooterControlMode(BallShooterControlMode.OPEN_LOOP);
-		mBallShooterSetpoint = ballShooterOutput;
+		mPeriodicIO.ball_shooter_setpoint = ballShooterOutput;
 	}
 
 	public synchronized void setTurretControlMode(TurretControlMode turretControlMode) {
@@ -325,7 +322,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	public boolean isTurretAtSetpoint(double posDelta) {
-		return Math.abs(mTurretSetpoint - mPeriodicIO.turret_position) < Math.abs(posDelta);
+		return Math.abs(mPeriodicIO.turret_setpoint - mPeriodicIO.turret_position) < Math.abs(posDelta);
 	}
 
 	public static double convertRotationsToTurretDegrees(double rotations) {
@@ -343,7 +340,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getSetpoint() {
-		return mTurretSetpoint;
+		return mPeriodicIO.turret_setpoint;
 	}
 
 	public enum TurretControlMode {
@@ -376,6 +373,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	public static class PeriodicIO {
 		// INPUTS
 		double turret_position;
+		double turret_setpoint;
+		double ball_shooter_setpoint;
 		boolean turret_encoder_present;
 		boolean turret_reset;
 		boolean hatch_limit_switch;

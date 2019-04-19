@@ -45,8 +45,6 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private ElevatorControlMode mElevatorControlMode = ElevatorControlMode.POSITION;
 
-	private double mElevatorSetpoint = 0;
-
 	private static final int mContinuousCurrentLimit = 15;  //8
 	private static final int mPeakCurrentLimit = 20;    //12
 	private static final int mPeakCurrentDurationMS = 250;
@@ -208,7 +206,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 //		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
 //				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
-//				"ElevatorOutput:" + mElevatorSetpoint + ";" +
+//				"ElevatorOutput:" + mPeriodicIO.elevator_setpoint + ";" +
 //				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
 //				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
 //				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
@@ -261,7 +259,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 			synchronized (Elevator.this) {
 				switch (mElevatorControlMode) {
 					case POSITION:
-						double outputPos = mElevatorSetpoint;
+						double outputPos = mPeriodicIO.elevator_setpoint;
 
 						boolean eUp = requestMoveElevatorUpCheck.hasPassedConditions() && requestMoveElevatorUpCheck.isEnabled();
 						boolean eDown = requestMoveElevatorDownCheck.hasPassedConditions() && requestMoveElevatorDownCheck.isEnabled();
@@ -278,7 +276,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 						break;
 					case OPEN_LOOP:
-						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mElevatorSetpoint, -1), 1), 0, 0);
+						mElevatorMaster.set(MCControlMode.PercentOut, Math.min(Math.max(mPeriodicIO.elevator_setpoint, -1), 1), 0, 0);
 						break;
 					case DISABLED:
 						mElevatorMaster.set(MCControlMode.Disabled, 0, 0, 0);
@@ -340,15 +338,15 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getSetpoint() {
-		return mElevatorSetpoint;
+		return mPeriodicIO.elevator_setpoint;
 	}
 
 	public synchronized void setElevatorPosition(double elevatorPosition) {
-		mElevatorSetpoint = elevatorPosition;
+		mPeriodicIO.elevator_setpoint = elevatorPosition;
 	}
 
 	public boolean isElevatorAtSetpoint(double posDelta) {
-		return Math.abs(mElevatorSetpoint - mPeriodicIO.elevator_position) < Math.abs(posDelta);
+		return Math.abs(mPeriodicIO.elevator_setpoint - mPeriodicIO.elevator_position) < Math.abs(posDelta);
 	}
 
 	public synchronized void setElevatorControlMode (ElevatorControlMode elevatorControlMode) {
@@ -377,6 +375,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	public static class PeriodicIO {
 		// INPUTS
 		double elevator_position;
+		double elevator_setpoint;
 		boolean elevator_at_lower_limit;
 		boolean elevator_master_reset;
 		boolean elevator_encoder_present;

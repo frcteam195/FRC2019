@@ -38,9 +38,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private BallIntakeArmControlMode mBallIntakeArmControlMode = BallIntakeArmControlMode.DISABLED;
 
-	private double mBallIntakeArmSetpoint = 0;
-	private double mBallIntakeRollerSetpoint = 0;
-
 	private PeriodicIO mPeriodicIO;
 	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
 
@@ -178,7 +175,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 //		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
 //				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
-//				"BallArmOutput:" + mBallIntakeArmSetpoint + ";" +
+//				"BallArmOutput:" + mPeriodicIO.ball_intake_arm_setpoint + ";" +
 //				"BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";" +
 //				"BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";" +
 //				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
@@ -229,11 +226,11 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			synchronized (BallIntakeArm.this) {
 				switch (mBallIntakeArmControlMode) {
 					case POSITION:
-						mBallArmRotationMotor.set(MCControlMode.MotionMagic, mBallIntakeArmSetpoint, 0, 0);
+						mBallArmRotationMotor.set(MCControlMode.MotionMagic, mPeriodicIO.ball_intake_arm_setpoint, 0, 0);
 						break;
 					case OPEN_LOOP:
 						if (ballArmUpCheck.hasPassedConditions())
-							mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeArmSetpoint, -1), 1), 0, 0);
+							mBallArmRotationMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mPeriodicIO.ball_intake_arm_setpoint, -1), 1), 0, 0);
 						break;
 					case DISABLED:
 					default:
@@ -241,7 +238,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 						break;
 				}
 
-				mBallArmRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mBallIntakeRollerSetpoint, -1), 1), 0, 0);
+				mBallArmRollerMotor.set(MCControlMode.PercentOut, Math.min(Math.max(mPeriodicIO.ball_intake_roller_setpoint, -1), 1), 0, 0);
 			}
 		}
 
@@ -278,19 +275,19 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public double getSetpoint() {
-		return mBallIntakeArmSetpoint;
+		return mPeriodicIO.ball_intake_arm_setpoint;
 	}
 
 	public synchronized void setBallIntakeArmPosition(double armPosition) {
-		mBallIntakeArmSetpoint = armPosition;
+		mPeriodicIO.ball_intake_arm_setpoint = armPosition;
 	}
 
 	public synchronized void setBallIntakeRollerSpeed(double rollerSpeed) {
-		mBallIntakeRollerSetpoint = rollerSpeed;
+		mPeriodicIO.ball_intake_roller_setpoint = rollerSpeed;
 	}
 
 	public boolean isArmAtSetpoint(double posDelta) {
-		return Math.abs(mBallIntakeArmSetpoint - mPeriodicIO.ball_intake_arm_position) < Math.abs(posDelta);
+		return Math.abs(mPeriodicIO.ball_intake_arm_setpoint - mPeriodicIO.ball_intake_arm_position) < Math.abs(posDelta);
 	}
 
 	public synchronized void setBallIntakeArmControlMode(BallIntakeArmControlMode ballIntakeArmControlMode) {
@@ -320,6 +317,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	public static class PeriodicIO {
 		// INPUTS
 		double ball_intake_arm_position;
+		double ball_intake_arm_setpoint;
+		double ball_intake_roller_setpoint;
 		boolean ball_intake_arm_at_limit;
 		boolean ball_intake_arm_reset;
 		boolean ball_intake_arm_encoder_present;
