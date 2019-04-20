@@ -96,27 +96,28 @@ public class TrajectoryGenerator {
     // +y is to the left.
     // ALL POSES DEFINED FOR THE CASE THAT ROBOT STARTS ON RIGHT! (mirrored about +x axis for LEFT)
 
-    private static final Pose2d kLowStartBackwardsPose = new Pose2d(65, -45, backwardsStartRotation);
-    private static final Pose2d kHighStartBackwardsPose = new Pose2d(20, -45, backwardsStartRotation);
-    private static final Pose2d kLowStartForwardsPose = new Pose2d(65, -45, forwardsStartRotation);
-    private static final Pose2d kHighStartForwardsPose = new Pose2d(20, -45, forwardsStartRotation);
+    public static final Pose2d kLowStartBackwardsPose = new Pose2d(65, -45, backwardsStartRotation);
+    public static final Pose2d kHighStartBackwardsPose = new Pose2d(20, -45, backwardsStartRotation);
+    public static final Pose2d kLowStartForwardsPose = new Pose2d(65, -45, forwardsStartRotation);
+    public static final Pose2d kHighStartForwardsPose = new Pose2d(20, -45, forwardsStartRotation);
 
-    private static final Pose2d kCloseRocketFarHatchPose = new Pose2d(265, -130, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(-145.0)));
-    private static final Pose2d kCloseRocketCloseHatchPose = new Pose2d(185, -130, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(-35.0)));
-    private static final Pose2d kCloseSideFeederStation = new Pose2d(20, -135, Rotation2d.fromDegrees(0.0));
-    private static final Pose2d kCloseSideBallReservoir = new Pose2d(65, -100, Rotation2d.fromDegrees(145.0));
+    public static final Pose2d kCloseRocketFarHatchIntermediatePose = new Pose2d(240, -60, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(-20.0)));
+    public static final Pose2d kCloseRocketFarHatchPose = new Pose2d(265, -130, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(-145.0)));
+    public static final Pose2d kCloseRocketCloseHatchPose = new Pose2d(185, -130, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(-35.0)));
+    public static final Pose2d kCloseSideFeederStation = new Pose2d(20, -135, Rotation2d.fromDegrees(0.0));
+    public static final Pose2d kCloseSideBallReservoir = new Pose2d(65, -100, Rotation2d.fromDegrees(145.0));
 
-    private static final Pose2d kHighStartCloseRocketPoint1 = new Pose2d(210, -65, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(10.0)));
+    public static final Pose2d kHighStartCloseRocketPoint1 = new Pose2d(210, -65, backwardsStartRotation.rotateBy(Rotation2d.fromDegrees(10.0)));
 
-    private static final Pose2d kCloseRocketFarHatchTurn1Point1Pose = kCloseRocketFarHatchPose.transformBy(new Pose2d(20, 60, Rotation2d.fromDegrees(30)));
-    private static final Pose2d kCloseRocketFarHatchTurn1Point2Pose = kCloseRocketFarHatchTurn1Point1Pose.transformBy(new Pose2d(-85, -10, Rotation2d.fromDegrees(-75)));
+    public static final Pose2d kCloseRocketFarHatchTurn1Point1Pose = kCloseRocketFarHatchPose.transformBy(new Pose2d(25, 70, Rotation2d.fromDegrees(45)));
+    public static final Pose2d kCloseRocketFarHatchTurn1Point2Pose = kCloseRocketFarHatchTurn1Point1Pose.transformBy(new Pose2d(-85, -40, Rotation2d.fromDegrees(-80)));
 
-    private static final Pose2d kCloseRocketCloseHatchTurn2Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 90, Rotation2d.fromDegrees(90)));
+    public static final Pose2d kCloseRocketCloseHatchTurn2Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 90, Rotation2d.fromDegrees(90)));
 
-    private static final Pose2d kCloseCargoSideHatchForwardFacingPose = new Pose2d(260, -45, Rotation2d.fromDegrees(0));
-    private static final Pose2d kCloseCargoFrontHatchPose = new Pose2d(200, -10, backwardsStartRotation);
+    public static final Pose2d kCloseCargoSideHatchForwardFacingPose = new Pose2d(260, -45, Rotation2d.fromDegrees(0));
+    public static final Pose2d kCloseCargoFrontHatchPose = new Pose2d(200, -10, backwardsStartRotation);
 
-    private static final Pose2d kCloseCargoFrontHatchTurn1Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 155, Rotation2d.fromDegrees(90)));
+    public static final Pose2d kCloseCargoFrontHatchTurn1Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 155, Rotation2d.fromDegrees(90)));
 
 
 
@@ -144,6 +145,7 @@ public class TrajectoryGenerator {
         private TrajectorySet() {
             lowStartToCloseRocketFarHatch = generateMirroredTrajectory(true, Arrays.asList(
                     kLowStartBackwardsPose,
+                    kCloseRocketFarHatchIntermediatePose,
                     kCloseRocketFarHatchPose),
                     Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kFirstPathMaxVel,
@@ -152,6 +154,7 @@ public class TrajectoryGenerator {
 
             highStartToCloseRocketFarHatch = generateMirroredTrajectory(true, Arrays.asList(
                     kHighStartBackwardsPose,
+                    kCloseRocketFarHatchIntermediatePose,
                     kHighStartCloseRocketPoint1,
                     kCloseRocketFarHatchPose),
                     Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
