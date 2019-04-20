@@ -364,7 +364,9 @@ public class AutomatedActions {
 		if (BallIntakeArm.getInstance().getSetpoint() != BallIntakeArmPositions.Down)
 			actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
 
-		actionArrayList.add(new ParallelAction(new SetTurretPositionAction(TurretPositions.Back180), new SetElevatorHeightAction(ElevatorPositions.RocketBallLow)));
+		actionArrayList.add(new ParallelAction(new SetElevatorHeightAction(ElevatorPositions.RocketBallLow),
+				new SeriesAction(new WaitForElevatorGreaterThanPositionAction(ElevatorPositions.CollisionThresholdTurret, 1),
+						new SetTurretPositionAction(TurretPositions.Back180))));
 
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallShooterOpenLoopAction(TurretPositions.BallShootSpeedIntake),
 				new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake))));

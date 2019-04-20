@@ -57,6 +57,7 @@ public class VisionTracker extends Subsystem {
 						mCurrentTargetingLimelightNT = limelightFrontNT.getValue();
 						break;
 					case HATCH:
+					case HATCH_AUTOSKEW:
 					case CARGO_BALL:
 					default:
 						mPeriodicIO.pipelineBack = mVisionEnabled ? 1 : 0;
@@ -233,7 +234,11 @@ public class VisionTracker extends Subsystem {
 //		NetworkTableEntry snapshot = mCurrentTargetingLimelightNT.getValue().getEntry("snapshot");
 	}
 
-	private static class PeriodicIO {
+	public TargetMode getTargetMode() {
+		return mTargetMode;
+	}
+
+	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		//Read values
 		public double targetValid;
@@ -248,7 +253,7 @@ public class VisionTracker extends Subsystem {
 		double targetVerticalSide;
 		double targetDistance;
 		double getPipelineValue;
-		public double cameraTranslationRotation;
+		double cameraTranslationRotation;
 		public MovingAverage calculatedSkewFactor = new MovingAverage(10);
 
 		ArrayList<Translation2d> pointArray = new ArrayList<>();
@@ -261,6 +266,7 @@ public class VisionTracker extends Subsystem {
 	public enum TargetMode {
 		HATCH,
 		CARGO_BALL,
-		ROCKET_BALL;
+		ROCKET_BALL,
+		HATCH_AUTOSKEW;
 	}
 }

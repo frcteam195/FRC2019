@@ -84,7 +84,7 @@ public class HIDController {
 
 						double throttle = -driveJoystick.getSmoothedAxis(1, Constants.kJoystickDeadband, 2) * scalingFactor;
 						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * scalingFactor * 0.5;
-						if (VisionTracker.getInstance().isVisionEnabled()) {
+						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 								if (VisionTracker.getInstance().isTargetFound())
 									throttle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
@@ -118,7 +118,7 @@ public class HIDController {
 						double throttle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
 						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.75;
 
-						if (VisionTracker.getInstance().isVisionEnabled()) {
+						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 								if (VisionTracker.getInstance().isTargetFound())
 									throttle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
@@ -169,7 +169,8 @@ public class HIDController {
 						VisionTracker.getInstance().setTargetMode(VisionTracker.TargetMode.HATCH);
 						VisionTracker.getInstance().setVisionEnabled(true);
 					} else {
-						VisionTracker.getInstance().setVisionEnabled(false);
+						if (VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH)
+							VisionTracker.getInstance().setVisionEnabled(false);
 					}
 
 //					if (driveJoystick.getRisingEdgeButton(1)) {
@@ -224,6 +225,8 @@ public class HIDController {
 						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
 					} else if (buttonBox2.getRisingEdgeButton(4)) {
 						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+					} else if (buttonBox2.getRisingEdgeButton(5)) {
+						TeleopActionRunner.runAction(AutomatedActions.reverseIntakeBall((t) -> buttonBox2.getRawButton(5)));
 					} else if (buttonBox2.getRisingEdgeButton(6)) {
 						ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
 						TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
@@ -255,6 +258,8 @@ public class HIDController {
 						//Flash LEDs to signal Human Player
 						LEDController.getInstance().setLEDColor(Constants.kRequestGamePieceColor);
 						LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);
+
+//						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretAutoSkewAction((t) -> armControlJoystick.getRawButton(1)), Constants.kActionTimeoutS, Turret.getInstance()));
 					} else if (armControlJoystick.getRisingEdgeButton(2)) {
 						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretPositionJoystickAction((t) -> armControlJoystick.getRawButton(2),
 								(t) -> armControlJoystick.getNormalizedAxis(2, 0.1)), 300, Turret.getInstance()));
