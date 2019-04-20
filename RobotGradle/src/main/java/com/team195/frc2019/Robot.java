@@ -100,40 +100,31 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		teleopInit();
-//		try {
-//			CrashTracker.logAutoInit();
-//
-//			ConsoleReporter.report("Stopping Disabled Loops");
-//			mDisabledLooper.stop();
-//
-//			ConsoleReporter.report("Set Infrastructure Auto");
-//			mInfrastructure.setIsDuringAuto(true);
-//
-//			ConsoleReporter.report("Zero Drive Sensors");
-//			Drive.getInstance().zeroSensors();
-//
-//			ConsoleReporter.report("Zero Pose");
-//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
-//
-////			ConsoleReporter.report("Check Auto Mode Not Null");
-////			if (mAutoModeExecutor != null) {
-////				ConsoleReporter.report("Start Auto Mode");
-////				mAutoModeExecutor.start();
-////			}
-//
-//			ConsoleReporter.report("Start Enabled Looper");
-//			mEnabledLooper.start();
-//
-//			ConsoleReporter.report("Start HIDController");
-//			mHIDController.start();
-//		} catch (Exception ex) {
-//			CrashTracker.logThrowableCrash(ex);
-//		}
-//		catch (Throwable t) {
-//			CrashTracker.logThrowableCrash(t);
-//			throw t;
-//		}
+//		teleopInit();
+		try {
+			CrashTracker.logAutoInit();
+
+			mDisabledLooper.stop();
+			mInfrastructure.setIsDuringAuto(true);
+			Drive.getInstance().zeroSensors();
+			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			mDrive.setBrakeMode(true);
+			mDrive.forceBrakeModeUpdate();
+			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
+			mEnabledLooper.start();
+			mHIDController.start();
+
+			if (mAutoModeExecutor != null) {
+				ConsoleReporter.report("Start Auto Mode");
+				mAutoModeExecutor.start();
+			}
+		} catch (Exception ex) {
+			CrashTracker.logThrowableCrash(ex);
+		}
+		catch (Throwable t) {
+			CrashTracker.logThrowableCrash(t);
+			throw t;
+		}
 	}
 
 	@Override
