@@ -4,8 +4,10 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCPortIn;
 import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.modes.*;
+import com.team195.frc2019.auto.modes.High.HighTwoHatchCargoshipBackwardsMode;
 import com.team195.frc2019.auto.modes.High.HighTwoHatchCargoshipMode;
 import com.team195.frc2019.auto.modes.High.HighTwoHatchRocketMode;
+import com.team195.frc2019.auto.modes.Low.LowTwoHatchCargoshipBackwardsMode;
 import com.team195.frc2019.auto.modes.Low.LowTwoHatchCargoshipMode;
 import com.team195.frc2019.auto.modes.Low.LowTwoHatchRocketMode;
 import com.team195.frc2019.constants.Constants;
@@ -61,7 +63,7 @@ public class AutoModeSelector {
                         case TwoHatchRocket:
                             return new LowTwoHatchRocketMode(true);
                         case TwoHatchCargoship:
-                            return new LowTwoHatchCargoshipMode(true);
+                            return new LowTwoHatchCargoshipBackwardsMode(true);
                         default:
                             break;
                     }
@@ -71,7 +73,7 @@ public class AutoModeSelector {
                         case TwoHatchRocket:
                             return new HighTwoHatchRocketMode(true);
                         case TwoHatchCargoship:
-                            return new HighTwoHatchCargoshipMode(true);
+                            return new HighTwoHatchCargoshipBackwardsMode(true);
                         default:
                             break;
                     }
@@ -83,7 +85,7 @@ public class AutoModeSelector {
                         case TwoHatchRocket:
                             return new LowTwoHatchRocketMode(false);
                         case TwoHatchCargoship:
-                            return new LowTwoHatchCargoshipMode(false);
+                            return new LowTwoHatchCargoshipBackwardsMode(false);
                         default:
                             break;
                     }
@@ -93,7 +95,7 @@ public class AutoModeSelector {
                         case TwoHatchRocket:
                             return new HighTwoHatchRocketMode(false);
                         case TwoHatchCargoship:
-                            return new HighTwoHatchCargoshipMode(false);
+                            return new HighTwoHatchCargoshipBackwardsMode(false);
                         default:
                             break;
                     }

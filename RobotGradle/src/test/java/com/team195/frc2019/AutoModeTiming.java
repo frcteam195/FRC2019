@@ -31,12 +31,24 @@ public class AutoModeTiming {
 //        double farScaleBestCaseWait = 2 * AutoConstants.kWaitForCubeTime;
 //        double farScaleWorstCaseWait = farScaleBestCaseWait + 0.5 * 3;
 
+        double cargoHatchBackwardsDuration = mTrajectoryGenerator.getTrajectorySet().lowStartToSideCargoForwardFacing.get(mStartedLeft).getLastState().t() +
+//                mTrajectoryGenerator.getTrajectorySet().highStartToSideCargoForwardFacing.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().sideCargoForwardFacingToFeederStation.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().feederStationToFrontCargoHatchForward.get(mStartedLeft).getLastState().t() +
+                mTrajectoryGenerator.getTrajectorySet().frontCargoHatchForwardToFeederStation.get(mStartedLeft).getLastState().t();
+//        double farScaleBestCaseWait = 2 * AutoConstants.kWaitForCubeTime;
+//        double farScaleWorstCaseWait = farScaleBestCaseWait + 0.5 * 3;
+
         System.out.println("Rocket Hatch Only:");
         System.out.println("\tTrajectory Duration: " + rocketHatchDuration);
 //        System.out.println("\tBest Case Wait Duration: " + nearScaleBestCaseWait);
 //        System.out.println("\tWorst Case Wait Duration: " + nearScaleWorstCaseWait);
         System.out.println("Cargo Hatch Only:");
         System.out.println("\tTrajectory Duration: " + cargoHatchDuration);
+//        System.out.println("\tBest Case Wait Duration: " + farScaleBestCaseWait);
+//        System.out.println("\tWorst Case Wait Duration: " + farScaleWorstCaseWait);
+        System.out.println("Cargo Hatch Backwards Only:");
+        System.out.println("\tTrajectory Duration: " + cargoHatchBackwardsDuration);
 //        System.out.println("\tBest Case Wait Duration: " + farScaleBestCaseWait);
 //        System.out.println("\tWorst Case Wait Duration: " + farScaleWorstCaseWait);
     }

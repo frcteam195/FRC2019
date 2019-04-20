@@ -9,6 +9,10 @@ import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.Util;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -90,32 +94,50 @@ public class TrajectoryGeneratorTest {
     public void verifyValidPose(Pose2d pose) {
         assertTrue(pose.getRotation().getDegrees() <= 180);
         assertTrue(pose.getRotation().getDegrees() >= -180);
-        System.out.println("Pose: " + pose.toString());
+    }
+
+    public void reflectingPoseValidator(TrajectoryGenerator trajectoryGenerator) {
+        Field[] fields = TrajectoryGenerator.class.getFields();
+        Arrays.sort(fields, Comparator.comparing(Field::getName));
+        for (Field f:
+             fields) {
+            try {
+                Pose2d p = (Pose2d) f.get(trajectoryGenerator);
+                System.out.println(p.toString() + "\tPose: " + f.getName());
+                verifyValidPose(p);
+            } catch (Exception ex) {
+
+            }
+        }
     }
 
     @Test
     public void test() {
-        verifyValidPose(TrajectoryGenerator.kLowStartBackwardsPose);
-        verifyValidPose(TrajectoryGenerator.kHighStartBackwardsPose);
-        verifyValidPose(TrajectoryGenerator.kLowStartForwardsPose);
-        verifyValidPose(TrajectoryGenerator.kHighStartForwardsPose);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchIntermediatePose);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchPose);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketCloseHatchPose);
-        verifyValidPose(TrajectoryGenerator.kCloseSideFeederStation);
-        verifyValidPose(TrajectoryGenerator.kCloseSideBallReservoir);
-        verifyValidPose(TrajectoryGenerator.kHighStartCloseRocketPoint1);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchTurn1Point1Pose);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchTurn1Point2Pose);
-        verifyValidPose(TrajectoryGenerator.kCloseRocketCloseHatchTurn2Pose);
-        verifyValidPose(TrajectoryGenerator.kCloseCargoSideHatchForwardFacingPose);
-        verifyValidPose(TrajectoryGenerator.kCloseCargoFrontHatchPose);
-        verifyValidPose(TrajectoryGenerator.kCloseCargoFrontHatchTurn1Pose);
+//        verifyValidPose(TrajectoryGenerator.kLowStartBackwardsPose);
+//        verifyValidPose(TrajectoryGenerator.kHighStartBackwardsPose);
+//        verifyValidPose(TrajectoryGenerator.kLowStartForwardsPose);
+//        verifyValidPose(TrajectoryGenerator.kHighStartForwardsPose);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchIntermediatePose);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchPose);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketCloseHatchPose);
+//        verifyValidPose(TrajectoryGenerator.kCloseSideFeederStation);
+//        verifyValidPose(TrajectoryGenerator.kCloseSideBallReservoir);
+//        verifyValidPose(TrajectoryGenerator.kHighStartCloseRocketPoint1);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchTurn1Point1Pose);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketFarHatchTurn1Point2Pose);
+//        verifyValidPose(TrajectoryGenerator.kCloseRocketCloseHatchTurn2Pose);
+//        verifyValidPose(TrajectoryGenerator.kCloseCargoSideHatchForwardFacingPose);
+//        verifyValidPose(TrajectoryGenerator.kCloseCargoFrontHatchPose);
+//        verifyValidPose(TrajectoryGenerator.kCloseCargoFrontHatchTurn1Pose);
+//        verifyValidPose(TrajectoryGenerator.kCloseCargoFrontHatchForwardFacingPose);
+
+        reflectingPoseValidator(TrajectoryGenerator.getInstance());
 
         TrajectoryGenerator.getInstance().generateTrajectories();
 
         int counter = 0;
-//        //Next Path is failing. Too sharp
+        System.out.println("\n\n");
+        //Next Path is failing. Too sharp
 //        System.out.println("Testing path " + counter++);
 //        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().lowStartToCloseRocketFarHatch, true);
 //        System.out.println("Testing path " + counter++);
@@ -131,25 +153,41 @@ public class TrajectoryGeneratorTest {
 //        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketTurn2ToCloseHatch, true);
 //        System.out.println("Testing path " + counter++);
 //        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().closeRocketCloseHatchToBall, false);
-//        System.out.println("Testing path " + counter++);
+//
+//
 
+
+        System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().lowStartToSideCargoForwardFacing, false);
+
         System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().highStartToSideCargoForwardFacing, false);
+
         System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().sideCargoForwardFacingToFeederStation, true);
+
         System.out.println("Testing path " + counter++);
         //Next Path is suspect. Too sharp
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().feederStationToFrontCargoTurn1, false);
+
         System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().frontCargoTurn1ToFrontCargoHatch, true);
+
         System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().frontCargoHatchToBall, false);
-        System.out.println("Testing path " + counter++);
 
+        System.out.println("Testing path " + counter++);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().feederStationToFrontCargoHatchForward, false);
+
+        System.out.println("Testing path " + counter++);
+        verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().frontCargoHatchForwardToFeederStation, true);
+
+        System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().testPath, false);
+
         System.out.println("Testing path " + counter++);
         verifyMirroredTrajectories(TrajectoryGenerator.getInstance().getTrajectorySet().test90DegPath, false);
-        System.out.println("Testing path " + counter++);
+
+
     }
 }

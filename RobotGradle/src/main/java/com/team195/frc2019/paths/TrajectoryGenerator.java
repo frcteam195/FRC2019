@@ -16,12 +16,12 @@ import java.util.List;
 
 public class TrajectoryGenerator {
     private static final double kMaxVoltage = 9.0;
-    private static final double kMaxAccel = 80.0;
-    private static final double kMaxVelocity = 100.0;
+    private static final double kMaxAccel = 100.0;
+    private static final double kMaxVelocity = 120.0;
 
     private static final double kFirstPathMaxVoltage = 9.0;
-    private static final double kFirstPathMaxAccel = 80.0;
-    private static final double kFirstPathMaxVel = 100.0;
+    private static final double kFirstPathMaxAccel = 110.0;
+    private static final double kFirstPathMaxVel = 130.0;
 
     private static final double kMaxCentripetalAccel = 100.0;
 
@@ -116,6 +116,7 @@ public class TrajectoryGenerator {
 
     public static final Pose2d kCloseCargoSideHatchForwardFacingPose = new Pose2d(260, -45, Rotation2d.fromDegrees(0));
     public static final Pose2d kCloseCargoFrontHatchPose = new Pose2d(200, -10, backwardsStartRotation);
+    public static final Pose2d kCloseCargoFrontHatchForwardFacingPose = new Pose2d(200, -10, forwardsStartRotation);
 
     public static final Pose2d kCloseCargoFrontHatchTurn1Pose = kCloseSideFeederStation.transformBy(new Pose2d(110, 155, Rotation2d.fromDegrees(90)));
 
@@ -137,6 +138,9 @@ public class TrajectoryGenerator {
         public final MirroredTrajectory feederStationToFrontCargoTurn1;
         public final MirroredTrajectory frontCargoTurn1ToFrontCargoHatch;
         public final MirroredTrajectory frontCargoHatchToBall;
+
+        public final MirroredTrajectory feederStationToFrontCargoHatchForward;
+        public final MirroredTrajectory frontCargoHatchForwardToFeederStation;
 
         public final MirroredTrajectory testPath;
         public final MirroredTrajectory test90DegPath;
@@ -246,6 +250,22 @@ public class TrajectoryGenerator {
             frontCargoHatchToBall = generateMirroredTrajectory(false, Arrays.asList(
                     kCloseCargoFrontHatchPose,
                     kCloseSideBallReservoir),
+                    Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
+                    kMaxVelocity,
+                    kMaxAccel,
+                    kMaxVoltage);
+
+            feederStationToFrontCargoHatchForward = generateMirroredTrajectory(false, Arrays.asList(
+                    kCloseSideFeederStation,
+                    kCloseCargoFrontHatchForwardFacingPose),
+                    Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
+                    kMaxVelocity,
+                    kMaxAccel,
+                    kMaxVoltage);
+
+            frontCargoHatchForwardToFeederStation = generateMirroredTrajectory(true, Arrays.asList(
+                    kCloseCargoFrontHatchForwardFacingPose,
+                    kCloseSideFeederStation),
                     Collections.singletonList(new CentripetalAccelerationConstraint(kMaxCentripetalAccel)),
                     kMaxVelocity,
                     kMaxAccel,
