@@ -16,12 +16,12 @@ import java.util.List;
 
 public class TrajectoryGenerator {
     private static final double kMaxVoltage = 9.0;
-    private static final double kMaxAccel = 100.0;
-    private static final double kMaxVelocity = 120.0;
+    private static final double kMaxAccel = 40.0;
+    private static final double kMaxVelocity = 60.0;
 
     private static final double kFirstPathMaxVoltage = 9.0;
-    private static final double kFirstPathMaxAccel = 110.0;
-    private static final double kFirstPathMaxVel = 130.0;
+    private static final double kFirstPathMaxAccel = 80.0;
+    private static final double kFirstPathMaxVel = 100.0;
 
     private static final double kMaxCentripetalAccel = 100.0;
 

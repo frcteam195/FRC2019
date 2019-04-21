@@ -38,9 +38,9 @@ public class LowTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		runAction(new ParallelAction(lowStartToSideCargoForwardFacing,
-				new SeriesAction(new WaitAction(2.0), AutomatedActions.setTurretPosition(mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90))));
-		runAction(AutomatedActions.placeHatch());
-		runAction(new ParallelAction(sideCargoForwardFacingToFeederStation,
+				new SeriesAction(new WaitAction(0.35), AutomatedActions.setTurretPosition(!mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90))));
+		runAction(AutomatedActions.placeHatchAuto());
+		runAction(new ParallelAction(sideCargoForwardFacingToFeederStation, AutomatedActions.setTurretPosition(TurretPositions.Home),
 				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, -160),
 						new Translation2d(50, -110), mStartedLeft),
 						AutomatedActions.pickupHatchFeederStation())));
@@ -49,7 +49,7 @@ public class LowTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 						new WaitAction(0.5),
 						AutomatedActions.ballArmSet(BallIntakeArmPositions.Up)
 						)));
-		runAction(AutomatedActions.placeHatch());
+		runAction(AutomatedActions.placeHatchAuto());
 		runAction(new ParallelAction(frontCargoHatchForwardToFeederStation,
 				new SeriesAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down),
 						new WaitAction(0.5),

@@ -13,11 +13,11 @@ public class CalConstants {
 
 	// Tuned dynamics
 	public static final double kRobotLinearInertia = 68.946;  // kg TODO tune
-	public static final double kRobotAngularInertia = 64.5986;  // kg m^2 TODO tune
-	public static final double kRobotAngularDrag = 21.0;  // N*m / (rad/sec) TODO tune
-	public static final double kDriveVIntercept = 0.23319967; //0.781046438 angular  // V
-	public static final double kDriveKv = 0.1825403887;  // V per rad/s
-	public static final double kDriveKa = 0.005275085;  // V per rad/s^2
+	public static final double kRobotAngularInertia = 125;  // kg m^2 TODO tune
+	public static final double kRobotAngularDrag = 0.1;  // N*m / (rad/sec) TODO tune
+	public static final double kDriveVIntercept = 0.30165000; //0.781046438 angular  // V
+	public static final double kDriveKv = 0.186163041;  // V per rad/s
+	public static final double kDriveKa = 0.0086739979;  // V per rad/s^2
 
 
 	// Pose of the LIDAR frame w.r.t. the robot frame
@@ -38,18 +38,18 @@ public class CalConstants {
 
 	/* CONTROL LOOP GAINS */
 
-	public static final double kDriveDefaultVoltageCompensationSetpoint = 11.0;
+	public static final double kDriveDefaultVoltageCompensationSetpoint = 12.0;
 	public static final double kDriveDefaultOpenLoopRampRate = 0.1;
 
 	// PID gains for drive velocity loop (LOW GEAR)
 	// Units: setpoint, error, and output are in ticks per second.
-	public static final double kDriveLowGearVelocityKp = 0.0003;
+	public static final double kDriveLowGearVelocityKp = 0.002;
 	public static final double kDriveLowGearVelocityKi = 0.0;
-	public static final double kDriveLowGearVelocityKd = 0.0007;
+	public static final double kDriveLowGearVelocityKd = 0.000;
 	public static final double kDriveLowGearVelocityKf = 0;//0.000176;
-	public static final double kDriveLowGearVelocityDFilter = 0.8;
+	public static final double kDriveLowGearVelocityDFilter = 1;
 	public static final int kDriveLowGearVelocityIZone = 0;
-	public static final double kDriveVoltageRampRate = 0.0;
+	public static final double kDriveVoltageRampRate = 0.1;
 
 	// PID gains for drive position loop (LOW GEAR)
 	// Units: setpoint, error, and output are in ticks per second.
