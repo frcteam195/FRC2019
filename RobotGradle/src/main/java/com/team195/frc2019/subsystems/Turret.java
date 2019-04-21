@@ -3,7 +3,6 @@ package com.team195.frc2019.subsystems;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.constants.CalConstants;
-import com.team195.frc2019.RobotState;
 import com.team195.frc2019.auto.actions.SetBeakAction;
 import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.constants.DeviceIDConstants;
@@ -25,6 +24,8 @@ import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team195.lib.util.TeleopActionRunner;
+import com.team195.lib.util.TrajectoryFollowingMotion.PathFollowerRobotState;
+import com.team195.lib.util.TrajectoryFollowingMotion.RigidTransform2d;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
@@ -201,7 +202,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 			synchronized (Turret.this) {
 				switch (mTurretControlMode) {
 					case AUTO_TRACK:
-						Pose2d robotCurrentPos = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+						RigidTransform2d robotCurrentPos = PathFollowerRobotState.getInstance().getLatestFieldToVehicle().getValue();
 						Translation2d currentRocketTarget;
 
 						if (robotCurrentPos.getTranslation().x() > 0)

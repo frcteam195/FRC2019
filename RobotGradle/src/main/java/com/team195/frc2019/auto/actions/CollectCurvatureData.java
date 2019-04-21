@@ -1,7 +1,7 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.RobotState;
 import com.team195.frc2019.subsystems.Drive;
+import com.team195.lib.util.TrajectoryFollowingMotion.PathFollowerRobotState;
 import com.team254.lib.physics.DriveCharacterization;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
@@ -15,7 +15,7 @@ public class CollectCurvatureData implements Action {
     private static final double kStartTime = 0.25;
     private static final double kRampRate = 0.02;
     private static final Drive mDrive = Drive.getInstance();
-    private static final RobotState mRobotState = RobotState.getInstance();
+    private static final PathFollowerRobotState mRobotState = PathFollowerRobotState.getInstance();
 
     private final ReflectingCSVWriter<DriveCharacterization.CurvatureDataPoint> mCSVWriter;
     private final List<DriveCharacterization.CurvatureDataPoint> mCurvatureData;

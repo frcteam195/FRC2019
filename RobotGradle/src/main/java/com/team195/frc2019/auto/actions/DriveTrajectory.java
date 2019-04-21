@@ -1,35 +1,34 @@
 package com.team195.frc2019.auto.actions;
 
-import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
-import com.team254.lib.geometry.Pose2dWithCurvature;
-import com.team254.lib.trajectory.TimedView;
-import com.team254.lib.trajectory.Trajectory;
-import com.team254.lib.trajectory.TrajectoryIterator;
-import com.team254.lib.trajectory.timing.TimedState;
+import com.team195.lib.util.TrajectoryFollowingMotion.Path;
+import com.team195.lib.util.TrajectoryFollowingMotion.PathContainer;
+import com.team195.lib.util.TrajectoryFollowingMotion.PathFollowerRobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 public class DriveTrajectory implements Action {
     private static final Drive mDrive = Drive.getInstance();
-    private static final RobotState mRobotState = RobotState.getInstance();
+    private static final PathFollowerRobotState mRobotState = PathFollowerRobotState.getInstance();
 
-    private final TrajectoryIterator<TimedState<Pose2dWithCurvature>> mTrajectory;
+    private PathContainer mPathContainer;
+    private Path mPath;
     private final boolean mResetPose;
 
-    public DriveTrajectory(Trajectory<TimedState<Pose2dWithCurvature>> trajectory) {
-        this(trajectory, false);
+    public DriveTrajectory(PathContainer p) {
+        this(p, false);
     }
 
 
-    public DriveTrajectory(Trajectory<TimedState<Pose2dWithCurvature>> trajectory, boolean resetPose) {
-        mTrajectory = new TrajectoryIterator<>(new TimedView<>(trajectory));
+    public DriveTrajectory(PathContainer p, boolean resetPose) {
+        mPathContainer = p;
+        mPath = mPathContainer.buildPath();
         mResetPose = resetPose;
     }
 
     @Override
     public boolean isFinished() {
-        if (mDrive.isDoneWithTrajectory()) {
+        if (mDrive.isDoneWithPath()) {
             ConsoleReporter.report("Trajectory finished");
             return true;
         }
@@ -46,12 +45,11 @@ public class DriveTrajectory implements Action {
 
     @Override
     public void start() {
-        ConsoleReporter.report("Starting trajectory! (length=" + mTrajectory.getRemainingProgress() + ")");
+        ConsoleReporter.report("Starting trajectory!");
         if (mResetPose) {
-            mRobotState.reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
+            mRobotState.reset(Timer.getFPGATimestamp(), mPathContainer.getStartPose());
         }
-        mDrive.setDriveControlState(Drive.DriveControlState.PATH_FOLLOWING);
-        mDrive.setTrajectory(mTrajectory);
+        mDrive.setWantDrivePath(mPath, mPathContainer.isReversed());
     }
 }
 

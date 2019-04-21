@@ -4,7 +4,12 @@ import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.AutoModeEndedException;
 import com.team195.frc2019.auto.actions.*;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
+import com.team195.frc2019.paths.LowLow.Path1;
+import com.team195.frc2019.paths.LowLow.Path2;
+import com.team195.frc2019.paths.LowLow.Path3;
+import com.team195.frc2019.paths.LowLow.Path4;
 import com.team195.frc2019.paths.TrajectoryGenerator;
+import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
@@ -24,10 +29,10 @@ public class LowTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 	public LowTwoHatchCargoshipBackwardsMode(boolean robotStartedOnLeft) {
 		mStartedLeft = robotStartedOnLeft;
 
-		lowStartToSideCargoForwardFacing = new DriveTrajectory(mTrajectoryGenerator.getTrajectorySet().lowStartToSideCargoForwardFacing.get(mStartedLeft), true);
-		sideCargoForwardFacingToFeederStation = new DriveTrajectory(mTrajectoryGenerator.getTrajectorySet().sideCargoForwardFacingToFeederStation.get(mStartedLeft));
-		feederStationToFrontCargoHatchForward = new DriveTrajectory(mTrajectoryGenerator.getTrajectorySet().feederStationToFrontCargoHatchForward.get(mStartedLeft));
-		frontCargoHatchForwardToFeederStation = new DriveTrajectory(mTrajectoryGenerator.getTrajectorySet().frontCargoHatchForwardToFeederStation.get(mStartedLeft));
+		lowStartToSideCargoForwardFacing = new DriveTrajectory(new Path1(), true);
+		sideCargoForwardFacingToFeederStation = new DriveTrajectory(new Path2());
+		feederStationToFrontCargoHatchForward = new DriveTrajectory(new Path3());
+		frontCargoHatchForwardToFeederStation = new DriveTrajectory(new Path4());
 	}
 
 	@Override
@@ -37,12 +42,14 @@ public class LowTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 
 	@Override
 	protected void routine() throws AutoModeEndedException {
+		ConsoleReporter.report("Two Hatch Cargo Auto Mode");
 		runAction(new ParallelAction(lowStartToSideCargoForwardFacing,
 				new SeriesAction(new WaitAction(0.35), AutomatedActions.setTurretPosition(!mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90))));
 		runAction(AutomatedActions.placeHatchAuto());
+		ConsoleReporter.report("Completed First Path");
 		runAction(new ParallelAction(sideCargoForwardFacingToFeederStation, AutomatedActions.setTurretPosition(TurretPositions.Home),
-				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, -160),
-						new Translation2d(50, -110), mStartedLeft),
+				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, 0),
+						new Translation2d(95, 70), mStartedLeft),
 						AutomatedActions.pickupHatchFeederStation())));
 		runAction(new ParallelAction(feederStationToFrontCargoHatchForward,
 				new SeriesAction(AutomatedActions.setTurretPosition(TurretPositions.Back180),

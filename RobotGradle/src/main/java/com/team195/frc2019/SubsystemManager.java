@@ -100,10 +100,10 @@ public class SubsystemManager implements ILooper {
 				mCriticalCheckTimeout.reset();
 			}
 
-			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
+//			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());
-				mLogDataTimeout.reset();
-			}
+//				mLogDataTimeout.reset();
+//			}
 		}
 
 		@Override
@@ -139,10 +139,10 @@ public class SubsystemManager implements ILooper {
 				mCriticalCheckTimeout.reset();
 			}
 
-			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
+//			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
 				LogDataReporter.reportOSCData(generateReport());
-				mLogDataTimeout.reset();
-			}
+//				mLogDataTimeout.reset();
+//			}
 		}
 
 		@Override

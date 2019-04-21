@@ -8,15 +8,12 @@ import com.team195.frc2019.controllers.HIDController;
 import com.team195.frc2019.controllers.LEDController;
 import com.team195.frc2019.loops.Looper;
 import com.team195.frc2019.monitors.ConnectionMonitor;
-import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
 import com.team195.lib.util.TeleopActionRunner;
-import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.*;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
 public class Robot extends TimedRobot {
@@ -51,7 +48,6 @@ public class Robot extends TimedRobot {
 			mHIDController = HIDController.getInstance();
 
 			mSubsystemManager = SubsystemManager.getInstance(
-				RobotStateEstimator.getInstance(),
 				Drive.getInstance(),
 				Elevator.getInstance(),
 				BallIntakeArm.getInstance(),
@@ -68,7 +64,9 @@ public class Robot extends TimedRobot {
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-			TrajectoryGenerator.getInstance().generateTrajectories();
+			mEnabledLooper.register(RobotStateEstimator.getInstance());
+
+//			TrajectoryGenerator.getInstance().generateTrajectories();
 
 			mLED.start();
 			mLED.setRequestedState(LEDController.LEDState.BLINK);
@@ -76,8 +74,6 @@ public class Robot extends TimedRobot {
 			ConnectionMonitor.getInstance();
 
 			Drive.getInstance().zeroSensors();
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
-
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -107,7 +103,6 @@ public class Robot extends TimedRobot {
 			mDisabledLooper.stop();
 			mInfrastructure.setIsDuringAuto(true);
 			Drive.getInstance().zeroSensors();
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 			mDrive.setBrakeMode(true);
 			mDrive.forceBrakeModeUpdate();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);

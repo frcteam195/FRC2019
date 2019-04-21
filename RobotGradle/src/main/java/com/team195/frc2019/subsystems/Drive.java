@@ -3,12 +3,11 @@ package com.team195.frc2019.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team195.frc2019.constants.CalConstants;
+import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
-import com.team195.frc2019.planners.DriveMotionPlanner;
-import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.reporters.ReflectingLogDataGenerator;
@@ -18,10 +17,11 @@ import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.*;
 import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.MotorDiagnostics;
+import com.team195.lib.util.TrajectoryFollowingMotion.*;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
-import com.team254.lib.trajectory.TrajectoryIterator;
+import com.team254.lib.geometry.Twist2d;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
 import com.team254.lib.util.ReflectingCSVWriter;
@@ -44,9 +44,11 @@ public class Drive extends Subsystem {
 	private PeriodicIO mPeriodicIO;
 	private ReflectingCSVWriter<PeriodicIO> mCSVWriter = null;
 	private ReflectingLogDataGenerator<PeriodicIO> mLogDataGenerator = new ReflectingLogDataGenerator<>(PeriodicIO.class);
-	private DriveMotionPlanner mMotionPlanner;
 	private Rotation2d mGyroOffset = Rotation2d.identity();
 	private boolean mOverrideTrajectory = false;
+	private Path mCurrentPath = null;
+	private PathFollower mPathFollower;
+	private PathFollowerRobotState mRobotState = PathFollowerRobotState.getInstance();
 
 	private AtomicBoolean mIsBrakeMode = new AtomicBoolean(false);
 	private AtomicBoolean mForceBrakeUpdate = new AtomicBoolean(false);
@@ -86,7 +88,10 @@ public class Drive extends Subsystem {
 					case OPEN_LOOP:
 						break;
 					case PATH_FOLLOWING:
-						updatePathFollower();
+						if (mPathFollower != null) {
+							updatePathFollower(timestamp);
+							//mCSVWriter.add(mPathFollower.getDebug());
+						}
 						break;
 					case CLIMB:
 					case OPEN_LOOP_AUTOMATED:
@@ -168,8 +173,6 @@ public class Drive extends Subsystem {
 		// Force a CAN message across.
 		mPrevBrakeMode = false;
 		setBrakeMode(true);
-
-		mMotionPlanner = new DriveMotionPlanner();
 
 		mLeftDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isLeftDriveEncoderPresent());
 		mRightDriveEncoderPresent = new CachedValue<>(500, (t) -> mElevator.isRightDriveEncoderPresent());
@@ -283,22 +286,6 @@ public class Drive extends Subsystem {
 		mPeriodicIO.right_feedforward = feedforward.getRight();
 	}
 
-	public synchronized void setTrajectory(TrajectoryIterator<TimedState<Pose2dWithCurvature>> trajectory) {
-		if (mMotionPlanner != null) {
-			mOverrideTrajectory = false;
-			mMotionPlanner.reset();
-			mMotionPlanner.setTrajectory(trajectory);
-			setDriveControlState(DriveControlState.PATH_FOLLOWING);
-		}
-	}
-
-	public boolean isDoneWithTrajectory() {
-		if (mMotionPlanner == null || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
-			return false;
-		}
-		return mMotionPlanner.isDone() || mOverrideTrajectory;
-	}
-
 	public boolean isHighGear() {
 		return false;
 	}
@@ -359,6 +346,7 @@ public class Drive extends Subsystem {
 	@Override
 	public void zeroSensors() {
 		setHeading(Rotation2d.identity());
+		mRobotState.reset(Timer.getFPGATimestamp(), RigidTransform2d.identity());
 		resetEncoders();
 	}
 
@@ -410,28 +398,28 @@ public class Drive extends Subsystem {
 		return mPeriodicIO.right_velocity_RPM;
 	}
 
-	private void updatePathFollower() {
-		if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
-			final double now = Timer.getFPGATimestamp();
+	/**
+	 * Called periodically when the robot is in path following mode. Updates the path follower with the robots latest
+	 * pose, distance driven, and velocity, then updates the wheel velocity setpoints.
+	 */
+	private void updatePathFollower(double timestamp) {
+		RigidTransform2d robot_pose = mRobotState.getLatestFieldToVehicle().getValue();
+		Twist2d command = mPathFollower.update(timestamp, robot_pose,
+				PathFollowerRobotState.getInstance().getDistanceDriven(), PathFollowerRobotState.getInstance().getPredictedVelocity().dx);
 
-			DriveMotionPlanner.Output output = mMotionPlanner.update(now, RobotState.getInstance().getFieldToVehicle(now));
+		if (!mPathFollower.isFinished()) {
+			Kinematics.DriveVelocity setpoint = Kinematics.inverseKinematics(command);
+			mPeriodicIO.left_demand = setpoint.left * CalConstants.kDriveGearRatioMotorConversionFactor;
+			mPeriodicIO.right_demand = setpoint.right * CalConstants.kDriveGearRatioMotorConversionFactor;
 
-			mPeriodicIO.error = mMotionPlanner.error();
-			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
-
-			if (!mOverrideTrajectory) {
-				setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor,
-										   radiansPerSecondToRPM(output.right_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor),
-						new DriveSignal(output.left_feedforward_voltage / 12.0, output.right_feedforward_voltage / 12.0));
-
-				mPeriodicIO.left_accel = radiansPerSecondToRPM(output.left_accel) / 1000.0;
-				mPeriodicIO.right_accel = radiansPerSecondToRPM(output.right_accel) / 1000.0;
-			} else {
-				setVelocity(DriveSignal.BRAKE, DriveSignal.BRAKE);
-				mPeriodicIO.left_accel = mPeriodicIO.right_accel = 0.0;
-			}
+			//ConsoleReporter.report(mPathFollower.getDebug());
+			//ConsoleReporter.report("Left2Cube: " + inchesPerSecondToRpm(setpoint.left) + ", Right2Cube: " + inchesPerSecondToRpm(setpoint.right));
+			//ConsoleReporter.report("Left2Cube Actual: " + Util.convertNativeUnitsToRPM(mLeftMaster.getSelectedSensorVelocity(0)) + ", Right2Cube Actual: " + Util.convertNativeUnitsToRPM(mRightMaster.getSelectedSensorVelocity(0)));
 		} else {
-			ConsoleReporter.report("Drive is not in path following state", MessageLevel.ERROR);
+			mPeriodicIO.left_demand = 0;
+			mPeriodicIO.right_demand = 0;
+			ConsoleReporter.report("Completed path!");
+			setDriveControlState(DriveControlState.VELOCITY);
 		}
 	}
 
@@ -525,6 +513,71 @@ public class Drive extends Subsystem {
 
 			if (mForceBrakeUpdate.get())
 				mForceBrakeUpdate.set(false);
+		}
+	}
+
+	/**
+	 * Configures the drivebase to drive a path. Used for autonomous driving
+	 *
+	 * @see Path
+	 */
+	public synchronized void setWantDrivePath(Path path, boolean reversed) {
+		if (mCurrentPath != path || mDriveControlState != DriveControlState.PATH_FOLLOWING) {
+			setDriveControlState(DriveControlState.PATH_FOLLOWING);
+			PathFollowerRobotState.getInstance().resetDistanceDriven();
+			mPathFollower = new PathFollower(path, reversed,
+					new PathFollower.Parameters(
+							new Lookahead(Constants.kMinLookAhead, Constants.kMaxLookAhead,
+									Constants.kMinLookAheadSpeed, Constants.kMaxLookAheadSpeed),
+							Constants.kInertiaSteeringGain, Constants.kPathFollowingProfileKp,
+							Constants.kPathFollowingProfileKi, Constants.kPathFollowingProfileKv,
+							Constants.kPathFollowingProfileKffv, Constants.kPathFollowingProfileKffa,
+							Constants.kPathFollowingMaxVel, Constants.kPathFollowingMaxAccel,
+							Constants.kPathFollowingGoalPosTolerance, Constants.kPathFollowingGoalVelTolerance,
+							Constants.kPathStopSteeringDistance));
+
+			mCurrentPath = path;
+		} else {
+			ConsoleReporter.report("Error setting path for drive!", MessageLevel.ERROR);
+		}
+	}
+
+	public synchronized boolean isDoneWithPath() {
+		if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+			boolean done = mPathFollower.isFinished();
+			if (done)
+				ConsoleReporter.report("Robot has completed the path");
+			return done;
+		} else {
+			ConsoleReporter.report("Robot is not in path following mode");
+			if (mPathFollower != null)
+				return mPathFollower.isFinished();
+			else
+				return true;
+		}
+	}
+
+	public synchronized void forceDoneWithPath() {
+		if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+			ConsoleReporter.report("Forcing robot to stop the path");
+			mPathFollower.forceFinish();
+		} else {
+			ConsoleReporter.report("Robot is not in path following mode");
+		}
+	}
+
+	public synchronized boolean hasPassedMarker(String marker) {
+		if (mDriveControlState == DriveControlState.PATH_FOLLOWING && mPathFollower != null) {
+			ConsoleReporter.report("Robot has passed marker " + marker);
+			return mPathFollower.hasPassedMarker(marker);
+		} else {
+			ConsoleReporter.report("Robot is not in path following mode");
+			if (mPathFollower != null)
+				return (mPathFollower.isFinished() || mPathFollower.hasPassedMarker(marker));
+			else {
+				//TODO: Test with false value
+				return true;
+			}
 		}
 	}
 
