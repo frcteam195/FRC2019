@@ -16,7 +16,7 @@ public class Path1 implements PathContainer {
 	public Path buildPath() {
 		ArrayList<Waypoint> sWaypoints = new ArrayList<Waypoint>();
 		sWaypoints.add(new Waypoint(67,115,0,0));
-		sWaypoints.add(new Waypoint(270,115,0,100));
+		sWaypoints.add(new Waypoint(240,115,0,100));
 
 		return PathBuilder.buildPathFromWaypoints(sWaypoints);
 	}

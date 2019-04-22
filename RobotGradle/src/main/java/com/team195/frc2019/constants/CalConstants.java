@@ -43,9 +43,9 @@ public class CalConstants {
 
 	// PID gains for drive velocity loop (LOW GEAR)
 	// Units: setpoint, error, and output are in ticks per second.
-	public static final double kDriveLowGearVelocityKp = 0.00024;
+	public static final double kDriveLowGearVelocityKp = 0.0001;
 	public static final double kDriveLowGearVelocityKi = 0.0;
-	public static final double kDriveLowGearVelocityKd = 0.0006;
+	public static final double kDriveLowGearVelocityKd = 0.0001;
 	public static final double kDriveLowGearVelocityKf = 0.000215;
 	public static final double kDriveLowGearVelocityDFilter = 0.8;
 	public static final int kDriveLowGearVelocityIZone = 0;

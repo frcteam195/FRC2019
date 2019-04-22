@@ -43,8 +43,8 @@ public class Constants {
     public static final double kInertiaSteeringGain = 0.0; // angular velocity command is multiplied by this gain *
     // our speed
     // in inches per sec
-    public static final double kSegmentCompletionTolerance = 2; // inches
-    public static final double kPathFollowingMaxAccel = 80.0; // inches per second^2
+    public static final double kSegmentCompletionTolerance = 5; // inches
+    public static final double kPathFollowingMaxAccel = 120.0; // inches per second^2
     public static final double kPathFollowingMaxVel = 120.0; // inches per second
 
     public static final double kPathFollowingProfileKp = 5.0;   //Used to be 5 when tuning our paths

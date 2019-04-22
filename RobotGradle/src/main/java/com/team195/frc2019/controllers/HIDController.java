@@ -161,10 +161,10 @@ public class HIDController {
 
 					if (driveJoystick.getRawButton(1)) {
 						VisionTracker.getInstance().setTargetMode(VisionTracker.TargetMode.HATCH);
-						if (!VisionTracker.getInstance().isTargetAreaReached())
-							VisionTracker.getInstance().setVisionEnabled(true);
-						else
-							VisionTracker.getInstance().setVisionEnabled(false);
+//						if (!VisionTracker.getInstance().isTargetAreaReached())
+						VisionTracker.getInstance().setVisionEnabled(true);
+//						else
+//							VisionTracker.getInstance().setVisionEnabled(false);
 					} else if (driveJoystick.getRawButton(2)) {
 						VisionTracker.getInstance().setTargetMode(VisionTracker.TargetMode.HATCH);
 						VisionTracker.getInstance().setVisionEnabled(true);

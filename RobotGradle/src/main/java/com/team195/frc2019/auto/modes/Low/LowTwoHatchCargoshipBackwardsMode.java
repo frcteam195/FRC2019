@@ -44,13 +44,16 @@ public class LowTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 	protected void routine() throws AutoModeEndedException {
 		ConsoleReporter.report("Two Hatch Cargo Auto Mode");
 		runAction(new ParallelAction(lowStartToSideCargoForwardFacing,
-				new SeriesAction(new WaitAction(0.35), AutomatedActions.setTurretPosition(!mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90))));
+				new SeriesAction(new WaitAction(0.35), AutomatedActions.setTurretPosition(!mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90)),
+				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(164, 0),
+						new Translation2d(230, 150), mStartedLeft), new ForceTerminatePathAction())));
+		runAction(new AutoFindSidewardsTargetAction());
 		runAction(AutomatedActions.placeHatchAuto());
 		ConsoleReporter.report("Completed First Path");
 		runAction(new ParallelAction(sideCargoForwardFacingToFeederStation, AutomatedActions.setTurretPosition(TurretPositions.Home),
 				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, 0),
-						new Translation2d(95, 70), mStartedLeft),
-						AutomatedActions.pickupHatchFeederStation())));
+						new Translation2d(65, 70), mStartedLeft), new ForceTerminatePathAction(),
+						new ParallelAction(AutomatedActions.pickupHatchFeederStation(), new AutoFindForwardsTargetAction(true)))));
 		runAction(new ParallelAction(feederStationToFrontCargoHatchForward,
 				new SeriesAction(AutomatedActions.setTurretPosition(TurretPositions.Back180),
 						new WaitAction(0.5),
