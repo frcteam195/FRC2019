@@ -100,31 +100,31 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-//		teleopInit();
-		try {
-			CrashTracker.logAutoInit();
-
-			mDisabledLooper.stop();
-			mInfrastructure.setIsDuringAuto(true);
-			Drive.getInstance().zeroSensors();
-			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
-			mDrive.setBrakeMode(true);
-			mDrive.forceBrakeModeUpdate();
-			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
-			mEnabledLooper.start();
-			mHIDController.start();
-
-			if (mAutoModeExecutor != null) {
-				ConsoleReporter.report("Start Auto Mode");
-				mAutoModeExecutor.start();
-			}
-		} catch (Exception ex) {
-			CrashTracker.logThrowableCrash(ex);
-		}
-		catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+		teleopInit();
+//		try {
+//			CrashTracker.logAutoInit();
+//
+//			mDisabledLooper.stop();
+//			mInfrastructure.setIsDuringAuto(true);
+//			Drive.getInstance().zeroSensors();
+//			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+//			mDrive.setBrakeMode(true);
+//			mDrive.forceBrakeModeUpdate();
+//			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
+//			mEnabledLooper.start();
+//			mHIDController.start();
+//
+//			if (mAutoModeExecutor != null) {
+//				ConsoleReporter.report("Start Auto Mode");
+//				mAutoModeExecutor.start();
+//			}
+//		} catch (Exception ex) {
+//			CrashTracker.logThrowableCrash(ex);
+//		}
+//		catch (Throwable t) {
+//			CrashTracker.logThrowableCrash(t);
+//			throw t;
+//		}
 	}
 
 	@Override
