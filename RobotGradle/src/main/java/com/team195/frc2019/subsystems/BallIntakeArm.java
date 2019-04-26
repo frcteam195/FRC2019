@@ -44,6 +44,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	private final CachedValue<Boolean> mBallIntakeArmEncoderPresent;
 	private final CachedValue<Boolean> mBallIntakeArmMasterHasReset;
 
+	private boolean mBallIntakeBarClimbLatched = false;
+
 	private BallIntakeArm() {
 		mPeriodicIO = new PeriodicIO();
 
@@ -200,6 +202,14 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor.setEncoderPosition(0);
 	}
 
+	public synchronized void setBallIntakeBarClimbLatched() {
+		mBallIntakeBarClimbLatched = true;
+	}
+
+	public boolean isBallIntakeBarClimbLatched() {
+		return mBallIntakeBarClimbLatched;
+	}
+
 	@Override
 	public void registerEnabledLoops(ILooper in) {
 		in.register(mLoop);
@@ -262,6 +272,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	public void dropClimbBar() {
 		mBallIntakeBarDropSolenoid.set(true);
+		setBallIntakeBarClimbLatched();
 	}
 
 	@Override

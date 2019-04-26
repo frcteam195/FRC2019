@@ -7,14 +7,17 @@ import com.team195.lib.util.TimeoutTimer;
 public class DropBallArmClimbBarAction implements Action {
 	private static final BallIntakeArm mBallIntakeArm = BallIntakeArm.getInstance();
 
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait + AutoConstants.kArmFallWait);
+	private TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait + AutoConstants.kArmFallWait);
 
 	public DropBallArmClimbBarAction() {
 	}
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut();
+		if (mTimeoutTimer != null)
+			return mTimeoutTimer.isTimedOut();
+		else
+			return true;
 	}
 
 	@Override
@@ -28,6 +31,9 @@ public class DropBallArmClimbBarAction implements Action {
 
 	@Override
 	public void start() {
-		mBallIntakeArm.dropClimbBar();
+		if (!mBallIntakeArm.isBallIntakeBarClimbLatched())
+			mBallIntakeArm.dropClimbBar();
+		else
+			mTimeoutTimer = null;
 	}
 }

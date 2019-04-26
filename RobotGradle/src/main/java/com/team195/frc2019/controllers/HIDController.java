@@ -22,6 +22,7 @@ import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.CrashTrackingRunnable;
 import com.team254.lib.util.DriveSignal;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
 
 import java.util.function.Function;
@@ -244,7 +245,9 @@ public class HIDController {
 						ConsoleReporter.report("Commanding Climb Lvl2 Action", MessageLevel.INFO);
 						TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
 					} else if (buttonBox2.getRisingEdgeButton(7)) {
-
+						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
+						|| !DriverStation.getInstance().isFMSAttached())
+							TeleopActionRunner.runAction(AutomatedAction.fromAction(new DropBallArmClimbBarAction(), Constants.kActionTimeoutS));
 					} else if (buttonBox2.getRisingEdgeButton(8)) {
 
 					} else if (buttonBox2.getRisingEdgeButton(9)) {
@@ -260,7 +263,7 @@ public class HIDController {
 						TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
 					} else if (buttonBox2.getRisingEdgeButton(13)) {
 						ConsoleReporter.report("Commanding Automated Climb Action", MessageLevel.INFO);
-						TeleopActionRunner.runAction(AutomatedActions.climbAutomated((t) -> buttonBox2.getRawButton(13)));
+						TeleopActionRunner.runAction(AutomatedActions.climbMax((t) -> buttonBox2.getRawButton(13)));
 					} else if (buttonBox2.getRisingEdgeButton(14)) {
 						//Flash LEDs
 						LEDController.getInstance().setRequestedState(LEDController.LEDState.BLINK);

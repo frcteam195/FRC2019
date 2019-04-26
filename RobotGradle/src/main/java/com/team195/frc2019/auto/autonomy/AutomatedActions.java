@@ -1,19 +1,14 @@
 package com.team195.frc2019.auto.autonomy;
 
+import com.team195.frc2019.auto.actions.climb.*;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.constants.AutoConstants;
 import com.team195.frc2019.auto.actions.*;
-import com.team195.frc2019.auto.actions.climb.SetClimbRackDownAction;
-import com.team195.frc2019.auto.actions.climb.SetClimbRackUpAction;
-import com.team195.frc2019.auto.actions.climb.SetDriveRampDownPowerAction;
-import com.team195.frc2019.auto.actions.climb.SetIntakeBarForwardClimbAction;
 import com.team195.frc2019.subsystems.*;
 import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,6 +55,27 @@ public class AutomatedActions {
 		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 		actionArrayList.add(new SetDrivePTOAction(false));
 		actionArrayList.add(new SetDriveRampDownPowerAction(0.4));
+
+		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance(), BallIntakeArm.getInstance());
+	}
+
+	public static AutomatedAction climbMax(Function<Void, Boolean> buttonGetterMethod) {
+		ArrayList<Action> actionArrayList = new ArrayList<>();
+
+		BallIntakeArm.getInstance().configureClimbCurrentLimit();
+		Drive.getInstance().configureClimbCurrentLimit();
+
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetElevatorHeightAction(ElevatorPositions.Down),
+				new SetTurretPositionAction(TurretPositions.Home))));
+		actionArrayList.add(new DropBallArmClimbBarAction());
+		actionArrayList.add(new SetBallArmRotationAction(BallIntakeArmPositions.Down));
+		actionArrayList.add(new SetDrivePTOAction(true));
+		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake),
+				new HoldOpenLoopDriveClimbAction(1, 1, buttonGetterMethod))));
+		actionArrayList.add(new SetClimbRackUpAction());
+		actionArrayList.add(new SetDrivePTOAction(false));
+		actionArrayList.add(new SetDriveRampDownPowerAction(0.4));
+		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
 
 		return AutomatedAction.fromAction(new SeriesAction(actionArrayList), 300, Drive.getInstance(), BallIntakeArm.getInstance());
 	}
