@@ -196,6 +196,12 @@ public class Drive extends Subsystem {
 		mRightSlaveB.addConfigStatement((t) -> mRightSlaveB.setSmartCurrentLimit(CalConstants.kDriveRightClimbCurrentLim));
 	}
 
+	public void configureRetractCurrentLimit() {
+		mLeftMaster.addConfigStatement((t) -> mLeftMaster.setSmartCurrentLimit(CalConstants.kDriveLeftRetractCurrentLim));
+		mLeftSlaveA.addConfigStatement((t) -> mLeftSlaveA.setSmartCurrentLimit(CalConstants.kDriveLeftRetractCurrentLim));
+		mLeftSlaveB.addConfigStatement((t) -> mLeftSlaveB.setSmartCurrentLimit(CalConstants.kDriveLeftRetractCurrentLim));
+	}
+
 	public static Drive getInstance() {
 		return mInstance;
 	}

@@ -18,7 +18,7 @@ public class SetClimbRackUpAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut() || Math.abs(mDrive.getRawLeftSparkEncoder()) < 3;
+		return mTimeoutTimer.isTimedOut() || Math.abs(mDrive.getRawLeftSparkEncoder()) < 2;
 	}
 
 	@Override
@@ -34,6 +34,7 @@ public class SetClimbRackUpAction implements Action {
 
 	@Override
 	public void start() {
-		mDrive.setClimbLeft(-0.5);
+		mDrive.configureRetractCurrentLimit();
+		mDrive.setClimbLeft(-1);
 	}
 }

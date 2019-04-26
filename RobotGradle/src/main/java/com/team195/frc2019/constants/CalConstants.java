@@ -65,6 +65,8 @@ public class CalConstants {
 	public static final int kDriveLeftClimbCurrentLim = 55;
 	public static final int kDriveRightClimbCurrentLim = 65;
 
+	public static final int kDriveLeftRetractCurrentLim = 40;
+
 	//17.25:1
 	public static final double kElevatorPositionKp = 1.9;
 	public static final double kElevatorPositionKi = 0.0;

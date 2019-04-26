@@ -22,7 +22,7 @@ public class SetTurretOpenLoopAction implements Action {
 
 	@Override
 	public void update() {
-		mTurret.setTurretPosition(mAxisGetterMethod.apply(null) / 3.0);
+		mTurret.setTurretPosition(mAxisGetterMethod.apply(null) / 2.0);
 	}
 
 	@Override
