@@ -54,7 +54,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor.setInverted(true);
 		mBallArmRollerMotor.setSensorPhase(true);
 		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
-		mBallArmRollerMotor.configCurrentLimit(20, 25, 100);
+		mBallArmRollerMotor.configCurrentLimit(30, 31, 100);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);

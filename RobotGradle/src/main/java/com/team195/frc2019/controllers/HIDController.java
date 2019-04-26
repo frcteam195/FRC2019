@@ -14,8 +14,10 @@ import com.team195.frc2019.subsystems.positions.BallIntakeArmPositions;
 import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.frc2019.subsystems.positions.TurretPositions;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
+import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
+import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.CrashTrackingRunnable;
@@ -47,6 +49,10 @@ public class HIDController {
 
 	private boolean firstRun = true;
 	private boolean stoppedAuto = false;
+
+	private boolean autoBrake = false;
+	private ElapsedTimer autoBrakeTimer = new ElapsedTimer();
+	private static final double kBrakeTimeout = 1;
 
 	private static final double HID_RATE_CONTROL = 0.020;
 
@@ -116,7 +122,7 @@ public class HIDController {
 						}
 					} else {
 						double throttle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
-						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.75;
+						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.6;
 
 						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
@@ -146,7 +152,14 @@ public class HIDController {
 //						}
 
 						if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
-							mDrive.setBrakeMode(driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled());
+							boolean brake = driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled();
+							mDrive.setBrakeMode(brake || autoBrake);
+
+							if (brake)
+								autoBrakeTimer.start();
+
+							autoBrake = autoBrakeTimer.hasElapsed() < kBrakeTimeout;
+
 
 							boolean quickTurn = driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled();
 							if (quickTurn)
