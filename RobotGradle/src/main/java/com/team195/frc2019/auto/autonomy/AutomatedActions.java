@@ -73,6 +73,7 @@ public class AutomatedActions {
 		actionArrayList.add(new ParallelAction(Arrays.asList(new SetBallIntakeAction(BallIntakeArmPositions.RollerIntake),
 				new HoldOpenLoopDriveClimbAction(1, 1, buttonGetterMethod))));
 		actionArrayList.add(new SetClimbRackUpAction());
+		actionArrayList.add(new WaitAction(0.5));
 		actionArrayList.add(new SetDrivePTOAction(false));
 		actionArrayList.add(new SetDriveRampDownPowerAction(0.4));
 		actionArrayList.add(new SetBallIntakeAction(BallIntakeArmPositions.RollerOff));
