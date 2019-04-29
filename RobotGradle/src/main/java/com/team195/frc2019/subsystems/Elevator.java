@@ -45,10 +45,6 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private ElevatorControlMode mElevatorControlMode = ElevatorControlMode.POSITION;
 
-	private static final int mContinuousCurrentLimit = 15;  //8
-	private static final int mPeakCurrentLimit = 20;    //12
-	private static final int mPeakCurrentDurationMS = 0;//250;
-
 	private final CachedValue<Boolean> mElevatorEncoderPresent;
 	private final CachedValue<Boolean> mElevatorMasterHasReset;
 
@@ -59,15 +55,14 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		mElevatorMaster.setSensorPhase(true);
 		mElevatorMaster.setInverted(false);
 		mElevatorMaster.setPIDF(CalConstants.kElevatorPositionKp, CalConstants.kElevatorPositionKi, CalConstants.kElevatorPositionKd, CalConstants.kElevatorPositionKf);
-		mElevatorMaster.setMotionParameters(CalConstants.kElevatorPositionCruiseVel, CalConstants.kElevatorPositionMMAccel);
+		mElevatorMaster.setMotionParameters(CalConstants.kElevatorPositionCruiseVel, CalConstants.kElevatorPositionMMAccel, CalConstants.kElevatorPositionSCurveStrength);
 		zeroSensors();
 		mElevatorMaster.setControlMode(MCControlMode.Disabled);
 		mElevatorMaster.configForwardSoftLimitThreshold(CalConstants.kElevatorPositionForwardSoftLimit);
 		mElevatorMaster.configForwardSoftLimitEnable(true);
 		mElevatorMaster.configReverseSoftLimitThreshold(CalConstants.kElevatorPositionReverseSoftLimit);
 		mElevatorMaster.configReverseSoftLimitEnable(true);
-		mElevatorMaster.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
-
+		mElevatorMaster.configCurrentLimit(CalConstants.kElevatorContinuousCurrentLimit, CalConstants.kElevatorPeakCurrentThreshold, CalConstants.kElevatorPeakCurrentThresholdExceedDuration);
 
 //		TuneablePIDOSC x;
 //		try {
@@ -77,15 +72,15 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 //		}
 
 		mElevatorSlaveA = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveALeftId, mElevatorMaster, PDPBreaker.B40A, false);
-		mElevatorSlaveA.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+		mElevatorSlaveA.configCurrentLimit(CalConstants.kElevatorContinuousCurrentLimit, CalConstants.kElevatorPeakCurrentThreshold, CalConstants.kElevatorPeakCurrentThresholdExceedDuration);
 		mElevatorSlaveA.setSensorPhase(true);
 
 		mElevatorSlaveB = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveBRightId, mElevatorMaster, PDPBreaker.B40A, true);
-		mElevatorSlaveB.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+		mElevatorSlaveB.configCurrentLimit(CalConstants.kElevatorContinuousCurrentLimit, CalConstants.kElevatorPeakCurrentThreshold, CalConstants.kElevatorPeakCurrentThresholdExceedDuration);
 		mElevatorSlaveB.setSensorPhase(true);
 
 		mElevatorSlaveC = new CKTalonSRX(DeviceIDConstants.kElevatorSlaveCRightId, mElevatorMaster, PDPBreaker.B40A, true);
-		mElevatorSlaveC.configCurrentLimit(mContinuousCurrentLimit, mPeakCurrentLimit, mPeakCurrentDurationMS);
+		mElevatorSlaveC.configCurrentLimit(CalConstants.kElevatorContinuousCurrentLimit, CalConstants.kElevatorPeakCurrentThreshold, CalConstants.kElevatorPeakCurrentThresholdExceedDuration);
 
 
 		//Limit Switch Homing for Elevator
@@ -203,23 +198,6 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized String generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
-
-//		return  "ElevatorPos:" + mElevatorMaster.getVelocity() + ";" +
-//				"ElevatorVel:" + mElevatorMaster.getVelocity() + ";" +
-//				"ElevatorOutput:" + mPeriodicIO.elevator_setpoint + ";" +
-//				"Elevator1Current:" + mElevatorMaster.getMCOutputCurrent() + ";" +
-//				"Elevator2Current:" + mElevatorSlaveA.getMCOutputCurrent() + ";" +
-//				"Elevator3Current:" + mElevatorSlaveB.getMCOutputCurrent() + ";" +
-//				"Elevator4Current:" + mElevatorSlaveC.getMCOutputCurrent() + ";" +
-//				"ElevatorOutputDutyCycle:" + mElevatorMaster.getMCOutputPercent() + ";" +
-//				"ElevatorOutputVoltage:" + mElevatorMaster.getMCOutputPercent() * mElevatorMaster.getMCInputVoltage() + ";" +
-//				"ElevatorSupplyVoltage:" + mElevatorMaster.getMCInputVoltage() + ";" +
-//				"Elevator1HasReset:" + mElevatorMaster.hasMotorControllerReset().getMessage() + ";" +
-//				"Elevator2HasReset:" + mElevatorSlaveA.hasMotorControllerReset().getMessage() + ";" +
-//				"Elevator3HasReset:" + mElevatorSlaveB.hasMotorControllerReset().getMessage() + ";" +
-//				"Elevator4HasReset:" + mElevatorSlaveC.hasMotorControllerReset().getMessage() + ";" +
-//				"ElevatorControlMode:" + mElevatorControlMode.toString() + ";" +
-//				"IsElevatorFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
@@ -372,6 +350,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		// INPUTS

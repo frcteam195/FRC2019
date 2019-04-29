@@ -4,8 +4,6 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.RobotState;
-import com.team195.frc2019.auto.actions.SetBeakAction;
-import com.team195.frc2019.auto.autonomy.AutomatedAction;
 import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
@@ -24,7 +22,6 @@ import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.CachedValue;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
-import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
@@ -66,13 +63,13 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		mTurretRotationMotor.setInverted(true);
 		mTurretRotationMotor.setSensorPhase(true);
 		mTurretRotationMotor.setPIDF(CalConstants.kTurretPositionKp, CalConstants.kTurretPositionKi, CalConstants.kTurretPositionKd, CalConstants.kTurretPositionKf);
-		mTurretRotationMotor.setMotionParameters(CalConstants.kTurretPositionCruiseVel, CalConstants.kTurretPositionMMAccel);
+		mTurretRotationMotor.setMotionParameters(CalConstants.kTurretPositionCruiseVel, CalConstants.kTurretPositionMMAccel, CalConstants.kTurretPositionSCurveStrength);
 		zeroSensors();
 		mTurretRotationMotor.configForwardSoftLimitThreshold(CalConstants.kTurretForwardSoftLimit);
 		mTurretRotationMotor.configForwardSoftLimitEnable(true);
 		mTurretRotationMotor.configReverseSoftLimitThreshold(CalConstants.kTurretReverseSoftLimit);
 		mTurretRotationMotor.configReverseSoftLimitEnable(true);
-		mTurretRotationMotor.configCurrentLimit(5, 7, 150);
+		mTurretRotationMotor.configCurrentLimit(CalConstants.kTurretContinuousCurrentLimit, CalConstants.kTurretPeakCurrentThreshold, CalConstants.kTurretPeakCurrentThresholdExceedDuration);
 		mTurretRotationMotor.setControlMode(MCControlMode.MotionMagic);
 
 //		TuneablePIDOSC x;
@@ -84,8 +81,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 		mBallShooterRollerMotor = new CKTalonSRX(DeviceIDConstants.kBallShooterMotorId, false, PDPBreaker.B30A);
 		mBallShooterRollerMotor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-		mBallShooterRollerMotor.setMCOpenLoopRampRate(0.2);
-		mBallShooterRollerMotor.configCurrentLimit(15, 25, 450);
+		mBallShooterRollerMotor.setMCOpenLoopRampRate(CalConstants.kTurretBallShooterOpenLoopRamp);
+		mBallShooterRollerMotor.configCurrentLimit(CalConstants.kTurretBallShooterContinuousCurrentLimit, CalConstants.kTurretBallShooterPeakCurrentThreshold, CalConstants.kTurretBallShooterPeakCurrentThresholdExceedDuration);
 
 		mHatchBeakSolenoid = new CKSolenoid(DeviceIDConstants.kHatchBeakSolenoidId);
 		mHatchBeakSolenoid.set(false);
@@ -146,23 +143,6 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized String generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
-
-//		return  "TurretPos:" + mTurretRotationMotor.getVelocity() + ";" +
-//				"TurretVel:" + mTurretRotationMotor.getVelocity() + ";" +
-//				"TurretOutput:" + mPeriodicIO.turret_setpoint + ";" +
-//				"TurretCurrent:" + mTurretRotationMotor.getMCOutputCurrent() + ";" +
-//				"TurretOutputDutyCycle:" + mTurretRotationMotor.getMCOutputPercent() + ";" +
-//				"TurretOutputVoltage:" + mTurretRotationMotor.getMCOutputPercent() * mTurretRotationMotor.getMCInputVoltage() + ";" +
-//				"TurretSupplyVoltage:" + mTurretRotationMotor.getMCInputVoltage() + ";" +
-//				"TurretRotationMotorHasReset:" + mTurretRotationMotor.hasMotorControllerReset().getMessage() + ";" +
-//				"TurretRollerMotorHasReset:" + mBallShooterRollerMotor.hasMotorControllerReset().getMessage() + ";" +
-//				"TurretControlMode:" + mTurretControlMode.toString() + ";" +
-//				"TurretIntakeCurrent:" + mBallShooterRollerMotor.getMCOutputCurrent() + ";" +
-//				"TurretIntakeOutputDutyCycle:" + mBallShooterRollerMotor.getMCOutputPercent() + ";" +
-//				"TurretIntakeOutputVoltage:" + mBallShooterRollerMotor.getMCOutputPercent() * mBallShooterRollerMotor.getMCInputVoltage() + ";" +
-//				"TurretIntakeSupplyVoltage:" + mBallShooterRollerMotor.getMCInputVoltage() + ";" +
-//				"TurretIntakeControlMode:" + mBallShooterControlMode.toString() + ";" +
-//				"IsTurretFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
@@ -171,8 +151,6 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		setTurretPosition(0);
 		if (mTurretControlMode == TurretControlMode.POSITION)
 			mTurretRotationMotor.set(MCControlMode.MotionMagic, 0, 0, 0);
-
-//		mPeriodicIO = new PeriodicIO();
 	}
 
 	@Override
@@ -370,6 +348,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		// INPUTS

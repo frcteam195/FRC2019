@@ -139,13 +139,6 @@ public class VisionTracker extends Subsystem {
 	@Override
 	public synchronized String generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
-
-//		return  "VisionXDev:" + mPeriodicIO.targetHorizontalDeviation + ";" +
-//				"VisionYDev:" + mPeriodicIO.targetVerticalDeviation + ";" +
-//				"VisionArea:" + mPeriodicIO.targetArea + ";" +
-//				"VisionDistance:" + mPeriodicIO.targetDistance + ";" +
-//				"VisionSkew:" + mPeriodicIO.calculatedSkewFactor + ";" +
-//				"IsVisionSystemFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
@@ -238,6 +231,7 @@ public class VisionTracker extends Subsystem {
 		return mTargetMode;
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		//Read values

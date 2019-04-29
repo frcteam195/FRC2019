@@ -30,7 +30,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private final CKTalonSRX mBallArmRotationMotor;
 	private final CKTalonSRX mBallArmRollerMotor;
-	private final ThreadRateControl trc = new ThreadRateControl();
 
 	private final MotionInterferenceChecker ballArmUpCheck;
 
@@ -55,8 +54,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		mBallArmRollerMotor = new CKTalonSRX(DeviceIDConstants.kBallIntakeRollerMotorId, false, PDPBreaker.B30A);
 		mBallArmRollerMotor.setInverted(true);
 		mBallArmRollerMotor.setSensorPhase(true);
-		mBallArmRollerMotor.setMCOpenLoopRampRate(0.2);
-		mBallArmRollerMotor.configCurrentLimit(30, 31, 100);
+		mBallArmRollerMotor.setMCOpenLoopRampRate(CalConstants.kBallArmRollerOpenLoopRamp);
+		mBallArmRollerMotor.configCurrentLimit(CalConstants.kBallArmRollerContinuousCurrentLimit, CalConstants.kBallArmRollerPeakCurrentThreshold, CalConstants.kBallArmRollerPeakCurrentThresholdExceedDuration);
 
 		mBallArmRotationMotor.setPIDGainSlot(0);
 		mBallArmRotationMotor.setFeedbackDevice(RemoteFeedbackDevice.RemoteSensor0, DeviceIDConstants.kBallIntakeRollerMotorId);
@@ -67,7 +66,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		zeroSensors();
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
-		mBallArmRotationMotor.configCurrentLimit(10, 12, 200);
+		mBallArmRotationMotor.configCurrentLimit(CalConstants.kBallArmRotationContinuousCurrentLimit, CalConstants.kBallArmRotationPeakCurrentThreshold, CalConstants.kBallArmRotationPeakCurrentThresholdExceedDuration);
 		mBallArmRotationMotor.setControlMode(MCControlMode.Disabled);
 		mBallArmRotationMotor.setBrakeCoastMode(MCNeutralMode.Brake);
 
@@ -174,22 +173,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	@Override
 	public synchronized String generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
-
-//		return  "BallArmPos:" + mBallArmRotationMotor.getVelocity() + ";" +
-//				"BallArmVel:" + mBallArmRotationMotor.getVelocity() + ";" +
-//				"BallArmOutput:" + mPeriodicIO.ball_intake_arm_setpoint + ";" +
-//				"BallArmCurrent:" + mBallArmRotationMotor.getMCOutputCurrent() + ";" +
-//				"BallArmOutputDutyCycle:" + mBallArmRotationMotor.getMCOutputPercent() + ";" +
-//				"BallArmOutputVoltage:" + mBallArmRotationMotor.getMCOutputPercent() * mBallArmRotationMotor.getMCInputVoltage() + ";" +
-//				"BallArmSupplyVoltage:" + mBallArmRotationMotor.getMCInputVoltage() + ";" +
-//				"BallArmControlMode:" + mBallIntakeArmControlMode.toString() + ";" +
-//				"BallArmRotationMotorHasReset:" + mBallArmRotationMotor.hasMotorControllerReset().getMessage() + ";" +
-//				"BallArmRollerMotorHasReset:" + mBallArmRollerMotor.hasMotorControllerReset().getMessage() + ";" +
-//				"BallArmIntakeCurrent:" + mBallArmRollerMotor.getMCOutputCurrent() + ";" +
-//				"BallArmIntakeOutputDutyCycle:" + mBallArmRollerMotor.getMCOutputPercent() + ";" +
-//				"BallArmIntakeOutputVoltage:" + mBallArmRollerMotor.getMCOutputPercent() * mBallArmRollerMotor.getMCInputVoltage() + ";" +
-//				"BallArmIntakeSupplyVoltage:" + mBallArmRollerMotor.getMCInputVoltage() + ";" +
-//				"IsBallIntakeArmFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
@@ -264,8 +247,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	};
 
 	public void configureClimbCurrentLimit() {
-//		mBallArmRollerMotor.configCurrentLimit();
-//		mBallArmRotationMotor.configCurrentLimit(17, 25, 250);
 		mBallArmRotationMotor.configForwardSoftLimitEnable(false);
 		mBallArmRotationMotor.configReverseSoftLimitEnable(false);
 	}
@@ -315,7 +296,6 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	public synchronized void readPeriodicInputs() {
 		mPeriodicIO.ball_intake_arm_position = mBallArmRotationMotor.getPosition();
 		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getForwardLimitValue();
-//		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getReverseLimitValue();    //WRONG VAL FOR TESTING
 		mPeriodicIO.ball_intake_arm_encoder_present = mBallIntakeArmEncoderPresent.getValue();
 		mPeriodicIO.ball_intake_arm_reset = mBallIntakeArmMasterHasReset.getValue();
 	}
@@ -325,6 +305,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		// INPUTS

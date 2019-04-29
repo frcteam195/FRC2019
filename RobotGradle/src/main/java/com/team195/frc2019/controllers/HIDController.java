@@ -17,15 +17,12 @@ import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.TeleopActionRunner;
 import com.team195.lib.util.ThreadRateControl;
-import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.CheesyDriveHelper;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.CrashTrackingRunnable;
 import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Notifier;
-
-import java.util.function.Function;
 
 public class HIDController {
 	private static HIDController mInstance = null;
@@ -105,8 +102,8 @@ public class HIDController {
 						}
 
 						if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
-							throttle *= CalConstants.kLowSensitivityFactor;
-							turn *= CalConstants.kLowSensitivityFactor;
+							throttle *= CalConstants.kElevatorLowSensitivityFactor;
+							turn *= CalConstants.kElevatorLowSensitivityFactor;
 						}
 
 //					    if (driveJoystick.getRisingEdgeButton(3)) {
@@ -140,8 +137,8 @@ public class HIDController {
 						}
 
 						if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
-							throttle *= CalConstants.kLowSensitivityFactor;
-							turn *= CalConstants.kLowSensitivityFactor;
+							throttle *= CalConstants.kElevatorLowSensitivityFactor;
+							turn *= CalConstants.kElevatorLowSensitivityFactor;
 						}
 
 //						if (driveJoystick.getRisingEdgeButton(3)) {

@@ -496,10 +496,6 @@ public class Drive extends Subsystem {
 		if (mCSVWriter != null) {
 			mCSVWriter.add(mPeriodicIO);
 		}
-
-//		ConsoleReporter.report(mPeriodicIO.left_demand);
-//		ConsoleReporter.report(mPeriodicIO.right_demand);
-//		ConsoleReporter.report(mDriveControlState.toString());
 	}
 
 	@Override
@@ -628,39 +624,6 @@ public class Drive extends Subsystem {
 	@Override
 	public synchronized String generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
-
-//		return  "LeftDrivePos:" +mPeriodicIO.left_position_rotations + ";" +
-//				"LeftDriveVel:" + mPeriodicIO.left_spark_velocity + ";" +
-//				"LeftDriveOutput:" + mPeriodicIO.left_demand + ";" +
-//				"LeftDrive1Current:" + mLeftMaster.getMCOutputCurrent() + ";" +
-//				"LeftDrive2Current:" + mLeftSlaveA.getMCOutputCurrent() + ";" +
-//				"LeftDrive3Current:" + mLeftSlaveB.getMCOutputCurrent() + ";" +
-//				"LeftDrive1HasReset:" + mLeftMaster.hasMotorControllerReset() + ";" +
-//				"LeftDrive2HasReset:" + mLeftSlaveA.hasMotorControllerReset() + ";" +
-//				"LeftDrive3HasReset:" + mLeftSlaveB.hasMotorControllerReset() + ";" +
-//				"LeftDriveOutputDutyCycle:" + mLeftMaster.getMCOutputPercent() + ";" +
-//				"LeftDriveOutputVoltage:" + mLeftMaster.getMCOutputPercent() * mLeftMaster.getMCInputVoltage() + ";" +
-//				"LeftDriveSupplyVoltage:" + mLeftMaster.getMCInputVoltage() + ";" +
-//				"LeftDriveVelocityError:" + (mPeriodicIO.left_demand - mPeriodicIO.left_spark_velocity) + ";" +
-//				"RightDrivePos:" + mPeriodicIO.right_position_rotations + ";" +
-//				"RightDriveVel:" + mPeriodicIO.right_spark_velocity + ";" +
-//				"RightDriveOutput:" + mPeriodicIO.right_demand + ";" +
-//				"RightDrive1Current:" + mRightMaster.getMCOutputCurrent() + ";" +
-//				"RightDrive2Current:" + mRightSlaveA.getMCOutputCurrent() + ";" +
-//				"RightDrive3Current:" + mRightSlaveB.getMCOutputCurrent() + ";" +
-//				"RightDrive1HasReset:" + mRightMaster.hasMotorControllerReset() + ";" +
-//				"RightDrive2HasReset:" + mRightSlaveA.hasMotorControllerReset() + ";" +
-//				"RightDrive3HasReset:" + mRightSlaveB.hasMotorControllerReset() + ";" +
-//				"RightDriveOutputDutyCycle:" + mRightMaster.getMCOutputPercent() + ";" +
-//				"RightDriveOutputVoltage:" + mRightMaster.getMCOutputPercent() * mRightMaster.getMCInputVoltage() + ";" +
-//				"RightDriveSupplyVoltage:" + mRightMaster.getMCInputVoltage() + ";" +
-//				"RightDriveVelocityError:" + (mPeriodicIO.right_demand - mPeriodicIO.right_spark_velocity) + ";" +
-//				"DriveMode:" + mDriveControlState.toString() + ";" +
-//				"DriveErrorX:" + mPeriodicIO.error.getTranslation().x() + ";" +
-//				"DriveErrorY:" + mPeriodicIO.error.getTranslation().y() + ";" +
-//				"DriveErrorRotation:" + mPeriodicIO.error.getRotation().getDegrees() + ";" +
-//				"Timestamp:" + Timer.getFPGATimestamp() + ";" +
-//				"IsDriveFaulted:" + isSystemFaulted() + ";";
 	}
 
 	@Override
@@ -677,15 +640,6 @@ public class Drive extends Subsystem {
 
 		if (navXFaulted)
 			ConsoleReporter.report("NavX Error", MessageLevel.DEFCON1);
-
-		//These functions are called in the LogDataReporter, so don't call them twice to save CPU.
-		//If LogDataReporter not enabled, call them here
-//		mLeftMaster.hasMotorControllerReset();
-//		mLeftSlaveA.hasMotorControllerReset();
-//		mLeftSlaveB.hasMotorControllerReset();
-//		mRightMaster.hasMotorControllerReset();
-//		mRightSlaveA.hasMotorControllerReset();
-//		mRightSlaveB.hasMotorControllerReset();
 
 		return leftSensorFaulted || rightSensorFaulted || navXFaulted;
 	}
@@ -704,6 +658,7 @@ public class Drive extends Subsystem {
 		AUTO_SHIFT
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	public static class PeriodicIO {
 		//Making members public here will automatically add them to logs
 		// INPUTS

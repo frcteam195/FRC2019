@@ -232,7 +232,7 @@ public class CKTalonSRX implements TuneableMotorController {
 		setCurrentSlotValue(slotIdx);
 		if (currentSelectedSlot < mFeedbackConfig.size()) {
 			configClosedloopRamp(mFeedbackConfig.get(currentSelectedSlot).closedLoopRampRate);
-			setMotionParameters(mFeedbackConfig.get(currentSelectedSlot).motionMagicVel, mFeedbackConfig.get(currentSelectedSlot).motionMagicAccel);
+			setMotionParameters(mFeedbackConfig.get(currentSelectedSlot).motionMagicVel, mFeedbackConfig.get(currentSelectedSlot).motionMagicAccel, mFeedbackConfig.get(currentSelectedSlot).motionMagicSCurveStrength);
 			FeedbackDevice f = mFeedbackConfig.get(currentSelectedSlot).feedbackDevice;
 			switch (f) {
 				case RemoteSensor0:
@@ -391,10 +391,16 @@ public class CKTalonSRX implements TuneableMotorController {
 
 	@Override
 	public void setMotionParameters(double cruiseVel, double cruiseAccel) {
+		setMotionParameters(cruiseVel, cruiseAccel, 0);
+	}
+
+	public void setMotionParameters(double cruiseVel, double cruiseAccel, int sCurveStrength) {
 		mFeedbackConfig.get(currentSelectedSlot).setMotionMagicVel(cruiseVel);
 		mFeedbackConfig.get(currentSelectedSlot).setMotionMagicAccel(cruiseAccel);
+		mFeedbackConfig.get(currentSelectedSlot).setMotionMagicSCurveStrength(sCurveStrength);
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configMotionCruiseVelocity(convertRPMToNativeUnits(cruiseVel), Constants.kCANTimeoutMs));
 		runTalonFunctionWithRetry((t) -> mTalonSRX.configMotionAcceleration(convertRPMToNativeUnits(cruiseAccel), Constants.kCANTimeoutMs));
+		runTalonFunctionWithRetry((t) -> mTalonSRX.configMotionSCurveStrength(sCurveStrength, Constants.kTalonRetryCount));
 	}
 
 	@Override
@@ -634,17 +640,19 @@ public class CKTalonSRX implements TuneableMotorController {
 		double closedLoopRampRate;
 		double motionMagicVel;
 		double motionMagicAccel;
+		int motionMagicSCurveStrength;
 
-		FeedbackConfiguration(FeedbackDevice feedbackDevice, int remoteDeviceId, double closedLoopRampRate, double motionMagicVel, double motionMagicAccel) {
+		FeedbackConfiguration(FeedbackDevice feedbackDevice, int remoteDeviceId, double closedLoopRampRate, double motionMagicVel, double motionMagicAccel, int motionMagicSCurveStrength) {
 			this.feedbackDevice = feedbackDevice;
 			this.remoteDeviceId = remoteDeviceId;
 			this.closedLoopRampRate = closedLoopRampRate;
 			this.motionMagicVel = motionMagicVel;
 			this.motionMagicAccel = motionMagicAccel;
+			this.motionMagicSCurveStrength = motionMagicSCurveStrength;
 		}
 
 		FeedbackConfiguration() {
-			this(FeedbackDevice.CTRE_MagEncoder_Relative, -1, 0, 0, 0);
+			this(FeedbackDevice.CTRE_MagEncoder_Relative, -1, 0, 0, 0, 0);
 		}
 
 		synchronized void setFeedbackDevice(FeedbackDevice feedbackDevice) {
@@ -665,6 +673,10 @@ public class CKTalonSRX implements TuneableMotorController {
 
 		synchronized void setMotionMagicAccel(double motionMagicAccel) {
 			this.motionMagicAccel = motionMagicAccel;
+		}
+
+		synchronized void setMotionMagicSCurveStrength(int sCurveStrength) {
+			this.motionMagicSCurveStrength = sCurveStrength;
 		}
 	}
 

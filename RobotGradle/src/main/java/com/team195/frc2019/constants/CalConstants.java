@@ -38,6 +38,8 @@ public class CalConstants {
 
 	/* CONTROL LOOP GAINS */
 
+	///////////////////////////////////////////////////////////////////////////
+	//Drive
 	public static final double kDriveDefaultVoltageCompensationSetpoint = 12.0;
 	public static final double kDriveDefaultOpenLoopRampRate = 0.1;
 
@@ -64,9 +66,11 @@ public class CalConstants {
 	public static final int kDriveLowGearCurrentLim = 50;
 	public static final int kDriveLeftClimbCurrentLim = 55;
 	public static final int kDriveRightClimbCurrentLim = 65;
-
 	public static final int kDriveLeftRetractCurrentLim = 50;
+	///////////////////////////////////////////////////////////////////////////
 
+	///////////////////////////////////////////////////////////////////////////
+	//Elevator
 	//17.25:1
 	public static final double kElevatorPositionKp = 1.9;
 	public static final double kElevatorPositionKi = 0.0;
@@ -74,13 +78,20 @@ public class CalConstants {
 	public static final double kElevatorPositionKf = 0.1380124477;
 	public static final int kElevatorPositionCruiseVel = 850;
 	public static final int kElevatorPositionMMAccel = 600;
+	public static final int kElevatorPositionSCurveStrength = 5;
+	public static final int kElevatorContinuousCurrentLimit = 15;
+	public static final int kElevatorPeakCurrentThreshold = 20;
+	public static final int kElevatorPeakCurrentThresholdExceedDuration = 0; //250;
 	//Units in rotations
 	public static final double kNewPulleyFactor = 1.25;
 	public static final double kElevatorPositionForwardSoftLimit = 6.3 * kNewPulleyFactor;
 	public static final double kElevatorPositionReverseSoftLimit = 0;
 	public static final double kElevatorLowSensitivityThreshold = 2.5;
-	public static final double kLowSensitivityFactor = 0.5;
+	public static final double kElevatorLowSensitivityFactor = 0.5;
+	///////////////////////////////////////////////////////////////////////////
 
+	///////////////////////////////////////////////////////////////////////////
+	//Turret
 	//50:1
 	public static final double kTurretPositionKp = 4.3;
 	public static final double kTurretPositionKi = 0.0;
@@ -88,53 +99,37 @@ public class CalConstants {
 	public static final double kTurretPositionKf = 0.400360;
 	public static final int kTurretPositionCruiseVel = 350;
 	public static final int kTurretPositionMMAccel = 600;
+	public static final int kTurretPositionSCurveStrength = 5;
+	public static final int kTurretContinuousCurrentLimit = 5;
+	public static final int kTurretPeakCurrentThreshold = 7;
+	public static final int kTurretPeakCurrentThresholdExceedDuration = 150;
+	public static final double kTurretBallShooterOpenLoopRamp = 0.2;
+	public static final int kTurretBallShooterContinuousCurrentLimit = 15;
+	public static final int kTurretBallShooterPeakCurrentThreshold = 25;
+	public static final int kTurretBallShooterPeakCurrentThresholdExceedDuration = 450;
 	//Units in rotations
 	public static final double kTurretForwardSoftLimit = Turret.convertTurretDegreesToRotations(225);
 	public static final double kTurretReverseSoftLimit = -kTurretForwardSoftLimit;
 	public static final double kTurretSmallGearTeeth = 36;
 	public static final double kTurretLargeGearTeeth = 252;
+	///////////////////////////////////////////////////////////////////////////
 
-	//TODO: Tune
-	//100:1
-	public static final double kHatchArmPositionKp = 2.4;
-	public static final double kHatchArmPositionKi = 0.0;
-	public static final double kHatchArmPositionKd = 6.0;
-	public static final double kHatchArmPositionKf = 0.8000721603;
-	public static final int kHatchArmPositionCruiseVel = 100;
-	public static final int kHatchArmPositionMMAccel = 60;
-	//Units in rotations
-	//    public static final double kHatchArmForwardSoftLimit = 0.6174;
-		// public static final double kHatchArmForwardSoftLimit = 0.622;
-	public static final double kHatchArmForwardSoftLimit = 0.700;
-	public static final double kHatchArmReverseSoftLimit = 0;
-
+	///////////////////////////////////////////////////////////////////////////
+	//Ball Intake Arm
 	public static final double kBallIntakeArmUpPositionKp = 3.7;
 	public static final double kBallIntakeArmUpPositionKi = 0.0;
 	public static final double kBallIntakeArmUpPositionKd = 12.0;
 	public static final double kBallIntakeArmUpPositionKf = 0.5600505122;
 	public static final int kBallIntakeArmUpPositionCruiseVel = 220;
 	public static final int kBallIntakeArmUpPositionMMAccel = 420;
-
-	//200:1
-//    public static final double kBallIntakeArmUpPositionKp = 7.3;
-//    public static final double kBallIntakeArmUpPositionKi = 0.0;
-//    public static final double kBallIntakeArmUpPositionKd = 100.0;
-//    public static final double kBallIntakeArmUpPositionKf = 1.6;
-//    public static final int kBallIntakeArmUpPositionCruiseVel = 50;
-//    public static final int kBallIntakeArmUpPositionMMAccel = 45;
-
-	//Units in rotations
-//    public static final double kBallIntakeArmForwardSoftLimit = 0.174;
-
-	//100:1
-	public static final double kBallIntakeArmDownPositionKp = 3.7;
-	public static final double kBallIntakeArmDownPositionKi = 0.0;
-	public static final double kBallIntakeArmDownPositionKd = 12.0;
-	public static final double kBallIntakeArmDownPositionKf = 0.8000721603;
-	public static final int kBallIntakeArmDownPositionCruiseVel = 160;
-	public static final int kBallIntakeArmDownPositionMMAccel = 320;
-	public static final double kBallIntakeArmForwardSoftLimit = 4;
-
+	public static final int kBallArmRotationContinuousCurrentLimit = 10;
+	public static final int kBallArmRotationPeakCurrentThreshold = 12;
+	public static final int kBallArmRotationPeakCurrentThresholdExceedDuration = 200;
+	public static final double kBallArmRollerOpenLoopRamp = 0.2;
+	public static final int kBallArmRollerContinuousCurrentLimit = 30;
+	public static final int kBallArmRollerPeakCurrentThreshold = 31;
+	public static final int kBallArmRollerPeakCurrentThresholdExceedDuration = 100;
+	///////////////////////////////////////////////////////////////////////////
 
 	//Breaker model for trip time output in seconds y = a*(current_percent_over_rating)^b + c
 	public static final double kPDPBreakerModelA = 282.2962;
