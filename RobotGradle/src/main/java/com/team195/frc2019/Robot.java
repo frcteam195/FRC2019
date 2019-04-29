@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-			TrajectoryGenerator.getInstance().generateTrajectories();
+//			TrajectoryGenerator.getInstance().generateTrajectories();
 
 			mLED.start();
 			mLED.setRequestedState(LEDController.LEDState.BLINK);

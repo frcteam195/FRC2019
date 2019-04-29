@@ -25,7 +25,7 @@ public class RobotState {
 			new Translation2d(CalConstants.kLidarXOffset, CalConstants.kLidarYOffset), Rotation2d.fromDegrees(CalConstants
 			.kLidarYawAngleDegrees));
 
-	// FPGATimestamp -> RigidTransform2d or Rotation2d
+	// FPGATimestamp -> Pose2d or Rotation2d
 	private InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_;
 	private Twist2d vehicle_velocity_predicted_;
 	private Twist2d vehicle_velocity_measured_;

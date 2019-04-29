@@ -10,7 +10,7 @@ public class Controllers {
 	
 	private static Controllers instance = null;
 	
-	public Controllers() {
+	private Controllers() {
 		driveJoystick = new CKDashJoystick(0);
 		armControlJoystick = new CKDashJoystick(1);
 		buttonBox1 = new CKDashJoystick(2);

@@ -46,7 +46,7 @@ public class Constants {
     public static final int DASHJOY_RECEIVER_PORT = 5806;
 
 
-    public static final boolean TUNING_PIDS = true;
+    public static final boolean TUNING_PIDS = false;
     public static final boolean DEBUG = false;
     public static final boolean LOGGING_ENABLED = true;
     public static final boolean REPORTING_ENABLED = true;
