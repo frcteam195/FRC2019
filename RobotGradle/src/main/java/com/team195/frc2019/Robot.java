@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
 	public void disabledPeriodic() {
 		try {
 			mAutoModeExecutor = new AutoModeExecutor();
-			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
+//			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
