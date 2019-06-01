@@ -56,6 +56,10 @@ public class OSCJavaToByteArrayConverter {
 		this.longintBytes = new byte[8];
 	}
 
+	public void reset() {
+		stream.reset();
+	}
+
 	/**
 	 * Returns the character set used to encode message addresses
 	 * and string parameters.

@@ -1,22 +1,22 @@
 package com.team195.frc2019;
 
+import com.illposed.osc.OSCBoundListMessage;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.loops.Looper;
 import com.team195.frc2019.reporters.ConsoleReporter;
-import com.team195.frc2019.reporters.LogDataReporter;
+import com.team195.frc2019.reporters.DataReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.Subsystem;
-import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.Reportable;
 import com.team195.lib.util.TimeoutTimer;
-import com.team254.lib.util.MovingAverage;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Used to reset, start, stop, and update all subsystems at once
@@ -62,15 +62,26 @@ public class SubsystemManager implements ILooper {
 		return true;
 	}
 
-	public String generateReport() {
-		StringBuilder sb = new StringBuilder();
+	private final List<Object> l = new ArrayList<>();
+	private final OSCBoundListMessage boundOSCMesage = new OSCBoundListMessage("/LogData", l);
+	private void generateReport() {
+		l.clear();
+
+		l.add("Enabled");
+		l.add(Boolean.toString(DriverStation.getInstance().isEnabled()));
+
+		l.add("Timestamp_Robot");
+		l.add(Timer.getFPGATimestamp());
+
+		l.add("MatchTime");
+		l.add(DriverStation.getInstance().getMatchTime());
+
 		try {
-			mAllSubsystems.forEach((s) -> sb.append(s.generateReport()));
-			mLooperReports.forEach((s) -> sb.append(s.generateReport()));
+			mAllSubsystems.forEach((s) -> l.addAll(s.generateReport()));
+			mLooperReports.forEach((s) -> l.addAll(s.generateReport()));
 		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
 		}
-		return sb.toString();
 	}
 
 	public void stop() {
@@ -100,9 +111,9 @@ public class SubsystemManager implements ILooper {
 				mCriticalCheckTimeout.reset();
 			}
 
-			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
-				LogDataReporter.reportOSCData(generateReport());
-				mLogDataTimeout.reset();
+			if (Constants.LOGGING_ENABLED) {
+				generateReport();
+				DataReporter.reportOSCData(boundOSCMesage);
 			}
 		}
 
@@ -139,9 +150,9 @@ public class SubsystemManager implements ILooper {
 				mCriticalCheckTimeout.reset();
 			}
 
-			if (Constants.LOGGING_ENABLED && mLogDataTimeout.isTimedOut()) {
-				LogDataReporter.reportOSCData(generateReport());
-				mLogDataTimeout.reset();
+			if (Constants.LOGGING_ENABLED) {
+				generateReport();
+				DataReporter.reportOSCData(boundOSCMesage);
 			}
 		}
 

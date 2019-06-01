@@ -122,7 +122,10 @@ public class Looper implements ILooper, Reportable {
     }
 
     @Override
-    public String generateReport() {
-        return name+"_dt:" + dt_ + ";";
+    public List<Object> generateReport() {
+        ArrayList<Object> l = new ArrayList<>();
+        l.add(name+"_dt");
+        l.add(dt_);
+        return l;
     }
 }

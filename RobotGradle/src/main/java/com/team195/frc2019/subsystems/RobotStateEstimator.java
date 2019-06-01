@@ -8,6 +8,9 @@ import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Twist2d;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RobotStateEstimator extends Subsystem {
     static RobotStateEstimator instance_ = new RobotStateEstimator();
     private RobotState robot_state_ = RobotState.getInstance();
@@ -15,6 +18,8 @@ public class RobotStateEstimator extends Subsystem {
     private double left_encoder_prev_distance_ = 0.0;
     private double right_encoder_prev_distance_ = 0.0;
     private double back_encoder_prev_distance_ = 0.0;
+
+    private final List<Object> mObjList = new ArrayList<>(4);
 
     private RobotStateEstimator() {
 
@@ -45,12 +50,24 @@ public class RobotStateEstimator extends Subsystem {
     }
 
     @Override
-    public String generateReport() {
+    public List<Object> generateReport() {
         Pose2d odometry = robot_state_.getLatestFieldToVehicle().getValue();
-        return  "RobotPoseX:" + odometry.getTranslation().x() + ";" +
-                "RobotPoseY:" + odometry.getTranslation().y() + ";" +
-                "RobotPoseTheta:" + odometry.getRotation().getDegrees() + ";" +
-                "RobotLinearVelocity:" + robot_state_.getMeasuredVelocity().dx + ";";
+
+        mObjList.clear();
+
+        mObjList.add("RobotPoseX");
+        mObjList.add(odometry.getTranslation().x());
+
+        mObjList.add("RobotPoseY");
+        mObjList.add(odometry.getTranslation().y());
+
+        mObjList.add("RobotPoseTheta");
+        mObjList.add(odometry.getRotation().getDegrees());
+
+        mObjList.add("RobotLinearVelocity");
+        mObjList.add(robot_state_.getMeasuredVelocity().dx);
+
+        return mObjList;
     }
 
     private class EnabledLoop implements Loop {

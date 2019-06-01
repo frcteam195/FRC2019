@@ -622,7 +622,7 @@ public class Drive extends Subsystem {
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public synchronized List<Object> generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
 	}
 

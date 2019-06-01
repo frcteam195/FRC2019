@@ -31,6 +31,8 @@ abstract class AbstractOSCPacket implements OSCPacket {
 	private byte[] byteArray;
 	private InetAddress ipAddress;
 
+	private final OSCJavaToByteArrayConverter stream = new OSCJavaToByteArrayConverter();
+
 	public AbstractOSCPacket() {
 		this.charset = Charset.defaultCharset();
 		this.byteArray = null;
@@ -58,7 +60,7 @@ abstract class AbstractOSCPacket implements OSCPacket {
 	 * the OSC byte stream specification. Used Internally.
 	 */
 	private byte[] computeByteArray() {
-		final OSCJavaToByteArrayConverter stream = new OSCJavaToByteArrayConverter();
+		stream.reset();
 		stream.setCharset(charset);
 		return computeByteArray(stream);
 	}

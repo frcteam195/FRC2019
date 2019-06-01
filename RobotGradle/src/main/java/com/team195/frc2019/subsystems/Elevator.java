@@ -196,7 +196,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public synchronized List<Object> generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
 	}
 

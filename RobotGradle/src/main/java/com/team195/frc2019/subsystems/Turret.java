@@ -25,6 +25,7 @@ import com.team195.lib.util.MotionInterferenceChecker;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Translation2d;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Turret extends Subsystem implements InterferenceSystem {
@@ -141,7 +142,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public synchronized List<Object> generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
 	}
 

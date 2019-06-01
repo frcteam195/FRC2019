@@ -24,6 +24,8 @@ import com.team195.lib.drivers.motorcontrol.MCNeutralMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.*;
 
+import java.util.List;
+
 public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private static BallIntakeArm mInstance = new BallIntakeArm();
@@ -171,7 +173,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public synchronized List<Object> generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
 	}
 

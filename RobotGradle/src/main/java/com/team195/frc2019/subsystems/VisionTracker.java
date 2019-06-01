@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class VisionTracker extends Subsystem {
 	private static VisionTracker mInstance = new VisionTracker();
@@ -137,7 +138,7 @@ public class VisionTracker extends Subsystem {
 	}
 
 	@Override
-	public synchronized String generateReport() {
+	public synchronized List<Object> generateReport() {
 		return mLogDataGenerator.generateData(mPeriodicIO);
 	}
 

@@ -4,6 +4,8 @@ import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import edu.wpi.first.wpilibj.Compressor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Infrastructure extends Subsystem {
@@ -15,6 +17,8 @@ public class Infrastructure extends Subsystem {
 
     private boolean mIsDuringAuto = false;
     private AtomicBoolean isRunning = new AtomicBoolean(false);
+
+    private static final List<Object> emptyList = new ArrayList<>(1);
 
     private Infrastructure() {
         mCompressor = new Compressor(0);
@@ -105,7 +109,7 @@ public class Infrastructure extends Subsystem {
     }
 
     @Override
-    public String generateReport() {
-        return "";
+    public List<Object> generateReport() {
+        return emptyList;
     }
 }
