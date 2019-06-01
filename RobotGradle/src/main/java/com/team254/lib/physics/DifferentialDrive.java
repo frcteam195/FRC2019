@@ -380,8 +380,8 @@ public class DifferentialDrive {
 
         @Override
         public String toCSV() {
-            return curvature + "," + dcurvature + "," + chassis_velocity + ", " + chassis_acceleration + ", " + wheel_velocity + ", " + wheel_acceleration
-                    + ", " + voltage + ", " + wheel_torque;
+            return FastDoubleToString.format(curvature) + "," + FastDoubleToString.format(dcurvature) + "," + chassis_velocity.toString() + ", " + chassis_acceleration.toString() + ", " + wheel_velocity.toString() + ", " + wheel_acceleration.toString()
+                    + ", " + voltage.toString() + ", " + wheel_torque.toString();
         }
     }
 }

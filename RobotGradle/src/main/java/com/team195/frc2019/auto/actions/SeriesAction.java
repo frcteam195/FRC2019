@@ -41,14 +41,14 @@ public class SeriesAction implements Action {
             }
 
             mCurAction = mRemainingActions.remove(0);
-            ConsoleReporter.report("Starting : " + mCurAction.getClass().getSimpleName(), MessageLevel.INFO);
+//            ConsoleReporter.report("Starting : " + mCurAction.getClass().getSimpleName(), MessageLevel.INFO);
             mCurAction.start();
         }
 
         mCurAction.update();
 
         if (mCurAction.isFinished()) {
-            ConsoleReporter.report("Finishing: " + mCurAction.getClass().getSimpleName(), MessageLevel.INFO);
+//            ConsoleReporter.report("Finishing: " + mCurAction.getClass().getSimpleName(), MessageLevel.INFO);
             mCurAction.done();
             mCurAction = null;
         }

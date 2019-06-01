@@ -139,8 +139,8 @@ public class MotorDiagnostics {
 	public String toString() {
 		String retVal = "";
 		retVal += motorName + "\r\n";
-		retVal += "\tCurrent: " + motorCurrent + "\r\n";
-		retVal += "\tRPM: " + motorRPM + "\r\n";
+		retVal += "\tCurrent: " + FastDoubleToString.format(motorCurrent) + "\r\n";
+		retVal += "\tRPM: " + FastDoubleToString.format(motorRPM) + "\r\n";
 		return retVal;
 	}
 

@@ -3,6 +3,7 @@ package com.team195.frc2019.auto.actions;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.trajectory.TimedView;
 import com.team254.lib.trajectory.Trajectory;
@@ -46,7 +47,7 @@ public class DriveTrajectory implements Action {
 
     @Override
     public void start() {
-        ConsoleReporter.report("Starting trajectory! (length=" + mTrajectory.getRemainingProgress() + ")");
+        ConsoleReporter.report("Starting trajectory! (length=" + FastDoubleToString.format(mTrajectory.getRemainingProgress()) + ")");
         if (mResetPose) {
             mRobotState.reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
         }

@@ -17,6 +17,7 @@ import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.*;
 import com.team195.lib.util.CachedValue;
+import com.team195.lib.util.FastDoubleToString;
 import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
@@ -342,7 +343,7 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setHeading(Rotation2d heading) {
-        ConsoleReporter.report("SET HEADING: " + heading.getDegrees());
+        ConsoleReporter.report("SET HEADING: " + FastDoubleToString.format(heading.getDegrees()));
 
         mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mGyro.getFusedHeading()).inverse());
 //        ConsoleReporter.report("Gyro offset: " + mGyroOffset.getDegrees());

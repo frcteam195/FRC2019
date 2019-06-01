@@ -43,7 +43,7 @@ public class ParallelAction implements Action {
     @Override
     public void done() {
         for (Action action : mActions) {
-            ConsoleReporter.report("Finishing: " + action.getClass().getSimpleName(), MessageLevel.INFO);
+//            ConsoleReporter.report("Finishing: " + action.getClass().getSimpleName(), MessageLevel.INFO);
             action.done();
         }
     }
@@ -51,7 +51,7 @@ public class ParallelAction implements Action {
     @Override
     public void start() {
         for (Action action : mActions) {
-            ConsoleReporter.report("Starting : " + action.getClass().getSimpleName(), MessageLevel.INFO);
+//            ConsoleReporter.report("Starting : " + action.getClass().getSimpleName(), MessageLevel.INFO);
             action.start();
         }
     }
