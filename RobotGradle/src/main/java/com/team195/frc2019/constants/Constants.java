@@ -40,7 +40,6 @@ public class Constants {
     public static final int kLEDThreadPriority = Thread.MIN_PRIORITY;
     public static final int kConsoleReporterThreadPriority = Thread.NORM_PRIORITY;
 
-    public static final String DASHBOARD_IP = "10.1.95.14";
     public static final int LOG_OSC_REPORTER_PORT = 5805;
     public static final int AUTO_SELECTOR_PORT = LOG_OSC_REPORTER_PORT;
     public static final int DASHJOY_RECEIVER_PORT = 5806;
