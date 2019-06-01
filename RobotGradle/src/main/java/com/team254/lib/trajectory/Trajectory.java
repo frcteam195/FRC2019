@@ -21,7 +21,6 @@ public class Trajectory<S extends State<S>> implements CSVWritable {
      * Create a trajectory from the given states and transforms.
      *
      * @param states The states of the trajectory.
-     * @throws InvalidTrajectoryException
      */
     public Trajectory(final List<S> states) {
         points_ = new ArrayList<>(states.size());

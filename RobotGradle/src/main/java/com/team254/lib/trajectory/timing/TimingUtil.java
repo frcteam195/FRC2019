@@ -1,5 +1,6 @@
 package com.team254.lib.trajectory.timing;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.geometry.State;
 import com.team254.lib.trajectory.DistanceView;
 import com.team254.lib.trajectory.Trajectory;
@@ -232,8 +233,8 @@ public class TimingUtil {
 
         @Override
         public String toString() {
-            return state.toString() + ", distance: " + distance + ", max_velocity: " + max_velocity + ", " +
-                    "min_acceleration: " + min_acceleration + ", max_acceleration: " + max_acceleration;
+            return state.toString() + ", distance: " + FastDoubleToString.format(distance) + ", max_velocity: " + FastDoubleToString.format(max_velocity) + ", " +
+                    "min_acceleration: " + FastDoubleToString.format(min_acceleration) + ", max_acceleration: " + FastDoubleToString.format(max_acceleration);
         }
     }
 }
