@@ -1,6 +1,7 @@
 package com.team195.frc2019.planners;
 
 import com.team195.frc2019.constants.CalConstants;
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
@@ -16,7 +17,6 @@ import com.team254.lib.util.CSVWritable;
 import com.team254.lib.util.Units;
 import com.team254.lib.util.Util;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,9 +145,9 @@ public class DriveMotionPlanner implements CSVWritable {
 
     @Override
     public String toCSV() {
-        DecimalFormat fmt = new DecimalFormat("#0.000");
-        return fmt.format(mOutput.left_velocity) + "," + fmt.format(mOutput.right_velocity) + "," + fmt.format
-                (mOutput.left_feedforward_voltage) + "," + fmt.format(mOutput.right_feedforward_voltage) + "," +
+//        DecimalFormat fmt = new DecimalFormat("#0.000");
+        return FastDoubleToString.format(mOutput.left_velocity) + "," + FastDoubleToString.format(mOutput.right_velocity) + "," + FastDoubleToString.format
+                (mOutput.left_feedforward_voltage) + "," + FastDoubleToString.format(mOutput.right_feedforward_voltage) + "," +
                 mSetpoint.toCSV();
     }
 

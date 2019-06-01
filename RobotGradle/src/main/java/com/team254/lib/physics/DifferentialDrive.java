@@ -1,9 +1,9 @@
 package com.team254.lib.physics;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.util.CSVWritable;
 import com.team254.lib.util.Util;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -329,8 +329,8 @@ public class DifferentialDrive {
 
         @Override
         public String toString() {
-            DecimalFormat fmt = new DecimalFormat("#0.000");
-            return fmt.format(linear) + ", " + fmt.format(angular);
+//            DecimalFormat fmt = new DecimalFormat("#0.000");
+            return FastDoubleToString.format(linear) + ", " + FastDoubleToString.format(angular);
         }
     }
 
@@ -361,8 +361,8 @@ public class DifferentialDrive {
 
         @Override
         public String toString() {
-            DecimalFormat fmt = new DecimalFormat("#0.000");
-            return fmt.format(left) + ", " + fmt.format(right);
+//            DecimalFormat fmt = new DecimalFormat("#0.000");
+            return FastDoubleToString.format(left) + ", " + FastDoubleToString.format(right);
         }
     }
 

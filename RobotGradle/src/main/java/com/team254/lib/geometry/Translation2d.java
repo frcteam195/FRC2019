@@ -1,8 +1,7 @@
 package com.team254.lib.geometry;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.util.Util;
-
-import java.text.DecimalFormat;
 
 /**
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
@@ -115,14 +114,14 @@ public class Translation2d implements ITranslation2d<Translation2d> {
 
     @Override
     public String toString() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return "(" + fmt.format(x_) + "," + fmt.format(y_) + ")";
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return "(" + FastDoubleToString.format(x_) + "," + FastDoubleToString.format(y_) + ")";
     }
 
     @Override
     public String toCSV() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return fmt.format(x_) + "," + fmt.format(y_);
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return FastDoubleToString.format(x_) + "," + FastDoubleToString.format(y_);
     }
 
     public static double dot(final Translation2d a, final Translation2d b) {

@@ -1,8 +1,7 @@
 package com.team254.lib.geometry;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.util.Util;
-
-import java.text.DecimalFormat;
 
 public class Pose2dWithCurvature implements IPose2d<Pose2dWithCurvature>, ICurvature<Pose2dWithCurvature> {
     protected static final Pose2dWithCurvature kIdentity = new Pose2dWithCurvature();
@@ -101,13 +100,13 @@ public class Pose2dWithCurvature implements IPose2d<Pose2dWithCurvature>, ICurva
 
     @Override
     public String toString() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return getPose().toString() + ", curvature: " + fmt.format(getCurvature()) + ", dcurvature_ds: " + fmt.format(getDCurvatureDs());
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return getPose().toString() + ", curvature: " + FastDoubleToString.format(getCurvature()) + ", dcurvature_ds: " + FastDoubleToString.format(getDCurvatureDs());
     }
 
     @Override
     public String toCSV() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return getPose().toCSV() + "," + fmt.format(getCurvature()) + "," + fmt.format(getDCurvatureDs());
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return getPose().toCSV() + "," + FastDoubleToString.format(getCurvature()) + "," + FastDoubleToString.format(getDCurvatureDs());
     }
 }

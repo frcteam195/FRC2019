@@ -1,9 +1,8 @@
 package com.team254.lib.trajectory.timing;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.geometry.State;
 import com.team254.lib.util.Util;
-
-import java.text.DecimalFormat;
 
 public class TimedState<S extends State<S>> implements State<TimedState<S>> {
     protected final S state_;
@@ -52,16 +51,16 @@ public class TimedState<S extends State<S>> implements State<TimedState<S>> {
 
     @Override
     public String toString() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return state().toString() + ", t: " + fmt.format(t()) + ", v: " + fmt.format(velocity()) + ", a: "
-                + fmt.format(acceleration());
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return state().toString() + ", t: " + FastDoubleToString.format(t()) + ", v: " + FastDoubleToString.format(velocity()) + ", a: "
+                + FastDoubleToString.format(acceleration());
     }
 
     @Override
     public String toCSV() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return state().toCSV() + "," + fmt.format(t()) + "," + fmt.format(velocity()) + ","
-                + fmt.format(acceleration());
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return state().toCSV() + "," + FastDoubleToString.format(t()) + "," + FastDoubleToString.format(velocity()) + ","
+                + FastDoubleToString.format(acceleration());
     }
 
     @Override

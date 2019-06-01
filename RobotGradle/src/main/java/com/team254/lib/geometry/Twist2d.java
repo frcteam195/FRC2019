@@ -1,8 +1,7 @@
 package com.team254.lib.geometry;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.util.Util;
-
-import java.text.DecimalFormat;
 
 /**
  * A movement along an arc at constant curvature and velocity. We can use ideas from "differential calculus" to create
@@ -46,7 +45,7 @@ public class Twist2d {
 
     @Override
     public String toString() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return "(" + fmt.format(dx) + "," + fmt.format(dy) + "," + fmt.format(Math.toDegrees(dtheta)) + " deg)";
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return "(" + FastDoubleToString.format(dx) + "," + FastDoubleToString.format(dy) + "," + FastDoubleToString.format(Math.toDegrees(dtheta)) + " deg)";
     }
 }

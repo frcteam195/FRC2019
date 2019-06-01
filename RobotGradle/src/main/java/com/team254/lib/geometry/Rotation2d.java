@@ -1,8 +1,7 @@
 package com.team254.lib.geometry;
 
+import com.team195.lib.util.FastDoubleToString;
 import com.team254.lib.util.Util;
-
-import java.text.DecimalFormat;
 
 import static com.team254.lib.util.Util.kEpsilon;
 
@@ -132,14 +131,14 @@ public class Rotation2d implements IRotation2d<Rotation2d> {
 
     @Override
     public String toString() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return "(" + fmt.format(getDegrees()) + " deg)";
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return "(" + FastDoubleToString.format(getDegrees()) + " deg)";
     }
 
     @Override
     public String toCSV() {
-        final DecimalFormat fmt = new DecimalFormat("#0.000");
-        return fmt.format(getDegrees());
+//        final DecimalFormat fmt = new DecimalFormat("#0.000");
+        return FastDoubleToString.format(getDegrees());
     }
 
     @Override
