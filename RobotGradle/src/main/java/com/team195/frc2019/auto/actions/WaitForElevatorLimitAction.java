@@ -7,9 +7,6 @@ public class WaitForElevatorLimitAction implements Action {
 	private final Elevator mElevator = Elevator.getInstance();
 	private final TimeoutTimer mTimeoutTimer;
 
-	private boolean prevButtonVal = true;
-
-
 	public WaitForElevatorLimitAction (double timeout) {
 		mTimeoutTimer = new TimeoutTimer(timeout);
 	}
@@ -30,6 +27,6 @@ public class WaitForElevatorLimitAction implements Action {
 
 	@Override
 	public void start() {
-
+		mTimeoutTimer.reset();
 	}
 }

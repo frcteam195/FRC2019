@@ -23,6 +23,15 @@ public class AutoModeExecutor {
         }));
     }
 
+    public void reset() {
+        mAutoMode.set(null);
+        mThread.set(null);
+    }
+
+    public boolean isSet() {
+        return mAutoMode.get() != null && mThread.get() != null;
+    }
+
     public void start() {
         if (mThread.get() != null) {
             mThread.get().start();

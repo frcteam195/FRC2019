@@ -31,5 +31,6 @@ public class SetBallShooterOpenLoopAction implements Action {
 	@Override
 	public void start() {
 		mTurret.setBallShooterOpenLoop(mOutputSpeed);
+		mTimeoutTimer.reset();
 	}
 }

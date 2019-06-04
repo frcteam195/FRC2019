@@ -68,6 +68,10 @@ public class SetBallArmRotationAction implements Action {
 	@Override
 	public void start() {
 		if (mBallArm.getSetpoint() != mRotation) {
+			mTimeoutTimer.reset();
+			mEncoderResetWait.reset();
+			mArmActionState = ArmActionState.WAITING;
+
 			//If the arm is up, zero sensor
 			if (mRotation < 0) {
 				mBallArm.setBallIntakeArmControlMode(BallIntakeArm.BallIntakeArmControlMode.DISABLED);

@@ -25,6 +25,7 @@ public class Looper implements ILooper, Reportable {
     private final List<Loop> loops_;
     private final Object taskRunningLock_ = new Object();
     private double timestamp_ = 0;
+    private double now_timestamp_ = 0;
     private double dt_ = 0;
     private String name = "";
     private boolean isFirstStart = true;
@@ -45,17 +46,17 @@ public class Looper implements ILooper, Reportable {
                     }
 
                     if (running_) {
-                        double now = Timer.getFPGATimestamp();
+                        now_timestamp_ = Timer.getFPGATimestamp();
                         try {
                             loops_.forEach((l) -> {
-                                l.onLoop(now);
+                                l.onLoop(now_timestamp_);
                             });
                         }
                         catch (Exception ex) {
                             ConsoleReporter.report(ex);
                         }
-                        dt_ = now - timestamp_;
-                        timestamp_ = now;
+                        dt_ = now_timestamp_ - timestamp_;
+                        timestamp_ = now_timestamp_;
                     }
                 }
             }
@@ -121,11 +122,12 @@ public class Looper implements ILooper, Reportable {
         this.name = name;
     }
 
+    private final ArrayList<Object> reportArrayList = new ArrayList<>(2);
     @Override
     public List<Object> generateReport() {
-        ArrayList<Object> l = new ArrayList<>();
-        l.add(name+"_dt");
-        l.add(dt_);
-        return l;
+        reportArrayList.clear();
+        reportArrayList.add(name+"_dt");
+        reportArrayList.add(dt_);
+        return reportArrayList;
     }
 }

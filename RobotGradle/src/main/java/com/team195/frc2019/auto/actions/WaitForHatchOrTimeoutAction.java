@@ -40,6 +40,6 @@ public class WaitForHatchOrTimeoutAction implements Action {
 
 	@Override
 	public void start() {
-
+		mTimeoutTimer.reset();
 	}
 }

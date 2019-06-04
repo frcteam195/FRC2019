@@ -42,6 +42,9 @@ public class SetBeakAction implements Action {
 
 	@Override
 	public void start() {
+		mTimeoutTimer.reset();
+		mFeedOffTimeout.reset();
+
 		if (mOpen) {
 			mTurret.setBeakFeedOff(false);
 			mTurret.setBeak(false);

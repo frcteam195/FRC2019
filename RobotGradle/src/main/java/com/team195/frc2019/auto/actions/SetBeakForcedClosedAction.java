@@ -30,5 +30,6 @@ public class SetBeakForcedClosedAction implements Action {
 	public void start() {
 		mTurret.setBeakFeedOff(false);
 		mTurret.setBeak(true);
+		mTimeoutTimer.reset();
 	}
 }

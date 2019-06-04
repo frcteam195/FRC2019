@@ -15,14 +15,13 @@ public class RobotStateEstimator extends Subsystem {
     static RobotStateEstimator instance_ = new RobotStateEstimator();
     private RobotState robot_state_ = RobotState.getInstance();
     private Drive drive_ = Drive.getInstance();
-    private double left_encoder_prev_distance_ = 0.0;
-    private double right_encoder_prev_distance_ = 0.0;
-    private double back_encoder_prev_distance_ = 0.0;
 
     private final List<Object> mObjList = new ArrayList<>(4);
 
-    private RobotStateEstimator() {
+    private PeriodicIO mPeriodicIO;
 
+    private RobotStateEstimator() {
+        mPeriodicIO = new PeriodicIO();
     }
 
     public static RobotStateEstimator getInstance() {
@@ -78,26 +77,26 @@ public class RobotStateEstimator extends Subsystem {
 
         @Override
         public synchronized void onStart(double timestamp) {
-            left_encoder_prev_distance_ = drive_.getLeftEncoderDistance();
-            right_encoder_prev_distance_ = drive_.getRightEncoderDistance();
+            mPeriodicIO.left_encoder_prev_distance_ = drive_.getLeftEncoderDistance();
+            mPeriodicIO.right_encoder_prev_distance_ = drive_.getRightEncoderDistance();
 
         }
 
         @Override
         public synchronized void onLoop(double timestamp) {
-            final double left_distance = drive_.getLeftEncoderDistance();
-            final double right_distance = drive_.getRightEncoderDistance();
-            final double delta_left = left_distance - left_encoder_prev_distance_;
-            final double delta_right = right_distance - right_encoder_prev_distance_;
-            final Rotation2d gyro_angle = drive_.getHeading();
-            final Twist2d odometry_velocity = robot_state_.generateOdometryFromSensors(
-                    delta_left, delta_right, gyro_angle);
-            final Twist2d predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftLinearVelocity(),
+            mPeriodicIO.left_distance = drive_.getLeftEncoderDistance();
+            mPeriodicIO.right_distance = drive_.getRightEncoderDistance();
+            mPeriodicIO.delta_left = mPeriodicIO.left_distance - mPeriodicIO.left_encoder_prev_distance_;
+            mPeriodicIO.delta_right = mPeriodicIO.right_distance - mPeriodicIO.right_encoder_prev_distance_;
+            mPeriodicIO.gyro_angle = drive_.getHeading();
+            mPeriodicIO.odometry_velocity = robot_state_.generateOdometryFromSensors(
+                    mPeriodicIO.delta_left, mPeriodicIO.delta_right, mPeriodicIO.gyro_angle);
+            mPeriodicIO.predicted_velocity = Kinematics.forwardKinematics(drive_.getLeftLinearVelocity(),
                     drive_.getRightLinearVelocity());
-            robot_state_.addObservations(timestamp, odometry_velocity,
-                    predicted_velocity);
-            left_encoder_prev_distance_ = left_distance;
-            right_encoder_prev_distance_ = right_distance;
+            robot_state_.addObservations(timestamp, mPeriodicIO.odometry_velocity,
+                    mPeriodicIO.predicted_velocity);
+            mPeriodicIO.left_encoder_prev_distance_ = mPeriodicIO.left_distance;
+            mPeriodicIO.right_encoder_prev_distance_ = mPeriodicIO.right_distance;
         }
 
         @Override
@@ -109,6 +108,20 @@ public class RobotStateEstimator extends Subsystem {
         public String getName() {
             return "RobotStateEstimator";
         }
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public static class PeriodicIO {
+        public double left_distance;
+        public double right_distance;
+        public double delta_left;
+        public double delta_right;
+        public Rotation2d gyro_angle;
+        public Twist2d odometry_velocity;
+        public Twist2d predicted_velocity;
+
+        double left_encoder_prev_distance_ = 0.0;
+        double right_encoder_prev_distance_ = 0.0;
     }
 }
 

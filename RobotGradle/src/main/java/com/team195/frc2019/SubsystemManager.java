@@ -25,10 +25,10 @@ public class SubsystemManager implements ILooper {
 
 	private static SubsystemManager instance = null;
 
-	private static ArrayList<Subsystem> mAllSubsystems = new ArrayList<>();
-	private List<Loop> mLoops = new ArrayList<>();
+	private static final ArrayList<Subsystem> mAllSubsystems = new ArrayList<>();
+	private static final List<Loop> mLoops = new ArrayList<>();
 
-	private ArrayList<Reportable> mLooperReports = new ArrayList<>();
+	private static final ArrayList<Reportable> mLooperReports = new ArrayList<>();
 
 	private TimeoutTimer mCriticalCheckTimeout = new TimeoutTimer(0.250);
 	private TimeoutTimer mLogDataTimeout = new TimeoutTimer(0.250);
@@ -52,18 +52,19 @@ public class SubsystemManager implements ILooper {
 		return instance;
 	}
 
+	private static final ArrayList<Boolean> diagnosticRetVals = new ArrayList<>();
 	public boolean checkSystemsPassDiagnostics() {
-		ArrayList<Boolean> retVals = new ArrayList<>();
-		mAllSubsystems.forEach((s) -> retVals.add(s.runDiagnostics()));
-		for (boolean b : retVals) {
+		diagnosticRetVals.clear();
+		mAllSubsystems.forEach((s) -> diagnosticRetVals.add(s.runDiagnostics()));
+		for (boolean b : diagnosticRetVals) {
 			if (!b)
 				return false;
 		}
 		return true;
 	}
 
-	private final List<Object> l = new ArrayList<>();
-	private final OSCBoundListMessage boundOSCMesage = new OSCBoundListMessage("/LogData", l);
+	private static final List<Object> l = new ArrayList<>(60);
+	private static final OSCBoundListMessage boundOSCMesage = new OSCBoundListMessage("/LogData", l);
 	private void generateReport() {
 		l.clear();
 

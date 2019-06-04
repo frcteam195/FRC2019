@@ -4,17 +4,19 @@ import com.team195.frc2019.auto.actions.Action;
 import com.team195.frc2019.subsystems.Drive;
 import com.team254.lib.util.DriveSignal;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class HoldOpenLoopDriveClimbAction implements Action {
 	private static final Drive mDrive = Drive.getInstance();
 
 	private final double mLeft, mRight;
 
-	private final Function<Void, Boolean> mButtonGetterMethod;
+	private final AtomicReference<Predicate<Void>> mButtonGetterMethod;
 
 
-	public HoldOpenLoopDriveClimbAction(double left, double right, Function<Void, Boolean> buttonGetterMethod) {
+	public HoldOpenLoopDriveClimbAction(double left, double right, AtomicReference<Predicate<Void>> buttonGetterMethod) {
 		mLeft = left;
 		mRight = right;
 		mButtonGetterMethod = buttonGetterMethod;
@@ -22,7 +24,10 @@ public class HoldOpenLoopDriveClimbAction implements Action {
 
 	@Override
 	public boolean isFinished() {
-		return (!mButtonGetterMethod.apply(null));
+		if (mButtonGetterMethod.get() != null)
+			return (!mButtonGetterMethod.get().test(null));
+		else
+			return true;
 	}
 
 	@Override

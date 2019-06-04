@@ -31,8 +31,12 @@ public class ConsoleReporter {
 	private final Notifier mConsoleNotifier;
 
 	private ConsoleReporter() {
-		mConsoleNotifier = new Notifier(mConsoleRunnable);
-		mConsoleNotifier.startPeriodic(MIN_CONSOLE_SEND_RATE_MS);
+		if (Constants.REPORTING_ENABLED) {
+			mConsoleNotifier = new Notifier(mConsoleRunnable);
+			mConsoleNotifier.startPeriodic(MIN_CONSOLE_SEND_RATE_MS);
+		} else {
+			mConsoleNotifier = null;
+		}
 	}
 
 	public static ConsoleReporter getInstance() {

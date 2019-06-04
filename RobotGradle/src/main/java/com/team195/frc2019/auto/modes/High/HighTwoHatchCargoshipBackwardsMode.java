@@ -38,22 +38,22 @@ public class HighTwoHatchCargoshipBackwardsMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		runAction(new ParallelAction(highStartToSideCargoForwardFacing,
-				new SeriesAction(new WaitAction(2.0), AutomatedActions.setTurretPosition(mStartedLeft ? TurretPositions.Left90 : TurretPositions.Right90))));
-		runAction(AutomatedActions.placeHatch());
+				new SeriesAction(new WaitAction(2.0), mStartedLeft ? AutomatedActions.setTurretLeft90Action : AutomatedActions.setTurretRight90Action)));
+		runAction(AutomatedActions.placeHatchAction);
 		runAction(new ParallelAction(sideCargoForwardFacingToFeederStation,
 				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, -160),
 						new Translation2d(50, -110), mStartedLeft),
-						AutomatedActions.pickupHatchFeederStation())));
+						AutomatedActions.pickupHatchFeederStation(null))));
 		runAction(new ParallelAction(feederStationToFrontCargoHatchForward,
-				new SeriesAction(AutomatedActions.setTurretPosition(TurretPositions.Back180),
+				new SeriesAction(AutomatedActions.setTurretBack180Action,
 						new WaitAction(0.5),
-						AutomatedActions.ballArmSet(BallIntakeArmPositions.Up)
+						AutomatedActions.ballArmSetUpAction
 				)));
-		runAction(AutomatedActions.placeHatch());
+		runAction(AutomatedActions.placeHatchAction);
 		runAction(new ParallelAction(frontCargoHatchForwardToFeederStation,
-				new SeriesAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down),
+				new SeriesAction(AutomatedActions.ballArmSetDownAction,
 						new WaitAction(0.5),
-						AutomatedActions.setTurretPosition(TurretPositions.Home)
+						AutomatedActions.setTurretHomeAction
 				)));
 	}
 }

@@ -39,5 +39,6 @@ public class SetDrivePTOAction implements Action {
 		}
 		
 		mDrive.setPTO(mDriveClimber);
+		mTimeoutTimer.reset();
 	}
 }

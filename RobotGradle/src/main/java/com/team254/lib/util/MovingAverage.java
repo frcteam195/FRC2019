@@ -1,5 +1,7 @@
 package com.team254.lib.util;
 
+import com.team195.lib.util.FastDoubleToString;
+
 import java.util.ArrayList;
 
 /**
@@ -55,6 +57,6 @@ public class MovingAverage {
 
     @Override
     public String toString() {
-        return Double.toString(getAverage());
+        return FastDoubleToString.format(getAverage());
     }
 }

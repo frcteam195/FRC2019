@@ -32,5 +32,6 @@ public class SetBallPushAction implements Action {
 	@Override
 	public void start() {
 		mTurret.setBallPush(mPushOut);
+		mTimeoutTimer.reset();
 	}
 }

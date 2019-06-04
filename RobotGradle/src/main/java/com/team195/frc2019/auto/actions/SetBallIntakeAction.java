@@ -31,5 +31,6 @@ public class SetBallIntakeAction implements Action {
 	@Override
 	public void start() {
 		mBallIntakeArm.setBallIntakeRollerSpeed(mOutputSpeed);
+		mTimeoutTimer.reset();
 	}
 }

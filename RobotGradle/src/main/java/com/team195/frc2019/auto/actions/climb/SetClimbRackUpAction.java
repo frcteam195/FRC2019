@@ -36,5 +36,6 @@ public class SetClimbRackUpAction implements Action {
 	public void start() {
 		mDrive.configureRetractCurrentLimit();
 		mDrive.setClimbLeft(-1);
+		mTimeoutTimer.reset();
 	}
 }

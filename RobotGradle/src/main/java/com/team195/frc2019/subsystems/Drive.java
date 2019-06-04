@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class Drive extends Subsystem {
 
 	private static final int kLowGearVelocityControlSlot = 0;
@@ -70,7 +71,7 @@ public class Drive extends Subsystem {
 		@Override
 		public void onStart(double timestamp) {
 			synchronized (Drive.this) {
-				setOpenLoop(new DriveSignal(0, 0));
+				setOpenLoop(DriveSignal.NEUTRAL);
 				if (mDriveControlState == DriveControlState.OPEN_LOOP) {
 					setBrakeMode(false);
 				}
@@ -343,11 +344,7 @@ public class Drive extends Subsystem {
 	}
 
 	public synchronized void setHeading(Rotation2d heading) {
-        ConsoleReporter.report("SET HEADING: " + FastDoubleToString.format(heading.getDegrees()));
-
         mGyroOffset = heading.rotateBy(Rotation2d.fromDegrees(mGyro.getFusedHeading()).inverse());
-//        ConsoleReporter.report("Gyro offset: " + mGyroOffset.getDegrees());
-
         mPeriodicIO.gyro_heading = heading;
 	}
 
@@ -417,22 +414,28 @@ public class Drive extends Subsystem {
 		return mPeriodicIO.right_velocity_RPM;
 	}
 
+	private static final DriveSignal pathVelWheelContainer = new DriveSignal(0,0 );
+	private static final DriveSignal pathFFWheelContainer = new DriveSignal(0,0 );
+	private static DriveMotionPlanner.Output motionPlannerOutput;
+	private static double currPathFollowingTime;
 	private void updatePathFollower() {
 		if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
-			final double now = Timer.getFPGATimestamp();
+			currPathFollowingTime = Timer.getFPGATimestamp();
 
-			DriveMotionPlanner.Output output = mMotionPlanner.update(now, RobotState.getInstance().getFieldToVehicle(now));
+			motionPlannerOutput = mMotionPlanner.update(currPathFollowingTime, RobotState.getInstance().getFieldToVehicle(currPathFollowingTime));
 
 			mPeriodicIO.error = mMotionPlanner.error();
 			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
 
 			if (!mOverrideTrajectory) {
-				setVelocity(new DriveSignal(radiansPerSecondToRPM(output.left_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor,
-										   radiansPerSecondToRPM(output.right_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor),
-						new DriveSignal(output.left_feedforward_voltage / 12.0, output.right_feedforward_voltage / 12.0));
+				pathVelWheelContainer.set(radiansPerSecondToRPM(motionPlannerOutput.left_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor,
+										  radiansPerSecondToRPM(motionPlannerOutput.right_velocity) * CalConstants.kDriveGearRatioMotorConversionFactor);
+				pathFFWheelContainer.set(motionPlannerOutput.left_feedforward_voltage / 12.0,
+										 motionPlannerOutput.right_feedforward_voltage / 12.0);
+				setVelocity(pathVelWheelContainer, pathFFWheelContainer);
 
-				mPeriodicIO.left_accel = radiansPerSecondToRPM(output.left_accel) / 1000.0;
-				mPeriodicIO.right_accel = radiansPerSecondToRPM(output.right_accel) / 1000.0;
+				mPeriodicIO.left_accel = radiansPerSecondToRPM(motionPlannerOutput.left_accel) / 1000.0;
+				mPeriodicIO.right_accel = radiansPerSecondToRPM(motionPlannerOutput.right_accel) / 1000.0;
 			} else {
 				setVelocity(DriveSignal.BRAKE, DriveSignal.BRAKE);
 				mPeriodicIO.left_accel = mPeriodicIO.right_accel = 0.0;
@@ -458,8 +461,8 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
-		double prevLeftRotations = mPeriodicIO.left_position_rotations;
-		double prevRightRotations = mPeriodicIO.right_position_rotations;
+		mPeriodicIO.prev_left_rotations = mPeriodicIO.left_position_rotations;
+		mPeriodicIO.prev_right_rotations = mPeriodicIO.right_position_rotations;
 		mPeriodicIO.left_position_rotations = mElevator.getLeftDrivePosition();
 		mPeriodicIO.right_position_rotations = mElevator.getRightDrivePosition();
 		mPeriodicIO.left_velocity_RPM = mElevator.getLeftDriveVelocity();
@@ -480,18 +483,18 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_bus_voltage = mLeftMaster.getMCInputVoltage();
 		mPeriodicIO.right_bus_voltage = mRightMaster.getMCInputVoltage();
 
-		double deltaLeftRotations = (mPeriodicIO.left_position_rotations - prevLeftRotations) * Math.PI;
-		if (deltaLeftRotations > 0.0) {
-			mPeriodicIO.left_distance += deltaLeftRotations * CalConstants.kDriveWheelDiameterInches;
+		mPeriodicIO.delta_left_rotations = (mPeriodicIO.left_position_rotations - mPeriodicIO.prev_left_rotations) * Math.PI;
+		if (mPeriodicIO.delta_left_rotations > 0.0) {
+			mPeriodicIO.left_distance += mPeriodicIO.delta_left_rotations * CalConstants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.left_distance += deltaLeftRotations * CalConstants.kDriveWheelDiameterInches;
+			mPeriodicIO.left_distance += mPeriodicIO.delta_left_rotations * CalConstants.kDriveWheelDiameterInches;
 		}
 
-		double deltaRightRotations = (mPeriodicIO.right_position_rotations - prevRightRotations) * Math.PI;
-		if (deltaRightRotations > 0.0) {
-			mPeriodicIO.right_distance += deltaRightRotations * CalConstants.kDriveWheelDiameterInches;
+		mPeriodicIO.delta_right_rotations = (mPeriodicIO.right_position_rotations - mPeriodicIO.prev_right_rotations) * Math.PI;
+		if (mPeriodicIO.delta_right_rotations > 0.0) {
+			mPeriodicIO.right_distance += mPeriodicIO.delta_right_rotations * CalConstants.kDriveWheelDiameterInches;
 		} else {
-			mPeriodicIO.right_distance += deltaRightRotations * CalConstants.kDriveWheelDiameterInches;
+			mPeriodicIO.right_distance += mPeriodicIO.delta_right_rotations * CalConstants.kDriveWheelDiameterInches;
 		}
 
 		if (mCSVWriter != null) {
@@ -514,8 +517,7 @@ public class Drive extends Subsystem {
 		}
 
 		if (mIsBrakeMode.get() != mPrevBrakeMode || mForceBrakeUpdate.get()) {
-			boolean newBrakeMode = mIsBrakeMode.get();
-			MCNeutralMode mode = newBrakeMode ? MCNeutralMode.Brake : MCNeutralMode.Coast;
+			MCNeutralMode mode = mIsBrakeMode.get() ? MCNeutralMode.Brake : MCNeutralMode.Coast;
 			mRightMaster.setBrakeCoastMode(mode);
 			mRightSlaveA.setBrakeCoastMode(mode);
 			mRightSlaveB.setBrakeCoastMode(mode);
@@ -524,7 +526,7 @@ public class Drive extends Subsystem {
 			mLeftSlaveA.setBrakeCoastMode(mode);
 			mLeftSlaveB.setBrakeCoastMode(mode);
 
-			mPrevBrakeMode = newBrakeMode;
+			mPrevBrakeMode = mIsBrakeMode.get();
 
 			if (mForceBrakeUpdate.get())
 				mForceBrakeUpdate.set(false);
@@ -684,6 +686,12 @@ public class Drive extends Subsystem {
 		boolean left_drive_encoder_present;
 		boolean right_drive_encoder_present;
 		boolean gyro_present;
+
+		double prev_left_rotations;
+		double prev_right_rotations;
+		double delta_left_rotations;
+		double delta_right_rotations;
+
 
 		// OUTPUTS
 		public double left_demand;

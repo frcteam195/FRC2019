@@ -3,9 +3,10 @@ package com.team195.lib.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class MotionInterferenceChecker {
-	private ArrayList<Function<Void, Boolean>> conditionList = new ArrayList<>();
+	private ArrayList<Predicate<Void>> conditionList = new ArrayList<>();
 	private LogicOperation mLogicOperation = LogicOperation.AND;
 
 	private boolean cachingEnabled = false;
@@ -15,19 +16,19 @@ public class MotionInterferenceChecker {
 	private boolean enabled = true;
 
 	@SafeVarargs
-	public MotionInterferenceChecker(LogicOperation logicOperation, Function<Void, Boolean>... conditions) {
+	public MotionInterferenceChecker(LogicOperation logicOperation,Predicate<Void>... conditions) {
 		this(logicOperation, false, conditions);
 	}
 
 	@SafeVarargs
-	public MotionInterferenceChecker(LogicOperation logicOperation, boolean cachingEnabled, Function<Void, Boolean>... conditions) {
+	public MotionInterferenceChecker(LogicOperation logicOperation, boolean cachingEnabled, Predicate<Void>... conditions) {
 		mLogicOperation = logicOperation;
 		conditionList.addAll(Arrays.asList(conditions));
 		this.cachingEnabled = cachingEnabled;
 	}
 
 	@SafeVarargs
-	public final void add(Function<Void, Boolean>... conditions) {
+	public final void add(Predicate<Void>... conditions) {
 		conditionList.addAll(Arrays.asList(conditions));
 	}
 
@@ -49,9 +50,9 @@ public class MotionInterferenceChecker {
 
 	private boolean checkLogic() {
 		if (mLogicOperation == LogicOperation.OR)
-			return conditionList.stream().map(f -> f.apply(null)).reduce(false, (a, b) -> a || b);
+			return conditionList.stream().map(f -> f.test(null)).reduce(false, (a, b) -> a || b);
 		else
-			return conditionList.stream().map(f -> f.apply(null)).reduce(true, (a, b) -> a && b);
+			return conditionList.stream().map(f -> f.test(null)).reduce(true, (a, b) -> a && b);
 	}
 
 	public enum LogicOperation {

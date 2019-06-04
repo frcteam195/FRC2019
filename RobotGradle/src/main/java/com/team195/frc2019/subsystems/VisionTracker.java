@@ -24,8 +24,10 @@ public class VisionTracker extends Subsystem {
 	private boolean mVisionEnabled = false;
 
 	private NetworkTable mCurrentTargetingLimelightNT;
-	private CachedValue<NetworkTable> limelightFrontNT = new CachedValue<>(100, (t) -> NetworkTableInstance.getDefault().getTable("limelight-turret"));
-	private CachedValue<NetworkTable> limelightBackNT = new CachedValue<>(100, (t) -> NetworkTableInstance.getDefault().getTable("limelight-back"));
+
+	private NetworkTable limelightFrontNT = NetworkTableInstance.getDefault().getTable("limelight-turret");
+	private NetworkTable limelightBackNT = NetworkTableInstance.getDefault().getTable("limelight-back");
+
 
 	public static VisionTracker getInstance() {
 		return mInstance;
@@ -55,14 +57,14 @@ public class VisionTracker extends Subsystem {
 				switch (mTargetMode) {
 					case ROCKET_BALL:
 						mPeriodicIO.pipelineFront = mVisionEnabled ? 1 : 0;
-						mCurrentTargetingLimelightNT = limelightFrontNT.getValue();
+						mCurrentTargetingLimelightNT = limelightFrontNT;
 						break;
 					case HATCH:
 					case HATCH_AUTOSKEW:
 					case CARGO_BALL:
 					default:
 						mPeriodicIO.pipelineBack = mVisionEnabled ? 1 : 0;
-						mCurrentTargetingLimelightNT = limelightBackNT.getValue();
+						mCurrentTargetingLimelightNT = limelightBackNT;
 						break;
 				}
 			}
@@ -159,30 +161,30 @@ public class VisionTracker extends Subsystem {
 				mPeriodicIO.getPipelineValue = mCurrentTargetingLimelightNT.getEntry("getpipe").getDouble(0);
 				mPeriodicIO.cameraTranslationRotation = mCurrentTargetingLimelightNT.getEntry("camtran").getDouble(0);
 
-				try {
-					double xArr[] = mCurrentTargetingLimelightNT.getEntry("tcornx").getDoubleArray(new double[]{0});
-					double yArr[] = mCurrentTargetingLimelightNT.getEntry("tcorny").getDoubleArray(new double[]{0});
-
-					if (xArr.length == yArr.length && xArr.length > 4) {
-						mPeriodicIO.pointArray.clear();
-						for (int i = 0; i < xArr.length; i++) {
-							mPeriodicIO.pointArray.add(new Translation2d(xArr[i], yArr[i]));
-						}
-
-						Translation2d upperLeftPoint = mPeriodicIO.pointArray.get(0);
-						Translation2d lowerLeftPoint = mPeriodicIO.pointArray.get(1);
-						Translation2d lowerRightPoint = mPeriodicIO.pointArray.get(yArr.length - 2);
-						Translation2d upperRightPoint = mPeriodicIO.pointArray.get(yArr.length - 1);
-
-						double upperLineSlope = Math.abs((upperRightPoint.y() - upperLeftPoint.y()) / (upperRightPoint.x() - upperLeftPoint.x()));
-						double lowerLineSlope = (lowerRightPoint.y() - lowerLeftPoint.y()) / (lowerRightPoint.x() - lowerLeftPoint.x());
-						mPeriodicIO.calculatedSkewFactor.addNumber(Math.toDegrees(Math.atan((upperLineSlope + Math.abs(lowerLineSlope)) / 2.0)) * Math.signum(lowerLineSlope));
-					} else {
-						mPeriodicIO.calculatedSkewFactor.clear();
-					}
-				} catch (Exception ex) {
-					ConsoleReporter.report(ex);
-				}
+//				try {
+//					double xArr[] = mCurrentTargetingLimelightNT.getEntry("tcornx").getDoubleArray(new double[]{0});
+//					double yArr[] = mCurrentTargetingLimelightNT.getEntry("tcorny").getDoubleArray(new double[]{0});
+//
+//					if (xArr.length == yArr.length && xArr.length > 4) {
+//						mPeriodicIO.pointArray.clear();
+//						for (int i = 0; i < xArr.length; i++) {
+//							mPeriodicIO.pointArray.add(new Translation2d(xArr[i], yArr[i]));
+//						}
+//
+//						Translation2d upperLeftPoint = mPeriodicIO.pointArray.get(0);
+//						Translation2d lowerLeftPoint = mPeriodicIO.pointArray.get(1);
+//						Translation2d lowerRightPoint = mPeriodicIO.pointArray.get(yArr.length - 2);
+//						Translation2d upperRightPoint = mPeriodicIO.pointArray.get(yArr.length - 1);
+//
+//						double upperLineSlope = Math.abs((upperRightPoint.y() - upperLeftPoint.y()) / (upperRightPoint.x() - upperLeftPoint.x()));
+//						double lowerLineSlope = (lowerRightPoint.y() - lowerLeftPoint.y()) / (lowerRightPoint.x() - lowerLeftPoint.x());
+//						mPeriodicIO.calculatedSkewFactor.addNumber(Math.toDegrees(Math.atan((upperLineSlope + Math.abs(lowerLineSlope)) / 2.0)) * Math.signum(lowerLineSlope));
+//					} else {
+//						mPeriodicIO.calculatedSkewFactor.clear();
+//					}
+//				} catch (Exception ex) {
+//					ConsoleReporter.report(ex);
+//				}
 
 //				mPeriodicIO.targetDistance = mTargetMode == TargetMode.ROCKET_BALL ?
 //						(TargetingConstants.kRocketBallTargetHeight - TargetingConstants.kLimelightFrontMountedHeightToFloor) /
@@ -215,8 +217,8 @@ public class VisionTracker extends Subsystem {
 	@Override
 	public synchronized void writePeriodicOutputs() {
 		try {
-			limelightFrontNT.getValue().getEntry("pipeline").setNumber(mPeriodicIO.pipelineFront);
-			limelightBackNT.getValue().getEntry("pipeline").setNumber(mPeriodicIO.pipelineBack);
+			limelightFrontNT.getEntry("pipeline").setNumber(mPeriodicIO.pipelineFront);
+			limelightBackNT.getEntry("pipeline").setNumber(mPeriodicIO.pipelineBack);
 		}
 		catch (Exception ex) {
 			ConsoleReporter.report(ex);

@@ -26,7 +26,7 @@ public class RobotState {
 			.kLidarYawAngleDegrees));
 
 	// FPGATimestamp -> Pose2d or Rotation2d
-	private InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_;
+	private final InterpolatingTreeMap<InterpolatingDouble, Pose2d> field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
 	private Twist2d vehicle_velocity_predicted_;
 	private Twist2d vehicle_velocity_measured_;
 	private double distance_driven_;
@@ -39,7 +39,8 @@ public class RobotState {
 	 * Resets the field to robot transform (robot's position on the field)
 	 */
 	public void reset(double start_time, Pose2d initial_field_to_vehicle) {
-		field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
+		field_to_vehicle_.clear();
+//		field_to_vehicle_ = new InterpolatingTreeMap<>(kObservationBufferSize);
 		field_to_vehicle_.put(new InterpolatingDouble(start_time), initial_field_to_vehicle);
 		Drive.getInstance().setHeading(initial_field_to_vehicle.getRotation());
 		vehicle_velocity_predicted_ = Twist2d.identity();
@@ -86,8 +87,8 @@ public class RobotState {
 
 	public Twist2d generateOdometryFromSensors(double left_encoder_delta_distance, double
 			right_encoder_delta_distance, Rotation2d current_gyro_angle) {
-		final Pose2d last_measurement = getLatestFieldToVehicle().getValue();
-		final Twist2d delta = Kinematics.forwardKinematics(last_measurement.getRotation(),
+//		final Pose2d last_measurement = getLatestFieldToVehicle().getValue();
+		final Twist2d delta = Kinematics.forwardKinematics(getLatestFieldToVehicle().getValue().getRotation(),
 				left_encoder_delta_distance, right_encoder_delta_distance,
 				current_gyro_angle);
 		distance_driven_ += delta.dx; //do we care about dy here?

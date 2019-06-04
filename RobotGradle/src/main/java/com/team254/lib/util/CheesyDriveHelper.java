@@ -37,6 +37,8 @@ public class CheesyDriveHelper {
     private double mQuickStopAccumlator = 0.0;
     private double mNegInertiaAccumlator = 0.0;
 
+    private final DriveSignal mDriveRetVal = new DriveSignal(0, 0);
+
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,
                                    boolean isHighGear, double velScalingFactor) {
 
@@ -142,7 +144,8 @@ public class CheesyDriveHelper {
         leftPwm = Math.abs(leftPwm) < kMinOutput ? 0 : leftPwm;
         rightPwm = Math.abs(rightPwm) < kMinOutput ? 0 : rightPwm;
 
-        return new DriveSignal(leftPwm * velScalingFactor, rightPwm * velScalingFactor);
+        mDriveRetVal.set(leftPwm * velScalingFactor, rightPwm * velScalingFactor);
+        return mDriveRetVal;
     }
 
     public DriveSignal cheesyDrive(double throttle, double wheel, boolean isQuickTurn,

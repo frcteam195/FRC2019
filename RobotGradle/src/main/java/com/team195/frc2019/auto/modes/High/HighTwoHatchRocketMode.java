@@ -43,15 +43,15 @@ public class HighTwoHatchRocketMode extends AutoModeBase {
 	@Override
 	protected void routine() throws AutoModeEndedException {
 		runAction(highStartToCloseRocketFarHatch);
-		runAction(AutomatedActions.placeHatch());
+		runAction(AutomatedActions.placeHatchAction);
 		runAction(closeRocketFarHatchToTurn1);
 		runAction(new ParallelAction(closeRocketFarHatchTurn1ToFeederStation,
 				new SeriesAction(new WaitUntilInsideRegion(new Translation2d(0, -160),
 						new Translation2d(50, -110), mStartedLeft),
-						AutomatedActions.pickupHatchFeederStation())));
+						AutomatedActions.pickupHatchFeederStation(null))));
 		runAction(closeRocketFeederStationToTurn2);
 		runAction(closeRocketTurn2ToCloseHatch);
-		runAction(AutomatedActions.placeHatch());
+		runAction(AutomatedActions.placeHatchAction);
 		runAction(new ParallelAction(closeRocketCloseHatchToBall, AutomatedActions.intakeBallOn((t) -> false)));
 	}
 }

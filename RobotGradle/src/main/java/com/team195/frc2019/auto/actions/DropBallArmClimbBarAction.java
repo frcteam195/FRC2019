@@ -31,6 +31,9 @@ public class DropBallArmClimbBarAction implements Action {
 
 	@Override
 	public void start() {
+		if (mTimeoutTimer != null)
+			mTimeoutTimer.reset();
+
 		if (!mBallIntakeArm.isBallIntakeBarClimbLatched())
 			mBallIntakeArm.dropClimbBar();
 		else

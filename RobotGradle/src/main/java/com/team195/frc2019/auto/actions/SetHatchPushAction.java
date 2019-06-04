@@ -32,5 +32,6 @@ public class SetHatchPushAction implements Action {
 	@Override
 	public void start() {
 		mTurret.setHatchPush(mPushOut);
+		mTimeoutTimer.reset();
 	}
 }

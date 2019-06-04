@@ -31,5 +31,6 @@ public class SetTurretPositionAction implements Action {
 	@Override
 	public void start() {
 		mTurret.setTurretPosition(mPosition);
+		mTimeoutTimer.reset();
 	}
 }

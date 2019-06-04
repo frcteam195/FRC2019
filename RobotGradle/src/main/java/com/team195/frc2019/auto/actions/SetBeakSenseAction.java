@@ -6,7 +6,6 @@ import com.team195.lib.util.TimeoutTimer;
 
 public class SetBeakSenseAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
-	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(AutoConstants.kDefaultSolenoidWait * 2.0);
 
 	private boolean mOn;
 

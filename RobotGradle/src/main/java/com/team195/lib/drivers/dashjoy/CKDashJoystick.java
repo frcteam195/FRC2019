@@ -5,6 +5,7 @@ import edu.wpi.first.hal.HALUtil;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class CKDashJoystick {
 
 	private final int mPort;
@@ -59,8 +60,7 @@ public class CKDashJoystick {
 
 	public double getSmoothedAxis(int axis, double deadband, double power) {
 		double x = getRawAxis(axis);
-		double sign = Math.signum(x);
-		return sign * Math.min(Math.pow(Math.abs(normalizeJoystickWithDeadband(x, deadband)), power), 1);
+		return Math.signum(x) * Math.min(Math.pow(Math.abs(normalizeJoystickWithDeadband(x, deadband)), power), 1);
 	}
 
 	public boolean getRawButton(int button) {
@@ -70,23 +70,27 @@ public class CKDashJoystick {
 			return backupJoystick.getRawButton(button);
 	}
 
+	private boolean currButtonRising;
+	private boolean retValButtonRising;
 	public boolean getRisingEdgeButton(int button) {
 		try {
-			boolean currentButton = getRawButton(button);
-			boolean retVal = (currentButton != prevButtonVal[button-1]) && currentButton;
-			setPrevButtonVal(button-1, currentButton);
-			return retVal;
+			currButtonRising = getRawButton(button);
+			retValButtonRising = (currButtonRising != prevButtonVal[button-1]) && currButtonRising;
+			setPrevButtonVal(button-1, currButtonRising);
+			return retValButtonRising;
 		} catch(Exception ex) {
 			return false;
 		}
 	}
 
+	private boolean currButtonFalling;
+	private boolean retValButtonFalling;
 	public boolean getFallingEdgeButton(int button) {
 		try {
-			boolean currentButton = getRawButton(button);
-			boolean retVal = (currentButton != prevButtonVal[button-1]) && !currentButton;
-			setPrevButtonVal(button-1, currentButton);
-			return retVal;
+			currButtonFalling = getRawButton(button);
+			retValButtonFalling = (currButtonFalling != prevButtonVal[button-1]) && !currButtonFalling;
+			setPrevButtonVal(button-1, currButtonFalling);
+			return retValButtonFalling;
 		} catch(Exception ex) {
 			return false;
 		}
@@ -135,12 +139,14 @@ public class CKDashJoystick {
 		return false;
 	}
 
+	private boolean currTrigRising;
+	private boolean retValTrigRising;
 	public boolean getRisingEdgeTrigger(int axis, double threshold) {
 		try {
-			boolean currentButton = Math.abs(getRawAxis(axis)) > threshold;
-			boolean retVal = (currentButton != prevTriggerVal[axis]) && currentButton;
-			setPrevTriggerVal(axis, currentButton);
-			return retVal;
+			currTrigRising = Math.abs(getRawAxis(axis)) > threshold;
+			retValTrigRising = (currTrigRising != prevTriggerVal[axis]) && currTrigRising;
+			setPrevTriggerVal(axis, currTrigRising);
+			return retValTrigRising;
 		} catch(Exception ex) {
 			return false;
 		}

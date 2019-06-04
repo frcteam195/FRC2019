@@ -14,12 +14,12 @@ import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.*;
 import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
-import com.team254.lib.util.*;
-import edu.wpi.first.wpilibj.TimedRobot;
+import com.team254.lib.util.CrashTracker;
+import com.team254.lib.util.DriveSignal;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 
-public class Robot extends TimedRobot {
+@SuppressWarnings({"ResultOfMethodCallIgnored", "FieldCanBeLocal", "WeakerAccess"})
+public class Robot extends RealtimeRobot {
 	private Looper mEnabledLooper = new Looper("EnabledLooper");
 	private Looper mDisabledLooper = new Looper("DisabledLooper");
 
@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
 	private Drive mDrive;
 	private LEDController mLED;
 	private Infrastructure mInfrastructure;
-	public static AutoModeExecutor mAutoModeExecutor;
+	public static final AutoModeExecutor mAutoModeExecutor = new AutoModeExecutor();
 
 	private HIDController mHIDController;
 
@@ -60,15 +60,13 @@ public class Robot extends TimedRobot {
 				VisionTracker.getInstance()
 			);
 
-			LiveWindow.disableAllTelemetry();
-
 			ConsoleReporter.getInstance();
 			ConsoleReporter.setReportingLevel(MessageLevel.INFO);
 
 			mSubsystemManager.registerEnabledLoops(mEnabledLooper);
 			mSubsystemManager.registerDisabledLoops(mDisabledLooper);
 
-//			TrajectoryGenerator.getInstance().generateTrajectories();
+			TrajectoryGenerator.getInstance().generateTrajectories();
 
 			mLED.start();
 			mLED.setRequestedState(LEDController.LEDState.BLINK);
@@ -78,6 +76,7 @@ public class Robot extends TimedRobot {
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
+			System.gc();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
 			throw t;
@@ -114,7 +113,7 @@ public class Robot extends TimedRobot {
 //			mEnabledLooper.start();
 //			mHIDController.start();
 //
-//			if (mAutoModeExecutor != null) {
+//			if (mAutoModeExecutor.isSet()) {
 //				ConsoleReporter.report("Start Auto Mode");
 //				mAutoModeExecutor.start();
 //			}
@@ -129,28 +128,33 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousPeriodic() {
-		try {
-
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+//		try {
+//
+//		} catch (Throwable t) {
+//			CrashTracker.logThrowableCrash(t);
+//			throw t;
+//		}
 	}
 
 	@Override
 	public void teleopInit() {
 		try {
-			CrashTracker.logTeleopInit();
+//			CrashTracker.logTeleopInit();
 			mDisabledLooper.stop();
 
-			if (mAutoModeExecutor != null)
-				mAutoModeExecutor.stop();
+			if (mAutoModeExecutor.isSet()) {
+				try {
+					mAutoModeExecutor.stop();
+				} catch (Exception ignored) {
+
+				}
+			}
 
 			mInfrastructure.setIsDuringAuto(false);
 
 			mEnabledLooper.start();
 			mDrive.setVelocity(DriveSignal.NEUTRAL, DriveSignal.NEUTRAL);
-			mDrive.setOpenLoop(new DriveSignal(0, 0));
+			mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 			mDrive.setBrakeMode(false);
 			mDrive.forceBrakeModeUpdate();
 			mHIDController.start();
@@ -162,12 +166,12 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopPeriodic() {
-		try {
-
-		} catch (Throwable t) {
-			CrashTracker.logThrowableCrash(t);
-			throw t;
-		}
+//		try {
+//
+//		} catch (Throwable t) {
+//			CrashTracker.logThrowableCrash(t);
+//			throw t;
+//		}
 	}
 
 	@Override
@@ -205,25 +209,19 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
 		try {
-			CrashTracker.logDisabledInit();
+//			CrashTracker.logDisabledInit();
 
-			ConsoleReporter.report("Stopping HID");
 			mHIDController.stop();
-
-			ConsoleReporter.report("Stopping Enabled Looper");
 			mEnabledLooper.stop();
-
-			ConsoleReporter.report("Setting Brake Mode");
 			mDrive.setBrakeMode(false);
 			mDrive.forceBrakeModeUpdate();
+			if (mAutoModeExecutor.isSet()) {
+				try {
+					mAutoModeExecutor.stop();
+				} catch (Exception ignored) {
 
-			ConsoleReporter.report("Check Auto Mode Not Null");
-			if (mAutoModeExecutor != null) {
-				ConsoleReporter.report("Stop Auto Mode");
-				mAutoModeExecutor.stop();
+				}
 			}
-
-			ConsoleReporter.report("Starting Disabled Looper");
 			mDisabledLooper.start();
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);
@@ -234,7 +232,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		try {
-			mAutoModeExecutor = new AutoModeExecutor();
+			mAutoModeExecutor.reset();
 //			mAutoModeExecutor.setAutoMode(mAutoModeSelector.getAutoMode());
 		} catch (Throwable t) {
 			CrashTracker.logThrowableCrash(t);

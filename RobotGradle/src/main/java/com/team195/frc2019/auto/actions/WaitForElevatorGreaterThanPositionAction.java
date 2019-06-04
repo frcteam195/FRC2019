@@ -31,6 +31,6 @@ public class WaitForElevatorGreaterThanPositionAction implements Action {
 
 	@Override
 	public void start() {
-
+		mTimeoutTimer.reset();
 	}
 }

@@ -34,7 +34,8 @@ public class Constants {
 
 
     //Thread prioritization - 5 is default
-    public static final int kRobotThreadPriority = 9;
+    public static final int kRobotThreadPriority = Thread.NORM_PRIORITY;
+    public static final int kControllerThreadPriority = 9;
     public static final int kLooperThreadPriority = Thread.MAX_PRIORITY;
     public static final int kConnectionMonitorThreadPriority = 7;
     public static final int kLEDThreadPriority = Thread.MIN_PRIORITY;
@@ -48,7 +49,7 @@ public class Constants {
     public static final boolean TUNING_PIDS = false;
     public static final boolean DEBUG = false;
     public static final boolean LOGGING_ENABLED = true;
-    public static final boolean REPORTING_ENABLED = true;
+    public static final boolean REPORTING_ENABLED = false;
     public static final boolean REPORT_TO_DRIVERSTATION_INSTEAD_OF_CONSOLE = false;
 
     public static final RGBColor kDefaultColor = new RGBColor(210, 0, 120);  //Default purple color

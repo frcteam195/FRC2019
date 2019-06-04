@@ -4,6 +4,7 @@ import com.team195.frc2019.subsystems.Turret;
 import com.team195.lib.drivers.dashjoy.CKDashJoystick;
 import com.team195.lib.util.TimeoutTimer;
 
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 public class SetRumbleIfHatchAction implements Action {
@@ -11,16 +12,19 @@ public class SetRumbleIfHatchAction implements Action {
 	private static final Turret mTurret = Turret.getInstance();
 
 	private double mVal;
-	private final Function<Void, CKDashJoystick> mDriveJoystickGetter;
+	private final AtomicReference<Function<Void, CKDashJoystick>> mDriveJoystickGetter;
 
-	public SetRumbleIfHatchAction(Function<Void, CKDashJoystick> driveJoystickGetter, double val) {
+	public SetRumbleIfHatchAction(AtomicReference<Function<Void, CKDashJoystick>> driveJoystickGetter, double val) {
 		mDriveJoystickGetter = driveJoystickGetter;
 		mVal = val;
 	}
 
 	@Override
 	public boolean isFinished() {
-		return mTimeoutTimer.isTimedOut();
+		if (mDriveJoystickGetter.get() != null)
+			return mTimeoutTimer.isTimedOut();
+		else
+			return true;
 	}
 
 	@Override
@@ -29,12 +33,16 @@ public class SetRumbleIfHatchAction implements Action {
 
 	@Override
 	public void done() {
-		mDriveJoystickGetter.apply(null).setRumble(0);
+		if (mDriveJoystickGetter.get() != null)
+			mDriveJoystickGetter.get().apply(null).setRumble(0);
 	}
 
 	@Override
 	public void start() {
-		if (!mTurret.getLimitSwitchValue())
-			mDriveJoystickGetter.apply(null).setRumble(mVal);
+		mTimeoutTimer.reset();
+		if (!mTurret.getLimitSwitchValue()) {
+			if (mDriveJoystickGetter.get() != null)
+				mDriveJoystickGetter.get().apply(null).setRumble(mVal);
+		}
 	}
 }

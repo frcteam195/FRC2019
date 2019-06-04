@@ -52,6 +52,10 @@ public class HIDController {
 	private ElapsedTimer autoBrakeTimer = new ElapsedTimer();
 	private static final double kBrakeTimeout = 1;
 
+	private static double mThrottle = 0;
+	private static double mTurn = 0;
+	private static final DriveSignal mDriveSignalOutput = new DriveSignal(0, 0);
+
 	private static final double HID_RATE_CONTROL = 0.020;
 
 	private final Notifier mHIDNotifier;
@@ -62,7 +66,7 @@ public class HIDController {
 		synchronized (taskRunningLock_) {
 			if (firstRun) {
 				Thread.currentThread().setName("HIDController");
-				Thread.currentThread().setPriority(Constants.kRobotThreadPriority);
+				Thread.currentThread().setPriority(Constants.kControllerThreadPriority);
 
 				if (BallIntakeArm.getInstance().isArmUp())
 					TeleopActionRunner.runAction(AutomatedActions.unfold());
@@ -71,63 +75,60 @@ public class HIDController {
 			}
 			try {
 				if (Infrastructure.getInstance().isDuringAuto() && !stoppedAuto) {
-					AutoModeExecutor autoModeExecutor = Robot.mAutoModeExecutor;
 					if (driveJoystick.isAxisInputActive()) {
-						ConsoleReporter.report("Stopping auto");
-						if (autoModeExecutor != null)
-							autoModeExecutor.stop();
+						if (Robot.mAutoModeExecutor.isSet())
+							Robot.mAutoModeExecutor.stop();
 						stoppedAuto = true;
 					}
 				} else {
 					//User Control Interface code here
 
 					if (!USE_CHEESY_DRIVE) {
-						double scalingFactor = driveJoystick.getRawButton(6) ? 1 : 1;
-
-						double throttle = -driveJoystick.getSmoothedAxis(1, Constants.kJoystickDeadband, 2) * scalingFactor;
-						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * scalingFactor * 0.5;
+						mThrottle = -driveJoystick.getSmoothedAxis(1, Constants.kJoystickDeadband, 2);
+						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.5;
 						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 								if (VisionTracker.getInstance().isTargetFound())
-									throttle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+									mThrottle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							} else if (Turret.getInstance().getSetpoint() == TurretPositions.Left90) {
 								if (VisionTracker.getInstance().isTargetFound())
-									throttle = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+									mThrottle = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							} else {
 								if (VisionTracker.getInstance().isTargetFound())
-									turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.007, 1), -1);
+									mTurn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.007, 1), -1);
 							}
 						}
 
 						if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
-							throttle *= CalConstants.kElevatorLowSensitivityFactor;
-							turn *= CalConstants.kElevatorLowSensitivityFactor;
+							mThrottle *= CalConstants.kElevatorLowSensitivityFactor;
+							mTurn *= CalConstants.kElevatorLowSensitivityFactor;
 						}
 
 						if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
 							mDrive.setBrakeMode(driveJoystick.getRawButton(5) || driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled());
-							mDrive.setOpenLoop(new DriveSignal(Math.max(Math.min(throttle + turn, 1), -1), Math.max(Math.min(throttle - turn, 1), -1)));
+							mDriveSignalOutput.set(Math.max(Math.min(mThrottle + mTurn, 1), -1), Math.max(Math.min(mThrottle - mTurn, 1), -1));
+							mDrive.setOpenLoop(mDriveSignalOutput);
 						}
 					} else {
-						double throttle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
-						double turn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.6;
+						mThrottle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
+						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.6;
 
 						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
 								if (VisionTracker.getInstance().isTargetFound())
-									throttle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+									mThrottle = -Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							} else if (Turret.getInstance().getSetpoint() == TurretPositions.Left90) {
 								if (VisionTracker.getInstance().isTargetFound())
-									throttle = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
+									mThrottle = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 1), -1);
 							} else {
 								if (VisionTracker.getInstance().isTargetFound())
-									turn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 0.1), -0.1);
+									mTurn = Math.max(Math.min(VisionTracker.getInstance().getTargetHorizAngleDev() * 0.01, 0.1), -0.1);
 							}
 						}
 
 						if (Elevator.getInstance().getPosition() > CalConstants.kElevatorLowSensitivityThreshold) {
-							throttle *= CalConstants.kElevatorLowSensitivityFactor;
-							turn *= CalConstants.kElevatorLowSensitivityFactor;
+							mThrottle *= CalConstants.kElevatorLowSensitivityFactor;
+							mTurn *= CalConstants.kElevatorLowSensitivityFactor;
 						}
 
 						if (mDrive.getDriveControlState() == Drive.DriveControlState.OPEN_LOOP) {
@@ -142,11 +143,9 @@ public class HIDController {
 
 							boolean quickTurn = driveJoystick.getRawButton(6) || VisionTracker.getInstance().isVisionEnabled();
 							if (quickTurn)
-								turn *= 0.5;
+								mTurn *= 0.5;
 
-							DriveSignal d = mCheesyDriveHelper.cheesyDrive(throttle, turn, quickTurn, true);
-
-							mDrive.setOpenLoop(d);
+							mDrive.setOpenLoop(mCheesyDriveHelper.cheesyDrive(mThrottle, mTurn, quickTurn, true));
 						}
 					}
 
@@ -206,25 +205,25 @@ public class HIDController {
 					if (buttonBox2.getRisingEdgeButton(1)) {
 						TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceHigh());
 					} else if (buttonBox2.getRisingEdgeButton(3)) {
-						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
+						TeleopActionRunner.runAction(AutomatedActions.ballArmSetUpAction);
 					} else if (buttonBox2.getRisingEdgeButton(4)) {
-						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
+						TeleopActionRunner.runAction(AutomatedActions.ballArmSetDownAction);
 					} else if (buttonBox2.getRisingEdgeButton(5)) {
 						TeleopActionRunner.runAction(AutomatedActions.reverseIntakeBall((t) -> buttonBox2.getRawButton(5)));
 					} else if (buttonBox2.getRisingEdgeButton(6)) {
-						TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
+
 					} else if (buttonBox2.getRisingEdgeButton(7)) {
 						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
 						|| !DriverStation.getInstance().isFMSAttached())
-							TeleopActionRunner.runAction(AutomatedAction.fromAction(new DropBallArmClimbBarAction(), Constants.kActionTimeoutS));
+							TeleopActionRunner.runAction(AutomatedActions.dropBallArmClimbBarAction);
 					} else if (buttonBox2.getRisingEdgeButton(8)) {
 
 					} else if (buttonBox2.getRisingEdgeButton(9)) {
 						TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> buttonBox2.getRawButton(9)));
 					} else if (buttonBox2.getRisingEdgeButton(10)) {
-						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetBeakAction(false), 1));
+						TeleopActionRunner.runAction(AutomatedActions.setBeakClosedAction);
 					} else if (buttonBox2.getRisingEdgeButton(11)) {
-						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetDrivePTOAction(false), 1));
+						TeleopActionRunner.runAction(AutomatedActions.setPTOToDriveAction);
 						mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 					} else if (buttonBox2.getRisingEdgeButton(12)) {
 						TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
@@ -247,14 +246,14 @@ public class HIDController {
 						//Ball Outtake turret and arm
 						TeleopActionRunner.runAction(AutomatedActions.shootBall((t) -> armControlJoystick.getRawButton(3)));
 					} else if (armControlJoystick.getRisingEdgeButton(4)) {
-						TeleopActionRunner.runAction(AutomatedActions.placeHatch());
+						TeleopActionRunner.runAction(AutomatedActions.placeHatchAction);
 					} else if (armControlJoystick.getRisingEdgeButton(5)) {
 
 					} else if (armControlJoystick.getRisingEdgeButton(6)) {
 
 					} else if (armControlJoystick.getRisingEdgeButton(7)) {
 						//Rehome Elevator
-						TeleopActionRunner.runAction(AutomatedActions.homeElevator());
+						TeleopActionRunner.runAction(AutomatedActions.homeElevatorAction);
 					} else if (armControlJoystick.getRisingEdgeButton(8)) {
 						//Turret Open Loop
 						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretOpenLoopAction((t) -> armControlJoystick.getRawButton(8),
@@ -266,21 +265,21 @@ public class HIDController {
 						Turret.getInstance().zeroSensors();
 						Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
 					} else if (armControlJoystick.getRisingEdgeButton(12)) {
-						TeleopActionRunner.runAction(AutomatedActions.lowerIntakeAndResetTurret());
+						TeleopActionRunner.runAction(AutomatedActions.lowerIntakeAndResetTurretAction);
 					}
 
 					switch (armControlJoystick.getPOV()) {
 						case 0:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Home));
+							TeleopActionRunner.runAction(AutomatedActions.setTurretHomeAction);
 							break;
 						case 90:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Left90));
+							TeleopActionRunner.runAction(AutomatedActions.setTurretLeft90Action);
 							break;
 						case 180:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Back180));
+							TeleopActionRunner.runAction(AutomatedActions.setTurretBack180Action);
 							break;
 						case 270:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Right90));
+							TeleopActionRunner.runAction(AutomatedActions.setTurretRight90Action);
 							break;
 						default:
 							break;
@@ -289,14 +288,13 @@ public class HIDController {
 			} catch (Exception ex) {
 				ConsoleReporter.report(ex);
 			} catch (Throwable t) {
-				ConsoleReporter.report(t);
 				CrashTracker.logThrowableCrash(t);
 			}
 		}
 
 		if (Turret.getInstance().isBeakListenerEnabled()) {
 			if (Turret.getInstance().getLimitSwitchFallingEdge())
-				TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 4));
+				TeleopActionRunner.runAction(AutomatedActions.setBeakOpenAction);
 		}
 
 		TeleopActionRunner.processActions();

@@ -31,6 +31,6 @@ public class WaitForTurretLessThanRotationAction implements Action {
 
 	@Override
 	public void start() {
-
+		mTimeoutTimer.reset();
 	}
 }
