@@ -213,8 +213,8 @@ public class HIDController {
 					} else if (buttonBox2.getRisingEdgeButton(6)) {
 
 					} else if (buttonBox2.getRisingEdgeButton(7)) {
-						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
-						|| !DriverStation.getInstance().isFMSAttached())
+//						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
+//						|| !DriverStation.getInstance().isFMSAttached())
 							TeleopActionRunner.runAction(AutomatedActions.dropBallArmClimbBarAction);
 					} else if (buttonBox2.getRisingEdgeButton(8)) {
 

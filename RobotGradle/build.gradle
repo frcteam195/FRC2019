@@ -50,7 +50,9 @@ deploy {
 							"-Dcom.sun.management.jmxremote.local.only=false",
 							"-Dcom.sun.management.jmxremote.ssl=false",
 							"-Dcom.sun.management.jmxremote.authenticate=false",
-							"-Djava.rmi.server.hostname=${TEAMIP}"
+							"-Djava.rmi.server.hostname=${TEAMIP}",
+							"-XX:+UseConcMarkSweepGC",
+							"-XX:MaxGCPauseMillis=10"
 							]
 			} else {
 // 				jvmArgs = [ "-XX:+UseG1GC",

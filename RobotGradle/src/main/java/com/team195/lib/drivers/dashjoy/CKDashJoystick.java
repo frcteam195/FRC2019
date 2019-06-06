@@ -43,15 +43,19 @@ public class CKDashJoystick {
 	public int getPOV(int pov) {
 		if (isTimestampValid())
 			return dashJoyController.getPOV(mPort);
-		else
+		if (backupJoystick != null)
 			return backupJoystick.getPOV();
+		else
+			return -1;
 	}
 
 	public double getRawAxis(int axis) {
 		if (isTimestampValid())
 			return dashJoyController.getRawAxis(mPort, axis);
-		else
+		if (backupJoystick != null)
 			return backupJoystick.getRawAxis(axis);
+		else
+			return 0;
 	}
 
 	public double getNormalizedAxis(int axis, double deadband) {
@@ -66,8 +70,10 @@ public class CKDashJoystick {
 	public boolean getRawButton(int button) {
 		if (isTimestampValid())
 			return dashJoyController.getRawButton(mPort, button-1);
-		else
+		if (backupJoystick != null)
 			return backupJoystick.getRawButton(button);
+		else
+			return false;
 	}
 
 	private boolean currButtonRising;
@@ -122,20 +128,22 @@ public class CKDashJoystick {
 	}
 
 	public boolean isAxisInputActive() {
-		for (int i = 0; i < backupJoystick.getAxisCount(); i++) {
-			if (Math.abs(getRawAxis(i)) > Constants.kJoystickJogThreshold) {
-				return true;
+		if (backupJoystick != null)
+			for (int i = 0; i < backupJoystick.getAxisCount(); i++) {
+				if (Math.abs(getRawAxis(i)) > Constants.kJoystickJogThreshold) {
+					return true;
+				}
 			}
-		}
 		return false;
 	}
 
 	public boolean isButtonInputActive() {
-		for (int i = 1; i <= backupJoystick.getButtonCount(); i++) {
-			if (getRawButton(i)) {
-				return true;
+		if (backupJoystick != null)
+			for (int i = 1; i <= backupJoystick.getButtonCount(); i++) {
+				if (getRawButton(i)) {
+					return true;
+				}
 			}
-		}
 		return false;
 	}
 
@@ -154,7 +162,8 @@ public class CKDashJoystick {
 
 	public void setRumble(double val) {
 //		backupJoystick.setRumble(GenericHID.RumbleType.kLeftRumble, val);
-		backupJoystick.setRumble(GenericHID.RumbleType.kRightRumble, val);
+		if (backupJoystick != null)
+			backupJoystick.setRumble(GenericHID.RumbleType.kRightRumble, val);
 	}
 
 	public boolean isPOVInputActive() {

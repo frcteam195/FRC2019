@@ -74,8 +74,8 @@ public class SubsystemManager implements ILooper {
 		l.add("Timestamp_Robot");
 		l.add(Timer.getFPGATimestamp());
 
-		l.add("MatchTime");
-		l.add(DriverStation.getInstance().getMatchTime());
+//		l.add("MatchTime");
+//		l.add(DriverStation.getInstance().getMatchTime());
 
 		try {
 			mAllSubsystems.forEach((s) -> l.addAll(s.generateReport()));
