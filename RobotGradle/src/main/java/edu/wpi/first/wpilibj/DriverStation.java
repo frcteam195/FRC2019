@@ -26,8 +26,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * Provide access to the network communication data to / from the Driver Station.
  */
 @SuppressWarnings({"PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength",
-                   "PMD.ExcessivePublicCount", "PMD.GodClass", "PMD.TooManyFields",
-                   "PMD.TooManyMethods"})
+        "PMD.ExcessivePublicCount", "PMD.GodClass", "PMD.TooManyFields",
+        "PMD.TooManyMethods", "FieldCanBeLocal", "ConstantConditions"})
 public class DriverStation {
   /**
    * Number of Joystick Ports.
@@ -173,6 +173,7 @@ public class DriverStation {
   private final Object m_controlWordMutex;
   private final ControlWord m_controlWordCache;
   private long m_lastControlWordUpdate;
+  private long m_controlWordUpdateNow;
 
   /**
    * Gets an instance of the DriverStation.
@@ -209,6 +210,7 @@ public class DriverStation {
     m_controlWordMutex = new Object();
     m_controlWordCache = new ControlWord();
     m_lastControlWordUpdate = 0;
+    m_controlWordUpdateNow = 0;
 
     m_matchDataSender = new MatchDataSender();
 
@@ -613,10 +615,8 @@ public class DriverStation {
    * @return True if the robot is enabled, false otherwise.
    */
   public boolean isEnabled() {
-    synchronized (m_controlWordMutex) {
-      updateControlWord(false);
-      return m_controlWordCache.getEnabled() && m_controlWordCache.getDSAttached();
-    }
+    updateControlWord(false);
+    return m_controlWordCache.getEnabled() && m_controlWordCache.getDSAttached();
   }
 
   /**
@@ -635,10 +635,8 @@ public class DriverStation {
    * @return True if autonomous mode should be enabled, false otherwise.
    */
   public boolean isAutonomous() {
-    synchronized (m_controlWordMutex) {
-      updateControlWord(false);
-      return m_controlWordCache.getAutonomous();
-    }
+    updateControlWord(false);
+    return m_controlWordCache.getAutonomous();
   }
 
   /**
@@ -658,10 +656,8 @@ public class DriverStation {
    * @return True if test mode should be enabled, false otherwise.
    */
   public boolean isTest() {
-    synchronized (m_controlWordMutex) {
-      updateControlWord(false);
-      return m_controlWordCache.getTest();
-    }
+    updateControlWord(false);
+    return m_controlWordCache.getTest();
   }
 
   /**
@@ -670,10 +666,8 @@ public class DriverStation {
    * @return True if Driver Station is attached, false otherwise.
    */
   public boolean isDSAttached() {
-    synchronized (m_controlWordMutex) {
-      updateControlWord(false);
-      return m_controlWordCache.getDSAttached();
-    }
+    updateControlWord(false);
+    return m_controlWordCache.getDSAttached();
   }
 
   /**
@@ -692,10 +686,8 @@ public class DriverStation {
    * @return true if the robot is competing on a field being controlled by a Field Management System
    */
   public boolean isFMSAttached() {
-    synchronized (m_controlWordMutex) {
-      updateControlWord(false);
-      return m_controlWordCache.getFMSAttached();
-    }
+    updateControlWord(false);
+    return m_controlWordCache.getFMSAttached();
   }
 
   /**
@@ -974,58 +966,62 @@ public class DriverStation {
     m_userInTest = entering;
   }
 
+
+  private String m_matchData_eventName;
+  private String m_matchData_gameSpecificMessage;
+  private int m_matchData_matchNumber;
+  private int m_matchData_replayNumber;
+  private int m_matchData_matchType;
+  private AllianceStationID m_matchData_alliance;
+  private boolean m_matchData_isRedAlliance;
+  private int m_matchData_stationNumber;
   private void sendMatchData() {
-    AllianceStationID alliance = HAL.getAllianceStation();
-    boolean isRedAlliance = false;
-    int stationNumber = 1;
-    switch (alliance) {
+    m_matchData_alliance = HAL.getAllianceStation();
+    m_matchData_isRedAlliance = false;
+    m_matchData_stationNumber = 1;
+
+    switch (m_matchData_alliance) {
       case Blue1:
-        isRedAlliance = false;
-        stationNumber = 1;
+        m_matchData_isRedAlliance = false;
+        m_matchData_stationNumber = 1;
         break;
       case Blue2:
-        isRedAlliance = false;
-        stationNumber = 2;
+        m_matchData_isRedAlliance = false;
+        m_matchData_stationNumber = 2;
         break;
       case Blue3:
-        isRedAlliance = false;
-        stationNumber = 3;
+        m_matchData_isRedAlliance = false;
+        m_matchData_stationNumber = 3;
         break;
       case Red1:
-        isRedAlliance = true;
-        stationNumber = 1;
+        m_matchData_isRedAlliance = true;
+        m_matchData_stationNumber = 1;
         break;
       case Red2:
-        isRedAlliance = true;
-        stationNumber = 2;
+        m_matchData_isRedAlliance = true;
+        m_matchData_stationNumber = 2;
         break;
       default:
-        isRedAlliance = true;
-        stationNumber = 3;
+        m_matchData_isRedAlliance = true;
+        m_matchData_stationNumber = 3;
         break;
     }
 
-
-    String eventName;
-    String gameSpecificMessage;
-    int matchNumber;
-    int replayNumber;
-    int matchType;
     synchronized (m_cacheDataMutex) {
-      eventName = m_matchInfo.eventName;
-      gameSpecificMessage = m_matchInfo.gameSpecificMessage;
-      matchNumber = m_matchInfo.matchNumber;
-      replayNumber = m_matchInfo.replayNumber;
-      matchType = m_matchInfo.matchType;
+      m_matchData_eventName = m_matchInfo.eventName;
+      m_matchData_gameSpecificMessage = m_matchInfo.gameSpecificMessage;
+      m_matchData_matchNumber = m_matchInfo.matchNumber;
+      m_matchData_replayNumber = m_matchInfo.replayNumber;
+      m_matchData_matchType = m_matchInfo.matchType;
     }
 
-    m_matchDataSender.alliance.setBoolean(isRedAlliance);
-    m_matchDataSender.station.setDouble(stationNumber);
-    m_matchDataSender.eventName.setString(eventName);
-    m_matchDataSender.gameSpecificMessage.setString(gameSpecificMessage);
-    m_matchDataSender.matchNumber.setDouble(matchNumber);
-    m_matchDataSender.replayNumber.setDouble(replayNumber);
-    m_matchDataSender.matchType.setDouble(matchType);
+    m_matchDataSender.alliance.setBoolean(m_matchData_isRedAlliance);
+    m_matchDataSender.station.setDouble(m_matchData_stationNumber);
+    m_matchDataSender.eventName.setString(m_matchData_eventName);
+    m_matchDataSender.gameSpecificMessage.setString(m_matchData_gameSpecificMessage);
+    m_matchDataSender.matchNumber.setDouble(m_matchData_matchNumber);
+    m_matchDataSender.replayNumber.setDouble(m_matchData_replayNumber);
+    m_matchDataSender.matchType.setDouble(m_matchData_matchType);
     m_matchDataSender.controlWord.setDouble(HAL.nativeGetControlWord());
   }
 
@@ -1118,20 +1114,21 @@ public class DriverStation {
    * Provides the service routine for the DS polling m_thread.
    */
   private void run() {
-    int safetyCounter = 0;
+//    int safetyCounter = 0;
     while (m_threadKeepAlive) {
       HAL.waitForDSData();
       getData();
 
-      if (isDisabled()) {
-        safetyCounter = 0;
-      }
+//      if (isDisabled()) {
+//        safetyCounter = 0;
+//      }
 
-      safetyCounter++;
-      if (safetyCounter >= 4) {
-        MotorSafety.checkMotors();
-        safetyCounter = 0;
-      }
+//      safetyCounter++;
+//      if (safetyCounter >= 4) {
+//        MotorSafety.checkMotors();
+//        safetyCounter = 0;
+//      }
+
       if (m_userInDisabled) {
         HAL.observeUserProgramDisabled();
       }
@@ -1149,16 +1146,16 @@ public class DriverStation {
 
   /**
    * Updates the data in the control word cache. Updates if the force parameter is set, or if
-   * 50ms have passed since the last update.
+   * 200ms have passed since the last update.
    *
    * @param force True to force an update to the cache, otherwise update if 50ms have passed.
    */
   private void updateControlWord(boolean force) {
-    long now = System.currentTimeMillis();
-    synchronized (m_controlWordMutex) {
-      if (now - m_lastControlWordUpdate > 50 || force) {
+    m_controlWordUpdateNow = RobotController.getFPGATime();
+    if (m_controlWordUpdateNow - m_lastControlWordUpdate > 200000 || force) {
+      synchronized (m_controlWordMutex) {
         HAL.getControlWord(m_controlWordCache);
-        m_lastControlWordUpdate = now;
+        m_lastControlWordUpdate = m_controlWordUpdateNow;
       }
     }
   }

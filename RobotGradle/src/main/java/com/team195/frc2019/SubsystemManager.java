@@ -9,6 +9,7 @@ import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.DataReporter;
 import com.team195.frc2019.reporters.MessageLevel;
 import com.team195.frc2019.subsystems.Subsystem;
+import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.Reportable;
 import com.team195.lib.util.TimeoutTimer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,6 +33,7 @@ public class SubsystemManager implements ILooper {
 
 	private TimeoutTimer mCriticalCheckTimeout = new TimeoutTimer(0.250);
 	private TimeoutTimer mLogDataTimeout = new TimeoutTimer(0.250);
+	private ElapsedTimer eLoopTimer = new ElapsedTimer();
 
 	private SubsystemManager() {
 
@@ -83,6 +85,9 @@ public class SubsystemManager implements ILooper {
 		} catch (Exception ex) {
 			ConsoleReporter.report(ex);
 		}
+
+		l.add("OverallLoopTime");
+		l.add(eLoopTimer.hasElapsed());
 	}
 
 	public void stop() {
@@ -103,6 +108,7 @@ public class SubsystemManager implements ILooper {
 
 		@Override
 		public void onLoop(double timestamp) {
+			eLoopTimer.start();
 			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
 			mLoops.forEach((l) -> l.onLoop(timestamp));
 			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
@@ -116,6 +122,23 @@ public class SubsystemManager implements ILooper {
 				generateReport();
 				DataReporter.reportOSCData(boundOSCMesage);
 			}
+
+			//DEBUG Code
+			//Use this code to get accurate loop times for each subsystem individually instead of summed
+//			for (int i = 0; i < mAllSubsystems.size(); i++) {
+//				Subsystem l = mAllSubsystems.get(i);
+//				l.readPeriodicInputs();
+//				mLoops.get(i).onLoop(timestamp);
+//				l.writePeriodicOutputs();
+//				if (mCriticalCheckTimeout.isTimedOut()) {
+//					l.isSystemFaulted();
+//				}
+//			}
+//			generateReport();
+//			DataReporter.reportOSCData(boundOSCMesage);
+//			if (mCriticalCheckTimeout.isTimedOut()) {
+//				mCriticalCheckTimeout.reset();
+//			}
 		}
 
 		@Override
@@ -143,6 +166,7 @@ public class SubsystemManager implements ILooper {
 
 		@Override
 		public void onLoop(double timestamp) {
+			eLoopTimer.start();
 			mAllSubsystems.forEach(Subsystem::readPeriodicInputs);
 			mAllSubsystems.forEach(Subsystem::writePeriodicOutputs);
 
@@ -155,6 +179,21 @@ public class SubsystemManager implements ILooper {
 				generateReport();
 				DataReporter.reportOSCData(boundOSCMesage);
 			}
+
+			//DEBUG Code
+			//Use this code to get accurate loop times for each subsystem individually instead of summed
+//			mAllSubsystems.forEach((l) -> {
+//					l.readPeriodicInputs();
+//					l.writePeriodicOutputs();
+//					if (mCriticalCheckTimeout.isTimedOut()) {
+//						l.isSystemFaulted();
+//					}
+//			});
+//			generateReport();
+//			DataReporter.reportOSCData(boundOSCMesage);
+//			if (mCriticalCheckTimeout.isTimedOut()) {
+//				mCriticalCheckTimeout.reset();
+//			}
 		}
 
 		@Override

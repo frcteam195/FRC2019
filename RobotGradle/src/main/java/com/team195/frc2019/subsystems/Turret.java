@@ -20,6 +20,7 @@ import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
 import com.team195.lib.util.CachedValue;
+import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.InterferenceSystem;
 import com.team195.lib.util.MotionInterferenceChecker;
 import com.team254.lib.geometry.Pose2d;
@@ -54,6 +55,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	private final CachedValue<Boolean> mTurretEncoderPresent;
 	private final CachedValue<Boolean> mTurretMasterHasReset;
+
+	private final ElapsedTimer loopTimer = new ElapsedTimer();
 
 	private Turret() {
 		mPeriodicIO = new PeriodicIO();
@@ -105,8 +108,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 				(t) -> (BallIntakeArm.getInstance().getPosition() < BallIntakeArmPositions.CollisionThreshold)
 		);
 
-		mTurretEncoderPresent = new CachedValue<>(200, (t) -> mTurretRotationMotor.isEncoderPresent());
-		mTurretMasterHasReset = new CachedValue<>(200, (t) -> mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
+		mTurretEncoderPresent = new CachedValue<>(500, (t) -> mTurretRotationMotor.isEncoderPresent());
+		mTurretMasterHasReset = new CachedValue<>(500, (t) -> mTurretRotationMotor.hasMotorControllerReset() != DiagnosticMessage.NO_MSG);
 	}
 
 	public static Turret getInstance() {
@@ -132,6 +135,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 			ConsoleReporter.report("Turret Requires Rehoming!", MessageLevel.DEFCON1);
 			setTurretControlMode(TurretControlMode.DISABLED);
 		}
+
+		mPeriodicIO.turret_loop_time = loopTimer.hasElapsed();
 
 		return systemFaulted;
 	}
@@ -338,6 +343,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
+		loopTimer.start();
 		mPeriodicIO.turret_position = mTurretRotationMotor.getPosition();
 		mPeriodicIO.turret_encoder_present = mTurretEncoderPresent.getValue();
 		mPeriodicIO.turret_reset = mTurretMasterHasReset.getValue();
@@ -346,7 +352,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-
+		mPeriodicIO.turret_loop_time = loopTimer.hasElapsed();
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -359,5 +365,8 @@ public class Turret extends Subsystem implements InterferenceSystem {
 		public boolean turret_encoder_present;
 		public boolean turret_reset;
 		public boolean hatch_limit_switch;
+
+		// Outputs
+		public double turret_loop_time;
 	}
 }

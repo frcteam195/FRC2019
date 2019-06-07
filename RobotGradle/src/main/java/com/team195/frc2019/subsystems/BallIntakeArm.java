@@ -47,6 +47,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	private boolean mBallIntakeBarClimbLatched = false;
 
+	private final ElapsedTimer loopTimer = new ElapsedTimer();
+
 	private BallIntakeArm() {
 		mPeriodicIO = new PeriodicIO();
 
@@ -115,6 +117,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 			ConsoleReporter.report("Ball Intake Arm Disabled!", MessageLevel.DEFCON1);
 			setBallIntakeArmControlMode(BallIntakeArmControlMode.DISABLED);
 		}
+
+		mPeriodicIO.ball_intake_loop_time = loopTimer.hasElapsed();
 
 		return systemFaulted;
 	}
@@ -296,6 +300,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
+		loopTimer.start();
 		mPeriodicIO.ball_intake_arm_position = mBallArmRotationMotor.getPosition();
 		mPeriodicIO.ball_intake_arm_at_limit = mBallArmRotationMotor.getForwardLimitValue();
 		mPeriodicIO.ball_intake_arm_encoder_present = mBallIntakeArmEncoderPresent.getValue();
@@ -304,7 +309,7 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-
+		mPeriodicIO.ball_intake_loop_time = loopTimer.hasElapsed();
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -317,5 +322,8 @@ public class BallIntakeArm extends Subsystem implements InterferenceSystem {
 		public boolean ball_intake_arm_at_limit;
 		public boolean ball_intake_arm_reset;
 		public boolean ball_intake_arm_encoder_present;
+
+		//Outputs
+		public double ball_intake_loop_time;
 	}
 }

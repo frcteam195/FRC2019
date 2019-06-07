@@ -4,6 +4,7 @@ import com.team195.frc2019.loops.ILooper;
 import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.Kinematics;
 import com.team195.frc2019.RobotState;
+import com.team195.lib.util.ElapsedTimer;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Twist2d;
@@ -16,7 +17,9 @@ public class RobotStateEstimator extends Subsystem {
     private RobotState robot_state_ = RobotState.getInstance();
     private Drive drive_ = Drive.getInstance();
 
-    private final List<Object> mObjList = new ArrayList<>(4);
+    private final ElapsedTimer loopTimer = new ElapsedTimer();
+
+    private final List<Object> mObjList = new ArrayList<>(5);
 
     private PeriodicIO mPeriodicIO;
 
@@ -66,6 +69,9 @@ public class RobotStateEstimator extends Subsystem {
         mObjList.add("RobotLinearVelocity");
         mObjList.add(robot_state_.getMeasuredVelocity().dx);
 
+        mObjList.add("RobotStateEstimatorLoopTime");
+        mObjList.add(mPeriodicIO.robot_state_loop_time);
+
         return mObjList;
     }
 
@@ -84,6 +90,7 @@ public class RobotStateEstimator extends Subsystem {
 
         @Override
         public synchronized void onLoop(double timestamp) {
+            loopTimer.start();
             mPeriodicIO.left_distance = drive_.getLeftEncoderDistance();
             mPeriodicIO.right_distance = drive_.getRightEncoderDistance();
             mPeriodicIO.delta_left = mPeriodicIO.left_distance - mPeriodicIO.left_encoder_prev_distance_;
@@ -97,6 +104,7 @@ public class RobotStateEstimator extends Subsystem {
                     mPeriodicIO.predicted_velocity);
             mPeriodicIO.left_encoder_prev_distance_ = mPeriodicIO.left_distance;
             mPeriodicIO.right_encoder_prev_distance_ = mPeriodicIO.right_distance;
+            mPeriodicIO.robot_state_loop_time = loopTimer.hasElapsed();
         }
 
         @Override
@@ -122,6 +130,9 @@ public class RobotStateEstimator extends Subsystem {
 
         double left_encoder_prev_distance_ = 0.0;
         double right_encoder_prev_distance_ = 0.0;
+
+        // Outputs
+        public double robot_state_loop_time;
     }
 }
 

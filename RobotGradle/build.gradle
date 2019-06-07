@@ -51,16 +51,16 @@ deploy {
 							"-Dcom.sun.management.jmxremote.ssl=false",
 							"-Dcom.sun.management.jmxremote.authenticate=false",
 							"-Djava.rmi.server.hostname=${TEAMIP}",
-							"-XX:+UseConcMarkSweepGC",
+							"-XX:+UseG1GC",
 							"-XX:MaxGCPauseMillis=10"
 							]
 			} else {
-// 				jvmArgs = [ "-XX:+UseG1GC",
-// 							"-XX:MaxGCPauseMillis=10"
-// 							]
-				jvmArgs = [ "-XX:+UseConcMarkSweepGC",
-							"-XX:MaxGCPauseMillis=10"
-							]
+ 				jvmArgs = [ "-XX:+UseG1GC",
+ 							"-XX:MaxGCPauseMillis=10"
+ 							]
+				//jvmArgs = [ "-XX:+UseConcMarkSweepGC",
+				//			"-XX:MaxGCPauseMillis=10"
+				//			]
 			}
         }
         // Built in artifact to deploy arbitrary files to the roboRIO.

@@ -17,10 +17,7 @@ import com.team195.frc2019.subsystems.positions.ElevatorPositions;
 import com.team195.lib.drivers.motorcontrol.CKTalonSRX;
 import com.team195.lib.drivers.motorcontrol.MCControlMode;
 import com.team195.lib.drivers.motorcontrol.PDPBreaker;
-import com.team195.lib.util.CachedValue;
-import com.team195.lib.util.InterferenceSystem;
-import com.team195.lib.util.MotionInterferenceChecker;
-import com.team195.lib.util.MotorDiagnostics;
+import com.team195.lib.util.*;
 import com.team254.lib.util.Util;
 
 import java.util.ArrayList;
@@ -47,6 +44,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	private final CachedValue<Boolean> mElevatorEncoderPresent;
 	private final CachedValue<Boolean> mElevatorMasterHasReset;
+
+	private final ElapsedTimer loopTimer = new ElapsedTimer();
 
 	private Elevator() {
 		mPeriodicIO = new PeriodicIO();
@@ -130,6 +129,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 			ConsoleReporter.report("Elevator Requires Rehoming!", MessageLevel.DEFCON1);
 			setElevatorControlMode(ElevatorControlMode.DISABLED);
 		}
+
+		mPeriodicIO.elevator_loop_time = loopTimer.hasElapsed();
 
 		return systemFaulted;
 	}
@@ -339,6 +340,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
+		loopTimer.start();
 		mPeriodicIO.elevator_position = mElevatorMaster.getPosition();
 		mPeriodicIO.elevator_at_lower_limit = mElevatorSlaveC.getReverseLimitValue();
 		mPeriodicIO.elevator_master_reset = mElevatorMasterHasReset.getValue();
@@ -347,7 +349,7 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 
 	@Override
 	public synchronized void writePeriodicOutputs() {
-
+		mPeriodicIO.elevator_loop_time = loopTimer.hasElapsed();
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -359,5 +361,8 @@ public class Elevator extends Subsystem implements InterferenceSystem {
 		public boolean elevator_at_lower_limit;
 		public boolean elevator_master_reset;
 		public boolean elevator_encoder_present;
+
+		// Outputs
+		public double elevator_loop_time;
 	}
 }

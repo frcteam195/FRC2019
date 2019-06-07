@@ -28,6 +28,7 @@ public class VisionTracker extends Subsystem {
 	private NetworkTable limelightFrontNT = NetworkTableInstance.getDefault().getTable("limelight-turret");
 	private NetworkTable limelightBackNT = NetworkTableInstance.getDefault().getTable("limelight-back");
 
+	private final ElapsedTimer loopTimer = new ElapsedTimer();
 
 	public static VisionTracker getInstance() {
 		return mInstance;
@@ -146,6 +147,7 @@ public class VisionTracker extends Subsystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
+		loopTimer.start();
 		try {
 			if (mVisionEnabled) {
 				mPeriodicIO.targetValid = mCurrentTargetingLimelightNT.getEntry("tv").getDouble(0);
@@ -228,6 +230,8 @@ public class VisionTracker extends Subsystem {
 //		NetworkTableEntry camMode = mCurrentTargetingLimelightNT.getValue().getEntry("camMode");
 //		NetworkTableEntry stream = mCurrentTargetingLimelightNT.getValue().getEntry("stream");
 //		NetworkTableEntry snapshot = mCurrentTargetingLimelightNT.getValue().getEntry("snapshot");
+
+		mPeriodicIO.vision_loop_time = loopTimer.hasElapsed();
 	}
 
 	public TargetMode getTargetMode() {
@@ -258,6 +262,7 @@ public class VisionTracker extends Subsystem {
 		//Written values
 		int pipelineFront;
 		int pipelineBack;
+		public double vision_loop_time;
 	}
 
 	public enum TargetMode {

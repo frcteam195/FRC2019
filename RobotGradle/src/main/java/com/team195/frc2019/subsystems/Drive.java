@@ -1,6 +1,7 @@
 package com.team195.frc2019.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxFrames;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.constants.DeviceIDConstants;
@@ -17,6 +18,7 @@ import com.team195.lib.drivers.CKIMU;
 import com.team195.lib.drivers.NavX;
 import com.team195.lib.drivers.motorcontrol.*;
 import com.team195.lib.util.CachedValue;
+import com.team195.lib.util.ElapsedTimer;
 import com.team195.lib.util.FastDoubleToString;
 import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
@@ -59,6 +61,8 @@ public class Drive extends Subsystem {
 	private final CachedValue<Boolean> mGyroPresent;
 
 	private static final Elevator mElevator = Elevator.getInstance();
+
+	private final ElapsedTimer loopTimer = new ElapsedTimer();
 
 	private final Loop mLoop = new Loop() {
 		@Override
@@ -327,16 +331,8 @@ public class Drive extends Subsystem {
 		mDriveControlState = driveControlState;
 	}
 
-	public double getPitch() {
-		return mPeriodicIO.gyro_pitch;
-	}
-
 	public double getRoll() {
 		return mPeriodicIO.gyro_roll;
-	}
-
-	public double getRawYaw() {
-		return mPeriodicIO.gyro_raw_yaw;
 	}
 
 	public synchronized Rotation2d getHeading() {
@@ -461,6 +457,7 @@ public class Drive extends Subsystem {
 
 	@Override
 	public synchronized void readPeriodicInputs() {
+		loopTimer.start();
 		mPeriodicIO.prev_left_rotations = mPeriodicIO.left_position_rotations;
 		mPeriodicIO.prev_right_rotations = mPeriodicIO.right_position_rotations;
 		mPeriodicIO.left_position_rotations = mElevator.getLeftDrivePosition();
@@ -468,20 +465,29 @@ public class Drive extends Subsystem {
 		mPeriodicIO.left_velocity_RPM = mElevator.getLeftDriveVelocity();
 		mPeriodicIO.right_velocity_RPM = mElevator.getRightDriveVelocity();
 		mPeriodicIO.gyro_heading = Rotation2d.fromDegrees(mGyro.getFusedHeading()).rotateBy(mGyroOffset);
-		mPeriodicIO.gyro_raw_yaw = mGyro.getRawYawDegrees();
-		mPeriodicIO.gyro_pitch = mGyro.getPitch();
 		mPeriodicIO.gyro_roll = mGyro.getRoll();
 
-		mPeriodicIO.left_spark_position = mLeftMaster.getPosition();
-		mPeriodicIO.left_spark_velocity = mLeftMaster.getVelocity();
-		mPeriodicIO.right_spark_velocity = mRightMaster.getVelocity();
+		if (mPTOShifter.isOn()) {
+			mPeriodicIO.left_spark_position = mLeftMaster.getPosition();
+		}
+
+
+
+
+
+//		mPeriodicIO.left_spark_velocity = mLeftMaster.getVelocity();
+//		mPeriodicIO.right_spark_velocity = mRightMaster.getVelocity();
 
 		mPeriodicIO.left_drive_encoder_present = mLeftDriveEncoderPresent.getValue();
 		mPeriodicIO.right_drive_encoder_present = mRightDriveEncoderPresent.getValue();
 		mPeriodicIO.gyro_present = mGyroPresent.getValue();
 
-		mPeriodicIO.left_bus_voltage = mLeftMaster.getMCInputVoltage();
-		mPeriodicIO.right_bus_voltage = mRightMaster.getMCInputVoltage();
+//		mPeriodicIO.left_bus_voltage = mLeftMaster.getMCInputVoltage();
+//		mPeriodicIO.right_bus_voltage = mRightMaster.getMCInputVoltage();
+
+
+
+
 
 		mPeriodicIO.delta_left_rotations = (mPeriodicIO.left_position_rotations - mPeriodicIO.prev_left_rotations) * Math.PI;
 		if (mPeriodicIO.delta_left_rotations > 0.0) {
@@ -531,6 +537,7 @@ public class Drive extends Subsystem {
 			if (mForceBrakeUpdate.get())
 				mForceBrakeUpdate.set(false);
 		}
+		mPeriodicIO.drive_loop_time = loopTimer.hasElapsed();
 	}
 
 	@Override
@@ -644,6 +651,8 @@ public class Drive extends Subsystem {
 		if (navXFaulted)
 			ConsoleReporter.report("NavX Error", MessageLevel.DEFCON1);
 
+		mPeriodicIO.drive_loop_time = loopTimer.hasElapsed();
+
 		return leftSensorFaulted || rightSensorFaulted || navXFaulted;
 	}
 
@@ -672,8 +681,6 @@ public class Drive extends Subsystem {
 		public double left_velocity_RPM;
 		public double right_velocity_RPM;
 		public Rotation2d gyro_heading = Rotation2d.identity();
-		double gyro_raw_yaw;
-		double gyro_pitch;
 		public double gyro_roll;
 		public Pose2d error = Pose2d.identity();
 
@@ -701,6 +708,7 @@ public class Drive extends Subsystem {
 		public double left_feedforward;
 		public double right_feedforward;
 		TimedState<Pose2dWithCurvature> path_setpoint = new TimedState<>(Pose2dWithCurvature.identity());
+		public double drive_loop_time;
 	}
 }
 

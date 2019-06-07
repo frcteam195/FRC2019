@@ -1,5 +1,7 @@
 package com.team195.frc2019.reporters;
 
+import com.team195.lib.util.ElapsedTimer;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,6 @@ public class ReflectingLogDataGenerator<T> {
 		mFields = typeClass.getFields();
 		mObjList = new ArrayList<>(mFields.length);
 	}
-
 	public List<Object> generateData(T data) {
 		mObjList.clear();
 
