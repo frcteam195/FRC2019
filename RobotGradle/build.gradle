@@ -122,7 +122,7 @@ jar {
     doLast {
         def folder = new File( "${rootDir}/build/classes/java/main/edu/wpi" )
 		if (folder.exists()) {
-			println "Overriding WPILibJ Classes"
+			project.logger.lifecycle("Overriding WPILibJ Classes")
 			
 			if (org.gradle.internal.os.OperatingSystem.current().isMacOsX()) {
 				def tmpFolder = new File ( "${rootDir}/build/libs/tmpDir" )
