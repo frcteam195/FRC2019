@@ -4,19 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.team195.frc2019.reporters.ConsoleReporter;
-import com.team195.frc2019.reporters.MessageLevel;
-
 /**
  * Executes one action at a time. Useful as a member of {@link ParallelAction}
  */
 public class SeriesAction implements Action {
 
+    private int mCurActionIndex;
     private Action mCurAction;
-    private final ArrayList<Action> mRemainingActions;
+    private final ArrayList<Action> mActions;
 
     public SeriesAction(List<Action> actions) {
-        mRemainingActions = new ArrayList<>(actions);
+        mActions = new ArrayList<>(actions);
+        mCurActionIndex = 0;
         mCurAction = null;
     }
 
@@ -26,21 +25,23 @@ public class SeriesAction implements Action {
 
     @Override
     public boolean isFinished() {
-        return mRemainingActions.isEmpty() && mCurAction == null;
+        return mCurAction == null && mCurActionIndex == mActions.size();
     }
 
     @Override
     public void start() {
+    	mCurAction = null;
+    	mCurActionIndex = 0;
     }
 
     @Override
     public void update() {
         if (mCurAction == null) {
-            if (mRemainingActions.isEmpty()) {
+            if (mCurActionIndex >= mActions.size()) {
                 return;
             }
 
-            mCurAction = mRemainingActions.remove(0);
+            mCurAction = mActions.get(mCurActionIndex++);
 //            ConsoleReporter.report("Starting : " + mCurAction.getClass().getSimpleName(), MessageLevel.INFO);
             mCurAction.start();
         }
@@ -55,25 +56,25 @@ public class SeriesAction implements Action {
     }
 
     public void purgeActions() {
-        if (mCurAction == null) {
-            if (mRemainingActions.isEmpty()) {
-                return;
-            }
-        }
-        if (mCurAction != null) {
-            mCurAction.done();
-        }
-        for (Action a:
-             mRemainingActions) {
-            if (a != null) {
-                a.start();
-                a.update();
-                a.isFinished();
-                a.done();
-            }
-        }
-        mCurAction = null;
-        mRemainingActions.clear();
+	    if(mCurAction == null) {
+		    if(mCurActionIndex >= mActions.size()) {
+			    return;
+		    }
+	    }
+	    if(mCurAction != null) {
+		    mCurAction.done();
+	    }
+	    for(Action a :
+			    mActions) {
+		    if(a != null) {
+			    a.start();
+			    a.update();
+			    a.isFinished();
+			    a.done();
+		    }
+	    }
+	    mCurAction = null;
+	    mCurActionIndex = mActions.size();
     }
 
     @Override
