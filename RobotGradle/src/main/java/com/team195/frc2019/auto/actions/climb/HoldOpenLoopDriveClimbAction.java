@@ -2,6 +2,7 @@ package com.team195.frc2019.auto.actions.climb;
 
 import com.team195.frc2019.auto.actions.Action;
 import com.team195.frc2019.subsystems.Drive;
+import com.team195.lib.util.TimeoutTimer;
 import com.team254.lib.util.DriveSignal;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,6 +16,8 @@ public class HoldOpenLoopDriveClimbAction implements Action {
 
 	private final AtomicReference<Predicate<Void>> mButtonGetterMethod;
 
+	private final TimeoutTimer mTimeoutTimer = new TimeoutTimer(0.1);
+
 
 	public HoldOpenLoopDriveClimbAction(double left, double right, AtomicReference<Predicate<Void>> buttonGetterMethod) {
 		mLeft = left;
@@ -25,14 +28,15 @@ public class HoldOpenLoopDriveClimbAction implements Action {
 	@Override
 	public boolean isFinished() {
 		if (mButtonGetterMethod.get() != null)
-			return (!mButtonGetterMethod.get().test(null));
+			return (!mButtonGetterMethod.get().test(null)) && mTimeoutTimer.isTimedOut();
 		else
-			return true;
+			return true && mTimeoutTimer.isTimedOut();
 	}
 
 	@Override
 	public void update() {
-
+		if (mTimeoutTimer.isTimedOut())
+			mDrive.setOpenLoopAutomated(new DriveSignal(mLeft, mRight));
 	}
 
 	@Override
@@ -43,6 +47,7 @@ public class HoldOpenLoopDriveClimbAction implements Action {
 	@Override
 	public void start() {
 		mDrive.configureClimbCurrentLimit();
-		mDrive.setOpenLoopAutomated(new DriveSignal(mLeft, mRight));
+		mTimeoutTimer.reset();
+		mDrive.setOpenLoopAutomated(new DriveSignal(0, mRight));
 	}
 }

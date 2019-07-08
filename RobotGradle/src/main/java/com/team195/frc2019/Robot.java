@@ -16,7 +16,6 @@ import com.team195.lib.util.TeleopActionRunner;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.util.CrashTracker;
 import com.team254.lib.util.DriveSignal;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "FieldCanBeLocal", "WeakerAccess"})

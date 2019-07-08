@@ -469,6 +469,8 @@ public class Drive extends Subsystem {
 
 		if (mPTOShifter.isOn()) {
 			mPeriodicIO.left_spark_position = mLeftMaster.getPosition();
+			mPeriodicIO.left_drive_current = mLeftMaster.getOutputCurrent();
+			mPeriodicIO.right_drive_current = mRightMaster.getOutputCurrent();
 		}
 
 
@@ -689,6 +691,9 @@ public class Drive extends Subsystem {
 		public double right_spark_velocity;
 		public double left_bus_voltage;
 		public double right_bus_voltage;
+
+		public double left_drive_current;
+		public double right_drive_current;
 
 		boolean left_drive_encoder_present;
 		boolean right_drive_encoder_present;

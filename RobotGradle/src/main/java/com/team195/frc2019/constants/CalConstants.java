@@ -64,8 +64,8 @@ public class CalConstants {
 	public static final double kDriveLowGearPositionAccel = 1000;
 	public static final int kDriveLowGearPositoinIZone = 0;
 	public static final int kDriveLowGearCurrentLim = 50;
-	public static final int kDriveLeftClimbCurrentLim = 55;
-	public static final int kDriveRightClimbCurrentLim = 65;
+	public static final int kDriveLeftClimbCurrentLim = 65;
+	public static final int kDriveRightClimbCurrentLim = 80;
 	public static final int kDriveLeftRetractCurrentLim = 50;
 	///////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +77,7 @@ public class CalConstants {
 	public static final double kElevatorPositionKd = 8.0;
 	public static final double kElevatorPositionKf = 0.1380124477;
 	public static final int kElevatorPositionCruiseVel = 850;
-	public static final int kElevatorPositionMMAccel = 600;
+	public static final int kElevatorPositionMMAccel = 900;
 	public static final int kElevatorPositionSCurveStrength = 5;
 	public static final int kElevatorContinuousCurrentLimit = 15;
 	public static final int kElevatorPeakCurrentThreshold = 20;

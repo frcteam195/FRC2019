@@ -111,7 +111,7 @@ public class HIDController {
 						}
 					} else {
 						mThrottle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
-						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.6;
+						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.8;
 
 						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
@@ -205,25 +205,25 @@ public class HIDController {
 					if (buttonBox2.getRisingEdgeButton(1)) {
 						TeleopActionRunner.runAction(AutomatedActions.reverseHatchPlaceHigh());
 					} else if (buttonBox2.getRisingEdgeButton(3)) {
-						TeleopActionRunner.runAction(AutomatedActions.ballArmSetUpAction);
+						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Up));
 					} else if (buttonBox2.getRisingEdgeButton(4)) {
-						TeleopActionRunner.runAction(AutomatedActions.ballArmSetDownAction);
+						TeleopActionRunner.runAction(AutomatedActions.ballArmSet(BallIntakeArmPositions.Down));
 					} else if (buttonBox2.getRisingEdgeButton(5)) {
 						TeleopActionRunner.runAction(AutomatedActions.reverseIntakeBall((t) -> buttonBox2.getRawButton(5)));
 					} else if (buttonBox2.getRisingEdgeButton(6)) {
-
+						TeleopActionRunner.runAction(AutomatedActions.climbAutomatedLvl2((t) -> buttonBox2.getRawButton(6)));
 					} else if (buttonBox2.getRisingEdgeButton(7)) {
-//						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
-//						|| !DriverStation.getInstance().isFMSAttached())
-							TeleopActionRunner.runAction(AutomatedActions.dropBallArmClimbBarAction);
+						if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()
+								|| !DriverStation.getInstance().isFMSAttached())
+							TeleopActionRunner.runAction(AutomatedAction.fromAction(new DropBallArmClimbBarAction(), Constants.kActionTimeoutS));
 					} else if (buttonBox2.getRisingEdgeButton(8)) {
 
 					} else if (buttonBox2.getRisingEdgeButton(9)) {
 						TeleopActionRunner.runAction(AutomatedActions.ballOuttake((t) -> buttonBox2.getRawButton(9)));
 					} else if (buttonBox2.getRisingEdgeButton(10)) {
-						TeleopActionRunner.runAction(AutomatedActions.setBeakClosedAction);
+						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetBeakAction(false), 1));
 					} else if (buttonBox2.getRisingEdgeButton(11)) {
-						TeleopActionRunner.runAction(AutomatedActions.setPTOToDriveAction);
+						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetDrivePTOAction(false), 1));
 						mDrive.setOpenLoop(DriveSignal.NEUTRAL);
 					} else if (buttonBox2.getRisingEdgeButton(12)) {
 						TeleopActionRunner.runAction(AutomatedActions.climbOpen((t) -> buttonBox2.getRawButton(12), (t) -> -driveJoystick.getNormalizedAxis(1, 0.1), (t) -> -driveJoystick.getNormalizedAxis(5, 0.1)));
@@ -246,14 +246,14 @@ public class HIDController {
 						//Ball Outtake turret and arm
 						TeleopActionRunner.runAction(AutomatedActions.shootBall((t) -> armControlJoystick.getRawButton(3)));
 					} else if (armControlJoystick.getRisingEdgeButton(4)) {
-						TeleopActionRunner.runAction(AutomatedActions.placeHatchAction);
+						TeleopActionRunner.runAction(AutomatedActions.placeHatch());
 					} else if (armControlJoystick.getRisingEdgeButton(5)) {
 
 					} else if (armControlJoystick.getRisingEdgeButton(6)) {
 
 					} else if (armControlJoystick.getRisingEdgeButton(7)) {
 						//Rehome Elevator
-						TeleopActionRunner.runAction(AutomatedActions.homeElevatorAction);
+						TeleopActionRunner.runAction(AutomatedActions.homeElevator());
 					} else if (armControlJoystick.getRisingEdgeButton(8)) {
 						//Turret Open Loop
 						TeleopActionRunner.runAction(AutomatedAction.fromAction(new SetTurretOpenLoopAction((t) -> armControlJoystick.getRawButton(8),
@@ -265,21 +265,21 @@ public class HIDController {
 						Turret.getInstance().zeroSensors();
 						Turret.getInstance().setTurretControlMode(Turret.TurretControlMode.POSITION);
 					} else if (armControlJoystick.getRisingEdgeButton(12)) {
-						TeleopActionRunner.runAction(AutomatedActions.lowerIntakeAndResetTurretAction);
+						TeleopActionRunner.runAction(AutomatedActions.lowerIntakeAndResetTurret());
 					}
 
 					switch (armControlJoystick.getPOV()) {
 						case 0:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretHomeAction);
+							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Home));
 							break;
 						case 90:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretLeft90Action);
+							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Left90));
 							break;
 						case 180:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretBack180Action);
+							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Back180));
 							break;
 						case 270:
-							TeleopActionRunner.runAction(AutomatedActions.setTurretRight90Action);
+							TeleopActionRunner.runAction(AutomatedActions.setTurretPosition(TurretPositions.Right90));
 							break;
 						default:
 							break;
@@ -288,13 +288,14 @@ public class HIDController {
 			} catch (Exception ex) {
 				ConsoleReporter.report(ex);
 			} catch (Throwable t) {
+				ConsoleReporter.report(t);
 				CrashTracker.logThrowableCrash(t);
 			}
 		}
 
 		if (Turret.getInstance().isBeakListenerEnabled()) {
 			if (Turret.getInstance().getLimitSwitchFallingEdge())
-				TeleopActionRunner.runAction(AutomatedActions.setBeakOpenAction);
+				TeleopActionRunner.runAction(new AutomatedAction(new SetBeakAction(true), 4));
 		}
 
 		TeleopActionRunner.processActions();
