@@ -98,11 +98,11 @@ public class CalConstants {
 	public static final double kTurretPositionKd = 8.0;
 	public static final double kTurretPositionKf = 0.400360;
 	public static final int kTurretPositionCruiseVel = 350;
-	public static final int kTurretPositionMMAccel = 600;
+	public static final int kTurretPositionMMAccel = 350;
 	public static final int kTurretPositionSCurveStrength = 5;
-	public static final int kTurretContinuousCurrentLimit = 5;
-	public static final int kTurretPeakCurrentThreshold = 7;
-	public static final int kTurretPeakCurrentThresholdExceedDuration = 150;
+	public static final int kTurretContinuousCurrentLimit = 8;
+	public static final int kTurretPeakCurrentThreshold = 9;
+	public static final int kTurretPeakCurrentThresholdExceedDuration = 0;
 	public static final double kTurretBallShooterOpenLoopRamp = 0.2;
 	public static final int kTurretBallShooterContinuousCurrentLimit = 15;
 	public static final int kTurretBallShooterPeakCurrentThreshold = 25;
