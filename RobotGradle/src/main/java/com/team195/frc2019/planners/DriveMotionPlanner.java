@@ -48,6 +48,7 @@ public class DriveMotionPlanner implements CSVWritable {
     Output mOutput = new Output();
 
     DifferentialDrive.ChassisState prev_velocity_ = new DifferentialDrive.ChassisState();
+    DifferentialDrive.ChassisState prev_accel_ = new DifferentialDrive.ChassisState();
     double mDt = 0.0;
 
     public DriveMotionPlanner() {
@@ -290,6 +291,7 @@ public class DriveMotionPlanner implements CSVWritable {
                 .angular) / mDt;
 
         prev_velocity_ = dynamics.chassis_velocity;
+        prev_accel_ = dynamics.chassis_acceleration;
 
         DifferentialDrive.WheelState feedforward_voltages = mModel.solveInverseDynamics(dynamics.chassis_velocity,
                 dynamics.chassis_acceleration).voltage;
@@ -339,6 +341,10 @@ public class DriveMotionPlanner implements CSVWritable {
             mOutput = new Output();
         }
         return mOutput;
+    }
+
+    public DifferentialDrive.ChassisState getPrevAccel() {
+        return prev_accel_;
     }
 
     public boolean isDone() {

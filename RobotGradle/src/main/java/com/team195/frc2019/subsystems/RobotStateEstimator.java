@@ -5,6 +5,7 @@ import com.team195.frc2019.loops.Loop;
 import com.team195.frc2019.Kinematics;
 import com.team195.frc2019.RobotState;
 import com.team195.lib.util.ElapsedTimer;
+import com.team195.lib.util.statefuser.StateEstimationFuser;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.geometry.Twist2d;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class RobotStateEstimator extends Subsystem {
     static RobotStateEstimator instance_ = new RobotStateEstimator();
+
     private RobotState robot_state_ = RobotState.getInstance();
     private Drive drive_ = Drive.getInstance();
 

@@ -1,10 +1,11 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.RobotState;
+import com.team195.frc2019.SensorFusedRobotState;
 import com.team254.lib.geometry.Translation2d;
 
 public class WaitUntilInsideRegion implements Action {
-    private final static RobotState mRobotState = RobotState.getInstance();
+    private final static SensorFusedRobotState mRobotState = SensorFusedRobotState.getInstance();
 
     private final Translation2d mBottomLeft;
     private final Translation2d mTopRight;

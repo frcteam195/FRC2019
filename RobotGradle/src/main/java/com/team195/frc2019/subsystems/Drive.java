@@ -3,6 +3,7 @@ package com.team195.frc2019.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxFrames;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.team195.frc2019.SensorFusedRobotState;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.constants.DeviceIDConstants;
 import com.team195.frc2019.constants.TestConstants;
@@ -24,6 +25,7 @@ import com.team195.lib.util.MotorDiagnostics;
 import com.team254.lib.geometry.Pose2d;
 import com.team254.lib.geometry.Pose2dWithCurvature;
 import com.team254.lib.geometry.Rotation2d;
+import com.team254.lib.physics.DifferentialDrive;
 import com.team254.lib.trajectory.TrajectoryIterator;
 import com.team254.lib.trajectory.timing.TimedState;
 import com.team254.lib.util.DriveSignal;
@@ -418,7 +420,7 @@ public class Drive extends Subsystem {
 		if (mDriveControlState == DriveControlState.PATH_FOLLOWING) {
 			currPathFollowingTime = Timer.getFPGATimestamp();
 
-			motionPlannerOutput = mMotionPlanner.update(currPathFollowingTime, RobotState.getInstance().getFieldToVehicle(currPathFollowingTime));
+			motionPlannerOutput = mMotionPlanner.update(currPathFollowingTime, SensorFusedRobotState.getInstance().getFieldToVehicle(currPathFollowingTime));
 
 			mPeriodicIO.error = mMotionPlanner.error();
 			mPeriodicIO.path_setpoint = mMotionPlanner.setpoint();
@@ -453,6 +455,10 @@ public class Drive extends Subsystem {
 		mRightMaster.setPIDF(CalConstants.kDriveLowGearVelocityKp, CalConstants.kDriveLowGearVelocityKi, CalConstants.kDriveLowGearVelocityKd, CalConstants.kDriveLowGearVelocityKf);
 		mRightMaster.setIZone(CalConstants.kDriveLowGearVelocityIZone);
 		mRightMaster.writeToFlash();
+	}
+
+	public DifferentialDrive.ChassisState getChassisAccel() {
+		return mMotionPlanner.getPrevAccel();
 	}
 
 	@Override

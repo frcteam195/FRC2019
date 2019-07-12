@@ -19,7 +19,7 @@ public class FastDoubleToString {
 			val = -val;
 		}
 
-		long lval = (long)(val * POW10[precision] + 0.5);
+		long lval = (long) (val * POW10[precision] + 0.5);
 		sb.append(lval / POW10[precision]).append('.');
 		long fval = lval % POW10[precision];
 		for (int p = precision - 1; p > 0 && fval < POW10[p]; p--) {

@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.RobotState;
+import com.team195.frc2019.SensorFusedRobotState;
 import edu.wpi.first.wpilibj.Timer;
 
 public class WaitUntilCrossXBoundaryCommand implements Action {
@@ -13,7 +14,7 @@ public class WaitUntilCrossXBoundaryCommand implements Action {
 
     @Override
     public boolean isFinished() {
-        return RobotState.getInstance().getFieldToVehicle(Timer.getFPGATimestamp()).getTranslation().x() > mXBoundary;
+        return SensorFusedRobotState.getInstance().getFieldToVehicle(Timer.getFPGATimestamp()).getTranslation().x() > mXBoundary;
     }
 
     @Override

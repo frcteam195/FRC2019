@@ -1,6 +1,7 @@
 package com.team195.frc2019.auto.actions;
 
 import com.team195.frc2019.RobotState;
+import com.team195.frc2019.SensorFusedRobotState;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.subsystems.Drive;
 import com.team195.lib.util.FastDoubleToString;
@@ -13,7 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class DriveTrajectory implements Action {
     private static final Drive mDrive = Drive.getInstance();
-    private static final RobotState mRobotState = RobotState.getInstance();
 
     private final TrajectoryIterator<TimedState<Pose2dWithCurvature>> mTrajectory;
     private final boolean mResetPose;
@@ -49,7 +49,8 @@ public class DriveTrajectory implements Action {
     public void start() {
         ConsoleReporter.report("Starting trajectory! (length=" + FastDoubleToString.format(mTrajectory.getRemainingProgress()) + ")");
         if (mResetPose) {
-            mRobotState.reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
+            SensorFusedRobotState.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
+            RobotState.getInstance().reset(Timer.getFPGATimestamp(), mTrajectory.getState().state().getPose());
         }
         mDrive.setDriveControlState(Drive.DriveControlState.PATH_FOLLOWING);
         mDrive.setTrajectory(mTrajectory);

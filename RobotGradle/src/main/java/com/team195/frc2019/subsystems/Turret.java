@@ -2,6 +2,7 @@ package com.team195.frc2019.subsystems;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.team195.frc2019.SensorFusedRobotState;
 import com.team195.frc2019.constants.CalConstants;
 import com.team195.frc2019.RobotState;
 import com.team195.frc2019.constants.DeviceIDConstants;
@@ -185,7 +186,7 @@ public class Turret extends Subsystem implements InterferenceSystem {
 			synchronized (Turret.this) {
 				switch (mTurretControlMode) {
 					case AUTO_TRACK:
-						Pose2d robotCurrentPos = RobotState.getInstance().getLatestFieldToVehicle().getValue();
+						Pose2d robotCurrentPos = SensorFusedRobotState.getInstance().getLatestFieldToVehicle().getValue();
 						Translation2d currentRocketTarget;
 
 						if (robotCurrentPos.getTranslation().x() > 0)

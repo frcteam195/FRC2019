@@ -75,6 +75,7 @@ public class Robot extends RealtimeRobot {
 
 			Drive.getInstance().zeroSensors();
 			RobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
+			SensorFusedRobotState.getInstance().reset(Timer.getFPGATimestamp(), Pose2d.identity());
 
 			System.gc();
 		} catch (Throwable t) {
