@@ -6,6 +6,8 @@ import com.team195.frc2019.auto.actions.CollectAccelerationData;
 import com.team195.frc2019.auto.actions.CollectVelocityData;
 import com.team195.frc2019.auto.actions.WaitAction;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Rotation2d;
 import com.team254.lib.physics.DriveCharacterization;
 import com.team254.lib.util.CrashTracker;
 
@@ -32,5 +34,10 @@ public class CharacterizeHighGearStraight extends AutoModeBase {
         ConsoleReporter.report("ka: " + constants.ka);
 
         CrashTracker.logThrowableCrash(new Exception("ks:"+constants.ks + ",kv:"+constants.kv+",ka:"+constants.ka));
+    }
+
+    @Override
+    public Pose2d getStartingCoords() {
+        return new Pose2d(0, 0, Rotation2d.identity());
     }
 }

@@ -5,6 +5,8 @@ import com.team195.frc2019.auto.AutoModeBase;
 import com.team195.frc2019.auto.actions.DriveTrajectory;
 import com.team195.frc2019.paths.TrajectoryGenerator;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Rotation2d;
 
 public class TestMode extends AutoModeBase {
     @Override
@@ -34,5 +36,10 @@ public class TestMode extends AutoModeBase {
                         Pose2d.fromRotation(Rotation2d.fromDegrees(180.0))),
                 Arrays.asList(new CentripetalAccelerationConstraint(120.0)),
                 120.0, 120.0, 10.0)));*/
+    }
+
+    @Override
+    public Pose2d getStartingCoords() {
+        return new Pose2d(0, 0, Rotation2d.identity());
     }
 }

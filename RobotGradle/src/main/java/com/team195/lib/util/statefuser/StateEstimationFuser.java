@@ -29,6 +29,7 @@ public class StateEstimationFuser {
 	private Velocity3d currCameraLinearVel = new Velocity3d(0,0,0);
 	private Velocity3d currCameraAngularVel = new Velocity3d(0,0,0);
 	private byte currCameraConfidence;
+	private Quaternion currCameraRotation = new Quaternion(0, 0, 0, 0);
 
 	private ProcessModel m_X_pm = mProcessModel.getxCoordProcessModel();
 	private CKSingleAxisNoUnitTransformMeasurementModel m_X_mm = new CKSingleAxisNoUnitTransformMeasurementModel();
@@ -64,8 +65,9 @@ public class StateEstimationFuser {
 
 		currCameraPose = null; //TODO: Get Pose from camera
 		currCameraConfidence = 0; //TODO: Get Confidence from camera
-		currCameraLinearVel.set(0, 0, 0); //TODO: Get Linear Velocity from camera;
-		currCameraAngularVel.set(0, 0, 0); //TODO: Get Angular Velocity from camera;
+		currCameraLinearVel.set(0, 0, 0); //TODO: Get Linear Velocity from camera
+		currCameraAngularVel.set(0, 0, 0); //TODO: Get Angular Velocity from camera
+		currCameraRotation.set(0, 0, 0, 0); //TODO: Get Rotation from Camera
 
 		CKSensorFusionMeasurementModel.update(currCameraConfidence);
 		mProcessModel.update();
@@ -102,7 +104,7 @@ public class StateEstimationFuser {
 		m_R_measurementVector_z.setEntry(1, mDrive.getAngularVelocity());
 		m_R_kf.correct(m_R_measurementVector_z);
 		m_R_mm.setMeasurementNoiseMatrix(CKSensorFusionMeasurementModel.getCameraMeasurementModel());
-		m_R_measurementVector_z.setEntry(0, currCameraPose.getTranslation());
+		m_R_measurementVector_z.setEntry(0, RotationAdvanced2d.fromQuaternionYaw(currCameraRotation).getRadians());
 		m_R_measurementVector_z.setEntry(1, currCameraAngularVel.x());
 		m_R_kf.correct(m_R_measurementVector_z);
 

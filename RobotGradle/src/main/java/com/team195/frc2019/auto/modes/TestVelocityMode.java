@@ -7,6 +7,8 @@ import com.team195.frc2019.auto.actions.ParallelAction;
 import com.team195.frc2019.auto.actions.SetDriveBaseVelocity;
 import com.team195.frc2019.auto.actions.WaitAction;
 import com.team195.frc2019.reporters.ConsoleReporter;
+import com.team254.lib.geometry.Pose2d;
+import com.team254.lib.geometry.Rotation2d;
 
 import java.util.ArrayList;
 
@@ -29,5 +31,10 @@ public class TestVelocityMode extends AutoModeBase {
 			runAction(new ParallelAction(currentAction));
 		}
 
+	}
+
+	@Override
+	public Pose2d getStartingCoords() {
+		return new Pose2d(0, 0, Rotation2d.identity());
 	}
 }
