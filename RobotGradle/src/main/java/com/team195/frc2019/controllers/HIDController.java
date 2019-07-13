@@ -111,7 +111,7 @@ public class HIDController {
 						}
 					} else {
 						mThrottle = -driveJoystick.getNormalizedAxis(1, Constants.kJoystickDeadband);
-						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.8;
+						mTurn = driveJoystick.getNormalizedAxis(4, Constants.kJoystickDeadband) * 0.6;
 
 						if (VisionTracker.getInstance().isVisionEnabled() && VisionTracker.getInstance().getTargetMode() == VisionTracker.TargetMode.HATCH) {
 							if (Turret.getInstance().getSetpoint() == TurretPositions.Right90) {
