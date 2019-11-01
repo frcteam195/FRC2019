@@ -2,6 +2,7 @@ package com.team195.frc2019.coprocessor;
 
 import com.illposed.osc.OSCBoundListMessage;
 import com.illposed.osc.OSCMessage;
+import com.team195.lib.drivers.RealsenseJNI;
 import com.team195.lib.util.FastDoubleToString;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -54,6 +55,16 @@ public class CoProcessor extends AcesPiTimedRobot {
 		mCoToRioDataStreamerData.reportOSCData(boundOSCMesage);
 		mTimestampEntry.setString(FastDoubleToString.format(CoToRioDataStreamerData.getInstance().timestamp));
 		mOperationalModeEntry.setString(CoToRioDataStreamerData.getInstance().robotOperationalMode.toString());
+
+		float[] f = new float[3];
+		RealsenseJNI.getTranslation(f);
+		//System.out.println("Retval: " + RealsenseJNI.getTranslation(f));;
+		//System.out.print("Pose: ");
+		for (int i = 0; i < f.length; i++) {
+			//System.out.print("" + f[i] + ",");
+		}
+		//System.out.println();
+
     }
 
     @Override

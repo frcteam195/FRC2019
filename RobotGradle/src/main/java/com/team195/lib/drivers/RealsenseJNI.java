@@ -2,17 +2,17 @@ package com.team195.lib.drivers;
 
 public class RealsenseJNI {
 
-	public native int getTranslation(float[] translationContainer);
-	public native int getRotation(float[] rotationContainer);
-	public native int setTranslation(float[] startingPosition);
-	public native int setRotation(float[] startingRotation);
+	public static native int getTranslation(float[] translationContainer);
+	public static native int getRotation(float[] rotationContainer);
+	public static native int setTranslation(float[] startingPosition);
+	public static native int setRotation(float[] startingRotation);
 
 	static boolean libraryLoaded = false;
 
 	static {
 		if (!libraryLoaded) {
 			try {
-				System.loadLibrary("ToddLib_JNI");
+				System.loadLibrary("RealsenseJNI");
 			} catch (UnsatisfiedLinkError e) {
 				e.printStackTrace();
 				System.exit(1);

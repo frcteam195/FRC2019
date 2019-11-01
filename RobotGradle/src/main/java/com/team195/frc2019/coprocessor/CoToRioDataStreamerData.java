@@ -46,7 +46,7 @@ public class CoToRioDataStreamerData {
 			OSCListener gyroListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
-					System.out.println("gyroLister fired " + valArr.size());
+					//System.out.println("gyroLister fired " + valArr.size());
 					if (valArr.size() == 1) {
 						mRotation = (double)(valArr.get(0));
 					}
@@ -58,7 +58,7 @@ public class CoToRioDataStreamerData {
 			OSCListener modeListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
-					System.out.println("modeLister fired " + valArr.size());
+					//System.out.println("modeLister fired " + valArr.size());
 					if (valArr.size() == 1) {
 						robotOperationalMode = RobotOperationalMode.valueOf(valArr.get(0));
 					}
@@ -102,10 +102,10 @@ public class CoToRioDataStreamerData {
 			if (k.getInetAddress() != null) {
 				if (k.getOscPortOut() == null) {
 					try {
-						System.out.println("SetOSCPort");
+						//System.out.println("SetOSCPort");
 						k.setOscPortOut(new OSCPortOut(k.getInetAddress(), portNumber));
 					} catch (Exception ignored) {
-						System.out.println("Error");
+						//System.out.println("Error");
 						return;
 					}
 				}
