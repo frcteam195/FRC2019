@@ -7,7 +7,7 @@ public class CoProcessorMain {
     private CoProcessorMain() {}
 
     public static void main(String[] args) {
-        AcesRobotState.setImpl(() -> RioToCoDataStreamerData.getInstance().robotOperationalMode);
+        AcesRobotState.setImpl(() -> CoToRioDataStreamerData.getInstance().robotOperationalMode);
         AcesPiIterativeRobotBase.startRobot(CoProcessor::new);
 
 

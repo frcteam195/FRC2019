@@ -1,5 +1,6 @@
 package com.team195.frc2019;
 
+import com.illposed.osc.OSCBoundListMessage;
 import com.team195.frc2019.auto.AutoModeExecutor;
 import com.team195.frc2019.auto.autonomy.AutomatedActions;
 import com.team195.frc2019.constants.Constants;
@@ -7,6 +8,7 @@ import com.team195.frc2019.constants.TestConstants;
 import com.team195.frc2019.controllers.HIDController;
 import com.team195.frc2019.controllers.LEDController;
 import com.team195.frc2019.coprocessor.CoProcessorRemoteExec;
+import com.team195.frc2019.coprocessor.RioToCoDataStreamerData;
 import com.team195.frc2019.loops.Looper;
 import com.team195.frc2019.monitors.ConnectionMonitor;
 import com.team195.frc2019.paths.TrajectoryGenerator;
@@ -21,6 +23,9 @@ import edu.wpi.first.wpilibj.Timer;
 import org.aceshigh176.lib.externalactions.ArbitraryCodeExecutorClient;
 import org.aceshigh176.lib.robotbase.AcesRobotState;
 import org.aceshigh176.lib.robotbase.RobotOperationalMode;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "FieldCanBeLocal", "WeakerAccess"})
 public class Robot extends RealtimeRobot {
@@ -37,6 +42,8 @@ public class Robot extends RealtimeRobot {
 	public static final AutoModeExecutor mAutoModeExecutor = new AutoModeExecutor();
 
 	private HIDController mHIDController;
+
+	private final RioToCoDataStreamerData mRioToCoDataStreamerData = RioToCoDataStreamerData.getInstance();
 
 	public Robot() {
 		CrashTracker.logRobotConstruction();
@@ -88,6 +95,10 @@ public class Robot extends RealtimeRobot {
 		}
 	}
 
+	private static final List<Object> gyroList = new ArrayList<>(5);
+	private static final OSCBoundListMessage boundOSCMesage = new OSCBoundListMessage("/GyroData", gyroList);
+	private static final List<Object> modeList = new ArrayList<>(5);
+	private static final OSCBoundListMessage modeBoundOSCMesage = new OSCBoundListMessage("/RobotMode", modeList);
 	@Override
 	public void robotPeriodic() {
 //		ConsoleReporter.report("ElevatorPos: " + Elevator.getInstance().getPosition());
@@ -101,6 +112,12 @@ public class Robot extends RealtimeRobot {
 //		ConsoleReporter.report("GyroDeg:" + Drive.getInstance().getRawYaw());
 //		ConsoleReporter.report("Skew: " + VisionTracker.getInstance().getTargetSkew());
 //		mArbitraryCodeExecutorClient.submitForExecution(new CoProcessorRemoteExec.SetRobotData(AcesRobotState.getOperationalMode()));
+		gyroList.clear();
+		gyroList.add(mDrive.getHeading().getRadians());
+		mRioToCoDataStreamerData.reportOSCData(boundOSCMesage);
+		modeList.clear();
+		modeList.add(AcesRobotState.getOperationalMode().ordinal());
+		mRioToCoDataStreamerData.reportOSCData(modeBoundOSCMesage);
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class CoProcessorRemoteExec {
 
         @Override
         public void accept(Void t) {
-            RioToCoDataStreamerData.getInstance().robotOperationalMode = mOperationalMode;
+			CoToRioDataStreamerData.getInstance().robotOperationalMode = mOperationalMode;
         }
     }
 

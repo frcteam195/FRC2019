@@ -12,57 +12,63 @@ import com.team254.lib.geometry.Rotation2d;
 import org.aceshigh176.lib.robotbase.RobotOperationalMode;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.List;
 
-public class RioToCoDataStreamerData {
+public class CoToRioDataStreamerData {
 
-    private static final RioToCoDataStreamerData mInstance = new RioToCoDataStreamerData();
+	private static final CoToRioDataStreamerData mInstance = new CoToRioDataStreamerData();
 
-    public static RioToCoDataStreamerData getInstance() {
-        return mInstance;
-    }
-    private RioToCoDataStreamerData() {}
+	public static CoToRioDataStreamerData getInstance() {
+		return mInstance;
+	}
+	private CoToRioDataStreamerData() {}
 
-    public double timestamp = 0;
+	public double timestamp = 0;
+	public RobotOperationalMode robotOperationalMode = RobotOperationalMode.kDisabled;
 
 	private final int portNumber = Constants.LOG_RIOOSC_REPORTER_PORT;
 
 	private ReportRequestorSet requestorSet = new ReportRequestorSet();
 	private boolean firstRun = true;
 
-	private Pose2d mPose = new Pose2d();
+	private double mRotation = 0;
 
 	@SuppressWarnings("FieldCanBeLocal")
 	private OSCPortIn oscPortIn;
 
-	public Pose2d getCurrentPose() {
-		return mPose;
+	public double getCurrentHeading() {
+		return mRotation;
 	}
 
 	private Runnable initializer = () -> {
 		try {
 			oscPortIn = new OSCPortIn(portNumber);
-			OSCListener updateListener = (time, message) -> {
-				try {
-					requestorSet.add(message.getIPAddress());
-				} catch (Exception ignored) {
 
-				}
-			};
-
-			OSCListener poseListener = (time, message) -> {
+			OSCListener gyroListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
-					if (valArr.size() == 3) {
-						mPose = new Pose2d((float)valArr.get(0), (float)valArr.get(1), Rotation2d.fromRadians((float)valArr.get(2)));
+					if (valArr.size() == 1) {
+						mRotation = (float)valArr.get(0);
 					}
 				} catch (Exception ignored) {
 
 				}
 			};
 
-			oscPortIn.addListener("/RegisterRequestor", updateListener);
-			oscPortIn.addListener("/SLAMPose", poseListener);
+			OSCListener modeListener = (time, message) -> {
+				try {
+					List<Object> valArr = message.getArguments();
+					if (valArr.size() == 1) {
+						robotOperationalMode = RobotOperationalMode.valueOf(valArr.get(0));
+					}
+				} catch (Exception ignored) {
+
+				}
+			};
+
+			oscPortIn.addListener("/GyroData", gyroListener);
+			oscPortIn.addListener("/RobotMode", modeListener);
 			oscPortIn.startListening();
 			firstRun = false;
 		} catch (Exception ex) {
@@ -85,9 +91,13 @@ public class RioToCoDataStreamerData {
 	public synchronized void reportOSCData(OSCPacket oscPacket) {
 		if (firstRun) {
 			initializer.run();
+			try {
+				requestorSet.add(InetAddress.getByName("10.1.95.2"));
+			} catch (Exception ex) {
+
+			}
 		}
 
-		requestorSet.removeExpiredEntries();
 		requestorSet.forEach((k) -> {
 			if (k.getInetAddress() != null) {
 				if (k.getOscPortOut() == null) {
