@@ -4,8 +4,8 @@ public class RealsenseJNI {
 
 	public native int getTranslation(float[] translationContainer);
 	public native int getRotation(float[] rotationContainer);
-	public native int setTranslation(double[] startingPosition);
-	public native int setRotation(double[] startingRotation);
+	public native int setTranslation(float[] startingPosition);
+	public native int setRotation(float[] startingRotation);
 
 	static boolean libraryLoaded = false;
 
