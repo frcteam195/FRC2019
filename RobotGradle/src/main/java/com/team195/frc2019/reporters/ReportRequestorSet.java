@@ -1,5 +1,7 @@
 package com.team195.frc2019.reporters;
 
+import org.springframework.beans.factory.parsing.ProblemReporter;
+
 import java.net.InetAddress;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -13,11 +15,15 @@ public class ReportRequestorSet {
 	}
 
 	@SuppressWarnings({"SuspiciousMethodCalls", "UnusedReturnValue"})
-	public synchronized ReportRequestor add(InetAddress value) {
+	public synchronized ReportRequestor add(InetAddress value, int portNumber) {
 		if (value != null) {
 			try {
-				if (!requestorSet.containsKey(value))
-					return add(new ReportRequestor(value));
+				if (!requestorSet.containsKey(value)) {
+					if (portNumber > 0)
+						return add(new ReportRequestor(value, 4, portNumber));
+					else
+						return add(new ReportRequestor(value));
+				}
 				else {
 					ReportRequestor r = requestorSet.get(value);
 					r.pumpHeartbeat();
@@ -28,6 +34,11 @@ public class ReportRequestorSet {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings({"SuspiciousMethodCalls", "UnusedReturnValue"})
+	public synchronized ReportRequestor add(InetAddress value) {
+		return add(value, 0);
 	}
 
 	public synchronized ReportRequestor add(ReportRequestor value) {

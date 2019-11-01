@@ -12,6 +12,7 @@ import com.team254.lib.geometry.Rotation2d;
 import org.aceshigh176.lib.robotbase.RobotOperationalMode;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.List;
 
 public class RioToCoDataStreamerData {
@@ -40,24 +41,28 @@ public class RioToCoDataStreamerData {
 	}
 
 	private Runnable initializer = () -> {
+		System.out.println("Initializing!");
+
 		try {
 			oscPortIn = new OSCPortIn(portNumber);
 			OSCListener updateListener = (time, message) -> {
 				try {
-					requestorSet.add(message.getIPAddress());
+					System.out.println("Got requestor!");
+					requestorSet.add(message.getIPAddress(), portNumber);
 				} catch (Exception ignored) {
-
+					ignored.printStackTrace();
 				}
 			};
 
 			OSCListener poseListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
+					System.out.println("Got pose!");
 					if (valArr.size() == 3) {
 						mPose = new Pose2d((float)valArr.get(0), (float)valArr.get(1), Rotation2d.fromRadians((float)valArr.get(2)));
 					}
 				} catch (Exception ignored) {
-
+					ignored.printStackTrace();
 				}
 			};
 
@@ -65,13 +70,15 @@ public class RioToCoDataStreamerData {
 			oscPortIn.addListener("/SLAMPose", poseListener);
 			oscPortIn.startListening();
 			firstRun = false;
+
+			System.out.println("Initialized!");
 		} catch (Exception ex) {
 			if (oscPortIn != null) {
 				try {
 					oscPortIn.stopListening();
 					oscPortIn.close();
 				} catch (Exception ignored) {
-
+					ignored.printStackTrace();
 				}
 			}
 			oscPortIn = null;
@@ -83,24 +90,31 @@ public class RioToCoDataStreamerData {
 
 	@SuppressWarnings("DuplicatedCode")
 	public synchronized void reportOSCData(OSCPacket oscPacket) {
+		System.out.println("Report data called");
 		if (firstRun) {
 			initializer.run();
+			System.out.println("Completed Init");
 		}
+
+		System.out.println("Checking for requestors");
 
 		requestorSet.removeExpiredEntries();
 		requestorSet.forEach((k) -> {
+			System.out.println("Checking socket");
 			if (k.getInetAddress() != null) {
 				if (k.getOscPortOut() == null) {
 					try {
 						k.setOscPortOut(new OSCPortOut(k.getInetAddress(), portNumber));
 					} catch (Exception ignored) {
+						ignored.printStackTrace();
 						return;
 					}
 				}
 				try {
+					System.out.println("Packet sent");
 					k.getOscPortOut().send(oscPacket);
 				} catch (IOException ignored) {
-
+					ignored.printStackTrace();
 				}
 			}
 		});

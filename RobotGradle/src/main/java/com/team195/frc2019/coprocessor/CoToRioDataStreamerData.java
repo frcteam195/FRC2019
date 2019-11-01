@@ -1,9 +1,6 @@
 package com.team195.frc2019.coprocessor;
 
-import com.illposed.osc.OSCListener;
-import com.illposed.osc.OSCPacket;
-import com.illposed.osc.OSCPortIn;
-import com.illposed.osc.OSCPortOut;
+import com.illposed.osc.*;
 import com.revrobotics.CANSparkMaxFrames;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
@@ -49,11 +46,12 @@ public class CoToRioDataStreamerData {
 			OSCListener gyroListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
+					System.out.println("gyroLister fired " + valArr.size());
 					if (valArr.size() == 1) {
-						mRotation = (float)valArr.get(0);
+						mRotation = (double)(valArr.get(0));
 					}
 				} catch (Exception ignored) {
-
+					ignored.printStackTrace();
 				}
 			};
 
@@ -65,7 +63,7 @@ public class CoToRioDataStreamerData {
 						robotOperationalMode = RobotOperationalMode.valueOf(valArr.get(0));
 					}
 				} catch (Exception ignored) {
-
+					ignored.printStackTrace();
 				}
 			};
 
@@ -94,9 +92,9 @@ public class CoToRioDataStreamerData {
 		if (firstRun) {
 			initializer.run();
 			try {
-				requestorSet.add(InetAddress.getByName("10.1.95.2"));
+				requestorSet.add(InetAddress.getByName("10.1.95.2"), portNumber);
 			} catch (Exception ex) {
-
+				ex.printStackTrace();
 			}
 		}
 
@@ -104,12 +102,20 @@ public class CoToRioDataStreamerData {
 			if (k.getInetAddress() != null) {
 				if (k.getOscPortOut() == null) {
 					try {
+						System.out.println("SetOSCPort");
 						k.setOscPortOut(new OSCPortOut(k.getInetAddress(), portNumber));
 					} catch (Exception ignored) {
+						System.out.println("Error");
 						return;
 					}
 				}
 				try {
+					//System.out.println(k.getInetAddress().getHostAddress());
+					if (oscPacket instanceof OSCBoundListMessage) {
+						//System.out.println("Send message " + ((OSCBoundListMessage)oscPacket).getAddress());
+					} else {
+						//System.out.println("Send message " + ((OSCMessage)oscPacket).getAddress());
+					}
 					k.getOscPortOut().send(oscPacket);
 				} catch (IOException ignored) {
 
