@@ -16,6 +16,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.4.1"
     id 'idea'
     id 'war'
+	id 'org.hidetake.ssh' version '2.10.1'
 }
 
 apply plugin: 'com.bmuschko.tomcat'
@@ -24,6 +25,69 @@ apply plugin: 'com.google.protobuf'
 def TEAM = 195
 def TEAMIP = "10.1.95.2"
 def ROBOT_MAIN_CLASS = "com.team195.frc2019.Main"
+
+
+remotes {
+	raspi{
+		host = '10.1.95.19'
+		user = 'root'
+		password = '195'
+	}
+}
+
+ssh.settings {
+	knownHosts = allowAnyHosts
+}
+
+task raspiDeploy {
+	group 'embeddedtools'
+	dependsOn('build')
+	dependsOn('raspiInternalDeploy')
+}
+
+task raspiJar(type: Jar) {
+	group 'build'
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	from { sourceSets.main.runtimeClasspath   }
+	manifest edu.wpi.first.gradlerio.GradleRIOPlugin.javaManifest("com.team195.frc2019.coprocessor.CoProcessorMain")
+	destinationDir = file('build/raspi')
+	archivesBaseName = 'FRCPIUserProgram'
+	doLast {
+		project.logger.lifecycle("Building Raspi Jar")
+	}
+}
+
+task raspiInternalDeploy {
+	dependsOn('raspiJar')
+
+	doLast {
+		project.logger.lifecycle("Deploying Raspi Jar")
+		ssh.run {
+			session(remotes.raspi) {
+				execute 'sudo mkdir -p /frc/userProg'
+				execute 'sudo mkdir -p /frc/userDeploy'
+				execute 'sudo systemctl stop FRCPIUserProgram'
+				execute 'sudo chmod -R 777 /frc'
+				put from: fileTree(dir: 'build/raspi/'), into: '/frc/userProg'
+				execute 'sudo chmod -R 777 /frc'
+				execute 'sudo echo "#! /bin/sh" > /frc/commands/robot_command.sh'
+				//Enter profile mode with ./gradlew <command> -PprofileMode
+				if (frc.project.hasProperty("profileMode")) {
+					project.logger.lifecycle('Debug mode enabled!')
+					project.logger.lifecycle("Connect client to ${remotes.raspi.host} for coprocessor profiling with YourKit Profiler.")
+					execute 'sudo echo "/usr/bin/java -agentpath:/usr/lib/jni/libyjpagent.so=listen=' + remotes.raspi.host + ' -jar /frc/userProg/FRCPIUserProgram.jar" >> /frc/commands/robot_command.sh'
+				} else {
+					execute 'sudo echo "/usr/bin/java -jar /frc/userProg/FRCPIUserProgram.jar" >> /frc/commands/robot_command.sh'
+				}
+				execute 'sudo chmod -R 777 /frc'
+				execute 'sudo sync'
+				execute 'sudo sync'
+				execute 'sudo sync'
+				execute 'sudo systemctl start FRCPIUserProgram'
+			}
+		}
+	}
+}
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -101,7 +165,9 @@ dependencies {
 
 	compile("org.springframework:spring-webmvc:5.1.6.RELEASE")
     compile("javax.servlet:javax.servlet-api:4.0.1")
-    compile("javax.servlet:jstl:1.2") 
+    compile("javax.servlet:jstl:1.2")
+	compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
+	compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
 }
 
 // context where tomcat is deployed, by default localhost:8080/
@@ -174,6 +240,13 @@ task listrepos {
         project.repositories.each { println "Name: " + it.name + "; url: " + it.url }
         println wpi.deps.wpilib()
    }
+}
+
+task deployAll() {
+	group 'embeddedtools'
+	dependsOn('build')
+	dependsOn('raspiInternalDeploy')
+	dependsOn('deploy')
 }
 
 wrapper {
