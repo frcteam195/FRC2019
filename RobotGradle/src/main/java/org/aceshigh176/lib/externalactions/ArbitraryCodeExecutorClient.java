@@ -4,8 +4,6 @@ import org.aceshigh176.lib.loops.Loopable;
 import org.aceshigh176.lib.loops.Looper;
 import org.aceshigh176.lib.loops.ThreadedLooper;
 import org.aceshigh176.lib.util.UnitUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;

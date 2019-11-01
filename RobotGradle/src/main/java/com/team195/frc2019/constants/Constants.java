@@ -16,8 +16,8 @@ public class Constants {
     public static final double kLooperDt = 0.010;
 
     public static final int kCANTimeoutMs = 10; //use for on the fly updates
-    public static final int kLongCANTimeoutMs = 100; //use for constructors
-    public static final int kTalonRetryCount = 3; //use for constructors
+    public static final int kLongCANTimeoutMs = 10; //use for constructors
+    public static final int kTalonRetryCount = 1; //use for constructors
 
     // Control Board
     public static final boolean kUseGamepadForDriving = false;

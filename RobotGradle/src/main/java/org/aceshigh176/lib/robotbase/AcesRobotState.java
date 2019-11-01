@@ -1,14 +1,10 @@
 package org.aceshigh176.lib.robotbase;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
 
 public class AcesRobotState {
-
-    private static final Logger log = LogManager.getLogger(AcesRobotState.class);
 
     interface IAcesRobotState {
         boolean isDisabled();
@@ -92,7 +88,7 @@ public class AcesRobotState {
         } else if(mImpl.isDisabled()) {
             return RobotOperationalMode.kDisabled;
         } else {
-            log.error("No known operation mode for robot!");
+			System.out.println("No known operation mode for robot!");
             return null;
         }
     }

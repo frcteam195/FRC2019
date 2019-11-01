@@ -4,6 +4,7 @@ import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCPacket;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
+import com.revrobotics.CANSparkMaxFrames;
 import com.team195.frc2019.constants.Constants;
 import com.team195.frc2019.reporters.ConsoleReporter;
 import com.team195.frc2019.reporters.ReportRequestorSet;
@@ -59,6 +60,7 @@ public class CoToRioDataStreamerData {
 			OSCListener modeListener = (time, message) -> {
 				try {
 					List<Object> valArr = message.getArguments();
+					System.out.println("modeLister fired " + valArr.size());
 					if (valArr.size() == 1) {
 						robotOperationalMode = RobotOperationalMode.valueOf(valArr.get(0));
 					}

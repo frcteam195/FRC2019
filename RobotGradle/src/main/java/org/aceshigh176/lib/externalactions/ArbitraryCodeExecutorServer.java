@@ -3,8 +3,6 @@ package org.aceshigh176.lib.externalactions;
 import org.aceshigh176.lib.loops.Loopable;
 import org.aceshigh176.lib.loops.Looper;
 import org.aceshigh176.lib.loops.ThreadedLooper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -12,7 +10,6 @@ import java.net.Socket;
 
 public class ArbitraryCodeExecutorServer implements Loopable {
 
-    private final Logger log = LogManager.getLogger(ArbitraryCodeExecutorServer.class);
 
     private final Looper looper = new ThreadedLooper(.1, "ArbitraryCodeExecutorServer", Thread.NORM_PRIORITY);
 
@@ -29,23 +26,23 @@ public class ArbitraryCodeExecutorServer implements Loopable {
 
         if(mState == State.INIT) {
             try {
-                log.debug("created server socket");
+                System.out.println("created server socket");
                 serverSocket = new ServerSocket(9010);
-//                log.debug("server socket created");
+//                System.out.println("server socket created");
                 nextState = State.LISTEN;
             } catch (IOException e) {
-                log.error(e);
+                System.out.println(e);
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e1) {
-                    log.error(e);
+                    System.out.println(e);
                 }
             }
         } else if(mState == State.LISTEN) {
             try {
-                log.debug("Listening for client");
+                System.out.println("Listening for client");
                 Socket client = serverSocket.accept();
-                log.debug("Client connected");
+                System.out.println("Client connected");
                 Runnable clientThread = new Runnable() {
                     @Override
                     public void run() {
@@ -56,30 +53,30 @@ public class ArbitraryCodeExecutorServer implements Loopable {
 
                             ObjectInputStream ois = new ObjectInputStream(is);
                             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(os));
-//                            log.debug("just before while loop");
+//                            System.out.println("just before while loop");
                             while(client.isConnected()) {
-//                                log.debug("reading object");
+//                                System.out.println("reading object");
                                 ArbitraryCodeExecutorLambda function = (ArbitraryCodeExecutorLambda) ois.readObject();
-//                                log.debug("got object object");
+//                                System.out.println("got object object");
                                 function.accept(null);
-//                                log.debug("accepted that object");
+//                                System.out.println("accepted that object");
                                 bufferedWriter.write("Got it!\n");
                                 bufferedWriter.flush();
                             }
                         } catch(IOException | ClassNotFoundException e) {
-                            log.error(e);
+                            System.out.println(e);
                         } finally {
                             try {
                                 client.close();
                             } catch (IOException e) {
-                                log.error(e);
+                                System.out.println(e);
                             }
                         }
                     }
                 };
                 new Thread(clientThread).start();
             } catch (IOException e) {
-                log.error(e);
+                System.out.println(e);
             }
         } else if(mState == State.CLOSE) {
 

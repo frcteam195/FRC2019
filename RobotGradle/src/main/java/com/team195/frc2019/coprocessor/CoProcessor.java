@@ -2,10 +2,12 @@ package com.team195.frc2019.coprocessor;
 
 import com.illposed.osc.OSCBoundListMessage;
 import com.illposed.osc.OSCMessage;
+import com.team195.lib.util.FastDoubleToString;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import org.aceshigh176.lib.externalactions.ArbitraryCodeExecutorServer;
 import org.aceshigh176.lib.robotbase.AcesPiTimedRobot;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,15 +15,22 @@ import java.util.List;
 
 public class CoProcessor extends AcesPiTimedRobot {
 
-    private static final Logger log = LogManager.getLogger(CoProcessor.class);
+//    private static final Logger log = LogManager.getLogger(CoProcessor.class);
 
 	private final CoToRioDataStreamerData mCoToRioDataStreamerData = CoToRioDataStreamerData.getInstance();
     private final ArbitraryCodeExecutorServer mArbitraryCodeExecutionClient = new ArbitraryCodeExecutorServer();
 
+    private NetworkTableEntry mOperationalModeEntry;
+	private NetworkTableEntry mTimestampEntry;
+
     @Override
     public void robotInit() {
-        log.info("robotInit called");
-    }
+        System.out.println("robotInit called");
+        NetworkTableInstance.getDefault().startServer();
+		NetworkTable networkTable = NetworkTableInstance.getDefault().getTable("Data");
+		mTimestampEntry = networkTable.getEntry("Timestamp");
+		mOperationalModeEntry = networkTable.getEntry("OperationalMode");
+	}
 
 	private static final List<Object> headingList = new ArrayList<>(5);
 	private static final OSCBoundListMessage boundOSCMesage = new OSCBoundListMessage("/SLAMPose", headingList);
@@ -36,11 +45,13 @@ public class CoProcessor extends AcesPiTimedRobot {
 		headingList.add((float)0);	//Y
 		headingList.add((float)0);	//Rot
 		mCoToRioDataStreamerData.reportOSCData(boundOSCMesage);
+		mTimestampEntry.setString(FastDoubleToString.format(CoToRioDataStreamerData.getInstance().timestamp));
+		mOperationalModeEntry.setString(CoToRioDataStreamerData.getInstance().robotOperationalMode.toString());
     }
 
     @Override
     public void autonomousInit() {
-        log.info("autoInit called");
+        System.out.println("autoInit called");
 
     }
 
@@ -51,7 +62,7 @@ public class CoProcessor extends AcesPiTimedRobot {
 
     @Override
     public void teleopInit() {
-        log.info("teleopInit called");
+        System.out.println("teleopInit called");
 
     }
 
@@ -62,7 +73,7 @@ public class CoProcessor extends AcesPiTimedRobot {
 
     @Override
     public void disabledInit() {
-        log.info("disabledInit called");
+        System.out.println("disabledInit called");
 
     }
 
