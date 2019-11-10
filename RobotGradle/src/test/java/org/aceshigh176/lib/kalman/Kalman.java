@@ -1,5 +1,7 @@
 package org.aceshigh176.lib.kalman;
 
+import com.github.sh0nk.matplotlib4j.Plot;
+import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import com.team254.lib.geometry.Translation2d;
 import org.apache.commons.math3.filter.*;
 import org.apache.commons.math3.linear.*;
@@ -9,6 +11,7 @@ import org.apache.commons.math3.util.Pair;
 
 import javax.security.sasl.RealmCallback;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,9 +221,9 @@ public class Kalman {
 
 		// Control matrix
 		RealMatrix B = new Array2DRowRealMatrix(new double[][]{
-			{DT * Math.cos(x.getEntry(2, 0)), 0},
-			{DT * Math.sin(x.getEntry(2, 0)), 0},
-			{0, DT},
+			{DT * Math.cos(x.getEntry(2, 0)), 0}, // dx?
+			{DT * Math.sin(x.getEntry(2, 0)), 0}, // dy?
+			{0, DT},										   // dtheta?
 			{1.0, 0},
 		});
 
@@ -363,7 +366,7 @@ public class Kalman {
 		return new Pair(xEst, PEst);
 	}
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, PythonExecutionException {
 		HashMap<String, List<String>> csv = CSVtoHashMap.convertCSVFileToHashMap(new File("src/test/java/org/aceshigh176/lib/kalman/fout.csv"));
 
 		ArrayList<Double> gps_x = csv.get("gps_x").stream().map(t -> Double.parseDouble(t)).collect(Collectors.toCollection(ArrayList::new));
@@ -376,6 +379,9 @@ public class Kalman {
 		ArrayList<Double> u_yawrate = csv.get("u_yawrate").stream().map(t -> Double.parseDouble(t)).collect(Collectors.toCollection(ArrayList::new));
 		ArrayList<Double> estimated_x = csv.get("estimated_x").stream().map(t -> Double.parseDouble(t)).collect(Collectors.toCollection(ArrayList::new));
 		ArrayList<Double> estimated_y = csv.get("estimated_y").stream().map(t -> Double.parseDouble(t)).collect(Collectors.toCollection(ArrayList::new));
+
+		ArrayList<Double> java_est_x = new ArrayList<>();
+		ArrayList<Double> java_est_y = new ArrayList<>();
 
 
 //        # State Vector [x y yaw v]'
@@ -405,7 +411,24 @@ public class Kalman {
 			xEst = estimation.getFirst();
 			PEst = estimation.getSecond();
 
+			java_est_x.add(xEst.getEntry(0, 0));
+			java_est_y.add(xEst.getEntry(1, 0));
 			System.out.println(xEst.getEntry(0, 0) + ", " + xEst.getEntry(1, 0));
 		}
+
+		Plot plt = Plot.create();
+//		plt.cla();
+		plt.plot()
+			.add(gps_x, gps_y, ".g") // GPS samples
+			.add(true_x, true_y, "-b") // True path
+			.add(dead_reckon_x, dead_reckon_y, "-k") // Dead reckoning
+			.add(java_est_x, java_est_y, "-r") // Estimated path
+//			.add(estimated_x, estimated_y, "-r") // Estimated path
+		;
+//		plot_covariance_ellipse(xEst, PEst) # covariance ellipse
+//		plt.axis("equal");
+//		plt.grid(True);
+//		plt.pause(0.001);
+		plt.show();
 	}
 }
