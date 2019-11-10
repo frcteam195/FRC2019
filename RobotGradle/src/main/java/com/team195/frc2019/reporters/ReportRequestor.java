@@ -18,6 +18,10 @@ public class ReportRequestor {
 	}
 
 	public ReportRequestor(InetAddress inetAddress, double heartbeatTimeout) {
+		this(inetAddress, heartbeatTimeout, portNumber);
+	}
+
+	public ReportRequestor(InetAddress inetAddress, double heartbeatTimeout, int portNumber) {
 		this.inetAddress = inetAddress;
 		try {
 			oscPortOut = new OSCPortOut(inetAddress, portNumber);
